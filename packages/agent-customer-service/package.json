@@ -1,0 +1,14 @@
+{
+  "name": "@softsystems/agent-customer-service",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "echo \"no tests\""
+  },
+  "dependencies": {
+    "zod": "^3.22.2"
+  }
+}
