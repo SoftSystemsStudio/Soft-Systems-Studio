@@ -24,6 +24,23 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
 
+  worker:
+    image: node:22
+    working_dir: /workspace
+    volumes:
+      - ../:/workspace:cached
+    environment:
+      REDIS_URL: redis://redis:6379
+      POSTGRES_URL: postgresql://postgres:password@postgres:5432/softsystems
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    command: sh -c "corepack enable && corepack prepare pnpm@8.11.0 --activate && pnpm --filter apps/agent-api worker"
+    depends_on:
+      - redis
+      - postgres
+      - qdrant
+
 volumes:
   pgdata:
   qdrant_data:

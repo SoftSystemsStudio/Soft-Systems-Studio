@@ -5,6 +5,7 @@ import { handleChat } from '../../packages/agent-customer-service/src/handlers/c
 import prisma from './db';
 import healthRouter from './health';
 import customerServiceRouter from './api/v1/agents/customer_service';
+import { metricsHandler } from './metrics';
 
 const app = express();
 app.use(bodyParser.json());
@@ -43,6 +44,7 @@ app.post('/api/agents/customer-service/chat', async (req, res) => {
 
 app.use('/health', healthRouter);
 app.use('/api/v1/agents/customer-service', customerServiceRouter);
+app.get('/metrics', metricsHandler);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 5000;
 app.listen(port, () => console.log(`agent-api listening on ${port}`));

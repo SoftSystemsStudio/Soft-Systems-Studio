@@ -3,19 +3,20 @@ import { upsertDocuments, querySimilar } from '../../services/qdrant';
 import { ingestQueue } from '../../queue';
 import { chat } from '../../services/llm';
 import prisma from '../../db';
+import requireApiKey from '../../middleware/auth';
 
 const router = Router();
 
 // Ingest KB documents for a workspace
-router.post('/ingest', async (req, res) => {
+router.post('/ingest', requireApiKey, async (req, res) => {
   try {
     const { workspaceId, documents } = req.body as any;
     if (!workspaceId || !Array.isArray(documents)) {
       return res.status(400).json({ error: 'invalid_payload' });
     }
 
-    // Enqueue ingestion job for async processing
-    await ingestQueue.add('ingest-job', { workspaceId, documents });
+    // Enqueue ingestion job for async processing with retries/backoff
+    await ingestQueue.add('ingest-job', { workspaceId, documents }, { attempts: 3, backoff: { type: 'exponential', delay: 2000 } });
     return res.json({ ok: true, enqueued: documents.length });
   } catch (e: any) {
     console.error('ingest error', e);
@@ -24,7 +25,7 @@ router.post('/ingest', async (req, res) => {
 });
 
 // Run chat with RAG-lite retrieval
-router.post('/run', async (req, res) => {
+router.post('/run', requireApiKey, async (req, res) => {
   try {
     const { workspaceId, message, userId } = req.body as any;
     if (!workspaceId || !message) return res.status(400).json({ error: 'invalid_payload' });

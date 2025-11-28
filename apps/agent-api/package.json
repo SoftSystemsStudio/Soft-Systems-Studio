@@ -7,6 +7,7 @@
     "start": "node dist/index.js",
     "build": "tsc -p tsconfig.json && cp -R prisma ./dist/prisma",
     "worker": "ts-node --transpile-only src/worker/ingestWorker.ts",
+    "metrics": "ts-node --transpile-only src/metrics.ts",
     "prisma:generate": "prisma generate",
     "migrate:dev": "prisma migrate dev --name init",
     "migrate:deploy": "prisma migrate deploy",
@@ -21,6 +22,7 @@
     "envalid": "^7.3.0",
     "bullmq": "^2.13.0",
     "ioredis": "^5.3.2"
+    ,"prom-client": "^14.0.1"
   },
   "devDependencies": {
     "ts-node-dev": "^2.0.0",
