@@ -1,3 +1,4 @@
+import './env';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { handleChat } from '../../packages/agent-customer-service/src/handlers/chat';
