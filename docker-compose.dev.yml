@@ -26,6 +26,12 @@ services:
     command: ["sh", "-c", "./packages/api/docker-entrypoint.sh"]
     depends_on:
       - db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   frontend:
     image: node:22

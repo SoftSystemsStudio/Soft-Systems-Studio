@@ -9,4 +9,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN pnpm run build
 EXPOSE 4000
-CMD ["node", "dist/index.js"]
+ CMD ["node", "dist/index.js"]
+
+# Healthcheck: probe the /health endpoint to determine container readiness
+ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+	 CMD curl -f http://localhost:4000/health || exit 1
