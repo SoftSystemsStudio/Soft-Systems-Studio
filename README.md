@@ -35,6 +35,18 @@ Database
 CI and Production
 - `Dockerfile` builds production image for the `api` package. CI is in `.github/workflows/ci.yml`.
 
+Docker (local)
+- A `docker-compose.yml` is provided to run a local Postgres and the API service for quick testing.
+- Start services:
+
+```bash
+# start DB and API (builds the API image)
+docker compose up --build
+```
+
+- The API will be available at `http://localhost:4000` and uses the internal Postgres service.
+- If you want the frontend in Docker as well we can add a `packages/frontend/Dockerfile` and service.
+
 Next steps
 - Add your agent services to `packages/api` or new packages under `packages/` and wire up inter-package types.
 # Soft-Systems-Studio
