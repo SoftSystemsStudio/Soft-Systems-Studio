@@ -47,6 +47,21 @@ docker compose up --build
 - The API will be available at `http://localhost:4000` and uses the internal Postgres service.
 - If you want the frontend in Docker as well we can add a `packages/frontend/Dockerfile` and service.
 
+Dev Docker Compose
+- For a one-command developer experience with hot reload, use the development compose file which mounts the repository into containers and starts the frontend and API in dev mode.
+
+```bash
+# start DB, API (dev) and Next frontend (hot reload)
+docker compose -f docker-compose.dev.yml up --build
+
+# stop
+docker compose -f docker-compose.dev.yml down
+```
+
+Notes
+- `packages/api/docker-entrypoint.sh` will wait for Postgres, run Prisma generate/migrate/seed, then start the API in dev mode.
+- The dev compose mounts the workspace into the container. This is optimized for developer DX; do not use it for production images.
+
 Next steps
 - Add your agent services to `packages/api` or new packages under `packages/` and wire up inter-package types.
 # Soft-Systems-Studio
