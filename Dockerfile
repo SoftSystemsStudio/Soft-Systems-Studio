@@ -15,3 +15,7 @@ RUN corepack enable && corepack prepare pnpm@8.11.0 --activate
 RUN pnpm install --prod
 EXPOSE 4000
 CMD ["node", "dist/index.js"]
+
+# Healthcheck for runtime image
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+	CMD curl -f http://localhost:4000/health || exit 1
