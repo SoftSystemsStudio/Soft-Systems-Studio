@@ -3,12 +3,12 @@ import { upsertDocuments, querySimilar } from '../../services/qdrant';
 import { ingestQueue } from '../../queue';
 import { chat } from '../../services/llm';
 import prisma from '../../db';
-import requireApiKey from '../../middleware/auth';
+import requireAuth from '../../middleware/auth-combined';
 
 const router = Router();
 
 // Ingest KB documents for a workspace
-router.post('/ingest', requireApiKey, async (req, res) => {
+router.post('/ingest', requireAuth, async (req, res) => {
   try {
     const { workspaceId, documents } = req.body as any;
     if (!workspaceId || !Array.isArray(documents)) {
@@ -25,7 +25,7 @@ router.post('/ingest', requireApiKey, async (req, res) => {
 });
 
 // Run chat with RAG-lite retrieval
-router.post('/run', requireApiKey, async (req, res) => {
+router.post('/run', requireAuth, async (req, res) => {
   try {
     const { workspaceId, message, userId } = req.body as any;
     if (!workspaceId || !message) return res.status(400).json({ error: 'invalid_payload' });
