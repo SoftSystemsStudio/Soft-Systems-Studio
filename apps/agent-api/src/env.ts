@@ -5,7 +5,8 @@ export const env = cleanEnv(process.env, {
   NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
   PORT: port({ default: 5000 }),
   POSTGRES_URL: str(),
-  OPENAI_API_KEY: str()
+  OPENAI_API_KEY: str(),
+  REDIS_URL: str({ default: 'redis://localhost:6379' })
 });
 
 export default env;

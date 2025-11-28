@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { upsertDocuments, querySimilar } from '../../services/qdrant';
+import { ingestQueue } from '../../queue';
 import { chat } from '../../services/llm';
 import prisma from '../../db';
 
@@ -13,10 +14,9 @@ router.post('/ingest', async (req, res) => {
       return res.status(400).json({ error: 'invalid_payload' });
     }
 
-    const docs = documents.map((d: any, i: number) => ({ id: `${workspaceId}-${Date.now()}-${i}`, text: d.text || d.content || '', metadata: { title: d.title || null } }));
-    await upsertDocuments(docs);
-
-    return res.json({ ok: true, ingested: docs.length });
+    // Enqueue ingestion job for async processing
+    await ingestQueue.add('ingest-job', { workspaceId, documents });
+    return res.json({ ok: true, enqueued: documents.length });
   } catch (e: any) {
     console.error('ingest error', e);
     return res.status(500).json({ error: e?.message || 'server_error' });
