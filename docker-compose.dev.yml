@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: softsystems
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    image: node:22
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace:cached
+    environment:
+      POSTGRES_URL: postgresql://postgres:password@db:5432/softsystems
+      NODE_ENV: development
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    command: ["sh", "-c", "./packages/api/docker-entrypoint.sh"]
+    depends_on:
+      - db
+
+  frontend:
+    image: node:22
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace:cached
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    command: ["sh", "-c", "corepack enable && corepack prepare pnpm@8.11.0 --activate && pnpm --filter frontend dev --hostname 0.0.0.0"]
+    depends_on:
+      - api
+
+volumes:
+  db-data:
