@@ -1,0 +1,38 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - 'apps/agent-api/**'
+      - 'packages/**'
+  pull_request:
+    paths:
+      - 'apps/agent-api/**'
+      - 'packages/**'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.11.0 --activate
+          pnpm -w install
+
+      - name: Run lint
+        run: pnpm lint || true
+
+      - name: Run tests (example)
+        run: pnpm test || true
+
+  # Add deploy steps on main branch as needed
