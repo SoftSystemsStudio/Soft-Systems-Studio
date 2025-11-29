@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running pre-commit checks: check-env-committed, scan-placeholders"
+pnpm run check-env-committed || exit 1
+pnpm run scan-placeholders || exit 1
+
+echo "Pre-commit checks passed."
