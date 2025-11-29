@@ -51,4 +51,9 @@ app.use('/api/v1/auth', loginRouter);
 app.get('/metrics', metricsHandler);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 5000;
-app.listen(port, () => console.log(`agent-api listening on ${port}`));
+
+if (require.main === module) {
+  app.listen(port, () => console.log(`agent-api listening on ${port}`));
+}
+
+export default app;
