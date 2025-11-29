@@ -75,4 +75,19 @@ Notes
 
 Next steps
 - Add your agent services to `packages/api` or new packages under `packages/` and wire up inter-package types.
+
+Pre-commit checks (local safety)
+- This repository includes Husky pre-commit hooks that run quick safety checks before commits:
+
+	- `pnpm check-env-committed` — fails if `.env` files are tracked in git.
+	- `pnpm scan-placeholders` — scans tracked files for likely secret patterns or disallowed placeholder strings.
+
+	To enable Husky hooks locally after cloning:
+
+```bash
+pnpm install
+pnpm prepare
+```
+
+	After that, the pre-commit checks will run automatically when you commit.
 # Soft-Systems-Studio
