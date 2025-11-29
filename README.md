@@ -29,6 +29,17 @@ pnpm --filter frontend dev
 Environment
 - Copy `.env.example` to `.env` in the root and in `packages/api` and adjust `POSTGRES_URL`.
 
+Syncing environment files
+- There's a helper script to merge example variables into your `.env` files without overwriting existing values.
+- Run from the repo root to update/create both root `.env` and `apps/agent-api/.env`:
+
+```bash
+pnpm sync-env
+# or: node scripts/sync-env.js
+```
+
+The script appends only missing keys from `.env.example` into the corresponding `.env` files and will not replace any existing values. It's a convenient way to keep local envs in sync with the repo examples while preserving developer secrets.
+
 Database
 - Uses Prisma. Migrations and seeds are wired in `packages/api/package.json`.
 
