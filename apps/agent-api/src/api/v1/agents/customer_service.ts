@@ -5,12 +5,13 @@ import { chat } from '../../services/llm';
 import prisma from '../../db';
 import requireAuth from '../../middleware/auth-combined';
 import requireWorkspace from '../../middleware/tenant';
+import { requireRole } from '../../middleware/role';
 
 const router = Router();
 
 // Ingest KB documents for a workspace
 // Enforce auth and workspace scoping
-router.post('/ingest', requireAuth, requireWorkspace, async (req, res) => {
+router.post('/ingest', requireAuth, requireWorkspace, requireRole('admin', 'owner', 'agent'), async (req, res) => {
   try {
     const { documents } = req.body as any;
     const workspaceId = req.auth?.workspaceId;
@@ -28,7 +29,7 @@ router.post('/ingest', requireAuth, requireWorkspace, async (req, res) => {
 });
 
 // Run chat with RAG-lite retrieval
-router.post('/run', requireAuth, requireWorkspace, async (req, res) => {
+router.post('/run', requireAuth, requireWorkspace, requireRole('user', 'agent', 'admin'), async (req, res) => {
   try {
     const { message, userId } = req.body as any;
     const workspaceId = req.auth?.workspaceId;
