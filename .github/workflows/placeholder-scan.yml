@@ -1,0 +1,25 @@
+name: "Placeholder and secret scan"
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  placeholder-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run env safety check
+        run: node scripts/check-env-committed.js
+
+      - name: Run placeholder/secret scan
+        run: node scripts/scan-placeholders.js
