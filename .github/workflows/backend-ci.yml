@@ -29,6 +29,16 @@ jobs:
           corepack prepare pnpm@8.11.0 --activate
           pnpm -w install
 
+      - name: Build workspace
+        run: |
+          # Build all packages in the workspace
+          pnpm -w -r build
+
+      - name: TypeScript check
+        run: |
+          # Run tsc across the workspace (no emit) to catch type errors and config drift
+          pnpm -w exec tsc --noEmit
+
       - name: Run lint
         run: pnpm lint || true
 
