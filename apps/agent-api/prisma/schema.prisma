@@ -38,3 +38,23 @@ model KbDocument {
   content    String   @db.Text
   createdAt  DateTime @default(now())
 }
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  createdAt   DateTime @default(now())
+  memberships WorkspaceMembership[]
+}
+
+model WorkspaceMembership {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        String
+  createdAt   DateTime @default(now())
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  @@unique([workspaceId, userId])
+}
