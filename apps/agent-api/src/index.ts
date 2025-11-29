@@ -5,6 +5,7 @@ import { handleChat } from '../../packages/agent-customer-service/src/handlers/c
 import prisma from './db';
 import healthRouter from './health';
 import onboardingRouter from './api/v1/auth/onboarding';
+import loginRouter from './api/v1/auth/login';
 import customerServiceRouter from './api/v1/agents/customer_service';
 import { metricsHandler } from './metrics';
 
@@ -46,6 +47,7 @@ app.post('/api/agents/customer-service/chat', async (req, res) => {
 app.use('/health', healthRouter);
 app.use('/api/v1/agents/customer-service', customerServiceRouter);
 app.use('/api/v1/auth', onboardingRouter);
+app.use('/api/v1/auth', loginRouter);
 app.get('/metrics', metricsHandler);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 5000;
