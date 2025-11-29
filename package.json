@@ -16,6 +16,7 @@
     "sync-env": "node scripts/sync-env.js",
     "check-env-committed": "node scripts/check-env-committed.js",
     "scan-placeholders": "node scripts/scan-placeholders.js",
+    "check-git-lfs": "node scripts/check-git-lfs.js",
     "prepare": "husky install"
   },
   "devDependencies": {
