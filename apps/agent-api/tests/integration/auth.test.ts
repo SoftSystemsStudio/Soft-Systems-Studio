@@ -1,48 +1,25 @@
 import request from 'supertest';
-import bcrypt from 'bcryptjs';
+import request from 'supertest';
 
 // set JWT env for tests
-process.env.JWT_SECRET = 'test-secret';
-process.env.JWT_ALGORITHM = 'HS256';
+process.env.JWT_SECRET = process.env.JWT_SECRET ?? 'test-secret';
+process.env.JWT_ALGORITHM = process.env.JWT_ALGORITHM ?? 'HS256';
 
-// Mock prisma and services
-jest.mock('../../src/db', () => {
-  return {
-    workspace: {
-      create: jest.fn(async ({ data }: any) => ({ id: 'ws1', name: data.name }))
-    },
-    user: {
-      create: jest.fn(async ({ data }: any) => ({ id: 'u1', email: data.email, password: data.password })),
-      findUnique: jest.fn(async ({ where }: any) => {
-        if (where.email === 'existing@example.com') return { id: 'u2', email: 'existing@example.com', password: bcrypt.hashSync('secret', 10) };
-        return null;
-      })
-    },
-    workspaceMembership: {
-      create: jest.fn(async ({ data }: any) => ({ id: 'm1', ...data })),
-      findMany: jest.fn(async ({ where }: any) => {
-        if (where.userId === 'u2') return [{ id: 'm2', workspaceId: 'ws1', userId: 'u2', role: 'admin' }];
-        return [];
-      })
-    },
-    conversation: {
-      create: jest.fn(async ({ data }: any) => ({ id: 'c1', ...data }))
-    },
-    message: {
-      createMany: jest.fn(async ({ data }: any) => data)
-    }
-  };
-});
+// Ensure test DB URL is present for DB-backed integration tests. CI sets this.
+process.env.POSTGRES_URL = process.env.POSTGRES_URL ?? 'postgresql://postgres:postgres@localhost:5432/agent_api_test';
 
-// Mock qdrant and llm services used by protected endpoint
+// Run test setup (applies schema and connects prisma)
+import '../setup';
+
+// Mock qdrant and llm services used by protected endpoint to avoid external calls
 jest.mock('../../src/services/qdrant', () => ({ querySimilar: jest.fn(async () => []) }));
 jest.mock('../../src/services/llm', () => ({ chat: jest.fn(async () => 'echo') }));
 
 import app from '../../src/index';
 
-describe('Auth integration', () => {
+describe('Auth integration (DB-backed)', () => {
   it('onboarding -> login -> protected endpoint', async () => {
-    // Onboarding
+    // Onboarding: create workspace + admin user
     const onboardingRes = await request(app)
       .post('/api/v1/auth/create-workspace')
       .send({ workspaceName: 'Acme', adminEmail: 'owner@acme.test', adminPassword: 'pa$$word' })
@@ -52,13 +29,25 @@ describe('Auth integration', () => {
     expect(onboardingRes.body.workspaceId).toBeDefined();
     expect(onboardingRes.body.token).toBeDefined();
 
-    // Simulate existing user login (mocked in prisma.findUnique)
+    // Create a real user to login
+    // Use the same prisma client used by the app
+    const { default: prisma } = await import('../../src/db');
+    const bcrypt = (await import('bcryptjs')).default;
+    const hashed = await bcrypt.hash('secret', 10);
+    await prisma.user.create({ data: { email: 'existing@example.com', password: hashed } });
+
+    // Login with real credentials
     const loginRes = await request(app).post('/api/v1/auth/login').send({ email: 'existing@example.com', password: 'secret' }).expect(200);
     expect(loginRes.body.token).toBeDefined();
     const token = loginRes.body.token;
 
     // Call protected run endpoint with token
-    const runRes = await request(app).post('/api/v1/agents/customer-service/run').set('Authorization', `Bearer ${token}`).send({ message: 'hello' }).expect(200);
+    const runRes = await request(app)
+      .post('/api/v1/agents/customer-service/run')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ message: 'hello' })
+      .expect(200);
+
     expect(runRes.body.reply).toBeDefined();
   });
 });
