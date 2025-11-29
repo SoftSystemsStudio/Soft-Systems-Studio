@@ -12,6 +12,13 @@ const worker = new Worker(
   async (job) => {
     const { workspaceId, documents } = job.data as any;
     console.log('[worker] processing ingest for', workspaceId, 'docs:', documents.length);
+    // verify workspace exists before doing work
+    const workspace = await prisma.workspace.findUnique({ where: { id: workspaceId } });
+    if (!workspace) {
+      const err = new Error(`[worker] workspace not found: ${workspaceId}`);
+      console.error(err.message);
+      throw err; // let job retry / DLQ handle it
+    }
 
     // upsert into qdrant
     await upsertDocuments(
@@ -24,6 +31,7 @@ const worker = new Worker(
       await prisma.kbDocument.createMany({ data: rows });
     } catch (e) {
       console.error('[worker] failed to persist kb documents', e);
+      throw e;
     }
 
     return { ok: true };

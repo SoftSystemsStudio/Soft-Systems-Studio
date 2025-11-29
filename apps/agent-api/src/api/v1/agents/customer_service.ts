@@ -4,13 +4,16 @@ import { ingestQueue } from '../../queue';
 import { chat } from '../../services/llm';
 import prisma from '../../db';
 import requireAuth from '../../middleware/auth-combined';
+import requireWorkspace from '../../middleware/tenant';
 
 const router = Router();
 
 // Ingest KB documents for a workspace
-router.post('/ingest', requireAuth, async (req, res) => {
+// Enforce auth and workspace scoping
+router.post('/ingest', requireAuth, requireWorkspace, async (req, res) => {
   try {
-    const { workspaceId, documents } = req.body as any;
+    const { documents } = req.body as any;
+    const workspaceId = req.auth?.workspaceId;
     if (!workspaceId || !Array.isArray(documents)) {
       return res.status(400).json({ error: 'invalid_payload' });
     }
@@ -25,9 +28,10 @@ router.post('/ingest', requireAuth, async (req, res) => {
 });
 
 // Run chat with RAG-lite retrieval
-router.post('/run', requireAuth, async (req, res) => {
+router.post('/run', requireAuth, requireWorkspace, async (req, res) => {
   try {
-    const { workspaceId, message, userId } = req.body as any;
+    const { message, userId } = req.body as any;
+    const workspaceId = req.auth?.workspaceId;
     if (!workspaceId || !message) return res.status(400).json({ error: 'invalid_payload' });
 
     // Retrieve top contexts
@@ -44,7 +48,7 @@ router.post('/run', requireAuth, async (req, res) => {
 
     // Persist conversation and messages
     try {
-      await prisma.workspace.upsert({ where: { id: workspaceId }, update: {}, create: { id: workspaceId, name: workspaceId } });
+      // Workspace already validated by middleware — create conversation and messages
       const conversation = await prisma.conversation.create({ data: { workspaceId } });
       await prisma.message.createMany({ data: [{ conversationId: conversation.id, role: 'user', content: message }, { conversationId: conversation.id, role: 'assistant', content: reply }] });
     } catch (e) {
