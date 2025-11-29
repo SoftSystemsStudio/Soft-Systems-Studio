@@ -27,6 +27,16 @@ jobs:
           corepack prepare pnpm@8.11.0 --activate
           pnpm -w install
 
+      - name: Build workspace
+        run: |
+          # Build all packages in the workspace to catch build-time errors across packages
+          pnpm -w -r build
+
+      - name: TypeScript check
+        run: |
+          # Run tsc across the workspace (noEmit) to catch type errors
+          pnpm -w exec tsc --noEmit
+
       - name: Build frontend
         run: pnpm --filter packages/frontend build || true
 
