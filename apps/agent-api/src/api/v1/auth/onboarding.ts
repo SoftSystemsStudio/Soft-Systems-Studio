@@ -3,11 +3,12 @@ import prisma from '../../../db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import env from '../../../env';
+import { onboardingLimiter } from '../../../middleware/rate';
 
 const router = Router();
 
 // Create workspace + initial admin user and return JWT
-router.post('/create-workspace', async (req, res) => {
+router.post('/create-workspace', onboardingLimiter, async (req, res) => {
   try {
     const { workspaceName, adminEmail, adminPassword } = req.body as any;
     if (!workspaceName || !adminEmail || !adminPassword) {

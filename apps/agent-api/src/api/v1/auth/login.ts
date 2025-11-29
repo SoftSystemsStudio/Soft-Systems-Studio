@@ -3,11 +3,12 @@ import prisma from '../../../db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import env from '../../../env';
+import { loginLimiter } from '../../../middleware/rate';
 
 const router = Router();
 
 // POST /api/v1/auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password, workspaceId: requestedWorkspace } = req.body as any;
     if (!email || !password) return res.status(400).json({ error: 'invalid_payload' });
