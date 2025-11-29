@@ -13,7 +13,8 @@
     "start": "pnpm --filter api start",
     "lint": "pnpm -w -r lint",
     "test": "pnpm -w -r test",
-    "sync-env": "node scripts/sync-env.js"
+    "sync-env": "node scripts/sync-env.js",
+    "check-env-committed": "node scripts/check-env-committed.js"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
