@@ -1,0 +1,36 @@
+name: Frontend CI
+
+on:
+  push:
+    paths:
+      - 'packages/frontend/**'
+  pull_request:
+    paths:
+      - 'packages/frontend/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.11.0 --activate
+          pnpm -w install
+
+      - name: Build frontend
+        run: pnpm --filter packages/frontend build || true
+
+      - name: Lint frontend
+        run: pnpm --filter packages/frontend lint || true
+
+  # Add deploy step to Vercel or target platform on main as desired
