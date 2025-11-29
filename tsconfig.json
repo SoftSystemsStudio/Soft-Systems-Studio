@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2023",
     "module": "NodeNext",
-    "moduleResolution": "Bundler",
     "lib": ["ES2023", "DOM"],
     "strict": true,
     "esModuleInterop": true,
