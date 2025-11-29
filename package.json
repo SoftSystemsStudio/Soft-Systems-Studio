@@ -12,7 +12,8 @@
     "build": "pnpm -w -r build",
     "start": "pnpm --filter api start",
     "lint": "pnpm -w -r lint",
-    "test": "pnpm -w -r test"
+    "test": "pnpm -w -r test",
+    "sync-env": "node scripts/sync-env.js"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
