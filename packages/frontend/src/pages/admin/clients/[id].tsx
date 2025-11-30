@@ -36,7 +36,11 @@ export default function ClientDetailPage() {
     setLoading(true);
     setOutput(null);
     try {
-      const res = await fetch(`/clients/${id}/proposal`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phase }) });
+      const res = await fetch(`/clients/${id}/proposal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phase }),
+      });
       const data = await res.json();
       setOutput(data.draft ?? JSON.stringify(data));
     } catch (e) {
@@ -52,13 +56,33 @@ export default function ClientDetailPage() {
       <div style={{ display: 'flex', gap: 24 }}>
         <section style={{ flex: 1 }}>
           <h2>Config</h2>
-          <pre style={{ background: '#f6f8fa', padding: 12 }}>{config ? JSON.stringify(config, null, 2) : 'Loading...'}</pre>
+          <pre style={{ background: '#f6f8fa', padding: 12 }}>
+            {config ? JSON.stringify(config, null, 2) : 'Loading...'}
+          </pre>
         </section>
         <aside style={{ width: 420 }}>
           <h2>Actions</h2>
-          <button onClick={genBrief} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>{loading ? 'Working...' : 'Generate Solution Brief'}</button>
-          <button onClick={() => genProposal(1)} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>Generate Proposal (Phase 1)</button>
-          <button onClick={() => genProposal(2)} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>Generate Proposal (Phase 2)</button>
+          <button
+            onClick={genBrief}
+            disabled={loading}
+            style={{ display: 'block', marginBottom: 8 }}
+          >
+            {loading ? 'Working...' : 'Generate Solution Brief'}
+          </button>
+          <button
+            onClick={() => genProposal(1)}
+            disabled={loading}
+            style={{ display: 'block', marginBottom: 8 }}
+          >
+            Generate Proposal (Phase 1)
+          </button>
+          <button
+            onClick={() => genProposal(2)}
+            disabled={loading}
+            style={{ display: 'block', marginBottom: 8 }}
+          >
+            Generate Proposal (Phase 2)
+          </button>
           <div style={{ marginTop: 12 }}>
             <h3>Output</h3>
             <pre style={{ background: '#fff', padding: 12 }}>{output ?? 'No output yet.'}</pre>

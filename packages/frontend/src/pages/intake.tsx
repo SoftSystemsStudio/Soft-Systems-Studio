@@ -14,7 +14,11 @@ export default function IntakePage() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch('/intake', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const res = await fetch('/intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
       if (!res.ok) throw new Error('submit_failed');
       setMessage("Thanks — we'll generate your AI Automation Blueprint.");
       setForm({});
@@ -33,11 +37,18 @@ export default function IntakePage() {
 
       {step === 1 && (
         <section>
-          <label>Company name<br />
-            <input value={form.companyName || ''} onChange={(e) => update('companyName', e.target.value)} />
+          <label>
+            Company name
+            <br />
+            <input
+              value={form.companyName || ''}
+              onChange={(e) => update('companyName', e.target.value)}
+            />
           </label>
           <br />
-          <label>Website<br />
+          <label>
+            Website
+            <br />
             <input value={form.website || ''} onChange={(e) => update('website', e.target.value)} />
           </label>
           <br />
@@ -47,12 +58,22 @@ export default function IntakePage() {
 
       {step === 2 && (
         <section>
-          <label>Primary contact name<br />
-            <input value={form.contactName || ''} onChange={(e) => update('contactName', e.target.value)} />
+          <label>
+            Primary contact name
+            <br />
+            <input
+              value={form.contactName || ''}
+              onChange={(e) => update('contactName', e.target.value)}
+            />
           </label>
           <br />
-          <label>Contact email<br />
-            <input value={form.contactEmail || ''} onChange={(e) => update('contactEmail', e.target.value)} />
+          <label>
+            Contact email
+            <br />
+            <input
+              value={form.contactEmail || ''}
+              onChange={(e) => update('contactEmail', e.target.value)}
+            />
           </label>
           <br />
           <button onClick={() => setStep(1)}>Back</button>{' '}
@@ -62,12 +83,16 @@ export default function IntakePage() {
 
       {step === 3 && (
         <section>
-          <label>Short description of needs<br />
+          <label>
+            Short description of needs
+            <br />
             <textarea value={form.needs || ''} onChange={(e) => update('needs', e.target.value)} />
           </label>
           <br />
           <button onClick={() => setStep(2)}>Back</button>{' '}
-          <button onClick={submit} disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>
+          <button onClick={submit} disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit'}
+          </button>
         </section>
       )}
 
