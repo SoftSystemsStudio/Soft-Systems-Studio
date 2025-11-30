@@ -9,17 +9,21 @@ export async function handleChat(body: unknown) {
 
   const { message, workspaceId, userId } = parse.data;
 
-  // Minimal prompt composition: load system prompt and user prompt from package
-  const systemPrompt = await import('../prompts/system.md').then((m) => String(m.default || m));
-  const userHint = await import('../prompts/user.md').then((m) => String(m.default || m));
+  // Minimal prompt composition: load system prompt and user prompt from package files
+  const fs = require('fs').promises;
+  const path = require('path');
+  const systemPath = path.join(__dirname, '../prompts/system.md');
+  const userPath = path.join(__dirname, '../prompts/user.md');
+  const systemPrompt = String(await fs.readFile(systemPath, 'utf-8'));
+  const userHint = String(await fs.readFile(userPath, 'utf-8'));
 
   const messages = [
     { role: 'system', content: systemPrompt },
-    { role: 'user', content: `${userHint}\n\nUser: ${message}` }
+    { role: 'user', content: `${userHint}\n\nUser: ${message}` },
   ];
 
   // Call shared LLM wrapper
-  const reply = await callChat(messages);
+  const reply = await callChat(messages as any);
 
   // Rudimentary detection for escalation token
   const needsHuman = /NEEDS_HUMAN/.test(reply);

@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "packageManager": "pnpm@8.11.0",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "setup": "pnpm -w install && pnpm -w -r build",
@@ -20,7 +21,16 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.5.0",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "@types/supertest": "^6.0.0",
     "concurrently": "^8.2.0",
-    "husky": "^8.0.0"
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^8.0.0",
+    "prettier": "^3.7.3"
   }
 }

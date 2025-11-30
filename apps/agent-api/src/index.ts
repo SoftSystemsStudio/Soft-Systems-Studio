@@ -21,7 +21,11 @@ app.post('/api/agents/customer-service/chat', async (req, res) => {
         const payload = req.body as any;
         const workspaceId = payload.workspaceId || 'demo';
         // ensure workspace exists (seed/demo)
-        await prisma.workspace.upsert({ where: { id: workspaceId }, update: {}, create: { id: workspaceId, name: workspaceId } });
+        await prisma.workspace.upsert({
+          where: { id: workspaceId },
+          update: {},
+          create: { id: workspaceId, name: workspaceId },
+        });
 
         // create conversation if provided or new
         const conversation = await prisma.conversation.create({ data: { workspaceId } });
@@ -29,8 +33,12 @@ app.post('/api/agents/customer-service/chat', async (req, res) => {
         await prisma.message.createMany({
           data: [
             { conversationId: conversation.id, role: 'user', content: payload.message },
-            { conversationId: conversation.id, role: 'assistant', content: (result.body as any).reply }
-          ]
+            {
+              conversationId: conversation.id,
+              role: 'assistant',
+              content: (result.body as any).reply,
+            },
+          ],
         });
       } catch (e) {
         console.error('failed to persist conversation', e);

@@ -12,7 +12,10 @@ declare global {
 // Ensure request is scoped to a workspace (tenant) and that the workspace exists.
 export async function requireWorkspace(req: Request, res: Response, next: NextFunction) {
   try {
-    const bodyWorkspace = (req.body && req.body.workspaceId) || (req.query && req.query.workspaceId) || req.headers['x-workspace-id'];
+    const bodyWorkspace =
+      (req.body && req.body.workspaceId) ||
+      (req.query && req.query.workspaceId) ||
+      req.headers['x-workspace-id'];
     let workspaceId = bodyWorkspace as string | undefined;
 
     // If JWT contained workspace info, prefer that

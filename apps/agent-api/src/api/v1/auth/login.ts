@@ -32,11 +32,24 @@ router.post('/login', loginLimiter, async (req, res) => {
       if (found) membership = found;
     }
 
-    const payload = { sub: user.id, email: user.email, workspaceId: membership.workspaceId, role: membership.role } as any;
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      workspaceId: membership.workspaceId,
+      role: membership.role,
+    } as any;
     if (!env.JWT_SECRET) return res.status(500).json({ error: 'server_missing_jwt_secret' });
-    const token = jwt.sign(payload, env.JWT_SECRET, { algorithm: env.JWT_ALGORITHM, expiresIn: '7d' as any });
+    const token = jwt.sign(payload, env.JWT_SECRET, {
+      algorithm: env.JWT_ALGORITHM,
+      expiresIn: '7d' as any,
+    });
 
-    return res.json({ ok: true, token, workspaceId: membership.workspaceId, role: membership.role });
+    return res.json({
+      ok: true,
+      token,
+      workspaceId: membership.workspaceId,
+      role: membership.role,
+    });
   } catch (err: any) {
     console.error('login error', err);
     return res.status(500).json({ error: err?.message || 'server_error' });
