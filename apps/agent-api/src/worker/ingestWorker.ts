@@ -22,12 +22,20 @@ const worker = new Worker(
 
     // upsert into qdrant
     await upsertDocuments(
-      documents.map((d: any, i: number) => ({ id: `${workspaceId}-${Date.now()}-${i}`, text: d.text || d.content || '', metadata: { title: d.title || null } }))
+      documents.map((d: any, i: number) => ({
+        id: `${workspaceId}-${Date.now()}-${i}`,
+        text: d.text || d.content || '',
+        metadata: { title: d.title || null },
+      }))
     );
 
     // persist to Postgres KbDocument
     try {
-      const rows = documents.map((d: any) => ({ workspaceId, title: d.title || null, content: d.text || d.content || '' }));
+      const rows = documents.map((d: any) => ({
+        workspaceId,
+        title: d.title || null,
+        content: d.text || d.content || '',
+      }));
       await prisma.kbDocument.createMany({ data: rows });
     } catch (e) {
       console.error('[worker] failed to persist kb documents', e);

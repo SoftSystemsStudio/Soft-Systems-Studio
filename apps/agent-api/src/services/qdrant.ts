@@ -22,12 +22,12 @@ async function ensureCollection() {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        ...(QDRANT_API_KEY ? { 'api-key': QDRANT_API_KEY } : {})
+        ...(QDRANT_API_KEY ? { 'api-key': QDRANT_API_KEY } : {}),
       },
       body: JSON.stringify({
         name: QDRANT_COLLECTION,
-        vectors: { size: 1536, distance: 'Cosine' }
-      })
+        vectors: { size: 1536, distance: 'Cosine' },
+      }),
     });
   }
 }
@@ -41,16 +41,16 @@ export async function upsertDocuments(docs: { id: string; text: string; metadata
   const points = docs.map((d, i) => ({
     id: d.id,
     vector: embeddings[i],
-    payload: { text: d.text, metadata: d.metadata }
+    payload: { text: d.text, metadata: d.metadata },
   }));
 
   await fetch(url(`/collections/${QDRANT_COLLECTION}/points`), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      ...(QDRANT_API_KEY ? { 'api-key': QDRANT_API_KEY } : {})
+      ...(QDRANT_API_KEY ? { 'api-key': QDRANT_API_KEY } : {}),
     },
-    body: JSON.stringify({ points })
+    body: JSON.stringify({ points }),
   });
 }
 
@@ -62,14 +62,14 @@ export async function querySimilar(text: string, topK = 4) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(QDRANT_API_KEY ? { 'api-key': QDRANT_API_KEY } : {})
+      ...(QDRANT_API_KEY ? { 'api-key': QDRANT_API_KEY } : {}),
     },
     body: JSON.stringify({
       vector: embedding,
       limit: topK,
       with_payload: true,
-      with_points: false
-    })
+      with_points: false,
+    }),
   });
 
   const payload = await res.json();

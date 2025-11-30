@@ -23,12 +23,22 @@ router.post('/create-workspace', onboardingLimiter, async (req, res) => {
     const user = await prisma.user.create({ data: { email: adminEmail, password: hashed } });
 
     // Create membership with admin role
-    await prisma.workspaceMembership.create({ data: { workspaceId: workspace.id, userId: user.id, role: 'admin' } });
+    await prisma.workspaceMembership.create({
+      data: { workspaceId: workspace.id, userId: user.id, role: 'admin' },
+    });
 
     // Create JWT for the user (includes workspaceId and role)
-    const payload = { sub: user.id, email: user.email, workspaceId: workspace.id, role: 'admin' } as any;
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      workspaceId: workspace.id,
+      role: 'admin',
+    } as any;
     if (!env.JWT_SECRET) return res.status(500).json({ error: 'server_missing_jwt_secret' });
-    const token = jwt.sign(payload, env.JWT_SECRET, { algorithm: env.JWT_ALGORITHM, expiresIn: '30d' as any });
+    const token = jwt.sign(payload, env.JWT_SECRET, {
+      algorithm: env.JWT_ALGORITHM,
+      expiresIn: '30d' as any,
+    });
 
     return res.json({ ok: true, workspaceId: workspace.id, token });
   } catch (err: any) {

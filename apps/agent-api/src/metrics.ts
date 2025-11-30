@@ -6,9 +6,18 @@ const collectDefault = client.collectDefaultMetrics;
 collectDefault({ timeout: 5000 });
 
 // custom metrics
-export const queueWaitingGauge = new client.Gauge({ name: 'ingest_queue_waiting', help: 'Number of waiting jobs in ingest queue' });
-export const queueActiveGauge = new client.Gauge({ name: 'ingest_queue_active', help: 'Number of active jobs in ingest queue' });
-export const queueFailedGauge = new client.Gauge({ name: 'ingest_queue_failed', help: 'Number of failed jobs in ingest queue' });
+export const queueWaitingGauge = new client.Gauge({
+  name: 'ingest_queue_waiting',
+  help: 'Number of waiting jobs in ingest queue',
+});
+export const queueActiveGauge = new client.Gauge({
+  name: 'ingest_queue_active',
+  help: 'Number of active jobs in ingest queue',
+});
+export const queueFailedGauge = new client.Gauge({
+  name: 'ingest_queue_failed',
+  help: 'Number of failed jobs in ingest queue',
+});
 
 async function updateQueueMetrics() {
   try {
@@ -26,7 +35,10 @@ setInterval(updateQueueMetrics, 5000);
 // small express server to expose metrics when run standalone (optional)
 export function metricsHandler(req: express.Request, res: express.Response) {
   res.set('Content-Type', client.register.contentType);
-  client.register.metrics().then((m) => res.send(m)).catch((err) => res.status(500).send(err.message));
+  client.register
+    .metrics()
+    .then((m) => res.send(m))
+    .catch((err) => res.status(500).send(err.message));
 }
 
 export default client;

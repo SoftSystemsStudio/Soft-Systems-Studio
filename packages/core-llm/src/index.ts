@@ -15,9 +15,9 @@ export async function callChat(messages: ChatMessage[], model = 'gpt-4o-mini') {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`
+      Authorization: `Bearer ${apiKey}`,
     },
-    body: JSON.stringify({ model, messages })
+    body: JSON.stringify({ model, messages }),
   });
 
   if (!res.ok) {
@@ -44,9 +44,9 @@ export async function callEmbeddings(input: string | string[], model = 'text-emb
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`
+      Authorization: `Bearer ${apiKey}`,
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -58,4 +58,3 @@ export async function callEmbeddings(input: string | string[], model = 'text-emb
   const embeddings = payload.data.map((d: any) => d.embedding as number[]);
   return embeddings;
 }
-

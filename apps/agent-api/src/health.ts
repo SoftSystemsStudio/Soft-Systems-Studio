@@ -20,8 +20,8 @@ router.get('/', async (req, res) => {
     db,
     env: {
       nodeEnv: env.NODE_ENV,
-      openaiKeyPresent: Boolean(process.env.OPENAI_API_KEY)
-    }
+      openaiKeyPresent: Boolean(process.env.OPENAI_API_KEY),
+    },
   });
 });
 

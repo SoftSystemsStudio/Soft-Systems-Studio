@@ -6,7 +6,7 @@ export const onboardingLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'too_many_requests' }
+  message: { error: 'too_many_requests' },
 });
 
 // Limit login attempts: e.g., 10 per 15 minutes per IP
@@ -15,7 +15,7 @@ export const loginLimiter = rateLimit({
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'too_many_requests' }
+  message: { error: 'too_many_requests' },
 });
 
 export default { onboardingLimiter, loginLimiter };
