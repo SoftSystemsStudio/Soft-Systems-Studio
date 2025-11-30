@@ -1,5 +1,6 @@
 import { ChatRequest, ChatResponse } from '../schemas';
 import { callChat } from '@softsystems/core-llm';
+import type { ChatMessage } from '@softsystems/core-llm';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -17,7 +18,7 @@ export async function handleChat(body: unknown) {
   const systemPrompt = String(await fs.readFile(systemPath, 'utf-8'));
   const userHint = String(await fs.readFile(userPath, 'utf-8'));
 
-  const messages = [
+  const messages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
     { role: 'user', content: `${userHint}\n\nUser: ${message}` },
   ];
