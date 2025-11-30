@@ -13,3 +13,37 @@ model User {
   name      String?
   createdAt DateTime @default(now())
 }
+
+model Client {
+  id          String   @id @default(uuid())
+  companyName String
+  website     String?
+  industry    String?
+  size        String?
+  contactName String?
+  contactEmail String?
+  contactPhone String?
+  // One-to-one relationship to ClientConfig
+  config      ClientConfig?
+  // Intake submissions (raw form JSON)
+  intakes     IntakeSubmission[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model IntakeSubmission {
+  id        String   @id @default(uuid())
+  clientId  String?
+  client    Client?  @relation(fields: [clientId], references: [id])
+  raw       Json
+  createdAt DateTime @default(now())
+}
+
+model ClientConfig {
+  id        String   @id @default(uuid())
+  clientId  String   @unique
+  client    Client   @relation(fields: [clientId], references: [id])
+  config    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
