@@ -1,11 +1,18 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { Request, Response, NextFunction } from 'express';
 import env from '../env';
 import jwt from 'jsonwebtoken';
 
+type AuthInfo = { [k: string]: unknown } & (
+  | { apiKey?: true }
+  | { anonymous?: true }
+  | { workspaceId?: string; role?: string }
+);
+
 declare global {
   namespace Express {
     interface Request {
-      auth?: any;
+      auth?: AuthInfo;
     }
   }
 }
@@ -22,10 +29,12 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     if (!secret) return res.status(401).json({ error: 'server_missing_jwt_secret' });
     try {
       const decoded = jwt.verify(token, secret, { algorithms: [env.JWT_ALGORITHM] });
-      req.auth = decoded;
+      req.auth = decoded as AuthInfo;
       return next();
-    } catch (err: any) {
-      return res.status(401).json({ error: 'invalid_token', message: err?.message });
+    } catch (err: unknown) {
+      return res
+        .status(401)
+        .json({ error: 'invalid_token', message: (err as { message?: string })?.message });
     }
   }
 

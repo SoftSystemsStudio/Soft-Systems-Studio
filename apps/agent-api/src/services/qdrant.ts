@@ -32,7 +32,7 @@ async function ensureCollection() {
   }
 }
 
-export async function upsertDocuments(docs: { id: string; text: string; metadata?: any }[]) {
+export async function upsertDocuments(docs: { id: string; text: string; metadata?: unknown }[]) {
   if (!docs.length) return;
   await ensureCollection();
   const texts = docs.map((d) => d.text);
@@ -73,6 +73,9 @@ export async function querySimilar(text: string, topK = 4) {
   });
 
   const payload = await res.json();
-  const results = (payload.result || payload) as any[];
-  return results.map((r) => ({ id: r.id, score: r.score, payload: r.payload }));
+  const results = (payload.result || payload) as unknown[];
+  return results.map((r) => {
+    const rr = r as { id: string; score: number; payload?: unknown };
+    return { id: rr.id, score: rr.score, payload: rr.payload };
+  });
 }

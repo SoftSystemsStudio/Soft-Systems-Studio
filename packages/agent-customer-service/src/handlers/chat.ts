@@ -1,5 +1,7 @@
 import { ChatRequest, ChatResponse } from '../schemas';
 import { callChat } from '@softsystems/core-llm';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 export async function handleChat(body: unknown) {
   const parse = ChatRequest.safeParse(body);
@@ -10,8 +12,6 @@ export async function handleChat(body: unknown) {
   const { message, workspaceId, userId } = parse.data;
 
   // Minimal prompt composition: load system prompt and user prompt from package files
-  const fs = require('fs').promises;
-  const path = require('path');
   const systemPath = path.join(__dirname, '../prompts/system.md');
   const userPath = path.join(__dirname, '../prompts/user.md');
   const systemPrompt = String(await fs.readFile(systemPath, 'utf-8'));
@@ -23,7 +23,7 @@ export async function handleChat(body: unknown) {
   ];
 
   // Call shared LLM wrapper
-  const reply = await callChat(messages as any);
+  const reply = await callChat(messages);
 
   // Rudimentary detection for escalation token
   const needsHuman = /NEEDS_HUMAN/.test(reply);

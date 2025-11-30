@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import env from '../env';
 
 // If API_KEY is set in env, require that header 'x-api-key' matches it.
 export function requireApiKey(req: Request, res: Response, next: NextFunction) {

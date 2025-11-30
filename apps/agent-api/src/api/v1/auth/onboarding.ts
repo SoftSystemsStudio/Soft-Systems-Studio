@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import prisma from '../../../db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -8,9 +8,16 @@ import { onboardingLimiter } from '../../../middleware/rate';
 const router = Router();
 
 // Create workspace + initial admin user and return JWT
-router.post('/create-workspace', onboardingLimiter, async (req, res) => {
+router.post('/create-workspace', onboardingLimiter, async (req: Request, res: Response) => {
   try {
-    const { workspaceName, adminEmail, adminPassword } = req.body as any;
+    const body = req.body as {
+      workspaceName?: string;
+      adminEmail?: string;
+      adminPassword?: string;
+    };
+    const workspaceName = body.workspaceName;
+    const adminEmail = body.adminEmail;
+    const adminPassword = body.adminPassword;
     if (!workspaceName || !adminEmail || !adminPassword) {
       return res.status(400).json({ error: 'invalid_payload' });
     }
@@ -33,17 +40,18 @@ router.post('/create-workspace', onboardingLimiter, async (req, res) => {
       email: user.email,
       workspaceId: workspace.id,
       role: 'admin',
-    } as any;
+    };
     if (!env.JWT_SECRET) return res.status(500).json({ error: 'server_missing_jwt_secret' });
     const token = jwt.sign(payload, env.JWT_SECRET, {
       algorithm: env.JWT_ALGORITHM,
-      expiresIn: '30d' as any,
+      expiresIn: '30d',
     });
 
     return res.json({ ok: true, workspaceId: workspace.id, token });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('onboarding error', err);
-    return res.status(500).json({ error: err?.message || 'server_error' });
+    const message = (err as { message?: string })?.message ?? 'server_error';
+    return res.status(500).json({ error: message });
   }
 });
 
