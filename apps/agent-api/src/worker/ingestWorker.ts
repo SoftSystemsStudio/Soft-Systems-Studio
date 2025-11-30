@@ -10,7 +10,9 @@ const connection = new IORedis(env.REDIS_URL);
 const worker = new Worker(
   'ingest',
   async (job) => {
-    const { workspaceId, documents } = job.data as any;
+    type IngestDoc = { text?: string; content?: string; title?: string };
+    type IngestJob = { workspaceId: string; documents: IngestDoc[] };
+    const { workspaceId, documents } = job.data as IngestJob;
     console.log('[worker] processing ingest for', workspaceId, 'docs:', documents.length);
     // verify workspace exists before doing work
     const workspace = await prisma.workspace.findUnique({ where: { id: workspaceId } });
@@ -22,7 +24,7 @@ const worker = new Worker(
 
     // upsert into qdrant
     await upsertDocuments(
-      documents.map((d: any, i: number) => ({
+      documents.map((d, i: number) => ({
         id: `${workspaceId}-${Date.now()}-${i}`,
         text: d.text || d.content || '',
         metadata: { title: d.title || null },
@@ -31,7 +33,7 @@ const worker = new Worker(
 
     // persist to Postgres KbDocument
     try {
-      const rows = documents.map((d: any) => ({
+      const rows = documents.map((d) => ({
         workspaceId,
         title: d.title || null,
         content: d.text || d.content || '',

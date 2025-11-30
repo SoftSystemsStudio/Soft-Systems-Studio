@@ -1,5 +1,8 @@
-import { Router } from 'express';
-import { upsertDocuments, querySimilar } from '../../services/qdrant';
+import { Router, Request, Response } from 'express';
+interface AuthRequest extends Request {
+  auth?: { workspaceId?: string };
+}
+import { querySimilar } from '../../services/qdrant';
 import { ingestQueue } from '../../queue';
 import { chat } from '../../services/llm';
 import prisma from '../../db';
@@ -16,9 +19,10 @@ router.post(
   requireAuth,
   requireWorkspace,
   requireRole('admin', 'owner', 'agent'),
-  async (req, res) => {
+  async (req: AuthRequest, res: Response) => {
     try {
-      const { documents } = req.body as any;
+      const body = req.body as { documents?: unknown };
+      const documents = body.documents;
       const workspaceId = req.auth?.workspaceId;
       if (!workspaceId || !Array.isArray(documents)) {
         return res.status(400).json({ error: 'invalid_payload' });
@@ -31,9 +35,10 @@ router.post(
         { attempts: 3, backoff: { type: 'exponential', delay: 2000 } }
       );
       return res.json({ ok: true, enqueued: documents.length });
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error('ingest error', e);
-      return res.status(500).json({ error: e?.message || 'server_error' });
+      const message = (e as { message?: string })?.message ?? 'server_error';
+      return res.status(500).json({ error: message });
     }
   }
 );
@@ -44,16 +49,18 @@ router.post(
   requireAuth,
   requireWorkspace,
   requireRole('user', 'agent', 'admin'),
-  async (req, res) => {
+  async (req: AuthRequest, res: Response) => {
     try {
-      const { message, userId } = req.body as any;
+      const body = req.body as { message?: unknown; userId?: unknown };
+      const message = body.message as string | undefined;
       const workspaceId = req.auth?.workspaceId;
       if (!workspaceId || !message) return res.status(400).json({ error: 'invalid_payload' });
 
       // Retrieve top contexts
-      const contexts = await querySimilar(message, 4);
+      type SimilarItem = { id: string; score: number; payload?: { text?: string } };
+      const contexts = (await querySimilar(message, 4)) as SimilarItem[];
       const contextText = contexts
-        .map((c: any, idx: number) => `Context ${idx + 1}: ${c.payload?.text || ''}`)
+        .map((c, idx) => `Context ${idx + 1}: ${c.payload?.text || ''}`)
         .join('\n\n');
 
       const system = `You are a helpful customer support assistant. Use the context to answer user questions. If you cannot answer, ask a clarification.`;
@@ -74,14 +81,15 @@ router.post(
             { conversationId: conversation.id, role: 'assistant', content: reply },
           ],
         });
-      } catch (e) {
+      } catch (e: unknown) {
         console.error('persist conversation failed', e);
       }
 
       return res.json({ reply });
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error('run error', e);
-      return res.status(500).json({ error: e?.message || 'server_error' });
+      const message = (e as { message?: string })?.message ?? 'server_error';
+      return res.status(500).json({ error: message });
     }
   }
 );

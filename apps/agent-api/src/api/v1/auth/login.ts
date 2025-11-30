@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import prisma from '../../../db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -8,9 +8,12 @@ import { loginLimiter } from '../../../middleware/rate';
 const router = Router();
 
 // POST /api/v1/auth/login
-router.post('/login', loginLimiter, async (req, res) => {
+router.post('/login', loginLimiter, async (req: Request, res: Response) => {
   try {
-    const { email, password, workspaceId: requestedWorkspace } = req.body as any;
+    const body = req.body as { email?: string; password?: string; workspaceId?: string };
+    const email = body.email;
+    const password = body.password;
+    const requestedWorkspace = body.workspaceId;
     if (!email || !password) return res.status(400).json({ error: 'invalid_payload' });
 
     const user = await prisma.user.findUnique({ where: { email } });
@@ -37,11 +40,11 @@ router.post('/login', loginLimiter, async (req, res) => {
       email: user.email,
       workspaceId: membership.workspaceId,
       role: membership.role,
-    } as any;
+    };
     if (!env.JWT_SECRET) return res.status(500).json({ error: 'server_missing_jwt_secret' });
     const token = jwt.sign(payload, env.JWT_SECRET, {
       algorithm: env.JWT_ALGORITHM,
-      expiresIn: '7d' as any,
+      expiresIn: '7d',
     });
 
     return res.json({
@@ -50,9 +53,10 @@ router.post('/login', loginLimiter, async (req, res) => {
       workspaceId: membership.workspaceId,
       role: membership.role,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('login error', err);
-    return res.status(500).json({ error: err?.message || 'server_error' });
+    const message = (err as { message?: string })?.message ?? 'server_error';
+    return res.status(500).json({ error: message });
   }
 });
 

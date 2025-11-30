@@ -1,5 +1,5 @@
 import './env';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { handleChat } from '../../packages/agent-customer-service/src/handlers/chat';
 import prisma from './db';
@@ -12,13 +12,13 @@ import { metricsHandler } from './metrics';
 const app = express();
 app.use(bodyParser.json());
 
-app.post('/api/agents/customer-service/chat', async (req, res) => {
+app.post('/api/agents/customer-service/chat', async (req: Request, res: Response) => {
   try {
     const result = await handleChat(req.body);
     if (result.status && result.body) {
       // Persist request and response for successful chats
       try {
-        const payload = req.body as any;
+        const payload = req.body as { workspaceId?: string; message?: string };
         const workspaceId = payload.workspaceId || 'demo';
         // ensure workspace exists (seed/demo)
         await prisma.workspace.upsert({
@@ -30,13 +30,14 @@ app.post('/api/agents/customer-service/chat', async (req, res) => {
         // create conversation if provided or new
         const conversation = await prisma.conversation.create({ data: { workspaceId } });
 
+        const reply = (result.body as { reply?: string })?.reply || '';
         await prisma.message.createMany({
           data: [
-            { conversationId: conversation.id, role: 'user', content: payload.message },
+            { conversationId: conversation.id, role: 'user', content: payload.message || '' },
             {
               conversationId: conversation.id,
               role: 'assistant',
-              content: (result.body as any).reply,
+              content: reply,
             },
           ],
         });
@@ -46,9 +47,10 @@ app.post('/api/agents/customer-service/chat', async (req, res) => {
       return res.status(result.status).json(result.body);
     }
     return res.status(500).json({ error: 'unknown' });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('chat error', err);
-    return res.status(500).json({ error: err?.message || 'server_error' });
+    const message = (err as { message?: string })?.message ?? 'server_error';
+    return res.status(500).json({ error: message });
   }
 });
 

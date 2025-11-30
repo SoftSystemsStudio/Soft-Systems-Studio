@@ -1,0 +1,6 @@
+# Ignore markdown prompts and build artifacts
+**/prompts/*.md
+dist
+node_modules
+pnpm-lock.yaml
+

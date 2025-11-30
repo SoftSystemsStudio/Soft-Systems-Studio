@@ -1,9 +1,17 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { Request, Response, NextFunction } from 'express';
+
+type AuthInfo = {
+  apiKey?: boolean;
+  role?: string | string[];
+  roles?: string[];
+  [k: string]: unknown;
+};
 
 declare global {
   namespace Express {
     interface Request {
-      auth?: any;
+      auth?: AuthInfo;
     }
   }
 }
@@ -30,7 +38,7 @@ export function requireRole(...allowed: string[]) {
       if (!ok) return res.status(403).json({ error: 'forbidden', required: allowed });
 
       return next();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('requireRole error', err);
       return res.status(500).json({ error: 'server_error' });
     }

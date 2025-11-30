@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../db';
+
+type AuthInfo = { workspaceId?: string; workspace?: unknown; [k: string]: unknown };
 
 declare global {
   namespace Express {
     interface Request {
-      auth?: any;
+      auth?: AuthInfo;
     }
   }
 }
@@ -42,7 +45,7 @@ export async function requireWorkspace(req: Request, res: Response, next: NextFu
     req.auth.workspaceId = workspaceId;
 
     return next();
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('requireWorkspace error', err);
     return res.status(500).json({ error: 'server_error' });
   }
