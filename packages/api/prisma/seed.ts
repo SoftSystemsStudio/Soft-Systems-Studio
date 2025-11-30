@@ -6,7 +6,7 @@ async function main() {
   await prisma.user.upsert({
     where: { email: 'admin@localhost' },
     update: {},
-    create: { email: 'admin@localhost', name: 'Admin' }
+    create: { email: 'admin@localhost', name: 'Admin' },
   });
   console.log('Seed completed');
 }

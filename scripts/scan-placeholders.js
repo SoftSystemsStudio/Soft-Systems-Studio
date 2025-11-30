@@ -24,7 +24,7 @@ function listTrackedFiles() {
 }
 
 function isExample(file) {
-  return /(^|/)\.env\.example$/.test(file) || /(^|/)\.example/.test(file) || file.startsWith('docs/') || file.includes('README');
+  return /(^|\/)\.env\.example$/.test(file) || /(^|\/)\.example/.test(file) || file.startsWith('docs/') || file.includes('README');
 }
 
 function checkFile(file) {

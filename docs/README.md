@@ -28,13 +28,16 @@ docker compose -f docker-compose.dev.yml up --build
 ```
 
 Where to extend
+
 - Add new agent packages under `packages/` (e.g. `agent-appointment-booking`).
 - Shared data types and utilities go into `packages/core-llm` and `packages/ui-components`.
 
 Notes about production and CI
+
 - Keep production images minimal (no bind mounts) and use the repository `Dockerfile`/package `Dockerfile`s in `/infra` or at package roots.
 - CI should run `pnpm -w -r lint`, `pnpm -w -r test`, and `pnpm -w -r build`.
 
 Next steps
+
 - Implement auth and multi-tenancy (workspace tables + RBAC).
 - Add tests for core LLM wrappers and handler flows.

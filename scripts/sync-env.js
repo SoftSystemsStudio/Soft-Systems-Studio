@@ -54,8 +54,14 @@ function mergeExampleIntoEnv(examplePath, envPath) {
 
 function run() {
   const pairs = [
-    { example: path.resolve(process.cwd(), '.env.example'), env: path.resolve(process.cwd(), '.env') },
-    { example: path.resolve(process.cwd(), 'apps/agent-api/.env.example'), env: path.resolve(process.cwd(), 'apps/agent-api/.env') },
+    {
+      example: path.resolve(process.cwd(), '.env.example'),
+      env: path.resolve(process.cwd(), '.env'),
+    },
+    {
+      example: path.resolve(process.cwd(), 'apps/agent-api/.env.example'),
+      env: path.resolve(process.cwd(), 'apps/agent-api/.env'),
+    },
   ];
 
   for (const p of pairs) {

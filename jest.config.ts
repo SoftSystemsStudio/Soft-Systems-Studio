@@ -4,9 +4,9 @@ const config: Config.InitialOptions = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   transform: {
-    '^.+\\.tsx?$': 'ts-jest'
+    '^.+\\.tsx?$': 'ts-jest',
   },
-  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)']
+  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
 };
 
 export default config;

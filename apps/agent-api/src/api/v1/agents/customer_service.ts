@@ -32,7 +32,7 @@ router.post(
       await ingestQueue.add(
         'ingest-job',
         { workspaceId, documents },
-        { attempts: 3, backoff: { type: 'exponential', delay: 2000 } }
+        { attempts: 3, backoff: { type: 'exponential', delay: 2000 } },
       );
       return res.json({ ok: true, enqueued: documents.length });
     } catch (e: unknown) {
@@ -40,7 +40,7 @@ router.post(
       const message = (e as { message?: string })?.message ?? 'server_error';
       return res.status(500).json({ error: message });
     }
-  }
+  },
 );
 
 // Run chat with RAG-lite retrieval
@@ -91,7 +91,7 @@ router.post(
       const message = (e as { message?: string })?.message ?? 'server_error';
       return res.status(500).json({ error: message });
     }
-  }
+  },
 );
 
 export default router;
