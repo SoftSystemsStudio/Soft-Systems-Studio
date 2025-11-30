@@ -37,5 +37,6 @@ docker rm -f ss-studio-test
 ```
 
 Notes:
+
 - CI runs tests against an ephemeral Postgres service in GitHub Actions; the repository uses `prisma migrate deploy` in CI when migrations exist, with a fallback to `prisma db push` for early-stage setups.
 - Keep an eye on `apps/agent-api/prisma/migrations` if you intend to use migrations for production deployments.

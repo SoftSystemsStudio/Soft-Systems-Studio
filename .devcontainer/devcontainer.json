@@ -9,10 +9,7 @@
   "postCreateCommand": "corepack enable && corepack prepare pnpm@8.11.0 --activate && pnpm install",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode"
-      ]
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
     }
   },
   "forwardPorts": [3000, 5173, 8080],

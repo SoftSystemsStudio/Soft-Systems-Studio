@@ -6,7 +6,8 @@ process.env.JWT_SECRET = process.env.JWT_SECRET ?? 'test-secret';
 process.env.JWT_ALGORITHM = process.env.JWT_ALGORITHM ?? 'HS256';
 
 // Ensure test DB URL is present for DB-backed integration tests. CI sets this.
-process.env.POSTGRES_URL = process.env.POSTGRES_URL ?? 'postgresql://postgres:postgres@localhost:5432/agent_api_test';
+process.env.POSTGRES_URL =
+  process.env.POSTGRES_URL ?? 'postgresql://postgres:postgres@localhost:5432/agent_api_test';
 
 // Run test setup (applies schema and connects prisma)
 import '../setup';
@@ -37,7 +38,10 @@ describe('Auth integration (DB-backed)', () => {
     await prisma.user.create({ data: { email: 'existing@example.com', password: hashed } });
 
     // Login with real credentials
-    const loginRes = await request(app).post('/api/v1/auth/login').send({ email: 'existing@example.com', password: 'secret' }).expect(200);
+    const loginRes = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'existing@example.com', password: 'secret' })
+      .expect(200);
     expect(loginRes.body.token).toBeDefined();
     const token = loginRes.body.token;
 

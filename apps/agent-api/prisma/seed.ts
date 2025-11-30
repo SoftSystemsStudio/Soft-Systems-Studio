@@ -6,7 +6,7 @@ async function main() {
   await prisma.workspace.upsert({
     where: { id: 'demo' },
     update: {},
-    create: { id: 'demo', name: 'Demo Workspace' }
+    create: { id: 'demo', name: 'Demo Workspace' },
   });
   console.log('Seed: created demo workspace');
 }

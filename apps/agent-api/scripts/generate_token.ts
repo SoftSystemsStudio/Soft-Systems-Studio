@@ -12,9 +12,12 @@ if (!secret) {
 const payload = {
   sub: 'demo-user',
   tenant: 'demo',
-  role: 'admin'
+  role: 'admin',
 };
 
-const token = jwt.sign(payload as any, secret, { algorithm: (process.env.JWT_ALGORITHM || 'HS256') as any, expiresIn: '7d' });
+const token = jwt.sign(payload as any, secret, {
+  algorithm: (process.env.JWT_ALGORITHM || 'HS256') as any,
+  expiresIn: '7d',
+});
 console.log('Generated token:');
 console.log(token);

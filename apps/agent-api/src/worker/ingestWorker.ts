@@ -28,7 +28,7 @@ const worker = new Worker(
         id: `${workspaceId}-${Date.now()}-${i}`,
         text: d.text || d.content || '',
         metadata: { title: d.title || null },
-      }))
+      })),
     );
 
     // persist to Postgres KbDocument
@@ -46,7 +46,7 @@ const worker = new Worker(
 
     return { ok: true };
   },
-  { connection }
+  { connection },
 );
 
 worker.on('completed', (job) => {

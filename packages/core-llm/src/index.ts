@@ -25,7 +25,9 @@ export async function callChat(messages: ChatMessage[], model = 'gpt-4o-mini') {
     throw new Error(`OpenAI error ${res.status}: ${body}`);
   }
 
-  const payload = await res.json();
+  const payload = (await res.json()) as {
+    choices?: Array<{ message?: { content?: string } }>;
+  };
   const reply = payload.choices?.[0]?.message?.content;
   return reply ?? '';
 }
@@ -36,9 +38,10 @@ export async function callEmbeddings(input: string | string[], model = 'text-emb
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error('OPENAI_API_KEY not set');
 
-  const body: any = { model };
-  if (Array.isArray(input)) body.input = input;
-  else body.input = [input];
+  const body: { model: string; input: string[] } = {
+    model,
+    input: Array.isArray(input) ? input : [input],
+  };
 
   const res = await fetch('https://api.openai.com/v1/embeddings', {
     method: 'POST',
@@ -54,7 +57,7 @@ export async function callEmbeddings(input: string | string[], model = 'text-emb
     throw new Error(`OpenAI embeddings error ${res.status}: ${txt}`);
   }
 
-  const payload = await res.json();
-  const embeddings = payload.data.map((d: any) => d.embedding as number[]);
+  const payload = (await res.json()) as { data?: Array<{ embedding: number[] }> };
+  const embeddings = payload.data?.map((d) => d.embedding) ?? [];
   return embeddings;
 }
