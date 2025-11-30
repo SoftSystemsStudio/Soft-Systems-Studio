@@ -26,7 +26,9 @@ export default function ClientsListPage() {
         <tbody>
           {clients.map((c) => (
             <tr key={c.id}>
-              <td><Link href={`/admin/clients/${c.id}`}>{c.id}</Link></td>
+              <td>
+                <Link href={`/admin/clients/${c.id}`}>{c.id}</Link>
+              </td>
               <td>{c.companyName}</td>
               <td>{c.website}</td>
               <td>{new Date(c.createdAt).toLocaleString()}</td>

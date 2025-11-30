@@ -14,12 +14,13 @@ export function buildClientConfigFromIntake(raw: any): ClientConfig {
     size: raw?.size as string | undefined,
   };
 
-  const subsystems = (raw?.subsystems as any[] | undefined)?.map((s, i) => ({
-    id: String(s?.id ?? `sub-${i}`),
-    type: (s?.type as any) ?? 'support_system',
-    description: s?.description ?? undefined,
-    settings: s?.settings ?? {},
-  })) ?? [];
+  const subsystems =
+    (raw?.subsystems as any[] | undefined)?.map((s, i) => ({
+      id: String(s?.id ?? `sub-${i}`),
+      type: (s?.type as any) ?? 'support_system',
+      description: s?.description ?? undefined,
+      settings: s?.settings ?? {},
+    })) ?? [];
 
   return {
     clientId: String(raw?.clientId ?? `client-${Date.now()}`),
