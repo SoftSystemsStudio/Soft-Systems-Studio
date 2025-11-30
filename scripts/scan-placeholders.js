@@ -24,7 +24,12 @@ function listTrackedFiles() {
 }
 
 function isExample(file) {
-  return /(^|\/)\.env\.example$/.test(file) || /(^|\/)\.example/.test(file) || file.startsWith('docs/') || file.includes('README');
+  return (
+    /(^|\/)\.env\.example$/.test(file) ||
+    /(^|\/)\.example/.test(file) ||
+    file.startsWith('docs/') ||
+    file.includes('README')
+  );
 }
 
 function checkFile(file) {
@@ -61,7 +66,9 @@ function run() {
       console.error(`\nFile: ${o.file}`);
       for (const mm of o.matches) console.error(` - ${mm.type}: ${mm.pattern}`);
     }
-    console.error('\nPlease remove secrets from source, move them to .env (ignored), or update the example files instead.');
+    console.error(
+      '\nPlease remove secrets from source, move them to .env (ignored), or update the example files instead.',
+    );
     process.exit(1);
   }
 
