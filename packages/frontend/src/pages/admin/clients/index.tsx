@@ -3,13 +3,20 @@ import Link from 'next/link';
 import Layout from '../../../components/Layout';
 
 export default function ClientsListPage() {
-  const [clients, setClients] = useState<any[]>([]);
+  type ClientListItem = {
+    id: string;
+    companyName: string;
+    website?: string | null;
+    createdAt?: string; // or Date, depending on what the API returns
+  };
+
+  const [clients, setClients] = useState<ClientListItem[]>([]);
 
   useEffect(() => {
-    fetch('/clients')
-      .then((r) => r.json())
+    fetch('/api/clients')
+      .then((res) => res.json())
       .then(setClients)
-      .catch(() => setClients([]));
+      .catch(console.error);
   }, []);
 
   return (
@@ -33,7 +40,7 @@ export default function ClientsListPage() {
                 </td>
                 <td>{c.companyName}</td>
                 <td>{c.website}</td>
-                <td>{new Date(c.createdAt).toLocaleString()}</td>
+                <td>{c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '-'}</td>
               </tr>
             ))}
           </tbody>
