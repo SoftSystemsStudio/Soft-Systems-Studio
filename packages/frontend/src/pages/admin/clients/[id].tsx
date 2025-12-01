@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Layout from '../../../components/Layout';
 
 export default function ClientDetailPage() {
   const router = useRouter();
@@ -51,44 +52,32 @@ export default function ClientDetailPage() {
   }
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1>Client {id}</h1>
-      <div style={{ display: 'flex', gap: 24 }}>
-        <section style={{ flex: 1 }}>
-          <h2>Config</h2>
-          <pre style={{ background: '#f6f8fa', padding: 12 }}>
-            {config ? JSON.stringify(config, null, 2) : 'Loading...'}
-          </pre>
-        </section>
-        <aside style={{ width: 420 }}>
-          <h2>Actions</h2>
-          <button
-            onClick={genBrief}
-            disabled={loading}
-            style={{ display: 'block', marginBottom: 8 }}
-          >
-            {loading ? 'Working...' : 'Generate Solution Brief'}
-          </button>
-          <button
-            onClick={() => genProposal(1)}
-            disabled={loading}
-            style={{ display: 'block', marginBottom: 8 }}
-          >
-            Generate Proposal (Phase 1)
-          </button>
-          <button
-            onClick={() => genProposal(2)}
-            disabled={loading}
-            style={{ display: 'block', marginBottom: 8 }}
-          >
-            Generate Proposal (Phase 2)
-          </button>
-          <div style={{ marginTop: 12 }}>
-            <h3>Output</h3>
-            <pre style={{ background: '#fff', padding: 12 }}>{output ?? 'No output yet.'}</pre>
-          </div>
-        </aside>
-      </div>
-    </main>
+    <Layout>
+      <main style={{ padding: 24 }}>
+        <h1>Client {id}</h1>
+        <div style={{ display: 'flex', gap: 24 }}>
+          <section style={{ flex: 1 }}>
+            <h2>Config</h2>
+            <pre style={{ background: '#f6f8fa', padding: 12 }}>{config ? JSON.stringify(config, null, 2) : 'Loading...'}</pre>
+          </section>
+          <aside style={{ width: 420 }}>
+            <h2>Actions</h2>
+            <button onClick={genBrief} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>
+              {loading ? 'Working...' : 'Generate Solution Brief'}
+            </button>
+            <button onClick={() => genProposal(1)} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>
+              Generate Proposal (Phase 1)
+            </button>
+            <button onClick={() => genProposal(2)} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>
+              Generate Proposal (Phase 2)
+            </button>
+            <div style={{ marginTop: 12 }}>
+              <h3>Output</h3>
+              <pre style={{ background: '#fff', padding: 12 }}>{output ?? 'No output yet.'}</pre>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </Layout>
   );
 }
