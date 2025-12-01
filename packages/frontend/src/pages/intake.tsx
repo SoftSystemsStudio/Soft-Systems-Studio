@@ -24,7 +24,8 @@ export default function IntakePage() {
   function validateStep(currentStep: number) {
     const nextErrors: Record<string, string> = {};
     if (currentStep === 1) {
-      if (!form.companyName || String(form.companyName).trim() === '') nextErrors.companyName = 'Company name is required';
+      if (!form.companyName || String(form.companyName).trim() === '')
+        nextErrors.companyName = 'Company name is required';
       if (form.website) {
         try {
           // Basic URL validation
@@ -36,8 +37,10 @@ export default function IntakePage() {
       }
     }
     if (currentStep === 2) {
-      if (!form.contactName || String(form.contactName).trim() === '') nextErrors.contactName = 'Contact name is required';
-      if (!form.contactEmail || String(form.contactEmail).trim() === '') nextErrors.contactEmail = 'Contact email is required';
+      if (!form.contactName || String(form.contactName).trim() === '')
+        nextErrors.contactName = 'Contact name is required';
+      if (!form.contactEmail || String(form.contactEmail).trim() === '')
+        nextErrors.contactEmail = 'Contact email is required';
       else {
         const email = String(form.contactEmail);
         const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -45,7 +48,8 @@ export default function IntakePage() {
       }
     }
     if (currentStep === 3) {
-      if (!form.needs || String(form.needs).trim().length < 10) nextErrors.needs = 'Please provide a short description (10+ characters)';
+      if (!form.needs || String(form.needs).trim().length < 10)
+        nextErrors.needs = 'Please provide a short description (10+ characters)';
     }
 
     setErrors(nextErrors);
@@ -88,14 +92,20 @@ export default function IntakePage() {
             <label>
               Company name
               <br />
-              <input value={form.companyName || ''} onChange={(e) => update('companyName', e.target.value)} />
+              <input
+                value={form.companyName || ''}
+                onChange={(e) => update('companyName', e.target.value)}
+              />
             </label>
             {errors.companyName && <div style={{ color: 'red' }}>{errors.companyName}</div>}
             <br />
             <label>
               Website
               <br />
-              <input value={form.website || ''} onChange={(e) => update('website', e.target.value)} />
+              <input
+                value={form.website || ''}
+                onChange={(e) => update('website', e.target.value)}
+              />
             </label>
             {errors.website && <div style={{ color: 'red' }}>{errors.website}</div>}
             <br />
@@ -115,14 +125,20 @@ export default function IntakePage() {
             <label>
               Primary contact name
               <br />
-              <input value={form.contactName || ''} onChange={(e) => update('contactName', e.target.value)} />
+              <input
+                value={form.contactName || ''}
+                onChange={(e) => update('contactName', e.target.value)}
+              />
             </label>
             {errors.contactName && <div style={{ color: 'red' }}>{errors.contactName}</div>}
             <br />
             <label>
               Contact email
               <br />
-              <input value={form.contactEmail || ''} onChange={(e) => update('contactEmail', e.target.value)} />
+              <input
+                value={form.contactEmail || ''}
+                onChange={(e) => update('contactEmail', e.target.value)}
+              />
             </label>
             {errors.contactEmail && <div style={{ color: 'red' }}>{errors.contactEmail}</div>}
             <br />
@@ -150,7 +166,10 @@ export default function IntakePage() {
             <label>
               Short description of needs
               <br />
-              <textarea value={form.needs || ''} onChange={(e) => update('needs', e.target.value)} />
+              <textarea
+                value={form.needs || ''}
+                onChange={(e) => update('needs', e.target.value)}
+              />
             </label>
             {errors.needs && <div style={{ color: 'red' }}>{errors.needs}</div>}
             <br />

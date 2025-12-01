@@ -58,17 +58,31 @@ export default function ClientDetailPage() {
         <div style={{ display: 'flex', gap: 24 }}>
           <section style={{ flex: 1 }}>
             <h2>Config</h2>
-            <pre style={{ background: '#f6f8fa', padding: 12 }}>{config ? JSON.stringify(config, null, 2) : 'Loading...'}</pre>
+            <pre style={{ background: '#f6f8fa', padding: 12 }}>
+              {config ? JSON.stringify(config, null, 2) : 'Loading...'}
+            </pre>
           </section>
           <aside style={{ width: 420 }}>
             <h2>Actions</h2>
-            <button onClick={genBrief} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>
+            <button
+              onClick={genBrief}
+              disabled={loading}
+              style={{ display: 'block', marginBottom: 8 }}
+            >
               {loading ? 'Working...' : 'Generate Solution Brief'}
             </button>
-            <button onClick={() => genProposal(1)} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>
+            <button
+              onClick={() => genProposal(1)}
+              disabled={loading}
+              style={{ display: 'block', marginBottom: 8 }}
+            >
               Generate Proposal (Phase 1)
             </button>
-            <button onClick={() => genProposal(2)} disabled={loading} style={{ display: 'block', marginBottom: 8 }}>
+            <button
+              onClick={() => genProposal(2)}
+              disabled={loading}
+              style={{ display: 'block', marginBottom: 8 }}
+            >
               Generate Proposal (Phase 2)
             </button>
             <div style={{ marginTop: 12 }}>
