@@ -100,7 +100,9 @@ export default function ClientDetailPage() {
                     <div style={{ marginTop: 6 }}>
                       <span style={{ color: '#6b7280' }}>{config.profile?.industry ?? ''}</span>
                       {config.profile?.size ? (
-                        <span style={{ marginLeft: 8, color: '#6b7280' }}>{config.profile.size}</span>
+                        <span style={{ marginLeft: 8, color: '#6b7280' }}>
+                          {config.profile.size}
+                        </span>
                       ) : null}
                     </div>
                   </div>
@@ -117,47 +119,54 @@ export default function ClientDetailPage() {
                 <div>
                   <h3>Systems</h3>
                   <div style={{ display: 'grid', gap: 12 }}>
-                    {(Array.isArray(config.subsystems) ? config.subsystems : []).map(
-                      (s: any) => (
-                        <div
-                          key={s.id ?? s.type}
-                          style={{
-                            background: '#fff',
-                            borderRadius: 8,
-                            padding: 12,
-                            boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
-                          }}
-                        >
-                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <div>
-                              <strong>{s.type}</strong>
-                              <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
-                            </div>
-                            <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
+                    {(Array.isArray(config.subsystems) ? config.subsystems : []).map((s: any) => (
+                      <div
+                        key={s.id ?? s.type}
+                        style={{
+                          background: '#fff',
+                          borderRadius: 8,
+                          padding: 12,
+                          boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <div>
+                            <strong>{s.type}</strong>
+                            <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
                           </div>
-
-                          {s.settings && (
-                            <div style={{ marginTop: 8 }}>
-                              {Object.entries(s.settings).map(([k, v]) => (
-                                <div
-                                  key={k}
-                                  style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}
-                                >
-                                  <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
-                                  <div style={{ fontFamily: 'monospace', color: '#111' }}>{renderValue(v)}</div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
                         </div>
-                      ),
-                    )}
+
+                        {s.settings && (
+                          <div style={{ marginTop: 8 }}>
+                            {Object.entries(s.settings).map(([k, v]) => (
+                              <div
+                                key={k}
+                                style={{
+                                  display: 'flex',
+                                  gap: 8,
+                                  alignItems: 'center',
+                                  marginTop: 6,
+                                }}
+                              >
+                                <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
+                                <div style={{ fontFamily: 'monospace', color: '#111' }}>
+                                  {renderValue(v)}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
                 <details style={{ background: '#f6f8fa', padding: 12, borderRadius: 8 }}>
                   <summary style={{ cursor: 'pointer' }}>Raw config (debug)</summary>
-                  <pre style={{ marginTop: 8, whiteSpace: 'pre-wrap' }}>{JSON.stringify(config, null, 2)}</pre>
+                  <pre style={{ marginTop: 8, whiteSpace: 'pre-wrap' }}>
+                    {JSON.stringify(config, null, 2)}
+                  </pre>
                 </details>
               </div>
             )}
