@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../../components/Layout';
 
-type ClientConfig = Record<string, unknown>;
+type ClientConfig = Record<string, any>;
 
 export default function ClientDetailPage() {
   const router = useRouter();
@@ -60,17 +60,109 @@ export default function ClientDetailPage() {
     }
   }
 
+  const renderValue = (v: unknown) => {
+    if (v == null) return '-';
+    if (typeof v === 'string') return v;
+    if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+    try {
+      return JSON.stringify(v);
+    } catch {
+      return String(v);
+    }
+  };
+
   return (
     <Layout>
       <main style={{ padding: 24 }}>
         <h1>Client {id}</h1>
-        <div style={{ display: 'flex', gap: 24 }}>
+        <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
           <section style={{ flex: 1 }}>
-            <h2>Config</h2>
-            <pre style={{ background: '#f6f8fa', padding: 12 }}>
-              {config ? JSON.stringify(config, null, 2) : 'Loading...'}
-            </pre>
+            <h2>Client overview</h2>
+
+            {!config && <div>Loading…</div>}
+
+            {config && (
+              <div style={{ display: 'grid', gap: 16 }}>
+                <div
+                  style={{
+                    background: '#fff',
+                    borderRadius: 8,
+                    padding: 16,
+                    boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
+                  }}
+                >
+                  <h3 style={{ margin: 0 }}>Profile</h3>
+                  <div style={{ marginTop: 8, color: '#374151' }}>
+                    <div>
+                      <strong>{config.profile?.companyName ?? '—'}</strong>
+                    </div>
+                    <div>{config.profile?.website ?? ''}</div>
+                    <div style={{ marginTop: 6 }}>
+                      <span style={{ color: '#6b7280' }}>{config.profile?.industry ?? ''}</span>
+                      {config.profile?.size ? (
+                        <span style={{ marginLeft: 8, color: '#6b7280' }}>{config.profile.size}</span>
+                      ) : null}
+                    </div>
+                  </div>
+                  {config.contact && (
+                    <div style={{ marginTop: 12 }}>
+                      <h4 style={{ margin: '8px 0' }}>Primary contact</h4>
+                      <div>{config.contact.name ?? '-'}</div>
+                      <div>{config.contact.email ?? '-'}</div>
+                      <div>{config.contact.phone ?? '-'}</div>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <h3>Systems</h3>
+                  <div style={{ display: 'grid', gap: 12 }}>
+                    {(Array.isArray(config.subsystems) ? config.subsystems : []).map(
+                      (s: any) => (
+                        <div
+                          key={s.id ?? s.type}
+                          style={{
+                            background: '#fff',
+                            borderRadius: 8,
+                            padding: 12,
+                            boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div>
+                              <strong>{s.type}</strong>
+                              <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
+                            </div>
+                            <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
+                          </div>
+
+                          {s.settings && (
+                            <div style={{ marginTop: 8 }}>
+                              {Object.entries(s.settings).map(([k, v]) => (
+                                <div
+                                  key={k}
+                                  style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}
+                                >
+                                  <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
+                                  <div style={{ fontFamily: 'monospace', color: '#111' }}>{renderValue(v)}</div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </div>
+
+                <details style={{ background: '#f6f8fa', padding: 12, borderRadius: 8 }}>
+                  <summary style={{ cursor: 'pointer' }}>Raw config (debug)</summary>
+                  <pre style={{ marginTop: 8, whiteSpace: 'pre-wrap' }}>{JSON.stringify(config, null, 2)}</pre>
+                </details>
+              </div>
+            )}
           </section>
+
           <aside style={{ width: 420 }}>
             <h2>Actions</h2>
             <button
