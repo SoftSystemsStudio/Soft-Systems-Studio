@@ -1,21 +1,17 @@
+// packages/api/src/index.ts
 import express from 'express';
-import { json } from 'body-parser';
-import { logger } from './logger';
-import healthRouter from './health';
-import clientsRouter from './clients';
+import logger from './logger';
+import clientsRouter from './clients'; // <- make sure this path matches your clients.ts
 
 const app = express();
-app.use(json());
+const PORT = process.env.PORT || 4000;
 
-app.use('/health', healthRouter);
-app.use('/', clientsRouter);
+// Parse JSON request bodies
+app.use(express.json());
 
-app.get('/', (req, res) => {
-  logger.info({ path: req.path }, 'root hit');
-  res.json({ status: 'ok', name: 'soft-systems-api' });
-});
+// Mount API routes (intake, clients, etc.)
+app.use(clientsRouter);
 
-const port = process.env.PORT ? Number(process.env.PORT) : 4000;
-app.listen(port, () => {
-  logger.info({ port }, 'server_started');
+app.listen(PORT, () => {
+  logger.info(`API server listening on port ${PORT}`);
 });

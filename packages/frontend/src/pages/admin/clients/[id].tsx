@@ -2,19 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../../components/Layout';
 
+type ClientConfig = Record<string, unknown>;
+
 export default function ClientDetailPage() {
   const router = useRouter();
   const { id } = router.query as { id?: string };
-  const [config, setConfig] = useState<any>(null);
+
+  const [config, setConfig] = useState<ClientConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
-    fetch(`/clients/${id}/config`)
-      .then((r) => r.json())
-      .then((d) => setConfig(d.config))
-      .catch(() => setConfig(null));
+
+    // Load the normalized config from the API
+    fetch(`/api/clients/${id}/config`)
+      .then((res) => res.json())
+      .then(setConfig)
+      .catch((err) => {
+        console.error('Error loading config', err);
+      });
   }, [id]);
 
   async function genBrief() {
@@ -22,10 +29,11 @@ export default function ClientDetailPage() {
     setLoading(true);
     setOutput(null);
     try {
-      const res = await fetch(`/clients/${id}/solution-brief`, { method: 'POST' });
+      const res = await fetch(`/api/clients/${id}/solution-brief`, { method: 'POST' });
       const data = await res.json();
-      setOutput(data.draft ?? JSON.stringify(data));
+      setOutput(data.draft ?? JSON.stringify(data, null, 2));
     } catch (e) {
+      console.error(e);
       setOutput('Error generating brief');
     } finally {
       setLoading(false);
@@ -37,14 +45,15 @@ export default function ClientDetailPage() {
     setLoading(true);
     setOutput(null);
     try {
-      const res = await fetch(`/clients/${id}/proposal`, {
+      const res = await fetch(`/api/clients/${id}/proposal`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phase }),
       });
       const data = await res.json();
-      setOutput(data.draft ?? JSON.stringify(data));
+      setOutput(data.draft ?? JSON.stringify(data, null, 2));
     } catch (e) {
+      console.error(e);
       setOutput('Error generating proposal');
     } finally {
       setLoading(false);

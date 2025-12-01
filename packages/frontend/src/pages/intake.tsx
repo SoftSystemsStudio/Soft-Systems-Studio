@@ -16,7 +16,7 @@ export default function IntakePage() {
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  function update(field: string, value: any) {
+  function update<K extends keyof FormShape>(field: K, value: FormShape[K]) {
     setForm((f) => ({ ...f, [field]: value }));
     setErrors((e) => ({ ...e, [field]: '' }));
   }
@@ -65,11 +65,12 @@ export default function IntakePage() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch('/intake', {
+      const res = await fetch('/api/intake', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
+
       if (!res.ok) throw new Error('submit_failed');
       setMessage("Thanks — we'll generate your AI Automation Blueprint.");
       setForm({});

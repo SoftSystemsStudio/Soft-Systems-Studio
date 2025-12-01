@@ -1,33 +1,68 @@
 import type { ClientConfig, IntakePayload } from './configTypes';
 
-export function buildClientConfigFromIntake(raw: any): ClientConfig {
-  // TODO: implement mapping from intake payload -> normalized config
-  // The function should parse the incoming raw intake (form JSON),
-  // extract company profile, contact, and map subsystem selections
-  // into a normalized `ClientConfig` shape.
+// Treat the intake as a loose record of unknown values.
+// This avoids `any` while still letting us index by field name.
+type LooseIntake = IntakePayload & Record<string, unknown>;
 
-  // Minimal stubbed return to allow wiring. Replace with real mapping.
+const asOptionalString = (value: unknown): string | undefined => {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : undefined;
+};
+
+export function buildClientConfigFromIntake(raw: IntakePayload): ClientConfig {
+  const now = new Date().toISOString();
+  const base = raw as LooseIntake;
+
+  const clientId =
+    typeof base.clientId === 'string' && base.clientId.trim().length > 0
+      ? base.clientId
+      : `client-${Date.now()}`;
+
   const profile = {
-    companyName: (raw?.companyName as string) ?? 'Unknown Company',
-    website: raw?.website as string | undefined,
-    industry: raw?.industry as string | undefined,
-    size: raw?.size as string | undefined,
+    companyName: asOptionalString(base.companyName) ?? 'Unknown Company',
+    website: asOptionalString(base.website),
+    industry: asOptionalString(base.industry),
+    size: asOptionalString(base.size),
   };
 
-  const subsystems =
-    (raw?.subsystems as any[] | undefined)?.map((s, i) => ({
-      id: String(s?.id ?? `sub-${i}`),
-      type: (s?.type as any) ?? 'support_system',
-      description: s?.description ?? undefined,
-      settings: s?.settings ?? {},
-    })) ?? [];
+  const contact = {
+    name: asOptionalString(base.contactName),
+    email: asOptionalString(base.contactEmail),
+    phone: asOptionalString(base.contactPhone),
+  };
+
+  // Default Phase 1 focus: Support + Workflow for every intake
+  const subsystems: ClientConfig['subsystems'] = [
+    {
+      id: 'support',
+      type: 'support_system',
+      description:
+        'AI Support System for web chat to handle FAQs and route complex issues to humans.',
+      settings: {
+        channels: ['web_chat'],
+        allowTopics: ['faq', 'basic_support'],
+        escalationPolicy: ['low_confidence', 'negative_sentiment'],
+      },
+    },
+    {
+      id: 'workflow',
+      type: 'workflow_system',
+      description:
+        'AI Workflow Automation System for inquiry routing and simple follow-up workflows.',
+      settings: {
+        targetDepartments: ['support'],
+        flows: ['inquiry_routing', 'basic_followup'],
+      },
+    },
+  ];
 
   return {
-    clientId: String(raw?.clientId ?? `client-${Date.now()}`),
+    clientId,
     profile,
-    contact: raw?.contact ?? undefined,
+    contact,
     subsystems,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  } as ClientConfig;
+    createdAt: now,
+    updatedAt: now,
+  };
 }

@@ -2,7 +2,6 @@ import { Router } from 'express';
 import type { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { buildClientConfigFromIntake } from '../../agency-core/src/mapping';
-import type { ClientConfig } from '../../agency-core/src/configTypes';
 import { generateSolutionBrief, generatePhaseProposal } from './llm';
 
 const prisma = new PrismaClient();
@@ -17,7 +16,7 @@ router.post('/intake', async (req: Request, res: Response) => {
     const intake = await prisma.intakeSubmission.create({ data: { raw } });
 
     // Build normalized ClientConfig from intake (stubbed mapping)
-    const config = buildClientConfigFromIntake(raw as any);
+    const config = buildClientConfigFromIntake(raw);
 
     // Upsert client and client config. Keep minimal logic here.
     const client = await prisma.client.upsert({
