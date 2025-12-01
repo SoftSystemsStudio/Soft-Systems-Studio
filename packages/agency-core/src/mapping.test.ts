@@ -47,13 +47,15 @@ describe('buildClientConfigFromIntake', () => {
     const workflow = config.subsystems.find((s) => s.type === 'workflow_system');
 
     expect(support).toBeDefined();
-    expect(support?.settings.channels).toEqual(payload.supportChannels);
-    expect(support?.settings.estimatedDailyInquiries).toBe(Number(payload.dailyInquiries));
-    expect(support?.settings.mainPainPoints).toBe(payload.mainPainPoints);
+    const supportSettings = support!.settings as any;
+    expect(supportSettings.channels).toEqual(payload.supportChannels);
+    expect(supportSettings.estimatedDailyInquiries).toBe(Number(payload.dailyInquiries));
+    expect(supportSettings.mainPainPoints).toBe(payload.mainPainPoints);
 
     expect(workflow).toBeDefined();
-    expect(workflow?.settings.hints).toEqual(payload.primaryObjectives);
-    expect(Array.isArray(workflow?.settings.targetDepartments)).toBe(true);
-    expect(workflow?.settings.targetDepartments.length).toBeGreaterThan(0);
+    const workflowSettings = workflow!.settings as any;
+    expect(workflowSettings.hints).toEqual(payload.primaryObjectives);
+    expect(Array.isArray(workflowSettings.targetDepartments)).toBe(true);
+    expect(workflowSettings.targetDepartments.length).toBeGreaterThan(0);
   });
 });
