@@ -35,4 +35,45 @@ export interface ClientConfig {
   updatedAt?: string;
 }
 
-export type IntakePayload = Record<string, unknown>;
+export type Objective =
+  | 'reduce_support_volume'
+  | 'increase_leads'
+  | 'increase_content_output'
+  | 'improve_reporting'
+  | 'automate_workflows'
+  | 'reduce_missed_calls';
+
+export type SystemInterest = 'support' | 'content' | 'data_bi' | 'workflow' | 'voice';
+
+export type SupportChannel = 'email' | 'web_chat' | 'phone' | 'whatsapp' | 'sms' | 'social_dm';
+
+export interface IntakePayload {
+  // Step 1 – Company & Objectives
+  companyName: string;
+  website?: string;
+  industry?: string;
+  size?: string;
+  primaryObjectives: Objective[];
+  systems: SystemInterest[];
+
+  // Step 2 – Tech stack
+  websitePlatform?: string;
+  crm?: string;
+  helpdesk?: string;
+  telephony?: string;
+  calendar?: string;
+
+  // Step 3 – Support & operations snapshot
+  dailyInquiries?: string;
+  supportChannels: SupportChannel[];
+  mainPainPoints?: string;
+
+  // Step 4 – Contact & notes
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  notes?: string;
+
+  // Optional fields used by upstream systems
+  clientId?: string;
+}

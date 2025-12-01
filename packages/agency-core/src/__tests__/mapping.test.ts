@@ -52,7 +52,9 @@ describe('buildClientConfigFromIntake', () => {
     expect(workflow).toBeDefined();
     expect(workflow?.settings).toBeDefined();
     // primaryObjectives ['reduce_support_volume','increase_leads'] map to ['support','sales']
-    expect(workflow?.settings?.targetDepartments).toEqual(expect.arrayContaining(['support', 'sales']));
+    expect(workflow?.settings?.targetDepartments).toEqual(
+      expect.arrayContaining(['support', 'sales']),
+    );
     expect(workflow?.settings?.hints).toEqual(payload.primaryObjectives);
   });
 });
