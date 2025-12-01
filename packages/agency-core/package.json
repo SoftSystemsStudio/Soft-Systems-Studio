@@ -7,6 +7,6 @@
   "scripts": {
     "build": "tsc -p ./",
     "lint": "eslint 'src/**/*.ts' --ext .ts",
-    "test": "echo \"No tests yet\""
+    "test": "jest --config ../../jest.config.ts --runTestsByPath src/mapping.test.ts"
   }
 }
