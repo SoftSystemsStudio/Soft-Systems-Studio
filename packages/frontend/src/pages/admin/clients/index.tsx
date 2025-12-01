@@ -124,7 +124,9 @@ export default function ClientsListPage() {
                   <td style={{ padding: '8px 12px', fontSize: 14, color: '#24292e' }}>
                     {buildSummary(c)}
                   </td>
-                  <td style={{ padding: '8px 12px', fontSize: 14 }}>{formatCreated(c.createdAt)}</td>
+                  <td style={{ padding: '8px 12px', fontSize: 14 }}>
+                    {formatCreated(c.createdAt)}
+                  </td>
                 </tr>
               ))}
             </tbody>
