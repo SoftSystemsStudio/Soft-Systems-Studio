@@ -214,11 +214,12 @@ export default function IntakePage() {
           margin: '0 auto',
         }}
       >
-        <header style={{ marginBottom: 24 }}>
-          <h1 style={{ fontSize: 32, marginBottom: 8 }}>AI Automation Intake</h1>
+          <header style={{ marginBottom: 24 }}>
+          <h1 style={{ fontSize: 32, marginBottom: 8 }}>AI Automation Assessment</h1>
           <p style={{ color: '#555', maxWidth: 720 }}>
-            This intake helps us design your Phase 1 AI Support + Workflow rollout and identify
-            future opportunities across Content, Data &amp; BI, and Voice.
+            Share a brief overview of your organisation and priorities — this helps us design a
+            practical Phase 1 focused on Support and Workflow automation, and identify high-impact
+            opportunities across Content, Data &amp; BI, and Voice.
           </p>
         </header>
 
@@ -256,14 +257,14 @@ export default function IntakePage() {
               justifyContent: 'space-between',
             }}
           >
-            <h2 style={{ margin: 0, fontSize: 20 }}>
+              <h2 style={{ margin: 0, fontSize: 20 }}>
               Step {step} of {totalSteps}
             </h2>
             <span style={{ color: '#64748b' }}>
-              {step === 1 && 'Company & Objectives'}
-              {step === 2 && 'Tech Stack'}
-              {step === 3 && 'Support & Operations'}
-              {step === 4 && 'Contact & Final Notes'}
+              {step === 1 && 'Company Information & Goals'}
+              {step === 2 && 'Technology & Integrations'}
+              {step === 3 && 'Support Operations Snapshot'}
+              {step === 4 && 'Primary Contact & Final Notes'}
             </span>
           </div>
 
@@ -271,7 +272,7 @@ export default function IntakePage() {
           {step === 1 && (
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontWeight: 500 }}>Company name *</label>
+                <label style={{ display: 'block', fontWeight: 500 }}>Company / Organization name *</label>
                 <input
                   value={form.companyName}
                   onChange={(e) => update('companyName', e.target.value)}
@@ -296,7 +297,7 @@ export default function IntakePage() {
                 }}
               >
                 <div>
-                  <label style={{ display: 'block', fontWeight: 500 }}>Website</label>
+                  <label style={{ display: 'block', fontWeight: 500 }}>Website (public URL)</label>
                   <input
                     placeholder="https://example.com"
                     value={form.website}
@@ -314,7 +315,7 @@ export default function IntakePage() {
                   )}
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: 500 }}>Industry</label>
+                  <label style={{ display: 'block', fontWeight: 500 }}>Industry / sector</label>
                   <input
                     value={form.industry}
                     onChange={(e) => update('industry', e.target.value)}
@@ -328,7 +329,7 @@ export default function IntakePage() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: 500 }}>Team size</label>
+                  <label style={{ display: 'block', fontWeight: 500 }}>Approx. team size</label>
                   <select
                     value={form.size}
                     onChange={(e) => update('size', e.target.value)}
@@ -352,7 +353,7 @@ export default function IntakePage() {
 
               <div>
                 <label style={{ display: 'block', fontWeight: 500 }}>
-                  Primary objectives * (select at least one)
+                  Primary objectives * (choose the top outcomes you want to achieve)
                 </label>
                 <div
                   style={{
@@ -397,7 +398,7 @@ export default function IntakePage() {
 
               <div>
                 <label style={{ display: 'block', fontWeight: 500 }}>
-                  Systems you&apos;re interested in (Phase 1 defaults to Support + Workflow)
+                  Systems of interest (Phase 1 typically focuses on Support + Workflow)
                 </label>
                 <div
                   style={{
@@ -442,7 +443,7 @@ export default function IntakePage() {
           {step === 2 && (
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontWeight: 500 }}>Website platform</label>
+                <label style={{ display: 'block', fontWeight: 500 }}>Website / storefront platform</label>
                 <select
                   value={form.websitePlatform}
                   onChange={(e) => update('websitePlatform', e.target.value)}
@@ -575,8 +576,8 @@ export default function IntakePage() {
           {step === 3 && (
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontWeight: 500 }}>
-                  Approximate number of inquiries per day
+                  <label style={{ display: 'block', fontWeight: 500 }}>
+                    Typical inquiries per day (approx.)
                 </label>
                 <input
                   value={form.dailyInquiries}
@@ -597,7 +598,7 @@ export default function IntakePage() {
 
               <div>
                 <label style={{ display: 'block', fontWeight: 500 }}>
-                  Current support channels
+                  Current customer support channels (where customers contact you today)
                 </label>
                 <div
                   style={{
@@ -639,7 +640,7 @@ export default function IntakePage() {
 
               <div>
                 <label style={{ display: 'block', fontWeight: 500 }}>
-                  What are your main pain points today? *
+                  What are the main challenges you currently face? *
                 </label>
                 <textarea
                   value={form.mainPainPoints}
@@ -673,7 +674,7 @@ export default function IntakePage() {
               >
                 <div>
                   <label style={{ display: 'block', fontWeight: 500 }}>
-                    Primary contact name *
+                    Primary contact (name) *
                   </label>
                   <input
                     value={form.contactName}
@@ -708,7 +709,7 @@ export default function IntakePage() {
                   )}
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: 500 }}>Contact phone</label>
+                  <label style={{ display: 'block', fontWeight: 500 }}>Contact phone (optional)</label>
                   <input
                     value={form.contactPhone}
                     onChange={(e) => update('contactPhone', e.target.value)}
@@ -726,7 +727,7 @@ export default function IntakePage() {
 
               <div>
                 <label style={{ display: 'block', fontWeight: 500 }}>
-                  Anything else we should know? *
+                  Additional context or goals (brief) *
                 </label>
                 <textarea
                   value={form.notes}
@@ -794,7 +795,7 @@ export default function IntakePage() {
                   cursor: 'pointer',
                 }}
               >
-                Continue
+                Next
               </button>
             )}
 
@@ -812,7 +813,7 @@ export default function IntakePage() {
                   cursor: loading ? 'default' : 'pointer',
                 }}
               >
-                {loading ? 'Submitting…' : 'Submit'}
+                {loading ? 'Submitting…' : 'Submit intake'}
               </button>
             )}
           </div>
