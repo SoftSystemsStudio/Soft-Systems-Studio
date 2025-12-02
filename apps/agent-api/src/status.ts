@@ -1,8 +1,15 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import prisma from './db';
 import env from './env';
 import { execSync } from 'child_process';
 import { logger } from './logger';
+
+// Wrap async handler to avoid ESLint no-misused-promises
+const asyncHandler =
+  (fn: (req: Request, res: Response) => Promise<void>) =>
+  (req: Request, res: Response, next: NextFunction): void => {
+    Promise.resolve(fn(req, res)).catch(next);
+  };
 
 const router = Router();
 
@@ -120,60 +127,66 @@ function checkMemory(): StatusResponse['checks']['memory'] {
  * GET /status
  * Comprehensive status endpoint for production monitoring
  */
-router.get('/', async (_req: Request, res: Response) => {
-  const uptimeSeconds = Math.floor((Date.now() - startTime) / 1000);
-  const dbCheck = await checkDatabase();
-  const memoryCheck = checkMemory();
+router.get(
+  '/',
+  asyncHandler(async (_req: Request, res: Response) => {
+    const uptimeSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const dbCheck = await checkDatabase();
+    const memoryCheck = checkMemory();
 
-  // Determine overall status
-  let overallStatus: StatusResponse['status'] = 'healthy';
-  if (dbCheck.status === 'error') {
-    overallStatus = 'unhealthy';
-  } else if (memoryCheck.status === 'critical') {
-    overallStatus = 'unhealthy';
-  } else if (memoryCheck.status === 'warning') {
-    overallStatus = 'degraded';
-  }
+    // Determine overall status
+    let overallStatus: StatusResponse['status'] = 'healthy';
+    if (dbCheck.status === 'error') {
+      overallStatus = 'unhealthy';
+    } else if (memoryCheck.status === 'critical') {
+      overallStatus = 'unhealthy';
+    } else if (memoryCheck.status === 'warning') {
+      overallStatus = 'degraded';
+    }
 
-  const response: StatusResponse = {
-    status: overallStatus,
-    version: {
-      commit: commitHash,
-      commitDate,
-      nodeVersion: process.version,
-      appVersion: process.env.npm_package_version || '0.1.0',
-    },
-    uptime: {
-      seconds: uptimeSeconds,
-      formatted: formatUptime(uptimeSeconds),
-    },
-    environment: env.NODE_ENV,
-    timestamp: new Date().toISOString(),
-    checks: {
-      database: dbCheck,
-      memory: memoryCheck,
-    },
-  };
+    const response: StatusResponse = {
+      status: overallStatus,
+      version: {
+        commit: commitHash,
+        commitDate,
+        nodeVersion: process.version,
+        appVersion: process.env.npm_package_version || '0.1.0',
+      },
+      uptime: {
+        seconds: uptimeSeconds,
+        formatted: formatUptime(uptimeSeconds),
+      },
+      environment: env.NODE_ENV,
+      timestamp: new Date().toISOString(),
+      checks: {
+        database: dbCheck,
+        memory: memoryCheck,
+      },
+    };
 
-  // Set appropriate status code
-  const statusCode = overallStatus === 'healthy' ? 200 : overallStatus === 'degraded' ? 200 : 503;
+    // Set appropriate status code
+    const statusCode = overallStatus === 'healthy' ? 200 : overallStatus === 'degraded' ? 200 : 503;
 
-  res.status(statusCode).json(response);
-});
+    res.status(statusCode).json(response);
+  }),
+);
 
 /**
  * GET /status/ready
  * Kubernetes readiness probe - is the service ready to accept traffic?
  */
-router.get('/ready', async (_req: Request, res: Response) => {
-  const dbCheck = await checkDatabase();
+router.get(
+  '/ready',
+  asyncHandler(async (_req: Request, res: Response) => {
+    const dbCheck = await checkDatabase();
 
-  if (dbCheck.status === 'ok') {
-    res.status(200).json({ ready: true });
-  } else {
-    res.status(503).json({ ready: false, reason: 'database unavailable' });
-  }
-});
+    if (dbCheck.status === 'ok') {
+      res.status(200).json({ ready: true });
+    } else {
+      res.status(503).json({ ready: false, reason: 'database unavailable' });
+    }
+  }),
+);
 
 /**
  * GET /status/live
