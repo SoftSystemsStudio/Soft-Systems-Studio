@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface FooterLink {
   label: string;
@@ -7,12 +8,14 @@ interface FooterLink {
 }
 
 interface FooterProps {
+  logo?: string;
   brand?: string;
   links?: FooterLink[];
   className?: string;
 }
 
 export default function Footer({
+  logo = '/images/S Logo - Black Blackground.png',
   brand = 'Soft Systems Studio',
   links = [
     { label: 'Privacy', href: '/privacy' },
@@ -23,8 +26,11 @@ export default function Footer({
   return (
     <footer className={`border-t border-white/5 py-10 bg-gray-950 ${className}`}>
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} {brand}
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          {logo && <Image src={logo} alt={brand} width={28} height={28} className="h-7 w-7" />}
+          <span>
+            &copy; {new Date().getFullYear()} {brand}
+          </span>
         </div>
         <div className="flex gap-6">
           {links.map((link) => (
