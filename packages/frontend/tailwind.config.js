@@ -4,12 +4,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: '#02040a',
-        text: '#e5e7eb',
-        muted: '#9ca3af',
-        border: '#1f2933',
-        surface: '#050816',
-        accent: '#c0ff6b',
+        sss: {
+          bg: '#02040a',
+          surface: '#050816',
+          accent: '#c0ff6b',
+          muted: '#9ca3af',
+        },
       },
     },
   },
