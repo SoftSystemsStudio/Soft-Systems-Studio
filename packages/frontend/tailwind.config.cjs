@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -10,6 +11,7 @@ module.exports = {
         border: '#1f2933',
         surface: '#0b1220',
         accent: '#c0ff6b',
+        brand: '#7f5af0',
         // High contrast accent palette for dark theme
         glow: {
           cyan: '#22d3ee',
@@ -26,6 +28,20 @@ module.exports = {
         'gradient-dark': 'linear-gradient(180deg, #02040a 0%, #0b1220 50%, #02040a 100%)',
         'gradient-hero':
           'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.3), transparent)',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        'fade-in': {
+          from: { opacity: '0', transform: 'translateY(20px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        float: 'float 4s ease-in-out infinite',
+        'fade-in': 'fade-in 0.6s ease-out forwards',
       },
     },
   },
