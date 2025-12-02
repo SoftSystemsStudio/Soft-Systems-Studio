@@ -10,14 +10,18 @@
     "test": "echo \"No frontend tests yet\""
   },
   "dependencies": {
+    "@react-three/drei": "9",
+    "@react-three/fiber": "8",
     "framer-motion": "^12.23.25",
     "next": "^14.2.33",
     "react": "18.3.0",
-    "react-dom": "18.3.0"
+    "react-dom": "18.3.0",
+    "three": "^0.181.2"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
+    "@types/three": "^0.181.0",
     "autoprefixer": "^10.4.22",
     "eslint": "^8.46.0",
     "postcss": "^8.5.6",

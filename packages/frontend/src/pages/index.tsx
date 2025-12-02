@@ -1,15 +1,26 @@
 import React from 'react';
+import dynamic from 'next/dynamic';
 import {
-  Hero,
   Navbar,
   Footer,
   Section,
-  FeatureCard,
   TestimonialCard,
   PricingCard,
   Button,
+  HoloCard,
+  ScanLine,
+  GlowText,
 } from '../components/ui';
 import { FadeIn, StaggerContainer } from '../components/motion';
+
+// Dynamically import Three.js components (client-side only)
+const Scene = dynamic(() => import('../components/three/Scene').then((mod) => mod.default), {
+  ssr: false,
+});
+const NeuralSphere = dynamic(
+  () => import('../components/three/NeuralSphere').then((mod) => mod.default),
+  { ssr: false },
+);
 
 const NAV_ITEMS = [
   { label: 'Features', href: '#features' },
@@ -46,9 +57,9 @@ const FEATURES = [
 ];
 
 const STEPS = [
-  { step: '01', title: 'Intake & discovery' },
-  { step: '02', title: 'Systems blueprint & roadmap' },
-  { step: '03', title: 'Deploy, tune, and scale' },
+  { step: '01', title: 'Intake & discovery', desc: 'Share your goals and current systems' },
+  { step: '02', title: 'Systems blueprint', desc: 'Receive a detailed architecture plan' },
+  { step: '03', title: 'Deploy & scale', desc: 'Launch, tune, and grow with AI' },
 ];
 
 const TESTIMONIALS = [
@@ -95,7 +106,7 @@ const PRICING_PLANS = [
 
 export default function Home() {
   return (
-    <div className="antialiased min-h-screen bg-gradient-to-b from-black via-[#0a0a0a] to-black text-[#d5d5d5]">
+    <div className="antialiased min-h-screen bg-black text-brand-light">
       {/* Skip link for accessibility */}
       <a href="#main-content" className="skip-link">
         Skip to main content
@@ -105,39 +116,83 @@ export default function Home() {
       <Navbar items={NAV_ITEMS} ctaLabel="Get Started" ctaHref="/intake" />
 
       <main id="main-content">
-        {/* Hero Section */}
-        <Hero
-          badge="AI Automation Agency"
-          title={
-            <>
-              Automate Smarter.
-              <br className="hidden sm:block" />
-              Grow Faster.
-            </>
-          }
-          subtitle="Design, deploy, and run AI systems for support, content, data, workflows, and voice. One intake, a clear systems blueprint, and a phased rollout."
-          primaryCta={{ label: 'Start the intake', href: '/intake' }}
-          secondaryCta={{ label: 'Explore features', href: '#features' }}
-        />
+        {/* Hero Section with 3D Neural Sphere */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          {/* 3D Background Canvas */}
+          <div className="absolute inset-0 z-0">
+            <Scene cameraPosition={[0, 0, 7]}>
+              <NeuralSphere color="#c0ff6b" secondaryColor="#22d3ee" particleCount={600} />
+            </Scene>
+          </div>
+
+          {/* Radial gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-radial from-transparent via-black/50 to-black pointer-events-none z-[1]" />
+
+          {/* Hero Content */}
+          <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+            <FadeIn>
+              {/* AI Status Badge */}
+              <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-brand-lime/30 bg-brand-lime/5">
+                <span className="w-2 h-2 rounded-full bg-brand-lime animate-pulse-slow" />
+                <span className="text-xs font-mono uppercase tracking-widest text-brand-lime">
+                  AI Systems Online
+                </span>
+              </div>
+
+              <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
+                Automate Smarter.
+                <br className="hidden sm:block" />
+                <GlowText as="span" color="lime">
+                  Grow Faster.
+                </GlowText>
+              </h1>
+
+              <p className="text-lg md:text-xl leading-relaxed text-brand-light/80 max-w-2xl mx-auto mb-10">
+                Design, deploy, and run AI systems for support, content, data, workflows, and voice.
+                One intake, a clear systems blueprint, and a phased rollout.
+              </p>
+
+              {/* Scanning line effect */}
+              <ScanLine color="lime" className="max-w-md mx-auto mb-10" />
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button as="link" href="/intake" variant="primary" size="lg">
+                  Start the intake
+                </Button>
+                <Button as="link" href="#features" variant="outline" size="lg">
+                  Explore features
+                </Button>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Bottom fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-[2]" />
+        </section>
 
         {/* Features Section */}
         <Section id="features" className="py-28">
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-[#d5d5d5]">
-              Core systems we deploy
-            </h2>
-            <p className="text-[#656565] max-w-2xl mb-12 leading-relaxed">
+            <GlowText
+              as="h2"
+              color="lime"
+              className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
+            >
+              Core Systems We Deploy
+            </GlowText>
+            <p className="text-brand-gray max-w-2xl mb-12 leading-relaxed">
               Agency on the front, configurable platform on the back.
             </p>
           </FadeIn>
 
           <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {FEATURES.map((feature) => (
-              <FeatureCard
-                key={feature.title}
-                title={feature.title}
-                description={feature.description}
-              />
+              <HoloCard key={feature.title} className="p-6" glowColor="lime" showScanLine>
+                <h3 className="font-semibold text-white mb-2 group-hover:text-brand-lime transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-brand-gray text-sm leading-relaxed">{feature.description}</p>
+              </HoloCard>
             ))}
           </StaggerContainer>
         </Section>
@@ -145,24 +200,23 @@ export default function Home() {
         {/* How It Works Section */}
         <Section id="use-cases" gradient="subtle" className="py-24">
           <FadeIn>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-[#d5d5d5]">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
               How it works
             </h2>
-            <p className="text-[#656565] mb-12 max-w-2xl leading-relaxed">
-              Intake → Blueprint → Deploy → Iterate. We prioritize high-leverage systems and ship
-              fast.
+            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed font-mono text-sm">
+              INTAKE → BLUEPRINT → DEPLOY → ITERATE
             </p>
           </FadeIn>
 
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {STEPS.map((s) => (
-              <div
-                key={s.step}
-                className="relative p-8 rounded-2xl border border-[#2a2a2a] bg-[#0a0a0a] shadow-lg shadow-black/20"
-              >
-                <span className="block text-5xl font-bold text-[#c0ff6b]/30 mb-2">{s.step}</span>
-                <h3 className="text-lg font-semibold text-[#d5d5d5]">{s.title}</h3>
-              </div>
+              <HoloCard key={s.step} className="p-8" glowColor="cyan">
+                <span className="block text-6xl font-bold text-brand-lime/20 mb-2 font-mono">
+                  {s.step}
+                </span>
+                <h3 className="text-lg font-semibold text-white mb-2">{s.title}</h3>
+                <p className="text-brand-gray text-sm">{s.desc}</p>
+              </HoloCard>
             ))}
           </StaggerContainer>
         </Section>
@@ -170,7 +224,7 @@ export default function Home() {
         {/* Testimonials Section */}
         <Section id="testimonials" className="py-24">
           <FadeIn>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-8 text-[#d5d5d5]">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-8 text-brand-light">
               Trusted by teams
             </h2>
           </FadeIn>
@@ -190,10 +244,10 @@ export default function Home() {
         {/* Pricing Section */}
         <Section id="pricing" gradient="dark" className="py-24">
           <FadeIn>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-[#d5d5d5]">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
               Pricing
             </h2>
-            <p className="text-[#656565] mb-12 max-w-2xl leading-relaxed">
+            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed">
               Simple plans to get started. Scale when you have real usage.
             </p>
           </FadeIn>
@@ -216,15 +270,27 @@ export default function Home() {
         </Section>
 
         {/* Final CTA Section */}
-        <Section className="py-28">
-          <FadeIn className="text-center">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#d5d5d5] mb-4">
+        <Section className="py-28 relative overflow-hidden">
+          {/* Subtle background glow */}
+          <div className="absolute inset-0 bg-gradient-radial from-brand-lime/5 via-transparent to-transparent pointer-events-none" />
+
+          <FadeIn className="text-center relative z-10">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
               Ready to level up your workflow?
             </h2>
-            <p className="text-[#656565] mb-8 leading-relaxed max-w-xl mx-auto">
+            <p className="text-brand-gray mb-8 leading-relaxed max-w-xl mx-auto">
               Share a bit about your team and goals — we&apos;ll return a concrete blueprint.
             </p>
-            <Button as="link" href="/intake" variant="primary" size="lg">
+
+            <ScanLine color="lime" className="max-w-xs mx-auto mb-8" />
+
+            <Button
+              as="link"
+              href="/intake"
+              variant="primary"
+              size="lg"
+              className="animate-glow-pulse"
+            >
               Start the intake
             </Button>
           </FadeIn>
