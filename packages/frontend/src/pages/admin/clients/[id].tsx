@@ -15,12 +15,16 @@ export default function ClientDetailPage() {
   useEffect(() => {
     if (!id) return;
 
-    // Load the normalized config from the API
+    // Load the normalized config from the API. The API returns { config: {...} }.
     fetch(`/api/clients/${id}/config`)
       .then((res) => res.json())
-      .then(setConfig)
+      .then((data) => {
+        // store only the inner config object
+        setConfig(data?.config ?? null);
+      })
       .catch((err) => {
-        console.error('Error loading config', err);
+        console.error('Failed to load client config', err);
+        setConfig(null);
       });
   }, [id]);
 
