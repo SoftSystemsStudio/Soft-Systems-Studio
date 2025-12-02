@@ -64,14 +64,18 @@ export default function ClientDetailPage() {
     }
   }
 
-  const renderValue = (v: unknown) => {
-    if (v == null) return '-';
-    if (typeof v === 'string') return v;
-    if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+  const renderValue = (value: unknown): string => {
+    if (value === null || value === undefined) return '—';
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    if (Array.isArray(value)) {
+      return value.map((v) => renderValue(v)).join(', ');
+    }
     try {
-      return JSON.stringify(v);
+      return JSON.stringify(value);
     } catch {
-      return String(v);
+      return String(value);
     }
   };
 
