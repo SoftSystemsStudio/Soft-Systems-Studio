@@ -4,6 +4,11 @@ dist
 build
 .env
 .env.local
-pnpm-lock.yaml
+.env.*
+!.env.example
 Dockerfile
 .git
+.github
+*.log
+*.md
+!README.md
