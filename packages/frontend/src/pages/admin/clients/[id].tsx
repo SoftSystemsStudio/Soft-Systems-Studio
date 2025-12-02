@@ -2,7 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../../components/Layout';
 
-type ClientConfig = Record<string, any>;
+interface Subsystem {
+  id?: string;
+  type: string;
+  priority?: string;
+  notes?: string;
+  description?: string;
+  settings?: Record<string, unknown>;
+}
+
+interface Profile {
+  companyName?: string;
+  website?: string;
+  industry?: string;
+  size?: string;
+}
+
+interface Contact {
+  name?: string;
+  email?: string;
+  phone?: string;
+}
+
+interface ClientConfig {
+  profile?: Profile;
+  contact?: Contact;
+  subsystems?: Subsystem[];
+  [key: string]: unknown;
+}
 
 export default function ClientDetailPage() {
   const router = useRouter();
@@ -199,46 +226,48 @@ export default function ClientDetailPage() {
             <section>
               <h3>Systems</h3>
               <div style={{ display: 'grid', gap: 12 }}>
-                {(Array.isArray(config?.subsystems) ? config!.subsystems : []).map((s: any) => (
-                  <div
-                    key={s.id ?? s.type}
-                    style={{
-                      background: '#fff',
-                      borderRadius: 8,
-                      padding: 12,
-                      boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div>
-                        <strong>{s.type}</strong>
-                        <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
+                {(Array.isArray(config?.subsystems) ? config!.subsystems : []).map(
+                  (s: Subsystem) => (
+                    <div
+                      key={s.id ?? s.type}
+                      style={{
+                        background: '#fff',
+                        borderRadius: 8,
+                        padding: 12,
+                        boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div>
+                          <strong>{s.type}</strong>
+                          <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
+                        </div>
+                        <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
                       </div>
-                      <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
-                    </div>
 
-                    {s.settings && (
-                      <div style={{ marginTop: 8 }}>
-                        {Object.entries(s.settings).map(([k, v]) => (
-                          <div
-                            key={k}
-                            style={{
-                              display: 'flex',
-                              gap: 8,
-                              alignItems: 'center',
-                              marginTop: 6,
-                            }}
-                          >
-                            <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
-                            <div style={{ fontFamily: 'monospace', color: '#111' }}>
-                              {renderValue(v)}
+                      {s.settings && (
+                        <div style={{ marginTop: 8 }}>
+                          {Object.entries(s.settings).map(([k, v]) => (
+                            <div
+                              key={k}
+                              style={{
+                                display: 'flex',
+                                gap: 8,
+                                alignItems: 'center',
+                                marginTop: 6,
+                              }}
+                            >
+                              <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
+                              <div style={{ fontFamily: 'monospace', color: '#111' }}>
+                                {renderValue(v)}
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ),
+                )}
               </div>
             </section>
           </div>

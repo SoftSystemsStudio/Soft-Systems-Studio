@@ -53,3 +53,52 @@ a {
 button {
   font-family: inherit;
 }
+
+/* ============================================
+   Accessibility Enhancements
+   ============================================ */
+
+/* Visible focus outlines for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #818cf8; /* indigo-400 */
+  outline-offset: 2px;
+}
+
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 0.5rem 1rem;
+  background: #111827;
+  color: white;
+  text-decoration: underline;
+}
+.skip-link:focus {
+  left: 0;
+  top: 0;
+}
+
+/* Reduced motion: disable animations for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Improve text legibility on dark backgrounds */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection color for dark theme */
+::selection {
+  background-color: #6366f1; /* indigo-500 */
+  color: white;
+}
