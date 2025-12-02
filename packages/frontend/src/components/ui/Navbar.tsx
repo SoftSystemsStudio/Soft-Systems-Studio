@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Button from './Button';
 
 interface NavItem {
@@ -8,6 +9,7 @@ interface NavItem {
 }
 
 interface NavbarProps {
+  logo?: string;
   brand?: string;
   items?: NavItem[];
   ctaLabel?: string;
@@ -16,6 +18,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({
+  logo = '/images/S Logo - Black Blackground.png',
   brand = 'Soft Systems Studio',
   items = [],
   ctaLabel = 'Get Started',
@@ -31,9 +34,14 @@ export default function Navbar({
       className={`sticky top-0 z-50 backdrop-blur-md bg-gray-950/70 border-b border-white/5 ${className}`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Brand */}
-        <Link href="/" className="font-bold text-xl tracking-tight text-white">
-          {brand}
+        {/* Brand with Logo */}
+        <Link href="/" className="flex items-center gap-3">
+          {logo && (
+            <Image src={logo} alt={brand} width={36} height={36} className="h-9 w-9" priority />
+          )}
+          <span className="font-bold text-xl tracking-tight text-white hidden sm:block">
+            {brand}
+          </span>
         </Link>
 
         {/* Desktop nav */}
