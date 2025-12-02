@@ -357,42 +357,31 @@ export default function IntakePage() {
                 <label style={{ display: 'block', fontWeight: 500 }}>
                   Primary objectives * (choose the top outcomes you want to achieve)
                 </label>
-                <div
+                <select
+                  multiple
+                  value={form.primaryObjectives}
+                  onChange={(e) => {
+                    const opts = Array.from(e.target.selectedOptions).map((o) => o.value as Objective);
+                    update('primaryObjectives', opts as FormState['primaryObjectives']);
+                  }}
+                  size={6}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                    gap: 8,
+                    width: '100%',
                     marginTop: 6,
+                    padding: '8px 10px',
+                    borderRadius: 6,
+                    border: '1px solid #cbd5f5',
+                    backgroundColor: '#fff',
+                    minHeight: 160,
                   }}
                 >
-                  {(
-                    [
-                      ['reduce_support_volume', 'Reduce support volume/cost'],
-                      ['increase_leads', 'Increase inbound leads & calls'],
-                      ['increase_content_output', 'Increase content output'],
-                      ['improve_reporting', 'Improve reporting/insights'],
-                      ['automate_workflows', 'Automate manual workflows'],
-                      ['reduce_missed_calls', 'Reduce missed calls'],
-                    ] as [Objective, string][]
-                  ).map(([value, label]) => (
-                    <label
-                      key={value}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        fontSize: 14,
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={form.primaryObjectives.includes(value)}
-                        onChange={() => toggleObjective(value)}
-                      />
-                      {label}
-                    </label>
-                  ))}
-                </div>
+                  <option value="reduce_support_volume">Reduce support volume/cost</option>
+                  <option value="increase_leads">Increase inbound leads &amp; calls</option>
+                  <option value="increase_content_output">Increase content output</option>
+                  <option value="improve_reporting">Improve reporting/insights</option>
+                  <option value="automate_workflows">Automate manual workflows</option>
+                  <option value="reduce_missed_calls">Reduce missed calls</option>
+                </select>
                 {errors.primaryObjectives && (
                   <div style={{ color: '#b91c1c', marginTop: 4 }}>{errors.primaryObjectives}</div>
                 )}
@@ -402,41 +391,30 @@ export default function IntakePage() {
                 <label style={{ display: 'block', fontWeight: 500 }}>
                   Systems of interest (Phase 1 typically focuses on Support + Workflow)
                 </label>
-                <div
+                <select
+                  multiple
+                  value={form.systems}
+                  onChange={(e) => {
+                    const opts = Array.from(e.target.selectedOptions).map((o) => o.value as SystemInterest);
+                    update('systems', opts as FormState['systems']);
+                  }}
+                  size={5}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                    gap: 8,
+                    width: '100%',
                     marginTop: 6,
+                    padding: '8px 10px',
+                    borderRadius: 6,
+                    border: '1px solid #cbd5f5',
+                    backgroundColor: '#fff',
+                    minHeight: 120,
                   }}
                 >
-                  {(
-                    [
-                      ['support', 'AI Support System'],
-                      ['content', 'AI Content System'],
-                      ['data_bi', 'AI Data & BI System'],
-                      ['workflow', 'AI Workflow System'],
-                      ['voice', 'AI Voice Reception System'],
-                    ] as [SystemInterest, string][]
-                  ).map(([value, label]) => (
-                    <label
-                      key={value}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        fontSize: 14,
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={form.systems.includes(value)}
-                        onChange={() => toggleSystemInterest(value)}
-                      />
-                      {label}
-                    </label>
-                  ))}
-                </div>
+                  <option value="support">AI Support System</option>
+                  <option value="content">AI Content System</option>
+                  <option value="data_bi">AI Data &amp; BI System</option>
+                  <option value="workflow">AI Workflow System</option>
+                  <option value="voice">AI Voice Reception System</option>
+                </select>
               </div>
             </div>
           )}
@@ -604,42 +582,31 @@ export default function IntakePage() {
                 <label style={{ display: 'block', fontWeight: 500 }}>
                   Current customer support channels (where customers contact you today)
                 </label>
-                <div
+                <select
+                  multiple
+                  value={form.supportChannels}
+                  onChange={(e) => {
+                    const opts = Array.from(e.target.selectedOptions).map((o) => o.value as SupportChannel);
+                    update('supportChannels', opts as FormState['supportChannels']);
+                  }}
+                  size={6}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                    gap: 8,
+                    width: '100%',
                     marginTop: 6,
+                    padding: '8px 10px',
+                    borderRadius: 6,
+                    border: '1px solid #cbd5f5',
+                    backgroundColor: '#fff',
+                    minHeight: 160,
                   }}
                 >
-                  {(
-                    [
-                      ['email', 'Email'],
-                      ['web_chat', 'Website chat'],
-                      ['phone', 'Phone'],
-                      ['whatsapp', 'WhatsApp'],
-                      ['sms', 'SMS'],
-                      ['social_dm', 'Social DMs'],
-                    ] as [SupportChannel, string][]
-                  ).map(([value, label]) => (
-                    <label
-                      key={value}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        fontSize: 14,
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={form.supportChannels.includes(value)}
-                        onChange={() => toggleSupportChannel(value)}
-                      />
-                      {label}
-                    </label>
-                  ))}
-                </div>
+                  <option value="email">Email</option>
+                  <option value="web_chat">Website chat</option>
+                  <option value="phone">Phone</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="sms">SMS</option>
+                  <option value="social_dm">Social DMs</option>
+                </select>
               </div>
 
               <div>
