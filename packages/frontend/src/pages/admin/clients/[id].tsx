@@ -199,9 +199,23 @@ export default function ClientDetailPage() {
 
                 <details style={{ background: '#f6f8fa', padding: 12, borderRadius: 8 }}>
                   <summary style={{ cursor: 'pointer' }}>Raw config (debug)</summary>
-                  <pre style={{ marginTop: 8, whiteSpace: 'pre-wrap' }}>
+                  <div
+                    style={{
+                      marginTop: 8,
+                      border: '1px solid #e1e4e8',
+                      borderRadius: 8,
+                      padding: 12,
+                      background: '#ffffff',
+                      maxHeight: 320,
+                      overflowY: 'auto',
+                      whiteSpace: 'pre-wrap',
+                      fontSize: 13,
+                      lineHeight: 1.4,
+                      fontFamily: 'monospace',
+                    }}
+                  >
                     {JSON.stringify(config, null, 2)}
-                  </pre>
+                  </div>
                 </details>
               </div>
             )}
@@ -230,46 +244,25 @@ export default function ClientDetailPage() {
             >
               Generate Proposal (Phase 2)
             </button>
-            <div style={{ marginTop: 12 }}>
-              <h3>Actions</h3>
-              <button
-                onClick={genBrief}
-                disabled={loading}
-                style={{ display: 'block', marginBottom: 8 }}
+
+            <div style={{ marginTop: 16 }}>
+              <h3>Solution brief / proposal draft</h3>
+              <div
+                role="region"
+                aria-label="Solution brief preview"
+                style={{
+                  border: '1px solid #e1e4e8',
+                  borderRadius: 8,
+                  padding: 16,
+                  background: '#ffffff',
+                  maxHeight: 420,
+                  overflowY: 'auto',
+                  whiteSpace: 'pre-wrap',
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                }}
               >
-                {loading ? 'Working...' : 'Generate Solution Brief'}
-              </button>
-              <button
-                onClick={() => genProposal(1)}
-                disabled={loading}
-                style={{ display: 'block', marginBottom: 8 }}
-              >
-                Generate Proposal (Phase 1)
-              </button>
-              <button
-                onClick={() => genProposal(2)}
-                disabled={loading}
-                style={{ display: 'block', marginBottom: 8 }}
-              >
-                Generate Proposal (Phase 2)
-              </button>
-              <div style={{ marginTop: 16 }}>
-                <h3>Solution brief / proposal draft</h3>
-                <div
-                  style={{
-                    border: '1px solid #e1e4e8',
-                    borderRadius: 8,
-                    padding: 12,
-                    background: '#ffffff',
-                    maxHeight: 400,
-                    overflowY: 'auto',
-                    whiteSpace: 'pre-wrap',
-                    fontSize: 14,
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {output ?? 'No output yet. Generate a Solution Brief or Proposal to see it here.'}
-                </div>
+                {output ?? 'No output yet. Generate a Solution Brief or Proposal to see it here.'}
               </div>
             </div>
           </aside>
