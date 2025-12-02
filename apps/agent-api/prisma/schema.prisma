@@ -7,76 +7,142 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
+// ============================================
+// Core Models
+// ============================================
+
 model Workspace {
   id        String   @id @default(cuid())
   name      String
   slug      String?  @unique
   createdAt DateTime @default(now())
-  conversations Conversation[]
-  memberships WorkspaceMembership[]
-  refreshTokens RefreshToken[]
-}
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? // Soft delete
 
-model Conversation {
-  id           String   @id @default(cuid())
-  workspaceId  String
-  messages     Message[]
-  createdAt    DateTime @default(now())
-  workspace    Workspace @relation(fields: [workspaceId], references: [id])
-}
+  // Relations
+  conversations  Conversation[]
+  memberships    WorkspaceMembership[]
+  refreshTokens  RefreshToken[]
+  kbDocuments    KbDocument[]
 
-model Message {
-  id             String   @id @default(cuid())
-  conversationId String
-  role           String
-  content        String   @db.Text
-  createdAt      DateTime @default(now())
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
-}
-
-model KbDocument {
-  id         String   @id @default(cuid())
-  workspaceId String
-  title      String?
-  content    String   @db.Text
-  createdAt  DateTime @default(now())
+  @@index([slug])
+  @@index([createdAt])
 }
 
 model User {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  password    String
-  createdAt   DateTime @default(now())
-  memberships WorkspaceMembership[]
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? // Soft delete
+
+  // Relations
+  memberships   WorkspaceMembership[]
   refreshTokens RefreshToken[]
+
+  @@index([email])
+  @@index([createdAt])
 }
 
 model WorkspaceMembership {
   id          String   @id @default(cuid())
   workspaceId String
   userId      String
-  role        String
+  role        String   @default("member")
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  user        User      @relation(fields: [userId], references: [id])
+  // Relations with cascade delete
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([role])
 }
 
-// Refresh tokens for secure token rotation
-model RefreshToken {
+// ============================================
+// Conversation & Messages
+// ============================================
+
+model Conversation {
   id          String   @id @default(cuid())
-  token       String   @unique
+  workspaceId String
+  title       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime? // Soft delete
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@index([workspaceId])
+  @@index([createdAt])
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           String   // 'user' | 'assistant' | 'system'
+  content        String   @db.Text
+  createdAt      DateTime @default(now())
+
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([createdAt])
+}
+
+// ============================================
+// Knowledge Base
+// ============================================
+
+model KbDocument {
+  id          String   @id @default(cuid())
+  workspaceId String
+  title       String?
+  content     String   @db.Text
+  metadata    Json?    // Flexible metadata storage
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime? // Soft delete
+  createdBy   String?  // User ID who created
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([createdAt])
+  @@index([title])
+}
+
+// ============================================
+// Authentication
+// ============================================
+
+model RefreshToken {
+  id          String    @id @default(cuid())
+  token       String    @unique
   userId      String
   workspaceId String
   expiresAt   DateTime
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
   revokedAt   DateTime?
-  replacedBy  String?  // Points to the new token if rotated
+  replacedBy  String?   // Points to the new token if rotated
+  userAgent   String?   // Track device/browser
+  ipAddress   String?   // Track IP for security
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  // Relations with cascade delete
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([workspaceId])
   @@index([token])
+  @@index([expiresAt])
 }
