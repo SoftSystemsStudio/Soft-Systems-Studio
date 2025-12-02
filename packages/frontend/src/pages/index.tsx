@@ -1,309 +1,266 @@
 import React from 'react';
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import styles from '../styles/Home.module.css';
 
 export default function Home() {
   return (
     <Layout>
-      <main className={styles.page}>
-        {/* HERO */}
-        <section className={styles.hero}>
-          <div className={styles.heroContent}>
-            <div className={styles.heroBadge}>Soft Systems Studio · AI Automation</div>
-            <h1 className={styles.heroTitle}>
-              Turn operational chaos into
-              <span className={styles.heroHighlight}> a predictable, AI-driven system.</span>
-            </h1>
-            <p className={styles.heroSubtitle}>
-              For founders and lean teams who are done firefighting support, workflows, and
-              reporting. We design and implement AI systems that quietly handle the busywork while
-              you focus on growth.
-            </p>
+      {/* Dark gradient background spanning entire page */}
+      <main className="antialiased min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-gray-100">
+        {/* Ambient radial glow behind hero */}
+        <div className="pointer-events-none fixed inset-0 overflow-hidden">
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[120%] h-[600px] bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(120,119,198,0.25),transparent)]" />
+        </div>
 
-            <div className={styles.heroActions}>
-              <Link href="/intake" className={styles.primaryButton}>
-                Start your AI Automation Blueprint
+        {/* Header / Nav */}
+        <header className="sticky top-0 z-50 backdrop-blur-md bg-gray-950/70 border-b border-white/5">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div className="font-bold text-xl tracking-tight text-white">Soft Systems Studio</div>
+            <nav className="hidden md:flex items-center gap-8">
+              <a href="#features" className="text-sm text-gray-400 hover:text-white transition">
+                Features
+              </a>
+              <a href="#use-cases" className="text-sm text-gray-400 hover:text-white transition">
+                Use cases
+              </a>
+              <a href="#pricing" className="text-sm text-gray-400 hover:text-white transition">
+                Pricing
+              </a>
+              <a href="#faq" className="text-sm text-gray-400 hover:text-white transition">
+                FAQ
+              </a>
+              {/* Glowing CTA button */}
+              <Link
+                href="/intake"
+                className="ml-2 inline-block bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-semibold py-2 px-5 rounded-full shadow-lg shadow-purple-500/40 hover:shadow-purple-400/60 transition-shadow"
+              >
+                Get Started
               </Link>
-              <a href="#process" className={styles.secondaryButton}>
-                View the engagement model
+            </nav>
+          </div>
+        </header>
+
+        {/* HERO */}
+        <section className="relative min-h-[90vh] flex items-center justify-center">
+          <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+            <span className="inline-block mb-4 text-xs uppercase tracking-widest text-indigo-400 font-medium">
+              AI Automation Agency
+            </span>
+            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
+              Automate Smarter.<br className="hidden sm:block" /> Grow Faster.
+            </h1>
+            <p className="text-lg md:text-xl leading-relaxed text-gray-300 max-w-2xl mx-auto mb-10">
+              Design, deploy, and run AI systems for support, content, data, workflows, and voice.
+              One intake, a clear systems blueprint, and a phased rollout.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {/* Primary glowing button */}
+              <Link
+                href="/intake"
+                className="inline-block bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-purple-500/50 hover:shadow-purple-400 transition-shadow"
+              >
+                Start the intake
+              </Link>
+              {/* Secondary ghost button */}
+              <a
+                href="#features"
+                className="inline-block py-3 px-8 rounded-full border border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white transition"
+              >
+                Explore features
               </a>
             </div>
-
-            <p className={styles.heroFootnote}>
-              Complete a focused intake. We return a tailored Solution Brief and Phase 1
-              implementation plan—built from your real workflows and tools.
-            </p>
           </div>
+        </section>
 
-          <aside className={styles.heroAside}>
-            <div className={styles.heroCard}>
-              <h3>What changes after we work together</h3>
-              <ul>
-                <li>Support noise drops; repeat questions handled by AI.</li>
-                <li>Key workflows run reliably without manual chasing.</li>
-                <li>Reporting stops being a fire drill and becomes a weekly habit.</li>
-              </ul>
-              <div className={styles.heroCardMeta}>
-                Designed for service businesses, agencies, and lean SaaS teams that feel “maxed out”
-                but still growing.
+        {/* FEATURE HIGHLIGHTS */}
+        <section id="features" className="relative py-28">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              Core systems we deploy
+            </h2>
+            <p className="text-gray-400 max-w-2xl mb-12 leading-relaxed">
+              Agency on the front, configurable platform on the back.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  title: 'AI Support Systems',
+                  desc: 'Web chat, email, SMS and social triage with context-preserving handoffs.',
+                },
+                {
+                  title: 'AI Content Systems',
+                  desc: 'A content engine that produces on-brand drafts for campaigns and posts.',
+                },
+                {
+                  title: 'AI Data & BI',
+                  desc: 'Query billing, CRM and ad data in plain language for fast insights.',
+                },
+                {
+                  title: 'AI Workflow Systems',
+                  desc: 'Automate qualification, reminders, and hand-offs with transparent flows.',
+                },
+                {
+                  title: 'AI Voice Reception',
+                  desc: 'Capture and qualify calls, book meetings, or route to humans.',
+                },
+                {
+                  title: 'Integrations',
+                  desc: 'Connect Stripe, HubSpot, Slack, Calendly, Notion and more.',
+                },
+              ].map((f) => (
+                <div
+                  key={f.title}
+                  className="group bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 p-6 rounded-2xl shadow-xl shadow-black/30 transition"
+                >
+                  <h3 className="font-semibold text-white mb-2 group-hover:text-indigo-400 transition-colors">
+                    {f.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* USE CASES / HOW IT WORKS */}
+        <section id="use-cases" className="py-24 bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">How it works</h2>
+            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed">
+              Intake → Blueprint → Deploy → Iterate. We prioritize high-leverage systems and ship
+              fast.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { step: '01', title: 'Intake & discovery' },
+                { step: '02', title: 'Systems blueprint & roadmap' },
+                { step: '03', title: 'Deploy, tune, and scale' },
+              ].map((s) => (
+                <div
+                  key={s.step}
+                  className="relative p-8 rounded-2xl border border-gray-700/50 bg-gray-800/40 shadow-lg shadow-black/20"
+                >
+                  <span className="block text-5xl font-bold text-indigo-500/30 mb-2">{s.step}</span>
+                  <h3 className="text-lg font-semibold text-white">{s.title}</h3>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* TESTIMONIALS */}
+        <section id="testimonials" className="py-24">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">Trusted by teams</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { quote: '"We cut support load by 40%"', author: 'Customer A' },
+                { quote: '"Content output tripled in a month"', author: 'Customer B' },
+                { quote: '"Reporting became actionable"', author: 'Customer C' },
+              ].map((t) => (
+                <div
+                  key={t.author}
+                  className="p-6 rounded-2xl border border-gray-700/50 bg-gray-800/30 shadow-lg shadow-black/20"
+                >
+                  <p className="text-lg text-gray-200 mb-4">{t.quote}</p>
+                  <span className="text-sm text-gray-500">— {t.author}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* PRICING */}
+        <section id="pricing" className="py-24 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">Pricing</h2>
+            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed">
+              Simple plans to get started. Scale when you have real usage.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Starter */}
+              <div className="flex flex-col p-8 rounded-2xl border border-gray-700/50 bg-gray-800/40 shadow-lg shadow-black/20">
+                <h3 className="text-xl font-semibold text-white mb-2">Starter</h3>
+                <p className="text-gray-400 text-sm mb-6">Blueprint only</p>
+                <div className="mt-auto">
+                  <span className="block text-3xl font-bold text-white mb-4">$2,500</span>
+                  <a
+                    href="/intake"
+                    className="block text-center py-3 rounded-full border border-gray-600 text-gray-300 hover:border-gray-400 transition"
+                  >
+                    Get started
+                  </a>
+                </div>
+              </div>
+              {/* Recommended */}
+              <div className="relative flex flex-col p-8 rounded-2xl border-2 border-purple-500 bg-gray-800/60 shadow-xl shadow-purple-500/20">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  Recommended
+                </span>
+                <h3 className="text-xl font-semibold text-white mb-2">Implementation Sprint</h3>
+                <p className="text-gray-400 text-sm mb-6">Full build &amp; handoff</p>
+                <div className="mt-auto">
+                  <span className="block text-3xl font-bold text-white mb-4">$10,000</span>
+                  <Link
+                    href="/intake"
+                    className="block text-center py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold shadow-lg shadow-purple-500/40 hover:shadow-purple-400 transition-shadow"
+                  >
+                    Start sprint
+                  </Link>
+                </div>
+              </div>
+              {/* Retainer */}
+              <div className="flex flex-col p-8 rounded-2xl border border-gray-700/50 bg-gray-800/40 shadow-lg shadow-black/20">
+                <h3 className="text-xl font-semibold text-white mb-2">Ongoing Partner</h3>
+                <p className="text-gray-400 text-sm mb-6">Retainer &amp; optimization</p>
+                <div className="mt-auto">
+                  <span className="block text-3xl font-bold text-white mb-4">Custom</span>
+                  <a
+                    href="/intake"
+                    className="block text-center py-3 rounded-full border border-gray-600 text-gray-300 hover:border-gray-400 transition"
+                  >
+                    Contact us
+                  </a>
+                </div>
               </div>
             </div>
-          </aside>
-        </section>
-
-        {/* VALUE STRIP */}
-        <section className={styles.valueStrip}>
-          You already have tools—email, chat, CRM, project management. Our job is to design the AI
-          layer that makes them feel like one system instead of a pile of tabs.
-        </section>
-
-        {/* BENEFITS */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2>Strategic systems, not one-off AI experiments</h2>
-            <p>
-              We build around three leverage points: how customers talk to you, how work moves
-              through your team, and how you see what is actually happening.
-            </p>
-          </div>
-
-          <div className={styles.grid3}>
-            <div className={styles.card}>
-              <h3>AI Support Systems</h3>
-              <p>
-                Consolidated support across email, social, SMS, and chat. AI handles FAQs, routing,
-                and first responses so your team only touches the work that truly needs their mind.
-              </p>
-            </div>
-            <div className={styles.card}>
-              <h3>Workflow Automation</h3>
-              <p>
-                Automate hand-offs, reminders, and status changes across ops and marketing. No more
-                “who owns this?” threads—each workflow has a clear owner and state.
-              </p>
-            </div>
-            <div className={styles.card}>
-              <h3>Data & Reporting</h3>
-              <p>
-                Translate activity across tools into a single operational view. We instrument the
-                right metrics so you can steer the business without refreshing five dashboards.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* PROCESS */}
-        <section id="process" className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2>An engagement model built for busy founders</h2>
-            <p>
-              Clear phases, clear outputs. You always know what you are getting, what we are
-              touching, and how it connects back to business impact.
-            </p>
-          </div>
-
-          <div className={styles.processGrid}>
-            <div className={styles.processStep}>
-              <div className={styles.stepNumber}>01</div>
-              <h3>Intake & Blueprint</h3>
-              <p>
-                You complete the intake and a short discovery call. We map your support, workflows,
-                and data into a structured ClientConfig, then generate a Solution Brief and Phase 1
-                proposal.
-              </p>
-            </div>
-            <div className={styles.processStep}>
-              <div className={styles.stepNumber}>02</div>
-              <h3>Phase 1 Build</h3>
-              <p>
-                We implement a focused slice—typically AI support + workflow automation—connected to
-                your existing stack. The target is a visible reduction in manual noise within the
-                first weeks.
-              </p>
-            </div>
-            <div className={styles.processStep}>
-              <div className={styles.stepNumber}>03</div>
-              <h3>Scale & Deepen</h3>
-              <p>
-                With the first system running, we extend into richer workflows, additional channels,
-                and reporting. Each iteration is based on live usage and measurable outcomes.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* METRICS / PROOF – FRAMED AS DESIRED OUTCOMES */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2>Designed to change how your week feels</h2>
-            <p>
-              We anchor each build around a small set of measurable shifts that you can feel in your
-              calendar and see in your metrics.
-            </p>
-          </div>
-
-          <div className={styles.metricsGrid}>
-            <div className={styles.metricCard}>
-              <div className={styles.metricValue}>40–70%</div>
-              <div className={styles.metricLabel}>
-                of repeat inquiries deflected or resolved by AI before a human ever reads them.
-              </div>
-            </div>
-            <div className={styles.metricCard}>
-              <div className={styles.metricValue}>2–3 hrs/day</div>
-              <div className={styles.metricLabel}>
-                reclaimed across the team from manual follow-ups, chasing status, and ad-hoc
-                reporting.
-              </div>
-            </div>
-            <div className={styles.metricCard}>
-              <div className={styles.metricValue}>1 source</div>
-              <div className={styles.metricLabel}>
-                of truth for support, ops, and marketing performance—built on top of tools you
-                already use.
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* INTEGRATIONS */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2>Built around your current stack, not against it</h2>
-            <p>
-              We actively avoid “new platform” fatigue. Instead, we wrap your existing tools with a
-              coherent automation and data layer.
-            </p>
-          </div>
-
-          <div className={styles.integrationsRow}>
-            <div className={styles.integrationBadge}>HubSpot / Pipedrive</div>
-            <div className={styles.integrationBadge}>Intercom / Zendesk</div>
-            <div className={styles.integrationBadge}>Slack & Email</div>
-            <div className={styles.integrationBadge}>Google Workspace</div>
-            <div className={styles.integrationBadge}>Notion / ClickUp / Asana</div>
-          </div>
-        </section>
-
-        {/* PRICING / ENGAGEMENT STRUCTURE */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2>Engagement structure, at a glance</h2>
-            <p>
-              Simple structure: one strategic blueprint, one focused build, optional ongoing
-              partnership. You stay in control of scope and spend.
-            </p>
-          </div>
-
-          <div className={styles.pricingGrid}>
-            <div className={styles.pricingCard}>
-              <div className={styles.pricingTagline}>01 · Strategic</div>
-              <h3>AI Automation Blueprint</h3>
-              <p className={styles.pricingNote}>
-                The front door to everything. Intake, discovery, ClientConfig, Solution Brief, and a
-                concrete Phase 1 proposal.
-              </p>
-              <ul>
-                <li>Structured intake, tailored to your business</li>
-                <li>ClientConfig and architecture design</li>
-                <li>Solution brief & Phase 1 implementation plan</li>
-              </ul>
-            </div>
-
-            <div className={`${styles.pricingCard} ${styles.pricingCardPrimary}`}>
-              <div className={styles.pricingTagline}>02 · Implementation</div>
-              <h3>Phase 1 Build</h3>
-              <p className={styles.pricingNote}>
-                A tightly scoped sprint focused on one or two systems that meaningfully reduce
-                operational drag.
-              </p>
-              <ul>
-                <li>AI support + workflow automation implementation</li>
-                <li>Integration with your existing tools and channels</li>
-                <li>Training, handover, and measurement plan</li>
-              </ul>
-              <Link href="/intake" className={styles.primaryButton}>
-                Start with the Blueprint
-              </Link>
-            </div>
-
-            <div className={styles.pricingCard}>
-              <div className={styles.pricingTagline}>03 · Ongoing</div>
-              <h3>Continuous Optimization</h3>
-              <p className={styles.pricingNote}>
-                Optional retainer to iterate on automations, add new flows, and deepen reporting as
-                your operations evolve.
-              </p>
-              <ul>
-                <li>New flows and channels added incrementally</li>
-                <li>Performance reviews and tuning</li>
-                <li>Roadmapping for future automation phases</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* FAQ */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2>Key questions before you start</h2>
-            <p>
-              The intake is low-risk: you invest time and context; we return a concrete plan. These
-              are the questions that usually show up first.
-            </p>
-          </div>
-
-          <div className={styles.faqList}>
-            <details className={styles.faqItem}>
-              <summary>What do you actually deliver after the intake?</summary>
-              <p>
-                You receive a structured ClientConfig, a Solution Brief outlining recommended
-                systems and architecture, and a Phase 1 proposal with objectives, deliverables,
-                timeline, and commercial model.
-              </p>
-            </details>
-
-            <details className={styles.faqItem}>
-              <summary>Are we locked into a long-term contract?</summary>
-              <p>
-                No. The Blueprint and Phase 1 are discrete engagements. Ongoing optimization is
-                optional and only makes sense once the initial system is delivering value.
-              </p>
-            </details>
-
-            <details className={styles.faqItem}>
-              <summary>How opinionated are you about tools?</summary>
-              <p>
-                We are tool-agnostic but opinionated about systems behavior. We work with your
-                existing stack where possible and only recommend new tools if they materially
-                simplify the architecture.
-              </p>
-            </details>
-
-            <details className={styles.faqItem}>
-              <summary>What size / stage of company is this for?</summary>
-              <p>
-                Typically founder-led companies with 3–50 people, where the leadership team still
-                feels day-to-day operational drag and needs leverage rather than headcount.
-              </p>
-            </details>
           </div>
         </section>
 
         {/* FINAL CTA */}
-        <section className={styles.finalCta}>
-          <div className={styles.finalCtaInner}>
-            <h2>Ready to design the system that replaces the chaos?</h2>
-            <p>
-              Start the intake. We will translate your reality into a concrete AI automation plan
-              that you can implement with us or internally.
+        <section className="py-28">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
+              Ready to level up your workflow?
+            </h2>
+            <p className="text-gray-400 mb-8 leading-relaxed max-w-xl mx-auto">
+              Share a bit about your team and goals — we&apos;ll return a concrete blueprint.
             </p>
-            <Link href="/intake" className={styles.primaryButton}>
-              Begin the AI Automation Intake
+            <Link
+              href="/intake"
+              className="inline-block bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-3 px-10 rounded-full shadow-lg shadow-purple-500/50 hover:shadow-purple-400 transition-shadow"
+            >
+              Start the intake
             </Link>
           </div>
         </section>
+
+        {/* FOOTER */}
+        <footer className="border-t border-white/5 py-10 bg-gray-950">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-gray-500">
+              &copy; {new Date().getFullYear()} Soft Systems Studio
+            </div>
+            <div className="flex gap-6">
+              <a href="#" className="text-gray-500 hover:text-gray-300 text-sm transition">
+                Privacy
+              </a>
+              <a href="#" className="text-gray-500 hover:text-gray-300 text-sm transition">
+                Terms
+              </a>
+            </div>
+          </div>
+        </footer>
       </main>
     </Layout>
   );
