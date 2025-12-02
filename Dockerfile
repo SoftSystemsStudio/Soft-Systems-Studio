@@ -1,9 +1,23 @@
 FROM node:22-slim AS builder
 WORKDIR /app
-COPY . .
+
+# Enable pnpm first
 RUN corepack enable && corepack prepare pnpm@8.11.0 --activate
-RUN pnpm -w install --frozen-lockfile
-RUN pnpm -w -r build
+
+# Copy package files and lockfile first for better caching
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages/api/package.json ./packages/api/
+COPY packages/core-llm/package.json ./packages/core-llm/
+COPY apps/agent-api/package.json ./apps/agent-api/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build all packages
+RUN pnpm -r build
 
 FROM node:22-slim AS runtime
 WORKDIR /app
