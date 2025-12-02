@@ -99,7 +99,10 @@ router.post('/clients/:id/solution-brief', async (req: Request, res: Response) =
           where: { id: existing.id },
           data: { content },
         });
-        return res.json({ draft: content, saved: { id: updated.id, updatedAt: updated.updatedAt } });
+        return res.json({
+          draft: content,
+          saved: { id: updated.id, updatedAt: updated.updatedAt },
+        });
       }
 
       const created = await prisma.proposalDraft.create({
@@ -145,7 +148,10 @@ router.post('/clients/:id/proposal', async (req: Request, res: Response) => {
           where: { id: existing.id },
           data: { content },
         });
-        return res.json({ draft: content, saved: { id: updated.id, updatedAt: updated.updatedAt } });
+        return res.json({
+          draft: content,
+          saved: { id: updated.id, updatedAt: updated.updatedAt },
+        });
       }
 
       const created = await prisma.proposalDraft.create({
