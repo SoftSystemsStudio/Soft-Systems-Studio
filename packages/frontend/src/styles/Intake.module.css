@@ -1,13 +1,12 @@
-:root {
+.page {
+  /* Design tokens scoped to this page */
   --color-bg: #000000;
   --color-text: #111111;
   --color-muted: #656565;
   --color-border: #d5d5d5;
   --color-surface: #f7f7f7;
   --color-accent: #c0ff6b;
-}
 
-.page {
   padding: 40px 24px 72px;
   max-width: 1120px;
   margin: 0 auto;
