@@ -14,14 +14,17 @@
     "start": "pnpm --filter api start",
     "lint:fix": "pnpm -w -r lint -- --fix",
     "lint": "pnpm -w -r lint",
+    "typecheck": "pnpm -r exec tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "test": "pnpm -w -r test",
+    "test:ci": "pnpm -w -r test -- --ci --coverage",
     "sync-env": "node scripts/sync-env.js",
     "check-env-committed": "node scripts/check-env-committed.js",
     "scan-placeholders": "node scripts/scan-placeholders.js",
     "check-git-lfs": "node scripts/check-git-lfs.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",

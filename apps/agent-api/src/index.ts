@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import prisma from './db';
 import healthRouter from './health';
+import statusRouter from './status';
 import onboardingRouter from './api/v1/auth/onboarding';
 import loginRouter from './api/v1/auth/login';
 import tokenRouter from './api/v1/auth/token';
@@ -12,6 +13,10 @@ import { metricsHandler } from './metrics';
 import requireAuth from './middleware/auth-combined';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
+import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
+
+// Initialize Sentry early (before any routes)
+initSentry();
 
 // Import handler using require to bypass TypeScript rootDir constraints
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
@@ -21,7 +26,10 @@ const { handleChat } = require('@softsystems/agent-customer-service') as {
 
 const app = express();
 
-// Request logging (first middleware)
+// Sentry request handler (must be first middleware)
+app.use(sentryRequestHandler);
+
+// Request logging (early middleware)
 app.use(httpLogger);
 
 app.use(bodyParser.json());
@@ -70,6 +78,7 @@ app.post('/api/agents/customer-service/chat', async (req: Request, res: Response
 });
 
 app.use('/health', healthRouter);
+app.use('/status', statusRouter);
 app.use('/api/v1/agents/customer-service', customerServiceRouter);
 app.use('/api/v1/auth', onboardingRouter);
 app.use('/api/v1/auth', loginRouter);
@@ -81,6 +90,9 @@ app.use('/api/v1/agents', requireAuth);
 
 // 404 handler for unmatched routes
 app.use(notFoundHandler);
+
+// Sentry error handler (must be before custom error handler)
+app.use(sentryErrorHandler);
 
 // Global error handler (must be last)
 app.use(errorHandler);

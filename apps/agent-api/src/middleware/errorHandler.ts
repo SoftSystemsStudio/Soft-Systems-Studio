@@ -4,6 +4,8 @@
  */
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
+import { captureException } from '../sentry';
+import { logger } from '../logger';
 
 /**
  * Custom application error class with status codes
@@ -93,20 +95,31 @@ export function errorHandler(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction,
 ): void {
-  // Log error (will be replaced by Pino in next step)
-  const logError: Record<string, unknown> = {
+  // Prepare error context for logging
+  const errorContext = {
     message: err.message,
-    stack: err.stack,
     url: req.url,
     method: req.method,
-    body: req.body as unknown,
-    params: req.params,
-    query: req.query,
     userId: (req as { userId?: string }).userId,
+    workspaceId: (req as { workspaceId?: string }).workspaceId,
+    requestId: (req as { id?: string }).id,
   };
 
+  // Capture error with Sentry for 5xx errors
+  if (!(err instanceof AppError) || err.statusCode >= 500) {
+    const sentryId = captureException(err, errorContext);
+    if (sentryId) {
+      logger.error({ err, sentryId, ...errorContext }, 'Error captured by Sentry');
+    }
+  }
+
+  // Log error with structured logging
   if (process.env.NODE_ENV !== 'test') {
-    console.error('Request error:', JSON.stringify(logError, null, 2));
+    if (err instanceof AppError && err.statusCode < 500) {
+      logger.warn({ err, ...errorContext }, 'Client error');
+    } else {
+      logger.error({ err, ...errorContext }, 'Server error');
+    }
   }
 
   // Handle Zod validation errors
