@@ -17,7 +17,7 @@ export class AppError extends Error {
     message: string,
     statusCode: number = 500,
     code?: string,
-    isOperational: boolean = true
+    isOperational: boolean = true,
   ) {
     super(message);
     this.statusCode = statusCode;
@@ -91,15 +91,15 @@ export function errorHandler(
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: NextFunction
+  _next: NextFunction,
 ): void {
   // Log error (will be replaced by Pino in next step)
-  const logError = {
+  const logError: Record<string, unknown> = {
     message: err.message,
     stack: err.stack,
     url: req.url,
     method: req.method,
-    body: req.body,
+    body: req.body as unknown,
     params: req.params,
     query: req.query,
     userId: (req as { userId?: string }).userId,
@@ -174,7 +174,7 @@ export function errorHandler(
 
 /**
  * Wrapper for async route handlers to catch errors and pass to error middleware
- * 
+ *
  * @example
  * router.get('/users/:id', asyncHandler(async (req, res) => {
  *   const user = await getUser(req.params.id);
@@ -183,7 +183,7 @@ export function errorHandler(
  * }));
  */
 export function asyncHandler(
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
 ) {
   return (req: Request, res: Response, next: NextFunction): void => {
     Promise.resolve(fn(req, res, next)).catch(next);
