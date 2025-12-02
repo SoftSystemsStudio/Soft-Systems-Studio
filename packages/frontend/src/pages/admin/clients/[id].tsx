@@ -231,8 +231,46 @@ export default function ClientDetailPage() {
               Generate Proposal (Phase 2)
             </button>
             <div style={{ marginTop: 12 }}>
-              <h3>Output</h3>
-              <pre style={{ background: '#fff', padding: 12 }}>{output ?? 'No output yet.'}</pre>
+              <h3>Actions</h3>
+              <button
+                onClick={genBrief}
+                disabled={loading}
+                style={{ display: 'block', marginBottom: 8 }}
+              >
+                {loading ? 'Working...' : 'Generate Solution Brief'}
+              </button>
+              <button
+                onClick={() => genProposal(1)}
+                disabled={loading}
+                style={{ display: 'block', marginBottom: 8 }}
+              >
+                Generate Proposal (Phase 1)
+              </button>
+              <button
+                onClick={() => genProposal(2)}
+                disabled={loading}
+                style={{ display: 'block', marginBottom: 8 }}
+              >
+                Generate Proposal (Phase 2)
+              </button>
+              <div style={{ marginTop: 16 }}>
+                <h3>Solution brief / proposal draft</h3>
+                <div
+                  style={{
+                    border: '1px solid #e1e4e8',
+                    borderRadius: 8,
+                    padding: 12,
+                    background: '#ffffff',
+                    maxHeight: 400,
+                    overflowY: 'auto',
+                    whiteSpace: 'pre-wrap',
+                    fontSize: 14,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {output ?? 'No output yet. Generate a Solution Brief or Proposal to see it here.'}
+                </div>
+              </div>
             </div>
           </aside>
         </div>
