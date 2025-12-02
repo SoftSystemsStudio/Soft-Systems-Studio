@@ -3,7 +3,7 @@ import express from 'express';
 import { ingestQueue } from './queue';
 
 const collectDefault = client.collectDefaultMetrics;
-collectDefault({ timeout: 5000 });
+collectDefault();
 
 // custom metrics
 export const queueWaitingGauge = new client.Gauge({
@@ -33,7 +33,7 @@ async function updateQueueMetrics() {
 setInterval(updateQueueMetrics, 5000);
 
 // small express server to expose metrics when run standalone (optional)
-export function metricsHandler(req: express.Request, res: express.Response) {
+export function metricsHandler(_req: express.Request, res: express.Response) {
   res.set('Content-Type', client.register.contentType);
   client.register
     .metrics()

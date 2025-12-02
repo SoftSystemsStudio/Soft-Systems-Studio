@@ -6,7 +6,9 @@ export function requireApiKey(req: Request, res: Response, next: NextFunction) {
   if (!configured) return next(); // no API key configured: allow through (dev mode)
 
   const key =
-    (req.headers['x-api-key'] as string) || req.query.api_key || req.headers['authorization'];
+    (req.headers['x-api-key'] as string | undefined) ??
+    (typeof req.query.api_key === 'string' ? req.query.api_key : undefined) ??
+    (req.headers['authorization'] as string | undefined);
   if (!key) return res.status(401).json({ error: 'missing_api_key' });
   // accept either the raw key or Bearer <key>
   const normalized = key.startsWith('Bearer ') ? key.replace('Bearer ', '') : key;

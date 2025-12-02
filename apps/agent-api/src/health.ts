@@ -4,7 +4,7 @@ import env from './env';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
   let db = false;
   try {
     // lightweight DB connectivity check
