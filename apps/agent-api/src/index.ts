@@ -9,6 +9,7 @@ import onboardingRouter from './api/v1/auth/onboarding';
 import loginRouter from './api/v1/auth/login';
 import tokenRouter from './api/v1/auth/token';
 import customerServiceRouter from './api/v1/agents/customer_service';
+import cleanupRouter from './api/v1/admin/cleanup';
 import { metricsHandler } from './metrics';
 import requireAuth from './middleware/auth-combined';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -83,6 +84,7 @@ app.use('/api/v1/agents/customer-service', customerServiceRouter);
 app.use('/api/v1/auth', onboardingRouter);
 app.use('/api/v1/auth', loginRouter);
 app.use('/api/v1/auth', tokenRouter);
+app.use('/api/v1/admin', cleanupRouter);
 app.get('/metrics', metricsHandler);
 
 // Apply auth middleware to protected routes
