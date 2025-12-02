@@ -55,6 +55,7 @@ export function validateBody<T extends ZodSchema>(
     }
 
     // Replace body with parsed/transformed data
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     req.body = result.data;
     next();
   };
@@ -74,6 +75,7 @@ export function validateQuery<T extends ZodSchema>(
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     req.query = result.data;
     next();
   };
@@ -93,6 +95,7 @@ export function validateParams<T extends ZodSchema>(
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     req.params = result.data;
     next();
   };
@@ -151,7 +154,13 @@ export const slugSchema = z
   .string()
   .min(2, 'Slug must be at least 2 characters')
   .max(50, 'Slug must be at most 50 characters')
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase alphanumeric with hyphens');
+  .regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens')
+  .refine((val) => !val.startsWith('-') && !val.endsWith('-'), {
+    message: 'Slug cannot start or end with a hyphen',
+  })
+  .refine((val) => !val.includes('--'), {
+    message: 'Slug cannot contain consecutive hyphens',
+  });
 
 // Re-export zod for convenience
 export { z };

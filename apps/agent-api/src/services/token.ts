@@ -34,8 +34,8 @@ export function createAccessToken(payload: Omit<AccessTokenPayload, 'type'>): st
   const secret = env.JWT_SECRET;
   if (!secret) throw new Error('JWT_SECRET not configured');
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return jwt.sign({ ...payload, type: 'access' } as any, secret, {
+  const tokenPayload: AccessTokenPayload = { ...payload, type: 'access' };
+  return jwt.sign(tokenPayload as object, secret, {
     algorithm: env.JWT_ALGORITHM as jwt.Algorithm,
     expiresIn: TOKEN_CONFIG.accessToken.expiresIn as jwt.SignOptions['expiresIn'],
   });

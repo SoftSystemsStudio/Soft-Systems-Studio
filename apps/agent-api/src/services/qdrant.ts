@@ -15,9 +15,7 @@ function url(path: string) {
 async function ensureCollection() {
   // create collection if not exists with default vector size 1536
   try {
-    await fetch(url(`/collections/${QDRANT_COLLECTION}`)).then((r: Response) =>
-      r.json()
-    );
+    await fetch(url(`/collections/${QDRANT_COLLECTION}`)).then((r: Response) => r.json());
   } catch (e) {
     // Try to create it
     await fetch(url('/collections'), {
