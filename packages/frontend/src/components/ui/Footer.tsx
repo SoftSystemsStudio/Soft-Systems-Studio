@@ -24,9 +24,9 @@ export default function Footer({
   className = '',
 }: FooterProps) {
   return (
-    <footer className={`border-t border-white/5 py-10 bg-gray-950 ${className}`}>
+    <footer className={`border-t border-[#2a2a2a] py-10 bg-black ${className}`}>
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-[#656565]">
           {logo && <Image src={logo} alt={brand} width={28} height={28} className="h-7 w-7" />}
           <span>
             &copy; {new Date().getFullYear()} {brand}
@@ -37,7 +37,7 @@ export default function Footer({
             <Link
               key={link.href}
               href={link.href}
-              className="text-gray-500 hover:text-gray-300 text-sm transition focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded"
+              className="text-[#656565] hover:text-[#c0ff6b] text-sm transition focus:outline-none focus:ring-2 focus:ring-[#c0ff6b] rounded"
             >
               {link.label}
             </Link>

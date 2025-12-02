@@ -31,7 +31,7 @@ export default function Navbar({
 
   return (
     <header
-      className={`sticky top-0 z-50 backdrop-blur-md bg-gray-950/70 border-b border-white/5 ${className}`}
+      className={`sticky top-0 z-50 backdrop-blur-md bg-black/70 border-b border-[#2a2a2a] ${className}`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Brand with Logo */}
@@ -39,7 +39,7 @@ export default function Navbar({
           {logo && (
             <Image src={logo} alt={brand} width={36} height={36} className="h-9 w-9" priority />
           )}
-          <span className="font-bold text-xl tracking-tight text-white hidden sm:block">
+          <span className="font-bold text-xl tracking-tight text-[#d5d5d5] hidden sm:block">
             {brand}
           </span>
         </Link>
@@ -50,7 +50,7 @@ export default function Navbar({
             <a
               key={item.href}
               href={item.href}
-              className="text-sm text-gray-400 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded"
+              className="text-sm text-[#656565] hover:text-[#c0ff6b] transition focus:outline-none focus:ring-2 focus:ring-[#c0ff6b] rounded"
             >
               {item.label}
             </a>
@@ -65,7 +65,7 @@ export default function Navbar({
           type="button"
           aria-label="Toggle navigation menu"
           aria-expanded={mobileOpen}
-          className="md:hidden p-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded"
+          className="md:hidden p-2 text-[#656565] hover:text-[#d5d5d5] focus:outline-none focus:ring-2 focus:ring-[#c0ff6b] rounded"
           onClick={toggleMobile}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,12 +90,12 @@ export default function Navbar({
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <nav className="md:hidden bg-gray-900 border-t border-white/5 px-6 py-4 space-y-4">
+        <nav className="md:hidden bg-black border-t border-[#2a2a2a] px-6 py-4 space-y-4">
           {items.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="block text-gray-300 hover:text-white transition"
+              className="block text-[#656565] hover:text-[#c0ff6b] transition"
               onClick={() => setMobileOpen(false)}
             >
               {item.label}

@@ -15,17 +15,17 @@ export default function FeatureCard({
 }: FeatureCardProps) {
   return (
     <div
-      className={`group bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 p-6 rounded-2xl shadow-xl shadow-black/30 transition-all duration-300 ${className}`}
+      className={`group bg-[#0a0a0a] hover:bg-[#111111] border border-[#2a2a2a] p-6 rounded-2xl shadow-xl shadow-black/30 transition-all duration-300 hover:border-[#c0ff6b]/50 ${className}`}
     >
       {icon && (
-        <div className="mb-4 text-indigo-400 group-hover:text-indigo-300 transition-colors">
+        <div className="mb-4 text-[#c0ff6b] group-hover:text-[#d4ff8f] transition-colors">
           {icon}
         </div>
       )}
-      <h3 className="font-semibold text-white mb-2 group-hover:text-indigo-400 transition-colors">
+      <h3 className="font-semibold text-[#d5d5d5] mb-2 group-hover:text-[#c0ff6b] transition-colors">
         {title}
       </h3>
-      <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
+      <p className="text-[#656565] text-sm leading-relaxed">{description}</p>
     </div>
   );
 }

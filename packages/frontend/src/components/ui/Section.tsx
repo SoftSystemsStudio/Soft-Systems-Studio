@@ -9,8 +9,8 @@ interface SectionProps {
 
 const gradientClasses: Record<'none' | 'subtle' | 'dark', string> = {
   none: '',
-  subtle: 'bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900',
-  dark: 'bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950',
+  subtle: 'bg-gradient-to-b from-black via-[#0a0a0a] to-black',
+  dark: 'bg-gradient-to-b from-[#0a0a0a] via-black to-[#0a0a0a]',
 };
 
 export default function Section({ children, id, className = '', gradient = 'none' }: SectionProps) {
