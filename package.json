@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "setup": "pnpm -w install && pnpm -w -r build",
-    "dev": "concurrently \"pnpm --filter api dev\" \"pnpm --filter frontend dev\"",
+    "dev": "pnpm --parallel --filter api --filter frontend dev",
     "build": "pnpm -w -r build",
     "start": "pnpm --filter api start",
     "lint:fix": "pnpm -w -r lint -- --fix",
