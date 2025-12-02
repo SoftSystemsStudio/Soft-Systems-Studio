@@ -11,14 +11,21 @@
     "prisma:generate": "prisma generate",
     "migrate:dev": "prisma migrate dev --name init",
     "migrate:deploy": "prisma migrate deploy",
+    "migrate:staging": "NODE_ENV=staging prisma migrate deploy",
+    "migrate:production": "NODE_ENV=production prisma migrate deploy",
     "seed": "ts-node prisma/seed.ts",
     "lint": "eslint . --ext .ts",
     "test": "jest",
-    "test:integration": "NODE_ENV=test jest tests/integration --runInBand"
+    "test:integration": "NODE_ENV=test jest tests/integration --runInBand",
+    "typecheck": "tsc --noEmit",
+    "deploy:staging": "pnpm build && pnpm migrate:staging",
+    "deploy:production": "pnpm build && pnpm migrate:production",
+    "health:check": "curl -f http://localhost:${PORT:-5000}/health || exit 1"
   },
   "bin": {},
   "dependencies": {
     "@prisma/client": "^5.8.0",
+    "@sentry/node": "^10.28.0",
     "@softsystems/agent-customer-service": "workspace:^",
     "@softsystems/core-llm": "workspace:^",
     "bcryptjs": "^2.4.3",
