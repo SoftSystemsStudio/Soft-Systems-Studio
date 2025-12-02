@@ -267,7 +267,8 @@ export default function ClientDetailPage() {
                     style={{
                       padding: '6px 10px',
                       borderRadius: 6,
-                      border: activeDraftTab === 'brief' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
+                      border:
+                        activeDraftTab === 'brief' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
                       background: activeDraftTab === 'brief' ? '#eef2ff' : '#fff',
                     }}
                   >
@@ -282,7 +283,8 @@ export default function ClientDetailPage() {
                     style={{
                       padding: '6px 10px',
                       borderRadius: 6,
-                      border: activeDraftTab === 'phase1' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
+                      border:
+                        activeDraftTab === 'phase1' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
                       background: activeDraftTab === 'phase1' ? '#eef2ff' : '#fff',
                     }}
                   >
@@ -295,7 +297,9 @@ export default function ClientDetailPage() {
                 <div
                   role="tabpanel"
                   id="draft-panel"
-                  aria-labelledby={activeDraftTab === 'brief' ? 'draft-tab-brief' : 'draft-tab-phase1'}
+                  aria-labelledby={
+                    activeDraftTab === 'brief' ? 'draft-tab-brief' : 'draft-tab-phase1'
+                  }
                   style={{
                     border: '1px solid #e1e4e8',
                     borderRadius: 8,
