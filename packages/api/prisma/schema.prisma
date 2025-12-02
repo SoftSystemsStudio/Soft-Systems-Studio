@@ -15,21 +15,28 @@ model User {
 }
 
 model Client {
-  id          String   @id @default(uuid())
-  companyName String
-  website     String?
-  industry    String?
-  size        String?
-  contactName String?
+  id           String   @id @default(uuid())
+  companyName  String
+  website      String?
+  industry     String?
+  size         String?
+  contactName  String?
   contactEmail String?
   contactPhone String?
+
   // One-to-one relationship to ClientConfig
-  config      ClientConfig?
+  config       ClientConfig?
+
   // Intake submissions (raw form JSON)
-  intakes     IntakeSubmission[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  intakes      IntakeSubmission[]
+
+  // NEW: Proposal drafts (solution brief + phase proposals)
+  drafts       ProposalDraft[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
+
 
 model IntakeSubmission {
   id        String   @id @default(uuid())
