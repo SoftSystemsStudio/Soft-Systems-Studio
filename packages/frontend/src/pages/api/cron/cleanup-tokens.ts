@@ -42,12 +42,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error('[cron/cleanup-tokens] Backend error:', error);
-      return res.status(response.status).json({ error: 'Backend cleanup failed', details: error });
+      const errorText = await response.text();
+      console.error('[cron/cleanup-tokens] Backend error:', errorText);
+      return res
+        .status(response.status)
+        .json({ error: 'Backend cleanup failed', details: errorText });
     }
 
-    const result = await response.json();
+    const result = (await response.json()) as Record<string, unknown>;
 
     return res.status(200).json({
       ok: true,
