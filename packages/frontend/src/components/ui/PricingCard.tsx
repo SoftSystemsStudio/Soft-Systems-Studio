@@ -27,33 +27,32 @@ export default function PricingCard({
   const baseClasses =
     'relative flex flex-col p-8 rounded-2xl shadow-lg transition-all duration-300';
   const normalClasses =
-    'border border-gray-700/50 bg-gray-800/40 shadow-black/20 hover:border-gray-600';
-  const highlightedClasses =
-    'border-2 border-purple-500 bg-gray-800/60 shadow-xl shadow-purple-500/20';
+    'border border-[#2a2a2a] bg-[#0a0a0a] shadow-black/20 hover:border-[#656565]';
+  const highlightedClasses = 'border-2 border-[#c0ff6b] bg-[#0a0a0a] shadow-xl shadow-[#c0ff6b]/20';
 
   return (
     <div
       className={`${baseClasses} ${highlighted ? highlightedClasses : normalClasses} ${className}`}
     >
       {badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#c0ff6b] text-black text-xs font-semibold px-3 py-1 rounded-full">
           {badge}
         </span>
       )}
 
-      <h3 className="text-xl font-semibold text-white mb-2">{name}</h3>
-      <p className="text-gray-400 text-sm mb-6">{description}</p>
+      <h3 className="text-xl font-semibold text-[#d5d5d5] mb-2">{name}</h3>
+      <p className="text-[#656565] text-sm mb-6">{description}</p>
 
       <div className="mb-6">
-        <span className="text-4xl font-bold text-white">{price}</span>
+        <span className="text-4xl font-bold text-[#d5d5d5]">{price}</span>
       </div>
 
       {features.length > 0 && (
         <ul className="space-y-3 mb-8 flex-grow">
           {features.map((feature, idx) => (
-            <li key={idx} className="flex items-start gap-2 text-sm text-gray-300">
+            <li key={idx} className="flex items-start gap-2 text-sm text-[#d5d5d5]">
               <svg
-                className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5"
+                className="w-5 h-5 text-[#c0ff6b] flex-shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

@@ -43,11 +43,11 @@ const sizeClasses: Record<ButtonSize, string> = {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold shadow-lg shadow-purple-500/40 hover:shadow-purple-400/60 focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-900',
+    'bg-[#c0ff6b] text-black font-semibold shadow-lg shadow-[#c0ff6b]/30 hover:bg-[#d4ff8f] hover:shadow-[#c0ff6b]/50 focus:ring-2 focus:ring-[#c0ff6b] focus:ring-offset-2 focus:ring-offset-black',
   secondary:
-    'bg-gray-700 text-gray-200 font-medium hover:bg-gray-600 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900',
+    'bg-[#656565] text-[#d5d5d5] font-medium hover:bg-[#7a7a7a] focus:ring-2 focus:ring-[#656565] focus:ring-offset-2 focus:ring-offset-black',
   ghost:
-    'border border-gray-700 text-gray-300 font-medium hover:border-gray-500 hover:text-white focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900',
+    'border border-[#656565] text-[#d5d5d5] font-medium hover:border-[#c0ff6b] hover:text-[#c0ff6b] focus:ring-2 focus:ring-[#656565] focus:ring-offset-2 focus:ring-offset-black',
 };
 
 export default function Button({

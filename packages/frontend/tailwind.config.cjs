@@ -5,29 +5,31 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: '#02040a',
-        text: '#e5e7eb',
-        muted: '#9ca3af',
-        border: '#1f2933',
-        surface: '#0b1220',
-        accent: '#c0ff6b',
-        brand: '#7f5af0',
-        // High contrast accent palette for dark theme
-        glow: {
-          cyan: '#22d3ee',
-          purple: '#a855f7',
-          indigo: '#6366f1',
+        // Brand colors
+        brand: {
+          lime: '#c0ff6b',
+          'lime-dark': '#9fdd4a',
+          light: '#d5d5d5',
+          gray: '#656565',
+          black: '#000000',
         },
+        // Semantic colors
+        bg: '#000000',
+        text: '#d5d5d5',
+        muted: '#656565',
+        border: '#2a2a2a',
+        surface: '#0a0a0a',
+        accent: '#c0ff6b',
       },
       boxShadow: {
-        glow: '0 0 20px 2px rgba(168, 85, 247, 0.5)',
-        'glow-cyan': '0 0 20px 2px rgba(34, 211, 238, 0.5)',
-        'glow-accent': '0 0 20px 2px rgba(192, 255, 107, 0.4)',
+        glow: '0 0 20px 2px rgba(192, 255, 107, 0.4)',
+        'glow-sm': '0 0 10px 1px rgba(192, 255, 107, 0.3)',
+        'glow-lg': '0 0 30px 4px rgba(192, 255, 107, 0.5)',
       },
       backgroundImage: {
-        'gradient-dark': 'linear-gradient(180deg, #02040a 0%, #0b1220 50%, #02040a 100%)',
+        'gradient-dark': 'linear-gradient(180deg, #000000 0%, #0a0a0a 50%, #000000 100%)',
         'gradient-hero':
-          'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.3), transparent)',
+          'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(192, 255, 107, 0.15), transparent)',
       },
       keyframes: {
         float: {
