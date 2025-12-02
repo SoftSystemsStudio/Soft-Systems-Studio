@@ -12,6 +12,8 @@ model Workspace {
   name      String
   createdAt DateTime @default(now())
   conversations Conversation[]
+  memberships WorkspaceMembership[]
+  refreshTokens RefreshToken[]
 }
 
 model Conversation {
@@ -45,6 +47,7 @@ model User {
   password    String
   createdAt   DateTime @default(now())
   memberships WorkspaceMembership[]
+  refreshTokens RefreshToken[]
 }
 
 model WorkspaceMembership {
@@ -57,4 +60,22 @@ model WorkspaceMembership {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   user        User      @relation(fields: [userId], references: [id])
   @@unique([workspaceId, userId])
+}
+
+// Refresh tokens for secure token rotation
+model RefreshToken {
+  id          String   @id @default(cuid())
+  token       String   @unique
+  userId      String
+  workspaceId String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  revokedAt   DateTime?
+  replacedBy  String?  // Points to the new token if rotated
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
 }

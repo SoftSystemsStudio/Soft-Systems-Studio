@@ -27,6 +27,7 @@ beforeAll(async () => {
   try {
     await prisma.message.deleteMany();
     await prisma.conversation.deleteMany();
+    await prisma.refreshToken.deleteMany();
     await prisma.workspaceMembership.deleteMany();
     await prisma.user.deleteMany();
     await prisma.kbDocument.deleteMany();
