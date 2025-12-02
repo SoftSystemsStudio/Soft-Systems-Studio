@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import Card from '../components/Card';
+import PrimaryButton from '../components/PrimaryButton';
+import SecondaryButton from '../components/SecondaryButton';
 
 type Objective =
   | 'reduce_support_volume'
@@ -242,14 +245,7 @@ export default function IntakePage() {
           />
         </div>
 
-        <section
-          style={{
-            background: '#fff',
-            borderRadius: 12,
-            padding: 24,
-            boxShadow: '0 8px 24px rgba(15, 23, 42, 0.08)',
-          }}
-        >
+        <Card>
           <div
             style={{
               marginBottom: 16,
@@ -361,7 +357,9 @@ export default function IntakePage() {
                   multiple
                   value={form.primaryObjectives}
                   onChange={(e) => {
-                    const opts = Array.from(e.target.selectedOptions).map((o) => o.value as Objective);
+                    const opts = Array.from(e.target.selectedOptions).map(
+                      (o) => o.value as Objective,
+                    );
                     update('primaryObjectives', opts as FormState['primaryObjectives']);
                   }}
                   size={6}
@@ -395,7 +393,9 @@ export default function IntakePage() {
                   multiple
                   value={form.systems}
                   onChange={(e) => {
-                    const opts = Array.from(e.target.selectedOptions).map((o) => o.value as SystemInterest);
+                    const opts = Array.from(e.target.selectedOptions).map(
+                      (o) => o.value as SystemInterest,
+                    );
                     update('systems', opts as FormState['systems']);
                   }}
                   size={5}
@@ -586,7 +586,9 @@ export default function IntakePage() {
                   multiple
                   value={form.supportChannels}
                   onChange={(e) => {
-                    const opts = Array.from(e.target.selectedOptions).map((o) => o.value as SupportChannel);
+                    const opts = Array.from(e.target.selectedOptions).map(
+                      (o) => o.value as SupportChannel,
+                    );
                     update('supportChannels', opts as FormState['supportChannels']);
                   }}
                   size={6}
@@ -730,26 +732,19 @@ export default function IntakePage() {
               justifyContent: 'space-between',
             }}
           >
-            <button
+            <SecondaryButton
               type="button"
-              disabled={step === 1}
               onClick={() => {
                 setMessage(null);
                 setStep((prev) => Math.max(1, prev - 1));
               }}
-              style={{
-                padding: '8px 14px',
-                borderRadius: 6,
-                border: '1px solid #cbd5f5',
-                backgroundColor: '#f9fafb',
-                cursor: step === 1 ? 'not-allowed' : 'pointer',
-              }}
+              disabled={step === 1}
             >
               Back
-            </button>
+            </SecondaryButton>
 
             {step < totalSteps && (
-              <button
+              <PrimaryButton
                 type="button"
                 onClick={() => {
                   if (validateStep(step)) {
@@ -759,38 +754,18 @@ export default function IntakePage() {
                     setMessage('Please fix the errors on this step.');
                   }
                 }}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: 6,
-                  border: 'none',
-                  background: 'linear-gradient(90deg, #2563eb 0%, #4f46e5 50%, #6366f1 100%)',
-                  color: '#fff',
-                  cursor: 'pointer',
-                }}
               >
                 Next
-              </button>
+              </PrimaryButton>
             )}
 
             {step === totalSteps && (
-              <button
-                type="button"
-                onClick={submit}
-                disabled={loading}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: 6,
-                  border: 'none',
-                  background: 'linear-gradient(90deg, #16a34a 0%, #22c55e 50%, #16a34a 100%)',
-                  color: '#fff',
-                  cursor: loading ? 'default' : 'pointer',
-                }}
-              >
+              <PrimaryButton type="button" onClick={submit} disabled={loading}>
                 {loading ? 'Submitting…' : 'Submit intake'}
-              </button>
+              </PrimaryButton>
             )}
           </div>
-        </section>
+        </Card>
 
         {message && (
           <div
