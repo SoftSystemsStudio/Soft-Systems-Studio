@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonBaseProps {
@@ -48,6 +48,8 @@ const variantClasses: Record<ButtonVariant, string> = {
     'bg-[#656565] text-[#d5d5d5] font-medium hover:bg-[#7a7a7a] focus:ring-2 focus:ring-[#656565] focus:ring-offset-2 focus:ring-offset-black',
   ghost:
     'border border-[#656565] text-[#d5d5d5] font-medium hover:border-[#c0ff6b] hover:text-[#c0ff6b] focus:ring-2 focus:ring-[#656565] focus:ring-offset-2 focus:ring-offset-black',
+  outline:
+    'border border-[#656565] text-[#d5d5d5] font-medium bg-transparent hover:border-[#c0ff6b] hover:text-[#c0ff6b] focus:ring-2 focus:ring-[#c0ff6b] focus:ring-offset-2 focus:ring-offset-black',
 };
 
 export default function Button({

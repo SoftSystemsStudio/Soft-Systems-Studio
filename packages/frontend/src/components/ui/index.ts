@@ -9,3 +9,8 @@ export { default as Hero } from './Hero';
 export { default as Navbar } from './Navbar';
 export { default as Footer } from './Footer';
 export { default as Modal } from './Modal';
+
+// Futuristic AI components
+export { default as HoloCard } from './HoloCard';
+export { default as ScanLine } from './ScanLine';
+export { default as GlowText } from './GlowText';
