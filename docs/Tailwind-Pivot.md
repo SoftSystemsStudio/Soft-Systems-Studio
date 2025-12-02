@@ -24,5 +24,6 @@ Next steps
 - Optionally install the Tailwind CSS IntelliSense extension in your editor for class autocompletion and linting.
 
 If you want, I can now:
+
 - Run the frontend dev server and capture the compile logs and a screenshot of the landing page.
 - Replace inline styles in the Intake page and use `Intake.module.css` or Tailwind classes.

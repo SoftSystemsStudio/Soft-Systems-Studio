@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import styles from '../styles/Intake.module.css';
 
 type Objective =
   | 'reduce_support_volume'
@@ -41,10 +42,12 @@ const initialForm: FormState = {
   primaryObjectives: [],
   systems: [],
   supportChannels: [],
-  dailyInquiries: '',
+  dailyInquiries: '10',
   mainPainPoints: '',
   notes: '',
 };
+
+const steps = ['Company', 'Contact', 'Goals', 'Support & Pain'] as const;
 
 export default function IntakePage() {
   const [step, setStep] = useState(1);
@@ -98,7 +101,6 @@ export default function IntakePage() {
       }
       if (form.website) {
         try {
-          // basic URL validation
           // eslint-disable-next-line no-new
           new URL(form.website);
         } catch {
@@ -126,7 +128,7 @@ export default function IntakePage() {
         nextErrors.primaryObjectives = 'Select at least one primary objective';
       }
       if (!form.systems.length) {
-        nextErrors.systems = 'Select at least one system you care about';
+        nextErrors.systems = 'Select at least one system you’re interested in';
       }
     }
 
@@ -135,7 +137,7 @@ export default function IntakePage() {
         nextErrors.dailyInquiries = 'Enter a number (approximate is fine)';
       }
       if (!form.mainPainPoints.trim()) {
-        nextErrors.mainPainPoints = 'Describe your main pain points';
+        nextErrors.mainPainPoints = 'Describe what’s painful today';
       }
     }
 
@@ -159,9 +161,7 @@ export default function IntakePage() {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) {
-        throw new Error('submit_failed');
-      }
+      if (!res.ok) throw new Error('submit_failed');
 
       setMessage(
         'Thanks — we’ll turn this into your AI Automation Blueprint and follow up with next steps.',
@@ -175,357 +175,433 @@ export default function IntakePage() {
     }
   }
 
+  const dailyInquiriesNumber = Number(form.dailyInquiries || '0');
+
   return (
     <Layout>
-      <main style={{ padding: 32, maxWidth: 900, margin: '0 auto' }}>
-        <h1>AI Automation Intake</h1>
-        <p style={{ color: '#656565', marginBottom: 8 }}>
-          A short intake so we can generate a tailored automation blueprint for your business.
-        </p>
-        <div style={{ fontSize: 13, color: '#656565', marginBottom: 24 }}>Step {step} of 4</div>
-
-        {/* Step 1 – Company profile */}
-        {step === 1 && (
-          <section style={{ marginBottom: 24 }}>
-            <h2>Company profile</h2>
-            <div style={{ marginTop: 12 }}>
-              <label>
-                Company name
-                <br />
-                <input
-                  value={form.companyName}
-                  onChange={(e) => update('companyName', e.target.value)}
-                  style={{ width: '100%', padding: 8 }}
-                />
-              </label>
-              {errors.companyName && (
-                <div style={{ color: 'red', fontSize: 13 }}>{errors.companyName}</div>
-              )}
-            </div>
-            <div style={{ marginTop: 12 }}>
-              <label>
-                Website
-                <br />
-                <input
-                  value={form.website}
-                  onChange={(e) => update('website', e.target.value)}
-                  placeholder="https://example.com"
-                  style={{ width: '100%', padding: 8 }}
-                />
-              </label>
-              {errors.website && <div style={{ color: 'red', fontSize: 13 }}>{errors.website}</div>}
-            </div>
-            <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-              <div style={{ flex: 1 }}>
-                <label>
-                  Industry
-                  <br />
-                  <input
-                    value={form.industry}
-                    onChange={(e) => update('industry', e.target.value)}
-                    style={{ width: '100%', padding: 8 }}
-                  />
-                </label>
-              </div>
-              <div style={{ flex: 1 }}>
-                <label>
-                  Company size
-                  <br />
-                  <input
-                    value={form.size}
-                    onChange={(e) => update('size', e.target.value)}
-                    placeholder="e.g. 1-10, 11-50"
-                    style={{ width: '100%', padding: 8 }}
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div style={{ marginTop: 20 }}>
-              <button
-                type="button"
-                onClick={() => {
-                  if (validateStep(1)) setStep(2);
-                  else setMessage('Please fix errors on this step.');
-                }}
-              >
-                Next
-              </button>
-            </div>
-          </section>
-        )}
-
-        {/* Step 2 – Primary contact */}
-        {step === 2 && (
-          <section style={{ marginBottom: 24 }}>
-            <h2>Primary contact</h2>
-            <div style={{ marginTop: 12 }}>
-              <label>
-                Name
-                <br />
-                <input
-                  value={form.contactName}
-                  onChange={(e) => update('contactName', e.target.value)}
-                  style={{ width: '100%', padding: 8 }}
-                />
-              </label>
-              {errors.contactName && (
-                <div style={{ color: 'red', fontSize: 13 }}>{errors.contactName}</div>
-              )}
-            </div>
-            <div style={{ marginTop: 12 }}>
-              <label>
-                Email
-                <br />
-                <input
-                  value={form.contactEmail}
-                  onChange={(e) => update('contactEmail', e.target.value)}
-                  style={{ width: '100%', padding: 8 }}
-                />
-              </label>
-              {errors.contactEmail && (
-                <div style={{ color: 'red', fontSize: 13 }}>{errors.contactEmail}</div>
-              )}
-            </div>
-            <div style={{ marginTop: 12 }}>
-              <label>
-                Phone (optional)
-                <br />
-                <input
-                  value={form.contactPhone}
-                  onChange={(e) => update('contactPhone', e.target.value)}
-                  style={{ width: '100%', padding: 8 }}
-                />
-              </label>
-            </div>
-
-            <div style={{ marginTop: 20 }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setMessage(null);
-                  setStep(1);
-                }}
-                style={{ marginRight: 8 }}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (validateStep(2)) setStep(3);
-                  else setMessage('Please fix errors on this step.');
-                }}
-              >
-                Next
-              </button>
-            </div>
-          </section>
-        )}
-
-        {/* Step 3 – Objectives and systems */}
-        {step === 3 && (
-          <section style={{ marginBottom: 24 }}>
-            <h2>What are you trying to achieve?</h2>
-            <p style={{ fontSize: 14, color: '#656565' }}>
-              Pick the outcomes and systems that matter most. This drives how we design your
-              automation blueprint.
+      <main className={styles.page}>
+        {/* Hero framing */}
+        <header className={styles.hero}>
+          <div className={styles.heroContent}>
+            <div className={styles.heroBadge}>Soft Systems Studio • Intake</div>
+            <h1 className={styles.heroTitle}>Your AI Automation Blueprint starts here.</h1>
+            <p className={styles.heroSubtitle}>
+              Answer a few focused questions and we’ll design a tailored AI playbook to reduce
+              support volume, automate workflows, and unlock capacity in your business.
             </p>
-
-            <div style={{ marginTop: 16 }}>
-              <h3>Primary objectives</h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-                {[
-                  { key: 'reduce_support_volume', label: 'Reduce support volume' },
-                  { key: 'increase_leads', label: 'Increase qualified leads' },
-                  { key: 'automate_workflows', label: 'Automate workflows' },
-                  { key: 'increase_content_output', label: 'Increase content output' },
-                  { key: 'improve_reporting', label: 'Improve reporting & insight' },
-                ].map((obj) => (
-                  <button
-                    key={obj.key}
-                    type="button"
-                    onClick={() => toggleObjective(obj.key as Objective)}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: 999,
-                      border: '1px solid #d5d5d5',
-                      backgroundColor: form.primaryObjectives.includes(obj.key as Objective)
-                        ? '#c0ff6b'
-                        : '#ffffff',
-                      fontSize: 13,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {obj.label}
-                  </button>
-                ))}
+            <p className={styles.heroFootnote}>
+              Expect a concrete solution brief and phase-one proposal — not generic recommendations.
+            </p>
+          </div>
+          <aside className={styles.heroAside}>
+            <div className={styles.heroCard}>
+              <h3>What you’ll get</h3>
+              <ul>
+                <li>AI Solution Brief aligned to your goals</li>
+                <li>Phase 1 implementation proposal</li>
+                <li>System architecture and suggested stack</li>
+              </ul>
+              <div className={styles.heroCardMeta}>
+                Typical outcome: 30–70% reduction in repetitive work for support and ops teams.
               </div>
-              {errors.primaryObjectives && (
-                <div style={{ color: 'red', fontSize: 13, marginTop: 4 }}>
-                  {errors.primaryObjectives}
+            </div>
+          </aside>
+        </header>
+
+        {/* Stepper */}
+        <section className={styles.stepperSection}>
+          <div className={styles.stepper}>
+            {steps.map((label, index) => {
+              const stepNumber = index + 1;
+              const isActive = stepNumber === step;
+              const isComplete = stepNumber < step;
+              return (
+                <div key={label} className={styles.stepperItem}>
+                  <div
+                    className={[
+                      styles.stepCircle,
+                      isActive ? styles.stepCircleActive : '',
+                      isComplete ? styles.stepCircleComplete : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    {stepNumber}
+                  </div>
+                  <div className={styles.stepLabel}>{label}</div>
                 </div>
-              )}
-            </div>
+              );
+            })}
+          </div>
+        </section>
 
-            <div style={{ marginTop: 20 }}>
-              <h3>Systems you’re interested in</h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-                {[
-                  { key: 'ai_support', label: 'AI Support System' },
-                  { key: 'ai_content', label: 'AI Content System' },
-                  { key: 'ai_data_bi', label: 'AI Data & BI' },
-                  { key: 'ai_workflow', label: 'AI Workflow Automation' },
-                  { key: 'ai_voice', label: 'AI Voice Reception' },
-                ].map((sys) => (
-                  <button
-                    key={sys.key}
-                    type="button"
-                    onClick={() => toggleSystemInterest(sys.key as SystemInterest)}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: 999,
-                      border: '1px solid #d5d5d5',
-                      backgroundColor: form.systems.includes(sys.key as SystemInterest)
-                        ? '#c0ff6b'
-                        : '#ffffff',
-                      fontSize: 13,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {sys.label}
-                  </button>
-                ))}
+        {/* Form card */}
+        <section className={styles.formCard}>
+          {/* STEP 1 – COMPANY */}
+          {step === 1 && (
+            <div className={styles.formSection}>
+              <h2 className={styles.sectionTitle}>Company profile</h2>
+              <p className={styles.sectionSubtitle}>
+                Help us understand who you are and the context we’re designing for.
+              </p>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                  Company name
+                  <input
+                    className={styles.input}
+                    value={form.companyName}
+                    onChange={(e) => update('companyName', e.target.value)}
+                    placeholder="Soft Systems Studio LLC"
+                  />
+                </label>
+                {errors.companyName && <div className={styles.errorText}>{errors.companyName}</div>}
               </div>
-              {errors.systems && (
-                <div style={{ color: 'red', fontSize: 13, marginTop: 4 }}>{errors.systems}</div>
-              )}
-            </div>
 
-            <div style={{ marginTop: 20 }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setMessage(null);
-                  setStep(2);
-                }}
-                style={{ marginRight: 8 }}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (validateStep(3)) setStep(4);
-                  else setMessage('Please fix errors on this step.');
-                }}
-              >
-                Next
-              </button>
-            </div>
-          </section>
-        )}
+              <div className={styles.fieldRow}>
+                <div className={styles.fieldCol}>
+                  <label className={styles.fieldLabel}>
+                    Website
+                    <input
+                      className={styles.input}
+                      value={form.website}
+                      onChange={(e) => update('website', e.target.value)}
+                      placeholder="https://example.com"
+                    />
+                  </label>
+                  {errors.website && <div className={styles.errorText}>{errors.website}</div>}
+                </div>
+              </div>
 
-        {/* Step 4 – Volume and pain points */}
-        {step === 4 && (
-          <section style={{ marginBottom: 24 }}>
-            <h2>Volume and pain points</h2>
+              <div className={styles.fieldRow}>
+                <div className={styles.fieldCol}>
+                  <label className={styles.fieldLabel}>
+                    Industry
+                    <input
+                      className={styles.input}
+                      value={form.industry}
+                      onChange={(e) => update('industry', e.target.value)}
+                      placeholder="e.g. SaaS, agency, ecommerce"
+                    />
+                  </label>
+                </div>
+                <div className={styles.fieldCol}>
+                  <label className={styles.fieldLabel}>
+                    Company size
+                    <input
+                      className={styles.input}
+                      value={form.size}
+                      onChange={(e) => update('size', e.target.value)}
+                      placeholder="e.g. 1–10, 11–50"
+                    />
+                  </label>
+                </div>
+              </div>
 
-            <div style={{ marginTop: 12 }}>
-              <h3>Support channels you care about</h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-                {[
-                  { key: 'email', label: 'Email' },
-                  { key: 'web_chat', label: 'Web chat' },
-                  { key: 'social_dm', label: 'Social DMs' },
-                  { key: 'phone', label: 'Phone' },
-                  { key: 'sms', label: 'SMS' },
-                ].map((ch) => (
-                  <button
-                    key={ch.key}
-                    type="button"
-                    onClick={() => toggleSupportChannel(ch.key as SupportChannel)}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: 999,
-                      border: '1px solid #d5d5d5',
-                      backgroundColor: form.supportChannels.includes(ch.key as SupportChannel)
-                        ? '#c0ff6b'
-                        : '#ffffff',
-                      fontSize: 13,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {ch.label}
-                  </button>
-                ))}
+              <div className={styles.actionsRow}>
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  onClick={() => {
+                    if (validateStep(1)) setStep(2);
+                    else setMessage('Please fix errors on this step.');
+                  }}
+                >
+                  Continue to contact
+                </button>
               </div>
             </div>
+          )}
 
-            <div style={{ marginTop: 12 }}>
-              <label>
-                Approx. daily inquiries (across channels)
-                <br />
-                <input
-                  value={form.dailyInquiries}
-                  onChange={(e) => update('dailyInquiries', e.target.value)}
-                  placeholder="e.g. 10"
-                  style={{ width: '100%', padding: 8 }}
-                />
-              </label>
-              {errors.dailyInquiries && (
-                <div style={{ color: 'red', fontSize: 13 }}>{errors.dailyInquiries}</div>
-              )}
+          {/* STEP 2 – CONTACT */}
+          {step === 2 && (
+            <div className={styles.formSection}>
+              <h2 className={styles.sectionTitle}>Primary contact</h2>
+              <p className={styles.sectionSubtitle}>
+                The person we’ll send the blueprint and proposal to.
+              </p>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                  Name
+                  <input
+                    className={styles.input}
+                    value={form.contactName}
+                    onChange={(e) => update('contactName', e.target.value)}
+                    placeholder="Your name"
+                  />
+                </label>
+                {errors.contactName && <div className={styles.errorText}>{errors.contactName}</div>}
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                  Email
+                  <input
+                    className={styles.input}
+                    value={form.contactEmail}
+                    onChange={(e) => update('contactEmail', e.target.value)}
+                    placeholder="you@company.com"
+                  />
+                </label>
+                {errors.contactEmail && (
+                  <div className={styles.errorText}>{errors.contactEmail}</div>
+                )}
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                  Phone (optional)
+                  <input
+                    className={styles.input}
+                    value={form.contactPhone}
+                    onChange={(e) => update('contactPhone', e.target.value)}
+                    placeholder="+1 (555) 000-0000"
+                  />
+                </label>
+              </div>
+
+              <div className={styles.actionsRow}>
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={() => {
+                    setMessage(null);
+                    setStep(1);
+                  }}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  onClick={() => {
+                    if (validateStep(2)) setStep(3);
+                    else setMessage('Please fix errors on this step.');
+                  }}
+                >
+                  Continue to goals
+                </button>
+              </div>
             </div>
+          )}
 
-            <div style={{ marginTop: 12 }}>
-              <label>
-                What’s painful today?
-                <br />
-                <textarea
-                  value={form.mainPainPoints}
-                  onChange={(e) => update('mainPainPoints', e.target.value)}
-                  rows={4}
-                  style={{ width: '100%', padding: 8 }}
-                />
-              </label>
-              {errors.mainPainPoints && (
-                <div style={{ color: 'red', fontSize: 13 }}>{errors.mainPainPoints}</div>
-              )}
+          {/* STEP 3 – GOALS */}
+          {step === 3 && (
+            <div className={styles.formSection}>
+              <h2 className={styles.sectionTitle}>What are you trying to achieve?</h2>
+              <p className={styles.sectionSubtitle}>
+                These choices shape how we design your systems and phases.
+              </p>
+
+              <div className={styles.fieldGroup}>
+                <div className={styles.fieldLabelRow}>
+                  <span className={styles.fieldLabel}>Primary objectives</span>
+                  <span className={styles.fieldHint}>Select all that apply.</span>
+                </div>
+                <div className={styles.chipRow}>
+                  {[
+                    { key: 'reduce_support_volume', label: 'Reduce support volume' },
+                    { key: 'increase_leads', label: 'Increase qualified leads' },
+                    { key: 'automate_workflows', label: 'Automate internal workflows' },
+                    { key: 'increase_content_output', label: 'Increase content output' },
+                    { key: 'improve_reporting', label: 'Improve reporting & insight' },
+                  ].map((obj) => {
+                    const active = form.primaryObjectives.includes(obj.key as Objective);
+                    return (
+                      <button
+                        key={obj.key}
+                        type="button"
+                        onClick={() => toggleObjective(obj.key as Objective)}
+                        className={[styles.chip, active ? styles.chipActive : '']
+                          .filter(Boolean)
+                          .join(' ')}
+                      >
+                        {obj.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {errors.primaryObjectives && (
+                  <div className={styles.errorText}>{errors.primaryObjectives}</div>
+                )}
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <div className={styles.fieldLabelRow}>
+                  <span className={styles.fieldLabel}>Systems you’re interested in</span>
+                  <span className={styles.fieldHint}>
+                    This helps us prioritize the first build.
+                  </span>
+                </div>
+                <div className={styles.chipRow}>
+                  {[
+                    { key: 'ai_support', label: 'AI Support System' },
+                    { key: 'ai_content', label: 'AI Content System' },
+                    { key: 'ai_data_bi', label: 'AI Data & BI' },
+                    { key: 'ai_workflow', label: 'AI Workflow Automation' },
+                    { key: 'ai_voice', label: 'AI Voice Reception' },
+                  ].map((sys) => {
+                    const active = form.systems.includes(sys.key as SystemInterest);
+                    return (
+                      <button
+                        key={sys.key}
+                        type="button"
+                        onClick={() => toggleSystemInterest(sys.key as SystemInterest)}
+                        className={[styles.chip, active ? styles.chipActive : '']
+                          .filter(Boolean)
+                          .join(' ')}
+                      >
+                        {sys.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {errors.systems && <div className={styles.errorText}>{errors.systems}</div>}
+              </div>
+
+              <div className={styles.actionsRow}>
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={() => {
+                    setMessage(null);
+                    setStep(2);
+                  }}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  onClick={() => {
+                    if (validateStep(3)) setStep(4);
+                    else setMessage('Please fix errors on this step.');
+                  }}
+                >
+                  Continue to support & pain
+                </button>
+              </div>
             </div>
+          )}
 
-            <div style={{ marginTop: 12 }}>
-              <label>
-                Anything else we should know? (optional)
-                <br />
-                <textarea
-                  value={form.notes}
-                  onChange={(e) => update('notes', e.target.value)}
-                  rows={3}
-                  style={{ width: '100%', padding: 8 }}
-                />
-              </label>
+          {/* STEP 4 – SUPPORT & PAIN */}
+          {step === 4 && (
+            <div className={styles.formSection}>
+              <h2 className={styles.sectionTitle}>Support volume & pain points</h2>
+              <p className={styles.sectionSubtitle}>
+                This is where the blueprint gets sharp. Be candid — the more real this is, the more
+                useful your plan will be.
+              </p>
+
+              <div className={styles.fieldGroup}>
+                <div className={styles.fieldLabelRow}>
+                  <span className={styles.fieldLabel}>Support channels you care about</span>
+                  <span className={styles.fieldHint}>Select all that apply.</span>
+                </div>
+                <div className={styles.chipRow}>
+                  {[
+                    { key: 'email', label: 'Email' },
+                    { key: 'web_chat', label: 'Web chat' },
+                    { key: 'social_dm', label: 'Social DMs' },
+                    { key: 'phone', label: 'Phone' },
+                    { key: 'sms', label: 'SMS' },
+                  ].map((ch) => {
+                    const active = form.supportChannels.includes(ch.key as SupportChannel);
+                    return (
+                      <button
+                        key={ch.key}
+                        type="button"
+                        onClick={() => toggleSupportChannel(ch.key as SupportChannel)}
+                        className={[styles.chip, active ? styles.chipActive : '']
+                          .filter(Boolean)
+                          .join(' ')}
+                      >
+                        {ch.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <div className={styles.fieldLabelRow}>
+                  <span className={styles.fieldLabel}>
+                    Approx. daily inquiries (across channels)
+                  </span>
+                  <span className={styles.fieldHint}>A rough range is enough.</span>
+                </div>
+                <div className={styles.sliderRow}>
+                  <input
+                    type="range"
+                    min={0}
+                    max={200}
+                    step={5}
+                    value={dailyInquiriesNumber}
+                    onChange={(e) => update('dailyInquiries', e.target.value)}
+                    className={styles.slider}
+                  />
+                  <div className={styles.sliderValue}>~{dailyInquiriesNumber || 0} per day</div>
+                </div>
+                {errors.dailyInquiries && (
+                  <div className={styles.errorText}>{errors.dailyInquiries}</div>
+                )}
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                  What’s painful right now?
+                  <textarea
+                    className={styles.textarea}
+                    value={form.mainPainPoints}
+                    onChange={(e) => update('mainPainPoints', e.target.value)}
+                    rows={4}
+                    placeholder="Describe where things break down, what you’re constantly chasing, or the work that feels like it should already be automated."
+                  />
+                </label>
+                {errors.mainPainPoints && (
+                  <div className={styles.errorText}>{errors.mainPainPoints}</div>
+                )}
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                  Anything else we should know? (optional)
+                  <textarea
+                    className={styles.textarea}
+                    value={form.notes}
+                    onChange={(e) => update('notes', e.target.value)}
+                    rows={3}
+                    placeholder="Context, constraints, existing tools, teams, or timelines."
+                  />
+                </label>
+              </div>
+
+              <div className={styles.actionsRow}>
+                <button
+                  type="button"
+                  className={styles.secondaryButton}
+                  onClick={() => {
+                    setMessage(null);
+                    setStep(3);
+                  }}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  onClick={submit}
+                  disabled={loading}
+                >
+                  {loading ? 'Submitting…' : 'Submit for blueprint'}
+                </button>
+              </div>
             </div>
+          )}
+        </section>
 
-            <div style={{ marginTop: 20 }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setMessage(null);
-                  setStep(3);
-                }}
-                style={{ marginRight: 8 }}
-              >
-                Back
-              </button>
-              <button type="button" onClick={submit} disabled={loading}>
-                {loading ? 'Submitting…' : 'Submit'}
-              </button>
-            </div>
-          </section>
-        )}
-
-        {message && <div style={{ marginTop: 16 }}>{message}</div>}
+        {message && <div className={styles.messageArea}>{message}</div>}
       </main>
     </Layout>
   );
