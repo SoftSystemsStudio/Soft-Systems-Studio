@@ -1,14 +1,94 @@
-import { cleanEnv, str, port } from 'envalid';
+import { z } from 'zod';
 
-// Validate environment variables at startup. Throws helpful errors and exits process on failure.
-export const env = cleanEnv(process.env, {
-  NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
-  PORT: port({ default: 5000 }),
-  POSTGRES_URL: str(),
-  OPENAI_API_KEY: str(),
-  REDIS_URL: str({ default: 'redis://localhost:6379' }),
-  JWT_SECRET: str({ default: '' }),
-  JWT_ALGORITHM: str({ choices: ['HS256', 'HS384', 'HS512'], default: 'HS256' }),
+/**
+ * Environment variable schema with comprehensive validation
+ * Validates all required environment variables at startup
+ */
+const envSchema = z.object({
+  // Node environment
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+
+  // Server configuration
+  PORT: z
+    .string()
+    .default('5000')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(1).max(65535)),
+
+  // Database
+  POSTGRES_URL: z
+    .string()
+    .min(1, 'POSTGRES_URL is required')
+    .url('POSTGRES_URL must be a valid URL'),
+
+  // Redis
+  REDIS_URL: z
+    .string()
+    .default('redis://localhost:6379')
+    .refine(
+      (val) => val.startsWith('redis://') || val.startsWith('rediss://'),
+      'REDIS_URL must start with redis:// or rediss://',
+    ),
+
+  // OpenAI
+  OPENAI_API_KEY: z
+    .string()
+    .min(1, 'OPENAI_API_KEY is required')
+    .refine(
+      (val) => val.startsWith('sk-') || process.env.NODE_ENV === 'test',
+      'OPENAI_API_KEY should start with sk-',
+    ),
+
+  // JWT Authentication
+  JWT_SECRET: z
+    .string()
+    .min(32, 'JWT_SECRET must be at least 32 characters for security')
+    .refine(
+      (val) => val.length >= 32 || process.env.NODE_ENV !== 'production',
+      'JWT_SECRET must be at least 32 characters in production',
+    ),
+  JWT_ALGORITHM: z.enum(['HS256', 'HS384', 'HS512']).default('HS256'),
+
+  // Optional: API Key for service-to-service auth
+  API_KEY: z.string().optional(),
+
+  // Optional: Qdrant vector database
+  QDRANT_HOST: z.string().default('localhost'),
+  QDRANT_PORT: z.string().default('6333'),
+  QDRANT_COLLECTION: z.string().default('kb'),
+  QDRANT_API_KEY: z.string().optional(),
+  QDRANT_USE_HTTPS: z
+    .string()
+    .default('false')
+    .transform((val) => val === 'true'),
+
+  // Optional: Logging
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  LOG_ENABLED: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
 });
+
+// Parse and validate environment variables
+function validateEnv() {
+  try {
+    return envSchema.parse(process.env);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const formatted = error.errors
+        .map((err) => `  - ${err.path.join('.')}: ${err.message}`)
+        .join('\n');
+      console.error('❌ Environment validation failed:\n' + formatted);
+      process.exit(1);
+    }
+    throw error;
+  }
+}
+
+export const env = validateEnv();
+
+// Type export for use in other modules
+export type Env = z.infer<typeof envSchema>;
 
 export default env;

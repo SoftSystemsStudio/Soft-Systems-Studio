@@ -83,9 +83,6 @@ importers:
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
-      envalid:
-        specifier: ^7.3.0
-        version: 7.3.1
       express:
         specifier: ^4.18.2
         version: 4.21.2
@@ -3083,13 +3080,6 @@ packages:
     resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
     dependencies:
       once: 1.4.0
-
-  /envalid@7.3.1:
-    resolution: {integrity: sha512-KL1YRwn8WcoF/Ty7t+yLLtZol01xr9ZJMTjzoGRM8NaSU+nQQjSWOQKKJhJP2P57bpdakJ9jbxqQX4fGTOicZg==}
-    engines: {node: '>=8.12'}
-    dependencies:
-      tslib: 2.3.1
-    dev: false
 
   /error-ex@1.3.4:
     resolution: {integrity: sha512-sqQamAnR14VgCr1A618A3sGrygcpK+HEbenA/HiEAkkUwcZIIB/tgWqHFxWgOyDh4nB4JCRimh79dR5Ywc9MDQ==}
@@ -6719,10 +6709,6 @@ packages:
       strip-bom: 3.0.0
       strip-json-comments: 2.0.1
     dev: true
-
-  /tslib@2.3.1:
-    resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
-    dev: false
 
   /tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
