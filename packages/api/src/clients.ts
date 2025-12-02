@@ -84,8 +84,34 @@ router.post('/clients/:id/solution-brief', async (req: Request, res: Response) =
     const clientConfigJson = JSON.stringify(cfg.config);
     const draft = await generateSolutionBrief(clientConfigJson);
 
-    // NOTE: stubbed response. Persist drafts or revisions as needed.
-    return res.json({ draft });
+    // Persist the generated draft (create or update existing by clientId+phase+kind)
+    try {
+      const kind = 'solution_brief';
+      const phase = 0; // solution brief is not a numbered proposal phase
+      const content = typeof draft === 'string' ? draft : JSON.stringify(draft);
+
+      const existing = await prisma.proposalDraft.findFirst({
+        where: { clientId: id, phase, kind },
+      });
+
+      if (existing) {
+        const updated = await prisma.proposalDraft.update({
+          where: { id: existing.id },
+          data: { content },
+        });
+        return res.json({ draft: content, saved: { id: updated.id, updatedAt: updated.updatedAt } });
+      }
+
+      const created = await prisma.proposalDraft.create({
+        data: { clientId: id, phase, kind, content },
+      });
+
+      return res.json({ draft: content, saved: { id: created.id, createdAt: created.createdAt } });
+    } catch (dbErr) {
+      console.error('failed persisting draft', dbErr);
+      // still return the draft string to client even if persistence fails
+      return res.status(200).json({ draft });
+    }
   } catch (err: unknown) {
     console.error('solution-brief error', err);
     const message = (err as { message?: string })?.message ?? 'server_error';
@@ -104,7 +130,33 @@ router.post('/clients/:id/proposal', async (req: Request, res: Response) => {
     const clientConfigJson = JSON.stringify(cfg.config);
     const draft = await generatePhaseProposal(clientConfigJson, Number(phase));
 
-    return res.json({ draft });
+    // Persist proposal draft (create or update)
+    try {
+      const kind = 'proposal';
+      const phaseNum = Number(phase);
+      const content = typeof draft === 'string' ? draft : JSON.stringify(draft);
+
+      const existing = await prisma.proposalDraft.findFirst({
+        where: { clientId: id, phase: phaseNum, kind },
+      });
+
+      if (existing) {
+        const updated = await prisma.proposalDraft.update({
+          where: { id: existing.id },
+          data: { content },
+        });
+        return res.json({ draft: content, saved: { id: updated.id, updatedAt: updated.updatedAt } });
+      }
+
+      const created = await prisma.proposalDraft.create({
+        data: { clientId: id, phase: phaseNum, kind, content },
+      });
+
+      return res.json({ draft: content, saved: { id: created.id, createdAt: created.createdAt } });
+    } catch (dbErr) {
+      console.error('failed persisting proposal draft', dbErr);
+      return res.status(200).json({ draft });
+    }
   } catch (err: unknown) {
     console.error('proposal error', err);
     const message = (err as { message?: string })?.message ?? 'server_error';
