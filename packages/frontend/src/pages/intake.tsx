@@ -214,7 +214,7 @@ export default function IntakePage() {
           margin: '0 auto',
         }}
       >
-          <header style={{ marginBottom: 24 }}>
+        <header style={{ marginBottom: 24 }}>
           <h1 style={{ fontSize: 32, marginBottom: 8 }}>AI Automation Assessment</h1>
           <p style={{ color: '#555', maxWidth: 720 }}>
             Share a brief overview of your organisation and priorities — this helps us design a
@@ -257,7 +257,7 @@ export default function IntakePage() {
               justifyContent: 'space-between',
             }}
           >
-              <h2 style={{ margin: 0, fontSize: 20 }}>
+            <h2 style={{ margin: 0, fontSize: 20 }}>
               Step {step} of {totalSteps}
             </h2>
             <span style={{ color: '#64748b' }}>
@@ -272,7 +272,9 @@ export default function IntakePage() {
           {step === 1 && (
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontWeight: 500 }}>Company / Organization name *</label>
+                <label style={{ display: 'block', fontWeight: 500 }}>
+                  Company / Organization name *
+                </label>
                 <input
                   value={form.companyName}
                   onChange={(e) => update('companyName', e.target.value)}
@@ -443,7 +445,9 @@ export default function IntakePage() {
           {step === 2 && (
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontWeight: 500 }}>Website / storefront platform</label>
+                <label style={{ display: 'block', fontWeight: 500 }}>
+                  Website / storefront platform
+                </label>
                 <select
                   value={form.websitePlatform}
                   onChange={(e) => update('websitePlatform', e.target.value)}
@@ -576,8 +580,8 @@ export default function IntakePage() {
           {step === 3 && (
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
-                  <label style={{ display: 'block', fontWeight: 500 }}>
-                    Typical inquiries per day (approx.)
+                <label style={{ display: 'block', fontWeight: 500 }}>
+                  Typical inquiries per day (approx.)
                 </label>
                 <input
                   value={form.dailyInquiries}
@@ -709,7 +713,9 @@ export default function IntakePage() {
                   )}
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: 500 }}>Contact phone (optional)</label>
+                  <label style={{ display: 'block', fontWeight: 500 }}>
+                    Contact phone (optional)
+                  </label>
                   <input
                     value={form.contactPhone}
                     onChange={(e) => update('contactPhone', e.target.value)}
