@@ -96,28 +96,55 @@ export default function ClientDetailPage() {
                   }}
                 >
                   <h3 style={{ margin: 0 }}>Profile</h3>
-                  <div style={{ marginTop: 8, color: '#374151' }}>
-                    <div>
-                      <strong>{config.profile?.companyName ?? '—'}</strong>
+                  <div style={{ marginTop: 8, color: '#374151', display: 'grid', gap: 8 }}>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                      <div style={{ color: '#6b7280', minWidth: 120 }}>Company</div>
+                      <div style={{ fontWeight: 600 }}>{config.profile?.companyName ?? '—'}</div>
                     </div>
-                    <div>{config.profile?.website ?? ''}</div>
-                    <div style={{ marginTop: 6 }}>
-                      <span style={{ color: '#6b7280' }}>{config.profile?.industry ?? ''}</span>
-                      {config.profile?.size ? (
-                        <span style={{ marginLeft: 8, color: '#6b7280' }}>
-                          {config.profile.size}
-                        </span>
-                      ) : null}
+
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                      <div style={{ color: '#6b7280', minWidth: 120 }}>Website</div>
+                      <div>
+                        {config.profile?.website ? (
+                          <a href={String(config.profile.website)} target="_blank" rel="noreferrer">
+                            {config.profile.website}
+                          </a>
+                        ) : (
+                          <span style={{ color: '#6b7280' }}>—</span>
+                        )}
+                      </div>
                     </div>
+
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                      <div style={{ color: '#6b7280', minWidth: 120 }}>Industry</div>
+                      <div>{config.profile?.industry ?? '-'}</div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                      <div style={{ color: '#6b7280', minWidth: 120 }}>Size</div>
+                      <div>{config.profile?.size ?? '-'}</div>
+                    </div>
+
+                    {config.contact && (
+                      <div style={{ marginTop: 6 }}>
+                        <div style={{ color: '#6b7280', marginBottom: 6 }}>Primary contact</div>
+                        <div style={{ display: 'grid', gap: 4 }}>
+                          <div style={{ display: 'flex', gap: 12 }}>
+                            <div style={{ minWidth: 120, color: '#6b7280' }}>Name</div>
+                            <div>{config.contact.name ?? '-'}</div>
+                          </div>
+                          <div style={{ display: 'flex', gap: 12 }}>
+                            <div style={{ minWidth: 120, color: '#6b7280' }}>Email</div>
+                            <div>{config.contact.email ?? '-'}</div>
+                          </div>
+                          <div style={{ display: 'flex', gap: 12 }}>
+                            <div style={{ minWidth: 120, color: '#6b7280' }}>Phone</div>
+                            <div>{config.contact.phone ?? '-'}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {config.contact && (
-                    <div style={{ marginTop: 12 }}>
-                      <h4 style={{ margin: '8px 0' }}>Primary contact</h4>
-                      <div>{config.contact.name ?? '-'}</div>
-                      <div>{config.contact.email ?? '-'}</div>
-                      <div>{config.contact.phone ?? '-'}</div>
-                    </div>
-                  )}
                 </div>
 
                 <div>
