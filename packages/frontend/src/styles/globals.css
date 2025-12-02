@@ -1,0 +1,25 @@
+/* packages/frontend/src/styles/globals.css */
+
+:root {
+  --color-bg: #000000;
+  --color-text: #111111;
+  --color-muted: #656565;
+  --color-border: #d5d5d5;
+  --color-surface: #f7f7f7;
+  --color-accent: #c0ff6b;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #ffffff;
+  color: var(--color-text);
+}
