@@ -19,7 +19,7 @@ try {
 }
 
 // Connect prisma client used by the app
-import prisma from '../../src/db';
+import prisma from '../src/db';
 
 beforeAll(async () => {
   await prisma.$connect();

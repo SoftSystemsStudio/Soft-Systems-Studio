@@ -2,13 +2,13 @@ import { Router, Request, Response } from 'express';
 interface AuthRequest extends Request {
   auth?: { workspaceId?: string };
 }
-import { querySimilar } from '../../services/qdrant';
-import { ingestQueue } from '../../queue';
-import { chat } from '../../services/llm';
-import prisma from '../../db';
-import requireAuth from '../../middleware/auth-combined';
-import requireWorkspace from '../../middleware/tenant';
-import { requireRole } from '../../middleware/role';
+import { querySimilar } from '../../../services/qdrant';
+import { ingestQueue } from '../../../queue';
+import { chat } from '../../../services/llm';
+import prisma from '../../../db';
+import requireAuth from '../../../middleware/auth-combined';
+import requireWorkspace from '../../../middleware/tenant';
+import { requireRole } from '../../../middleware/role';
 
 const router = Router();
 
@@ -64,7 +64,7 @@ router.post(
         .join('\n\n');
 
       const system = `You are a helpful customer support assistant. Use the context to answer user questions. If you cannot answer, ask a clarification.`;
-      const messages = [
+      const messages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
         { role: 'system', content: system },
         { role: 'user', content: `Context:\n${contextText}\n\nUser: ${message}` },
       ];

@@ -2,7 +2,6 @@ import './env';
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { handleChat } from '../../packages/agent-customer-service/src/handlers/chat';
 import prisma from './db';
 import healthRouter from './health';
 import onboardingRouter from './api/v1/auth/onboarding';
@@ -11,8 +10,20 @@ import tokenRouter from './api/v1/auth/token';
 import customerServiceRouter from './api/v1/agents/customer_service';
 import { metricsHandler } from './metrics';
 import requireAuth from './middleware/auth-combined';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { httpLogger, logger } from './logger';
+
+// Import handler using require to bypass TypeScript rootDir constraints
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const { handleChat } = require('@softsystems/agent-customer-service') as {
+  handleChat: (body: unknown) => Promise<{ status?: number; body?: unknown }>;
+};
 
 const app = express();
+
+// Request logging (first middleware)
+app.use(httpLogger);
+
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -68,10 +79,16 @@ app.get('/metrics', metricsHandler);
 // Apply auth middleware to protected routes
 app.use('/api/v1/agents', requireAuth);
 
+// 404 handler for unmatched routes
+app.use(notFoundHandler);
+
+// Global error handler (must be last)
+app.use(errorHandler);
+
 const port = process.env.PORT ? Number(process.env.PORT) : 5000;
 
 if (require.main === module) {
-  app.listen(port, () => console.log(`agent-api listening on ${port}`));
+  app.listen(port, () => logger.info({ port }, `agent-api listening on ${port}`));
 }
 
 export default app;

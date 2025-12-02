@@ -12,10 +12,10 @@ process.env.POSTGRES_URL =
 import '../setup';
 
 // Mock qdrant and llm services used by protected endpoint to avoid external calls
-jest.mock('../../src/services/qdrant', () => ({ querySimilar: jest.fn(async () => []) }));
-jest.mock('../../src/services/llm', () => ({ chat: jest.fn(async () => 'echo') }));
+jest.mock('../src/services/qdrant', () => ({ querySimilar: jest.fn(async () => []) }));
+jest.mock('../src/services/llm', () => ({ chat: jest.fn(async () => 'echo') }));
 
-import app from '../../src/index';
+import app from '../src/index';
 
 describe('Auth integration (DB-backed)', () => {
   it('onboarding -> login -> protected endpoint', async () => {
@@ -32,7 +32,7 @@ describe('Auth integration (DB-backed)', () => {
 
     // Create a real user to login
     // Use the same prisma client used by the app
-    const { default: prisma } = await import('../../src/db');
+    const { default: prisma } = await import('../src/db');
     const bcrypt = (await import('bcryptjs')).default;
     const hashed = await bcrypt.hash('secret', 10);
     const testUser = await prisma.user.create({
@@ -66,7 +66,7 @@ describe('Auth integration (DB-backed)', () => {
   });
 
   it('token refresh rotates tokens correctly', async () => {
-    const { default: prisma } = await import('../../src/db');
+    const { default: prisma } = await import('../src/db');
     const bcrypt = (await import('bcryptjs')).default;
 
     // Create user and workspace
@@ -86,13 +86,13 @@ describe('Auth integration (DB-backed)', () => {
       .expect(200);
 
     // Get refresh token from cookie
-    const cookies = loginRes.headers['set-cookie'];
+    const cookies = loginRes.headers['set-cookie'] as string[] | undefined;
     expect(cookies).toBeDefined();
 
     // Refresh the token
     const refreshRes = await request(app)
       .post('/api/v1/auth/token/refresh')
-      .set('Cookie', cookies)
+      .set('Cookie', cookies ?? [])
       .expect(200);
 
     expect(refreshRes.body.ok).toBe(true);
@@ -116,7 +116,7 @@ describe('Auth integration (DB-backed)', () => {
   });
 
   it('token revoke invalidates refresh token', async () => {
-    const { default: prisma } = await import('../../src/db');
+    const { default: prisma } = await import('../src/db');
     const bcrypt = (await import('bcryptjs')).default;
 
     // Create user and workspace
@@ -135,15 +135,18 @@ describe('Auth integration (DB-backed)', () => {
       .send({ email: 'revoke-test@example.com', password: 'revoke-test' })
       .expect(200);
 
-    const cookies = loginRes.headers['set-cookie'];
+    const cookies = loginRes.headers['set-cookie'] as string[] | undefined;
 
     // Revoke the token
-    await request(app).post('/api/v1/auth/token/revoke').set('Cookie', cookies).expect(200);
+    await request(app)
+      .post('/api/v1/auth/token/revoke')
+      .set('Cookie', cookies ?? [])
+      .expect(200);
 
     // Try to refresh with revoked token - should fail
     const refreshRes = await request(app)
       .post('/api/v1/auth/token/refresh')
-      .set('Cookie', cookies)
+      .set('Cookie', cookies ?? [])
       .expect(401);
 
     expect(refreshRes.body.error).toBe('invalid_or_expired_refresh_token');
