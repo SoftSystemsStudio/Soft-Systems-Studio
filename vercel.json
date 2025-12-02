@@ -1,15 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "pnpm install && pnpm build",
-  "outputDirectory": ".next",
+  "buildCommand": "cd packages/frontend && pnpm build",
   "installCommand": "pnpm install --frozen-lockfile",
-  "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "staging": true
-    }
-  },
+  "outputDirectory": "packages/frontend/.next",
   "crons": [
     {
       "path": "/api/cron/cleanup-tokens",
