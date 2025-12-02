@@ -78,43 +78,68 @@ router.get('/clients/:id/config', async (req: Request, res: Response) => {
 router.post('/clients/:id/solution-brief', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const { force } = req.body as { force?: boolean };
+
     const cfg = await prisma.clientConfig.findUnique({ where: { clientId: id } });
     if (!cfg) return res.status(404).json({ error: 'client_config_not_found' });
 
-    const clientConfigJson = JSON.stringify(cfg.config);
-    const draft = await generateSolutionBrief(clientConfigJson);
-
-    // Persist the generated draft (create or update existing by clientId+phase+kind)
-    try {
-      const kind = 'solution_brief';
-      const phase = 0; // solution brief is not a numbered proposal phase
-      const content = typeof draft === 'string' ? draft : JSON.stringify(draft);
-
-      const existing = await prisma.proposalDraft.findFirst({
-        where: { clientId: id, phase, kind },
+    // 1) If not forcing, return existing draft if present
+    if (!force) {
+      const existing = await prisma.proposalDraft.findUnique({
+        where: {
+          client_phase_kind_unique: {
+            clientId: id,
+            phase: 0, // convention: 0 = solution brief
+            kind: 'solution_brief',
+          },
+        },
       });
 
       if (existing) {
-        const updated = await prisma.proposalDraft.update({
-          where: { id: existing.id },
-          data: { content },
-        });
         return res.json({
-          draft: content,
-          saved: { id: updated.id, updatedAt: updated.updatedAt },
+          draft: existing.content,
+          saved: {
+            id: existing.id,
+            createdAt: existing.createdAt,
+            updatedAt: existing.updatedAt,
+            source: 'existing',
+          },
         });
       }
-
-      const created = await prisma.proposalDraft.create({
-        data: { clientId: id, phase, kind, content },
-      });
-
-      return res.json({ draft: content, saved: { id: created.id, createdAt: created.createdAt } });
-    } catch (dbErr) {
-      console.error('failed persisting draft', dbErr);
-      // still return the draft string to client even if persistence fails
-      return res.status(200).json({ draft });
     }
+
+    // 2) No existing draft (or force=true): generate a new one
+    const clientConfigJson = JSON.stringify(cfg.config);
+    const generatedDraft = await generateSolutionBrief(clientConfigJson);
+    const content = String(generatedDraft ?? '');
+
+    // 3) Upsert into ProposalDraft
+    const saved = await prisma.proposalDraft.upsert({
+      where: {
+        client_phase_kind_unique: {
+          clientId: id,
+          phase: 0,
+          kind: 'solution_brief',
+        },
+      },
+      update: { content },
+      create: {
+        clientId: id,
+        phase: 0,
+        kind: 'solution_brief',
+        content,
+      },
+    });
+
+    return res.json({
+      draft: saved.content,
+      saved: {
+        id: saved.id,
+        createdAt: saved.createdAt,
+        updatedAt: saved.updatedAt,
+        source: 'generated',
+      },
+    });
   } catch (err: unknown) {
     console.error('solution-brief error', err);
     const message = (err as { message?: string })?.message ?? 'server_error';
@@ -126,43 +151,69 @@ router.post('/clients/:id/solution-brief', async (req: Request, res: Response) =
 router.post('/clients/:id/proposal', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { phase = 1 } = req.body as { phase?: number };
+    const { phase = 1, force } = req.body as { phase?: number; force?: boolean };
+    const numericPhase = Number(phase) || 1;
+
     const cfg = await prisma.clientConfig.findUnique({ where: { clientId: id } });
     if (!cfg) return res.status(404).json({ error: 'client_config_not_found' });
 
-    const clientConfigJson = JSON.stringify(cfg.config);
-    const draft = await generatePhaseProposal(clientConfigJson, Number(phase));
-
-    // Persist proposal draft (create or update)
-    try {
-      const kind = 'proposal';
-      const phaseNum = Number(phase);
-      const content = typeof draft === 'string' ? draft : JSON.stringify(draft);
-
-      const existing = await prisma.proposalDraft.findFirst({
-        where: { clientId: id, phase: phaseNum, kind },
+    // 1) If not forcing, return existing draft if present
+    if (!force) {
+      const existing = await prisma.proposalDraft.findUnique({
+        where: {
+          client_phase_kind_unique: {
+            clientId: id,
+            phase: numericPhase,
+            kind: 'phase_proposal',
+          },
+        },
       });
 
       if (existing) {
-        const updated = await prisma.proposalDraft.update({
-          where: { id: existing.id },
-          data: { content },
-        });
         return res.json({
-          draft: content,
-          saved: { id: updated.id, updatedAt: updated.updatedAt },
+          draft: existing.content,
+          saved: {
+            id: existing.id,
+            createdAt: existing.createdAt,
+            updatedAt: existing.updatedAt,
+            source: 'existing',
+          },
         });
       }
-
-      const created = await prisma.proposalDraft.create({
-        data: { clientId: id, phase: phaseNum, kind, content },
-      });
-
-      return res.json({ draft: content, saved: { id: created.id, createdAt: created.createdAt } });
-    } catch (dbErr) {
-      console.error('failed persisting proposal draft', dbErr);
-      return res.status(200).json({ draft });
     }
+
+    // 2) No existing draft (or force=true): generate a new one
+    const clientConfigJson = JSON.stringify(cfg.config);
+    const generatedDraft = await generatePhaseProposal(clientConfigJson, numericPhase);
+    const content = String(generatedDraft ?? '');
+
+    // 3) Upsert into ProposalDraft
+    const saved = await prisma.proposalDraft.upsert({
+      where: {
+        client_phase_kind_unique: {
+          clientId: id,
+          phase: numericPhase,
+          kind: 'phase_proposal',
+        },
+      },
+      update: { content },
+      create: {
+        clientId: id,
+        phase: numericPhase,
+        kind: 'phase_proposal',
+        content,
+      },
+    });
+
+    return res.json({
+      draft: saved.content,
+      saved: {
+        id: saved.id,
+        createdAt: saved.createdAt,
+        updatedAt: saved.updatedAt,
+        source: 'generated',
+      },
+    });
   } catch (err: unknown) {
     console.error('proposal error', err);
     const message = (err as { message?: string })?.message ?? 'server_error';
