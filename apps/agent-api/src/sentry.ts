@@ -97,6 +97,7 @@ export function initSentry(): void {
           const sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'];
           for (const header of sensitiveHeaders) {
             if (Object.prototype.hasOwnProperty.call(headers, header)) {
+              // eslint-disable-next-line security/detect-object-injection -- safe: header is from a fixed allowlist
               headers[header] = '[REDACTED]';
             }
           }
