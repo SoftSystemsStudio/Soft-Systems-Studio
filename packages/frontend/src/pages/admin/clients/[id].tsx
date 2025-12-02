@@ -126,7 +126,11 @@ export default function ClientDetailPage() {
                         <div style={{ color: '#6b7280', minWidth: 120 }}>Website</div>
                         <div>
                           {config.profile?.website ? (
-                            <a href={String(config.profile.website)} target="_blank" rel="noreferrer">
+                            <a
+                              href={String(config.profile.website)}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
                               {config.profile.website}
                             </a>
                           ) : (
@@ -226,7 +230,9 @@ export default function ClientDetailPage() {
                             }}
                           >
                             <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
-                            <div style={{ fontFamily: 'monospace', color: '#111' }}>{renderValue(v)}</div>
+                            <div style={{ fontFamily: 'monospace', color: '#111' }}>
+                              {renderValue(v)}
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -247,10 +253,16 @@ export default function ClientDetailPage() {
                 boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
                 <h2 style={{ margin: 0, fontSize: 16 }}>Drafts</h2>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div role="tablist" aria-label="Draft types" style={{ display: 'flex', gap: 8 }}>
                   <button
+                    id="draft-tab-brief"
+                    role="tab"
+                    aria-selected={activeDraftTab === 'brief'}
+                    aria-controls="draft-panel"
                     onClick={() => setActiveDraftTab('brief')}
                     style={{
                       padding: '6px 10px',
@@ -262,6 +274,10 @@ export default function ClientDetailPage() {
                     Solution brief
                   </button>
                   <button
+                    id="draft-tab-phase1"
+                    role="tab"
+                    aria-selected={activeDraftTab === 'phase1'}
+                    aria-controls="draft-panel"
                     onClick={() => setActiveDraftTab('phase1')}
                     style={{
                       padding: '6px 10px',
@@ -277,8 +293,9 @@ export default function ClientDetailPage() {
 
               <div style={{ marginTop: 12 }}>
                 <div
-                  role="region"
-                  aria-label="Draft preview"
+                  role="tabpanel"
+                  id="draft-panel"
+                  aria-labelledby={activeDraftTab === 'brief' ? 'draft-tab-brief' : 'draft-tab-phase1'}
                   style={{
                     border: '1px solid #e1e4e8',
                     borderRadius: 8,
@@ -292,8 +309,8 @@ export default function ClientDetailPage() {
                   }}
                 >
                   {activeDraftTab === 'brief'
-                    ? solutionBrief ?? 'No solution brief yet. Generate one to see it here.'
-                    : phase1Proposal ?? 'No phase 1 proposal yet. Generate one to see it here.'}
+                    ? (solutionBrief ?? 'No solution brief yet. Generate one to see it here.')
+                    : (phase1Proposal ?? 'No phase 1 proposal yet. Generate one to see it here.')}
                 </div>
 
                 {lastSaved && (
@@ -303,11 +320,7 @@ export default function ClientDetailPage() {
                 )}
 
                 <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-                  <button
-                    onClick={() => genBrief(false)}
-                    disabled={loading}
-                    style={{ flex: 1 }}
-                  >
+                  <button onClick={() => genBrief(false)} disabled={loading} style={{ flex: 1 }}>
                     {loading ? 'Working...' : 'Generate Solution Brief'}
                   </button>
                   <button
