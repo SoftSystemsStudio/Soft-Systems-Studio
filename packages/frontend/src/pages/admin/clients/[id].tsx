@@ -10,7 +10,10 @@ export default function ClientDetailPage() {
 
   const [config, setConfig] = useState<ClientConfig | null>(null);
   const [loading, setLoading] = useState(false);
-  const [output, setOutput] = useState<string | null>(null);
+  const [solutionBrief, setSolutionBrief] = useState<string | null>(null);
+  const [phase1Proposal, setPhase1Proposal] = useState<string | null>(null);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [activeDraftTab, setActiveDraftTab] = useState<'brief' | 'phase1'>('brief');
 
   useEffect(() => {
     if (!id) return;
@@ -28,37 +31,49 @@ export default function ClientDetailPage() {
       });
   }, [id]);
 
-  async function genBrief() {
+  async function genBrief(force = false) {
     if (!id) return;
     setLoading(true);
-    setOutput(null);
     try {
-      const res = await fetch(`/api/clients/${id}/solution-brief`, { method: 'POST' });
+      const res = await fetch(`/api/clients/${id}/solution-brief`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(force ? { force: true } : {}),
+      });
       const data = await res.json();
-      setOutput(data.draft ?? JSON.stringify(data, null, 2));
+      const content = data?.draft ?? JSON.stringify(data, null, 2);
+      setSolutionBrief(String(content));
+      const ts = data?.saved?.updatedAt ?? data?.saved?.createdAt ?? null;
+      setLastSaved(ts ?? null);
+      setActiveDraftTab('brief');
     } catch (e) {
       console.error(e);
-      setOutput('Error generating brief');
+      setSolutionBrief('Error generating brief');
     } finally {
       setLoading(false);
     }
   }
 
-  async function genProposal(phase = 1) {
+  async function genProposal(phase = 1, force = false) {
     if (!id) return;
     setLoading(true);
-    setOutput(null);
     try {
       const res = await fetch(`/api/clients/${id}/proposal`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phase }),
+        body: JSON.stringify(Object.assign({ phase }, force ? { force: true } : {})),
       });
       const data = await res.json();
-      setOutput(data.draft ?? JSON.stringify(data, null, 2));
+      const content = data?.draft ?? JSON.stringify(data, null, 2);
+      if (Number(phase) === 1) {
+        setPhase1Proposal(String(content));
+        setActiveDraftTab('phase1');
+      }
+      const ts = data?.saved?.updatedAt ?? data?.saved?.createdAt ?? null;
+      setLastSaved(ts ?? null);
     } catch (e) {
       console.error(e);
-      setOutput('Error generating proposal');
+      if (Number(phase) === 1) setPhase1Proposal('Error generating proposal');
     } finally {
       setLoading(false);
     }
@@ -84,185 +99,225 @@ export default function ClientDetailPage() {
       <main style={{ padding: 24 }}>
         <h1>Client {id}</h1>
         <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-          <section style={{ flex: 1 }}>
-            <h2>Client overview</h2>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <section>
+              <h2>Client overview</h2>
 
-            {!config && <div>Loading…</div>}
+              {!config && <div>Loading…</div>}
 
-            {config && (
-              <div style={{ display: 'grid', gap: 16 }}>
-                <div
-                  style={{
-                    background: '#fff',
-                    borderRadius: 8,
-                    padding: 16,
-                    boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
-                  }}
-                >
-                  <h3 style={{ margin: 0 }}>Profile</h3>
-                  <div style={{ marginTop: 8, color: '#374151', display: 'grid', gap: 8 }}>
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                      <div style={{ color: '#6b7280', minWidth: 120 }}>Company</div>
-                      <div style={{ fontWeight: 600 }}>{config.profile?.companyName ?? '—'}</div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                      <div style={{ color: '#6b7280', minWidth: 120 }}>Website</div>
-                      <div>
-                        {config.profile?.website ? (
-                          <a href={String(config.profile.website)} target="_blank" rel="noreferrer">
-                            {config.profile.website}
-                          </a>
-                        ) : (
-                          <span style={{ color: '#6b7280' }}>—</span>
-                        )}
+              {config && (
+                <div style={{ display: 'grid', gap: 16 }}>
+                  <div
+                    style={{
+                      background: '#fff',
+                      borderRadius: 8,
+                      padding: 16,
+                      boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
+                    }}
+                  >
+                    <h3 style={{ margin: 0 }}>Profile</h3>
+                    <div style={{ marginTop: 8, color: '#374151', display: 'grid', gap: 8 }}>
+                      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                        <div style={{ color: '#6b7280', minWidth: 120 }}>Company</div>
+                        <div style={{ fontWeight: 600 }}>{config.profile?.companyName ?? '—'}</div>
                       </div>
-                    </div>
 
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                      <div style={{ color: '#6b7280', minWidth: 120 }}>Industry</div>
-                      <div>{config.profile?.industry ?? '-'}</div>
-                    </div>
+                      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                        <div style={{ color: '#6b7280', minWidth: 120 }}>Website</div>
+                        <div>
+                          {config.profile?.website ? (
+                            <a href={String(config.profile.website)} target="_blank" rel="noreferrer">
+                              {config.profile.website}
+                            </a>
+                          ) : (
+                            <span style={{ color: '#6b7280' }}>—</span>
+                          )}
+                        </div>
+                      </div>
 
-                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                      <div style={{ color: '#6b7280', minWidth: 120 }}>Size</div>
-                      <div>{config.profile?.size ?? '-'}</div>
-                    </div>
+                      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                        <div style={{ color: '#6b7280', minWidth: 120 }}>Industry</div>
+                        <div>{config.profile?.industry ?? '-'}</div>
+                      </div>
 
-                    {config.contact && (
-                      <div style={{ marginTop: 6 }}>
-                        <div style={{ color: '#6b7280', marginBottom: 6 }}>Primary contact</div>
-                        <div style={{ display: 'grid', gap: 4 }}>
-                          <div style={{ display: 'flex', gap: 12 }}>
-                            <div style={{ minWidth: 120, color: '#6b7280' }}>Name</div>
-                            <div>{config.contact.name ?? '-'}</div>
-                          </div>
-                          <div style={{ display: 'flex', gap: 12 }}>
-                            <div style={{ minWidth: 120, color: '#6b7280' }}>Email</div>
-                            <div>{config.contact.email ?? '-'}</div>
-                          </div>
-                          <div style={{ display: 'flex', gap: 12 }}>
-                            <div style={{ minWidth: 120, color: '#6b7280' }}>Phone</div>
-                            <div>{config.contact.phone ?? '-'}</div>
+                      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                        <div style={{ color: '#6b7280', minWidth: 120 }}>Size</div>
+                        <div>{config.profile?.size ?? '-'}</div>
+                      </div>
+
+                      {config.contact && (
+                        <div style={{ marginTop: 6 }}>
+                          <div style={{ color: '#6b7280', marginBottom: 6 }}>Primary contact</div>
+                          <div style={{ display: 'grid', gap: 4 }}>
+                            <div style={{ display: 'flex', gap: 12 }}>
+                              <div style={{ minWidth: 120, color: '#6b7280' }}>Name</div>
+                              <div>{config.contact.name ?? '-'}</div>
+                            </div>
+                            <div style={{ display: 'flex', gap: 12 }}>
+                              <div style={{ minWidth: 120, color: '#6b7280' }}>Email</div>
+                              <div>{config.contact.email ?? '-'}</div>
+                            </div>
+                            <div style={{ display: 'flex', gap: 12 }}>
+                              <div style={{ minWidth: 120, color: '#6b7280' }}>Phone</div>
+                              <div>{config.contact.phone ?? '-'}</div>
+                            </div>
                           </div>
                         </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <details style={{ background: '#f6f8fa', padding: 12, borderRadius: 8 }}>
+                    <summary style={{ cursor: 'pointer' }}>Raw config (debug)</summary>
+                    <div
+                      style={{
+                        marginTop: 8,
+                        border: '1px solid #e1e4e8',
+                        borderRadius: 8,
+                        padding: 12,
+                        background: '#ffffff',
+                        maxHeight: 320,
+                        overflowY: 'auto',
+                        whiteSpace: 'pre-wrap',
+                        fontSize: 13,
+                        lineHeight: 1.4,
+                        fontFamily: 'monospace',
+                      }}
+                    >
+                      {JSON.stringify(config, null, 2)}
+                    </div>
+                  </details>
+                </div>
+              )}
+            </section>
+
+            {/* Systems section remains as-is but placed in left column */}
+            <section>
+              <h3>Systems</h3>
+              <div style={{ display: 'grid', gap: 12 }}>
+                {(Array.isArray(config?.subsystems) ? config!.subsystems : []).map((s: any) => (
+                  <div
+                    key={s.id ?? s.type}
+                    style={{
+                      background: '#fff',
+                      borderRadius: 8,
+                      padding: 12,
+                      boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div>
+                        <strong>{s.type}</strong>
+                        <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
+                      </div>
+                      <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
+                    </div>
+
+                    {s.settings && (
+                      <div style={{ marginTop: 8 }}>
+                        {Object.entries(s.settings).map(([k, v]) => (
+                          <div
+                            key={k}
+                            style={{
+                              display: 'flex',
+                              gap: 8,
+                              alignItems: 'center',
+                              marginTop: 6,
+                            }}
+                          >
+                            <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
+                            <div style={{ fontFamily: 'monospace', color: '#111' }}>{renderValue(v)}</div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
-                </div>
+                ))}
+              </div>
+            </section>
+          </div>
 
-                <div>
-                  <h3>Systems</h3>
-                  <div style={{ display: 'grid', gap: 12 }}>
-                    {(Array.isArray(config.subsystems) ? config.subsystems : []).map((s: any) => (
-                      <div
-                        key={s.id ?? s.type}
-                        style={{
-                          background: '#fff',
-                          borderRadius: 8,
-                          padding: 12,
-                          boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <div>
-                            <strong>{s.type}</strong>
-                            <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
-                          </div>
-                          <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
-                        </div>
-
-                        {s.settings && (
-                          <div style={{ marginTop: 8 }}>
-                            {Object.entries(s.settings).map(([k, v]) => (
-                              <div
-                                key={k}
-                                style={{
-                                  display: 'flex',
-                                  gap: 8,
-                                  alignItems: 'center',
-                                  marginTop: 6,
-                                }}
-                              >
-                                <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
-                                <div style={{ fontFamily: 'monospace', color: '#111' }}>
-                                  {renderValue(v)}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <details style={{ background: '#f6f8fa', padding: 12, borderRadius: 8 }}>
-                  <summary style={{ cursor: 'pointer' }}>Raw config (debug)</summary>
-                  <div
+          {/* Right column: Drafts panel */}
+          <aside style={{ width: 420 }}>
+            <div
+              style={{
+                background: '#fff',
+                borderRadius: 8,
+                padding: 12,
+                boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2 style={{ margin: 0, fontSize: 16 }}>Drafts</h2>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={() => setActiveDraftTab('brief')}
                     style={{
-                      marginTop: 8,
-                      border: '1px solid #e1e4e8',
-                      borderRadius: 8,
-                      padding: 12,
-                      background: '#ffffff',
-                      maxHeight: 320,
-                      overflowY: 'auto',
-                      whiteSpace: 'pre-wrap',
-                      fontSize: 13,
-                      lineHeight: 1.4,
-                      fontFamily: 'monospace',
+                      padding: '6px 10px',
+                      borderRadius: 6,
+                      border: activeDraftTab === 'brief' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
+                      background: activeDraftTab === 'brief' ? '#eef2ff' : '#fff',
                     }}
                   >
-                    {JSON.stringify(config, null, 2)}
-                  </div>
-                </details>
+                    Solution brief
+                  </button>
+                  <button
+                    onClick={() => setActiveDraftTab('phase1')}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: 6,
+                      border: activeDraftTab === 'phase1' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
+                      background: activeDraftTab === 'phase1' ? '#eef2ff' : '#fff',
+                    }}
+                  >
+                    Phase 1 proposal
+                  </button>
+                </div>
               </div>
-            )}
-          </section>
 
-          <aside style={{ width: 420 }}>
-            <h2>Actions</h2>
-            <button
-              onClick={genBrief}
-              disabled={loading}
-              style={{ display: 'block', marginBottom: 8 }}
-            >
-              {loading ? 'Working...' : 'Generate Solution Brief'}
-            </button>
-            <button
-              onClick={() => genProposal(1)}
-              disabled={loading}
-              style={{ display: 'block', marginBottom: 8 }}
-            >
-              Generate Proposal (Phase 1)
-            </button>
-            <button
-              onClick={() => genProposal(2)}
-              disabled={loading}
-              style={{ display: 'block', marginBottom: 8 }}
-            >
-              Generate Proposal (Phase 2)
-            </button>
+              <div style={{ marginTop: 12 }}>
+                <div
+                  role="region"
+                  aria-label="Draft preview"
+                  style={{
+                    border: '1px solid #e1e4e8',
+                    borderRadius: 8,
+                    padding: 12,
+                    background: '#ffffff',
+                    maxHeight: 360,
+                    overflowY: 'auto',
+                    whiteSpace: 'pre-wrap',
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {activeDraftTab === 'brief'
+                    ? solutionBrief ?? 'No solution brief yet. Generate one to see it here.'
+                    : phase1Proposal ?? 'No phase 1 proposal yet. Generate one to see it here.'}
+                </div>
 
-            <div style={{ marginTop: 16 }}>
-              <h3>Solution brief / proposal draft</h3>
-              <div
-                role="region"
-                aria-label="Solution brief preview"
-                style={{
-                  border: '1px solid #e1e4e8',
-                  borderRadius: 8,
-                  padding: 16,
-                  background: '#ffffff',
-                  maxHeight: 420,
-                  overflowY: 'auto',
-                  whiteSpace: 'pre-wrap',
-                  fontSize: 14,
-                  lineHeight: 1.6,
-                }}
-              >
-                {output ?? 'No output yet. Generate a Solution Brief or Proposal to see it here.'}
+                {lastSaved && (
+                  <div style={{ marginTop: 8, color: '#6b7280', fontSize: 13 }}>
+                    Last saved: {lastSaved}
+                  </div>
+                )}
+
+                <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={() => genBrief(false)}
+                    disabled={loading}
+                    style={{ flex: 1 }}
+                  >
+                    {loading ? 'Working...' : 'Generate Solution Brief'}
+                  </button>
+                  <button
+                    onClick={() => genProposal(1, false)}
+                    disabled={loading}
+                    style={{ flex: 1 }}
+                  >
+                    {loading ? 'Working...' : 'Generate Phase 1 Proposal'}
+                  </button>
+                </div>
               </div>
             </div>
           </aside>
