@@ -4,11 +4,11 @@ dist
 build
 .env
 .env.local
-.env.*
+.env._
 !.env.example
 Dockerfile
 .git
 .github
-*.log
-*.md
+_.log
+\*.md
 !README.md
