@@ -10,9 +10,6 @@
       "staging": true
     }
   },
-  "github": {
-    "silent": true
-  },
   "crons": [
     {
       "path": "/api/cron/cleanup-tokens",
