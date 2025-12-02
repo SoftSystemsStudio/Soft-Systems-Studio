@@ -1,5 +1,4 @@
 import request from 'supertest';
-import request from 'supertest';
 
 // set JWT env for tests
 process.env.JWT_SECRET = process.env.JWT_SECRET ?? 'test-secret';
@@ -28,22 +27,33 @@ describe('Auth integration (DB-backed)', () => {
 
     expect(onboardingRes.body.ok).toBe(true);
     expect(onboardingRes.body.workspaceId).toBeDefined();
-    expect(onboardingRes.body.token).toBeDefined();
+    expect(onboardingRes.body.accessToken).toBeDefined();
+    expect(onboardingRes.body.expiresAt).toBeDefined();
 
     // Create a real user to login
     // Use the same prisma client used by the app
     const { default: prisma } = await import('../../src/db');
     const bcrypt = (await import('bcryptjs')).default;
     const hashed = await bcrypt.hash('secret', 10);
-    await prisma.user.create({ data: { email: 'existing@example.com', password: hashed } });
+    const testUser = await prisma.user.create({
+      data: { email: 'existing@example.com', password: hashed },
+    });
+
+    // Create a workspace membership for the test user
+    const testWorkspace = await prisma.workspace.create({ data: { name: 'TestWorkspace' } });
+    await prisma.workspaceMembership.create({
+      data: { workspaceId: testWorkspace.id, userId: testUser.id, role: 'admin' },
+    });
 
     // Login with real credentials
     const loginRes = await request(app)
       .post('/api/v1/auth/login')
       .send({ email: 'existing@example.com', password: 'secret' })
       .expect(200);
-    expect(loginRes.body.token).toBeDefined();
-    const token = loginRes.body.token;
+    expect(loginRes.body.accessToken).toBeDefined();
+    expect(loginRes.body.workspaceId).toBeDefined();
+    expect(loginRes.body.role).toBe('admin');
+    const token = loginRes.body.accessToken;
 
     // Call protected run endpoint with token
     const runRes = await request(app)
@@ -53,5 +63,89 @@ describe('Auth integration (DB-backed)', () => {
       .expect(200);
 
     expect(runRes.body.reply).toBeDefined();
+  });
+
+  it('token refresh rotates tokens correctly', async () => {
+    const { default: prisma } = await import('../../src/db');
+    const bcrypt = (await import('bcryptjs')).default;
+
+    // Create user and workspace
+    const hashed = await bcrypt.hash('refresh-test', 10);
+    const user = await prisma.user.create({
+      data: { email: 'refresh-test@example.com', password: hashed },
+    });
+    const workspace = await prisma.workspace.create({ data: { name: 'RefreshTestWorkspace' } });
+    await prisma.workspaceMembership.create({
+      data: { workspaceId: workspace.id, userId: user.id, role: 'member' },
+    });
+
+    // Login to get tokens
+    const loginRes = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'refresh-test@example.com', password: 'refresh-test' })
+      .expect(200);
+
+    // Get refresh token from cookie
+    const cookies = loginRes.headers['set-cookie'];
+    expect(cookies).toBeDefined();
+
+    // Refresh the token
+    const refreshRes = await request(app)
+      .post('/api/v1/auth/token/refresh')
+      .set('Cookie', cookies)
+      .expect(200);
+
+    expect(refreshRes.body.ok).toBe(true);
+    expect(refreshRes.body.accessToken).toBeDefined();
+    expect(refreshRes.body.accessToken).not.toBe(loginRes.body.accessToken); // New token issued
+  });
+
+  it('rejects expired tokens with proper error code', async () => {
+    // Use an invalid/expired token
+    const expiredToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxfQ.invalid';
+
+    const res = await request(app)
+      .post('/api/v1/agents/customer-service/run')
+      .set('Authorization', `Bearer ${expiredToken}`)
+      .send({ message: 'hello' })
+      .expect(401);
+
+    expect(res.body.error).toBeDefined();
+    expect(res.body.code).toBeDefined();
+  });
+
+  it('token revoke invalidates refresh token', async () => {
+    const { default: prisma } = await import('../../src/db');
+    const bcrypt = (await import('bcryptjs')).default;
+
+    // Create user and workspace
+    const hashed = await bcrypt.hash('revoke-test', 10);
+    const user = await prisma.user.create({
+      data: { email: 'revoke-test@example.com', password: hashed },
+    });
+    const workspace = await prisma.workspace.create({ data: { name: 'RevokeTestWorkspace' } });
+    await prisma.workspaceMembership.create({
+      data: { workspaceId: workspace.id, userId: user.id, role: 'member' },
+    });
+
+    // Login to get tokens
+    const loginRes = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'revoke-test@example.com', password: 'revoke-test' })
+      .expect(200);
+
+    const cookies = loginRes.headers['set-cookie'];
+
+    // Revoke the token
+    await request(app).post('/api/v1/auth/token/revoke').set('Cookie', cookies).expect(200);
+
+    // Try to refresh with revoked token - should fail
+    const refreshRes = await request(app)
+      .post('/api/v1/auth/token/refresh')
+      .set('Cookie', cookies)
+      .expect(401);
+
+    expect(refreshRes.body.error).toBe('invalid_or_expired_refresh_token');
   });
 });

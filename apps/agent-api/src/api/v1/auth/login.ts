@@ -1,11 +1,20 @@
 import { Router, Request, Response } from 'express';
 import prisma from '../../../db';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import env from '../../../env';
 import { loginLimiter } from '../../../middleware/rate';
+import { createAccessToken, createRefreshTokenInDb, TOKEN_CONFIG } from '../../../services/token';
 
 const router = Router();
+
+// Cookie options for refresh token
+const getRefreshCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  maxAge: TOKEN_CONFIG.refreshToken.expiresInMs,
+  path: '/api/v1/auth/token', // Only sent to token endpoints
+});
 
 // POST /api/v1/auth/login
 router.post('/login', loginLimiter, async (req: Request, res: Response) => {
@@ -35,23 +44,31 @@ router.post('/login', loginLimiter, async (req: Request, res: Response) => {
       if (found) membership = found;
     }
 
-    const payload = {
+    if (!env.JWT_SECRET) return res.status(500).json({ error: 'server_missing_jwt_secret' });
+
+    // Create short-lived access token
+    const accessToken = createAccessToken({
       sub: user.id,
       email: user.email,
       workspaceId: membership.workspaceId,
       role: membership.role,
-    };
-    if (!env.JWT_SECRET) return res.status(500).json({ error: 'server_missing_jwt_secret' });
-    const token = jwt.sign(payload, env.JWT_SECRET, {
-      algorithm: env.JWT_ALGORITHM,
-      expiresIn: '7d',
     });
+
+    // Create refresh token and store in DB
+    const { token: refreshToken, expiresAt } = await createRefreshTokenInDb(
+      user.id,
+      membership.workspaceId,
+    );
+
+    // Set refresh token in HTTP-only cookie
+    res.cookie('refreshToken', refreshToken, getRefreshCookieOptions());
 
     return res.json({
       ok: true,
-      token,
+      accessToken,
       workspaceId: membership.workspaceId,
       role: membership.role,
+      expiresAt: expiresAt.toISOString(),
     });
   } catch (err: unknown) {
     console.error('login error', err);

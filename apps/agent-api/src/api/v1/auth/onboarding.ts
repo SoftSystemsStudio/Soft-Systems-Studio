@@ -1,11 +1,20 @@
 import { Router, Request, Response } from 'express';
 import prisma from '../../../db';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import env from '../../../env';
 import { onboardingLimiter } from '../../../middleware/rate';
+import { createAccessToken, createRefreshTokenInDb, TOKEN_CONFIG } from '../../../services/token';
 
 const router = Router();
+
+// Cookie options for refresh token
+const getRefreshCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  maxAge: TOKEN_CONFIG.refreshToken.expiresInMs,
+  path: '/api/v1/auth/token', // Only sent to token endpoints
+});
 
 // Create workspace + initial admin user and return JWT
 router.post('/create-workspace', onboardingLimiter, async (req: Request, res: Response) => {
@@ -34,20 +43,28 @@ router.post('/create-workspace', onboardingLimiter, async (req: Request, res: Re
       data: { workspaceId: workspace.id, userId: user.id, role: 'admin' },
     });
 
-    // Create JWT for the user (includes workspaceId and role)
-    const payload = {
+    if (!env.JWT_SECRET) return res.status(500).json({ error: 'server_missing_jwt_secret' });
+
+    // Create short-lived access token
+    const accessToken = createAccessToken({
       sub: user.id,
       email: user.email,
       workspaceId: workspace.id,
       role: 'admin',
-    };
-    if (!env.JWT_SECRET) return res.status(500).json({ error: 'server_missing_jwt_secret' });
-    const token = jwt.sign(payload, env.JWT_SECRET, {
-      algorithm: env.JWT_ALGORITHM,
-      expiresIn: '30d',
     });
 
-    return res.json({ ok: true, workspaceId: workspace.id, token });
+    // Create refresh token and store in DB
+    const { token: refreshToken, expiresAt } = await createRefreshTokenInDb(user.id, workspace.id);
+
+    // Set refresh token in HTTP-only cookie
+    res.cookie('refreshToken', refreshToken, getRefreshCookieOptions());
+
+    return res.json({
+      ok: true,
+      workspaceId: workspace.id,
+      accessToken,
+      expiresAt: expiresAt.toISOString(),
+    });
   } catch (err: unknown) {
     console.error('onboarding error', err);
     const message = (err as { message?: string })?.message ?? 'server_error';

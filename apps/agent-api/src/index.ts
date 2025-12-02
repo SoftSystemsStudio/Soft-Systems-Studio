@@ -1,16 +1,20 @@
 import './env';
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import { handleChat } from '../../packages/agent-customer-service/src/handlers/chat';
 import prisma from './db';
 import healthRouter from './health';
 import onboardingRouter from './api/v1/auth/onboarding';
 import loginRouter from './api/v1/auth/login';
+import tokenRouter from './api/v1/auth/token';
 import customerServiceRouter from './api/v1/agents/customer_service';
 import { metricsHandler } from './metrics';
+import requireAuth from './middleware/auth-combined';
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.post('/api/agents/customer-service/chat', async (req: Request, res: Response) => {
   try {
@@ -58,7 +62,11 @@ app.use('/health', healthRouter);
 app.use('/api/v1/agents/customer-service', customerServiceRouter);
 app.use('/api/v1/auth', onboardingRouter);
 app.use('/api/v1/auth', loginRouter);
+app.use('/api/v1/auth', tokenRouter);
 app.get('/metrics', metricsHandler);
+
+// Apply auth middleware to protected routes
+app.use('/api/v1/agents', requireAuth);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 5000;
 
