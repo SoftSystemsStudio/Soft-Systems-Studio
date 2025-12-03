@@ -31,6 +31,27 @@ interface ClientConfig {
   [key: string]: unknown;
 }
 
+/** API response types */
+interface BriefApiResponse {
+  draft?: string;
+  saved?: {
+    updatedAt?: string;
+    createdAt?: string;
+  };
+}
+
+interface ProposalApiResponse {
+  draft?: string;
+  saved?: {
+    updatedAt?: string;
+    createdAt?: string;
+  };
+}
+
+interface ConfigApiResponse {
+  config?: ClientConfig;
+}
+
 export default function ClientDetailPage() {
   const router = useRouter();
   const { id } = router.query as { id?: string };
@@ -47,7 +68,7 @@ export default function ClientDetailPage() {
 
     // Load the normalized config from the API. The API returns { config: {...} }.
     fetch(`/api/clients/${id}/config`)
-      .then((res) => res.json())
+      .then((res) => res.json() as Promise<ConfigApiResponse>)
       .then((data) => {
         // store only the inner config object
         setConfig(data?.config ?? null);
@@ -67,11 +88,11 @@ export default function ClientDetailPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(force ? { force: true } : {}),
       });
-      const data = await res.json();
+      const data = (await res.json()) as BriefApiResponse;
       const content = data?.draft ?? JSON.stringify(data, null, 2);
       setSolutionBrief(String(content));
       const ts = data?.saved?.updatedAt ?? data?.saved?.createdAt ?? null;
-      setLastSaved(ts ?? null);
+      setLastSaved(ts);
       setActiveDraftTab('brief');
     } catch (e) {
       console.error(e);
@@ -90,14 +111,14 @@ export default function ClientDetailPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(Object.assign({ phase }, force ? { force: true } : {})),
       });
-      const data = await res.json();
+      const data = (await res.json()) as ProposalApiResponse;
       const content = data?.draft ?? JSON.stringify(data, null, 2);
       if (Number(phase) === 1) {
         setPhase1Proposal(String(content));
         setActiveDraftTab('phase1');
       }
       const ts = data?.saved?.updatedAt ?? data?.saved?.createdAt ?? null;
-      setLastSaved(ts ?? null);
+      setLastSaved(ts);
     } catch (e) {
       console.error(e);
       if (Number(phase) === 1) setPhase1Proposal('Error generating proposal');
@@ -226,7 +247,7 @@ export default function ClientDetailPage() {
             <section>
               <h3>Systems</h3>
               <div style={{ display: 'grid', gap: 12 }}>
-                {(Array.isArray(config?.subsystems) ? config!.subsystems : []).map(
+                {(Array.isArray(config?.subsystems) ? config.subsystems : []).map(
                   (s: Subsystem) => (
                     <div
                       key={s.id ?? s.type}
@@ -353,11 +374,15 @@ export default function ClientDetailPage() {
                 )}
 
                 <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-                  <button onClick={() => genBrief(false)} disabled={loading} style={{ flex: 1 }}>
+                  <button
+                    onClick={() => void genBrief(false)}
+                    disabled={loading}
+                    style={{ flex: 1 }}
+                  >
                     {loading ? 'Working...' : 'Generate Solution Brief'}
                   </button>
                   <button
-                    onClick={() => genProposal(1, false)}
+                    onClick={() => void genProposal(1, false)}
                     disabled={loading}
                     style={{ flex: 1 }}
                   >

@@ -1,5 +1,6 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
+import type { ComponentType } from 'react';
 import {
   Navbar,
   Footer,
@@ -13,12 +14,31 @@ import {
 } from '../components/ui';
 import { FadeIn, StaggerContainer } from '../components/motion';
 
+// Dynamic import types
+interface SceneProps {
+  cameraPosition: [number, number, number];
+  children: React.ReactNode;
+}
+
+interface NeuralSphereProps {
+  color: string;
+  secondaryColor: string;
+  particleCount: number;
+}
+
 // Dynamically import Three.js components (client-side only)
-const Scene = dynamic(() => import('../components/three/Scene').then((mod) => mod.default), {
-  ssr: false,
-});
-const NeuralSphere = dynamic(
-  () => import('../components/three/NeuralSphere').then((mod) => mod.default),
+const Scene = dynamic<SceneProps>(
+  () =>
+    import('../components/three/Scene').then(
+      (mod: { default: ComponentType<SceneProps> }) => mod.default,
+    ),
+  { ssr: false },
+);
+const NeuralSphere = dynamic<NeuralSphereProps>(
+  () =>
+    import('../components/three/NeuralSphere').then(
+      (mod: { default: ComponentType<NeuralSphereProps> }) => mod.default,
+    ),
   { ssr: false },
 );
 

@@ -591,7 +591,9 @@ export default function IntakePage() {
                 <button
                   type="button"
                   className={styles.primaryButton}
-                  onClick={submit}
+                  onClick={() => {
+                    void submit();
+                  }}
                   disabled={loading}
                 >
                   {loading ? 'Submitting…' : 'Submit for blueprint'}
