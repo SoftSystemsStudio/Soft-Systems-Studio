@@ -69,7 +69,9 @@ router.post(
 
     let membership = firstMembership;
     if (requestedWorkspace) {
-      const found = memberships.find((m: { workspaceId: string }) => m.workspaceId === requestedWorkspace);
+      const found = memberships.find(
+        (m: { workspaceId: string }) => m.workspaceId === requestedWorkspace,
+      );
       if (found) membership = found;
     }
 
