@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { logger } from './logger';
+import type { Router as RouterType } from 'express';
+import logger from './logger';
 
-const router = Router();
+const router: RouterType = Router();
 
 router.get('/', async (req, res) => {
   // Basic health response. Expand to DB checks later.

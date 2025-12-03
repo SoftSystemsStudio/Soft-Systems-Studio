@@ -76,7 +76,7 @@ export const logger = pino(isProduction ? productionOptions : developmentOptions
  * Attach to Express app: app.use(httpLogger)
  */
 export const httpLogger = pinoHttp({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
   logger: logger as any,
   // Generate request IDs
   genReqId: (req, res) => {
