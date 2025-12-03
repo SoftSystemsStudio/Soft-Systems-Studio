@@ -25,6 +25,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["src", "scripts", "prisma", "prisma.config.ts"],
+  "include": ["src", "scripts", "prisma"],
   "exclude": ["node_modules", "dist", "tests"]
 }
