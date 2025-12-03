@@ -1,7 +1,7 @@
 FROM node:22-slim AS builder
 
-# Force fresh build - v4
-ARG CACHEBUST=4
+# Force fresh build - v5
+ARG CACHEBUST=5
 WORKDIR /app
 
 # Install curl for healthcheck
@@ -39,8 +39,8 @@ RUN pnpm -r --filter '!frontend' --filter '!api' build
 # Use pnpm deploy to create standalone deployment with real files (no symlinks)
 RUN pnpm --filter apps-agent-api deploy --prod /app/deploy
 
-# Copy Prisma generated client to deploy folder
-RUN cp -r /app/apps/agent-api/node_modules/.prisma /app/deploy/node_modules/.prisma
+# Prisma generates to @prisma/client which pnpm deploy includes
+# No additional copy needed - the generated client is inside node_modules/@prisma/client
 
 FROM node:22-slim AS runtime
 WORKDIR /app
