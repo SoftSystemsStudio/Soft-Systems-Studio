@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "build": "prisma generate && tsc -p tsconfig.json && cp -R prisma ./dist/prisma",
     "worker": "ts-node --transpile-only src/worker/ingestWorker.ts",
     "metrics": "ts-node --transpile-only src/metrics.ts",
