@@ -25,12 +25,13 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build only required packages for agent-api (skip frontend and broken packages/api)
-RUN pnpm -r --filter '!frontend' --filter '!api' build
-
-# Generate Prisma client in builder (where devDeps are available)
+# Generate Prisma client BEFORE building (TypeScript needs the generated types)
 WORKDIR /app/apps/agent-api
 RUN pnpm exec prisma generate
+
+# Build only required packages for agent-api (skip frontend and broken packages/api)
+WORKDIR /app
+RUN pnpm -r --filter '!frontend' --filter '!api' build
 
 FROM node:22-slim AS runtime
 WORKDIR /app
