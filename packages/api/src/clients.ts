@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import type { Request, Response } from 'express';
+import type { Request, Response, Router as RouterType } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { buildClientConfigFromIntake } from '../../agency-core/src/mapping';
 import { generateSolutionBrief, generatePhaseProposal } from './llm';
 
 const prisma = new PrismaClient();
-const router = Router();
+const router: RouterType = Router();
 
 // POST /intake
 router.post('/intake', async (req: Request, res: Response) => {

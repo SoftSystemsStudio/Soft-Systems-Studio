@@ -1,6 +1,16 @@
 import { z } from 'zod';
 
 /**
+ * Sync DATABASE_URL with POSTGRES_URL for Prisma compatibility
+ * Prisma uses DATABASE_URL, but Railway/Vercel often set POSTGRES_URL
+ */
+if (process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = process.env.POSTGRES_URL;
+} else if (process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
+  process.env.POSTGRES_URL = process.env.DATABASE_URL;
+}
+
+/**
  * Environment variable schema with comprehensive validation
  * Validates all required environment variables at startup
  */
@@ -15,10 +25,10 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().min(1).max(65535)),
 
-  // Database
+  // Database - accept either POSTGRES_URL or DATABASE_URL
   POSTGRES_URL: z
     .string()
-    .min(1, 'POSTGRES_URL is required')
+    .min(1, 'POSTGRES_URL or DATABASE_URL is required')
     .url('POSTGRES_URL must be a valid URL'),
 
   // Redis
