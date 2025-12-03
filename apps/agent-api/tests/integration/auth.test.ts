@@ -18,7 +18,8 @@ import '../setup';
 jest.mock('../src/services/qdrant', () => ({ querySimilar: jest.fn().mockResolvedValue([]) }));
 jest.mock('../src/services/llm', () => ({ chat: jest.fn().mockResolvedValue('echo') }));
 
-import app from '../src/index';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const app = require('../src/index').default;
 
 describe('Auth integration (DB-backed)', () => {
   it('onboarding -> login -> protected endpoint', async () => {
@@ -35,7 +36,8 @@ describe('Auth integration (DB-backed)', () => {
 
     // Create a real user to login
     // Use the same prisma client used by the app
-    const { default: prisma } = (await import('../src/db')) as { default: PrismaClient };
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const prisma = require('../src/db').default as PrismaClient;
     const bcrypt = (await import('bcryptjs')).default as typeof bcryptType;
     const hashed = await bcrypt.hash('secret', 10);
     const testUser = await prisma.user.create({
@@ -69,7 +71,8 @@ describe('Auth integration (DB-backed)', () => {
   });
 
   it('token refresh rotates tokens correctly', async () => {
-    const { default: prisma } = (await import('../src/db')) as { default: PrismaClient };
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const prisma = require('../src/db').default as PrismaClient;
     const bcrypt = (await import('bcryptjs')).default as typeof bcryptType;
 
     // Create user and workspace
@@ -89,7 +92,7 @@ describe('Auth integration (DB-backed)', () => {
       .expect(200);
 
     // Get refresh token from cookie
-    const cookies = loginRes.headers['set-cookie'] as string[] | undefined;
+    const cookies = loginRes.headers['set-cookie'] as unknown as string[] | undefined;
     expect(cookies).toBeDefined();
 
     // Refresh the token
@@ -119,7 +122,8 @@ describe('Auth integration (DB-backed)', () => {
   });
 
   it('token revoke invalidates refresh token', async () => {
-    const { default: prisma } = (await import('../src/db')) as { default: PrismaClient };
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const prisma = require('../src/db').default as PrismaClient;
     const bcrypt = (await import('bcryptjs')).default as typeof bcryptType;
 
     // Create user and workspace
@@ -138,9 +142,9 @@ describe('Auth integration (DB-backed)', () => {
       .send({ email: 'revoke-test@example.com', password: 'revoke-test' })
       .expect(200);
 
-    const cookies = loginRes.headers['set-cookie'] as string[] | undefined;
+    const cookies = loginRes.headers['set-cookie'] as unknown as string[] | undefined;
 
-    // Revoke the token
+    // Revoke the token;
     await request(app)
       .post('/api/v1/auth/token/revoke')
       .set('Cookie', cookies ?? [])

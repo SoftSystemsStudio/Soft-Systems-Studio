@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import { buildClientConfigFromIntake } from './mapping';
 import type { IntakePayload, Objective, SupportChannel } from './configTypes';
 
@@ -60,13 +61,13 @@ describe('buildClientConfigFromIntake', () => {
     const workflow = config.subsystems.find((s) => s.type === 'workflow_system');
 
     expect(support).toBeDefined();
-    const supportSettings = support!.settings as SupportSystemSettings;
+    const supportSettings = support!.settings as unknown as SupportSystemSettings;
     expect(supportSettings.channels).toEqual(payload.supportChannels);
     expect(supportSettings.estimatedDailyInquiries).toBe(Number(payload.dailyInquiries));
     expect(supportSettings.mainPainPoints).toBe(payload.mainPainPoints);
 
     expect(workflow).toBeDefined();
-    const workflowSettings = workflow!.settings as WorkflowSystemSettings;
+    const workflowSettings = workflow!.settings as unknown as WorkflowSystemSettings;
     expect(workflowSettings.hints).toEqual(payload.primaryObjectives);
     expect(Array.isArray(workflowSettings.targetDepartments)).toBe(true);
     expect(workflowSettings.targetDepartments.length).toBeGreaterThan(0);
