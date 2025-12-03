@@ -1,19 +1,15 @@
 FROM node:22-slim AS builder
 
-# Force fresh build - v6
-ARG CACHEBUST=5
 WORKDIR /app
 
-# Install curl for healthcheck
+# Install system dependencies
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# Enable pnpm first
+# Enable pnpm
 RUN corepack enable && corepack prepare pnpm@8.11.0 --activate
 
-# Copy root package files first
+# Copy package files
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-
-# Copy ALL workspace package.json files BEFORE install
 COPY packages/api/package.json ./packages/api/
 COPY packages/core-llm/package.json ./packages/core-llm/
 COPY packages/agency-core/package.json ./packages/agency-core/
@@ -22,49 +18,44 @@ COPY packages/frontend/package.json ./packages/frontend/
 COPY packages/ui-components/package.json ./packages/ui-components/
 COPY apps/agent-api/package.json ./apps/agent-api/
 
-# Install ALL dependencies (including devDependencies for build)
+# Install all dependencies (including devDependencies)
 RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
-# Generate Prisma client BEFORE building (TypeScript needs the generated types)
+# Change to agent-api directory and generate Prisma client with Prisma 6
 WORKDIR /app/apps/agent-api
-RUN pnpm exec prisma generate
+RUN npx prisma@6 generate
 
-# Build only required packages for agent-api (skip frontend and broken packages/api)
+# Go back to root and build all packages
 WORKDIR /app
 RUN pnpm -r --filter '!frontend' --filter '!api' build
 
-# Use pnpm deploy to create standalone deployment with real files (no symlinks)
+# Use pnpm deploy to create a clean production deployment
 RUN pnpm --filter apps-agent-api deploy --prod /app/deploy
 
-# Prisma generates to @prisma/client which pnpm deploy includes
-# No additional copy needed - the generated client is inside node_modules/@prisma/client
-
+# Runtime stage
 FROM node:22-slim AS runtime
-WORKDIR /app
-ENV NODE_ENV=production
 
-# Install OpenSSL for Prisma and curl for healthcheck
+WORKDIR /app
+
+# Install runtime dependencies (OpenSSL needed for Prisma)
 RUN apt-get update && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
 
-# Copy the standalone deployment (has all deps as real files, not symlinks)
+# Copy the deployed production files
 COPY --from=builder /app/deploy ./
 
-# Copy built dist
+# Copy built code
 COPY --from=builder /app/apps/agent-api/dist ./dist
 
-# Copy prisma schema and config for generating client
+# Copy Prisma schema and migrations
 COPY --from=builder /app/apps/agent-api/prisma ./prisma
-COPY --from=builder /app/apps/agent-api/prisma.config.ts ./prisma.config.ts
 
-# Generate Prisma client in runtime (required for Prisma 7)
-RUN npx prisma generate
+# Generate Prisma client in runtime using Prisma 6
+RUN npx prisma@6 generate
 
 EXPOSE 5000
-CMD ["node", "dist/src/index.js"]
 
-# Healthcheck for runtime image
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-	CMD curl -f http://localhost:5000/health || exit 1
+# Run the application
+CMD ["node", "dist/src/index.js"]
