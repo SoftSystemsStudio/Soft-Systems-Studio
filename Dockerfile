@@ -40,15 +40,15 @@ ENV NODE_ENV=production
 # Install OpenSSL for Prisma and curl for healthcheck
 RUN apt-get update && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
 
-# Copy the apps/agent-api build output
+# App code
 COPY --from=builder /app/apps/agent-api/dist ./apps/agent-api/dist
-COPY --from=builder /app/apps/agent-api/package.json ./apps/agent-api/package.json
 COPY --from=builder /app/apps/agent-api/prisma ./apps/agent-api/prisma
+COPY --from=builder /app/apps/agent-api/package.json ./apps/agent-api/package.json
 
-# Copy generated Prisma client from builder (explicit output in schema.prisma)
-COPY --from=builder /app/apps/agent-api/node_modules/.prisma ./apps/agent-api/node_modules/.prisma
+# Dependencies (includes Prisma client and engines) - copy entire node_modules
+COPY --from=builder /app/apps/agent-api/node_modules ./apps/agent-api/node_modules
 
-# Copy required workspace packages
+# Copy required workspace packages (built output)
 COPY --from=builder /app/packages/core-llm/dist ./packages/core-llm/dist
 COPY --from=builder /app/packages/core-llm/package.json ./packages/core-llm/package.json
 COPY --from=builder /app/packages/agency-core/dist ./packages/agency-core/dist
@@ -56,16 +56,7 @@ COPY --from=builder /app/packages/agency-core/package.json ./packages/agency-cor
 COPY --from=builder /app/packages/agent-customer-service/dist ./packages/agent-customer-service/dist
 COPY --from=builder /app/packages/agent-customer-service/package.json ./packages/agent-customer-service/package.json
 
-# Copy workspace config
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-
 WORKDIR /app/apps/agent-api
-RUN corepack enable && corepack prepare pnpm@8.11.0 --activate
-
-# Install production dependencies only, skip lifecycle scripts
-RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
 EXPOSE 5000
 CMD ["node", "dist/src/index.js"]
