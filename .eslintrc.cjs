@@ -10,7 +10,12 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
     tsconfigRootDir: __dirname,
-    project: ['./tsconfig.json', './apps/*/tsconfig.json', './packages/*/tsconfig.json'],
+    project: [
+      './tsconfig.json',
+      './apps/*/tsconfig.json',
+      './apps/*/tsconfig.test.json',
+      './packages/*/tsconfig.json',
+    ],
   },
   plugins: ['@typescript-eslint', 'prettier', 'security'],
   extends: [

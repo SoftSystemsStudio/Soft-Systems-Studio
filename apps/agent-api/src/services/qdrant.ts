@@ -40,6 +40,7 @@ export async function upsertDocuments(docs: { id: string; text: string; metadata
 
   const points = docs.map((d, i) => ({
     id: d.id,
+    // eslint-disable-next-line security/detect-object-injection -- index is from map iteration, safe
     vector: embeddings[i],
     payload: { text: d.text, metadata: d.metadata },
   }));
@@ -72,10 +73,9 @@ export async function querySimilar(text: string, topK = 4) {
     }),
   });
 
-  const payload = await res.json();
-  const results = (payload.result || payload) as unknown[];
+  const payload = (await res.json()) as { result?: unknown[] };
+  const results = (payload.result ?? []) as Array<{ id: string; score: number; payload?: unknown }>;
   return results.map((r) => {
-    const rr = r as { id: string; score: number; payload?: unknown };
-    return { id: rr.id, score: rr.score, payload: rr.payload };
+    return { id: r.id, score: r.score, payload: r.payload };
   });
 }

@@ -1,5 +1,18 @@
 import { buildClientConfigFromIntake } from './mapping';
-import type { IntakePayload } from './configTypes';
+import type { IntakePayload, Objective, SupportChannel } from './configTypes';
+
+/** Type for support system settings */
+interface SupportSystemSettings {
+  channels: SupportChannel[];
+  estimatedDailyInquiries: number;
+  mainPainPoints?: string;
+}
+
+/** Type for workflow system settings */
+interface WorkflowSystemSettings {
+  hints: Objective[];
+  targetDepartments: string[];
+}
 
 describe('buildClientConfigFromIntake', () => {
   it('maps intake payload into a normalized ClientConfig', () => {
@@ -47,13 +60,13 @@ describe('buildClientConfigFromIntake', () => {
     const workflow = config.subsystems.find((s) => s.type === 'workflow_system');
 
     expect(support).toBeDefined();
-    const supportSettings = support!.settings as any;
+    const supportSettings = support!.settings as SupportSystemSettings;
     expect(supportSettings.channels).toEqual(payload.supportChannels);
     expect(supportSettings.estimatedDailyInquiries).toBe(Number(payload.dailyInquiries));
     expect(supportSettings.mainPainPoints).toBe(payload.mainPainPoints);
 
     expect(workflow).toBeDefined();
-    const workflowSettings = workflow!.settings as any;
+    const workflowSettings = workflow!.settings as WorkflowSystemSettings;
     expect(workflowSettings.hints).toEqual(payload.primaryObjectives);
     expect(Array.isArray(workflowSettings.targetDepartments)).toBe(true);
     expect(workflowSettings.targetDepartments.length).toBeGreaterThan(0);

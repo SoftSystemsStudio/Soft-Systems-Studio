@@ -1,6 +1,7 @@
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import jwt, { type Algorithm, type JwtPayload } from 'jsonwebtoken';
+import * as dotenv from 'dotenv';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 dotenv.config();
 
 const secret = process.env.JWT_SECRET || '';
@@ -9,14 +10,22 @@ if (!secret) {
   process.exit(1);
 }
 
-const payload = {
+interface TokenPayload extends JwtPayload {
+  sub: string;
+  tenant: string;
+  role: string;
+}
+
+const payload: TokenPayload = {
   sub: 'demo-user',
   tenant: 'demo',
   role: 'admin',
 };
 
-const token = jwt.sign(payload as any, secret, {
-  algorithm: (process.env.JWT_ALGORITHM || 'HS256') as any,
+const algorithm = (process.env.JWT_ALGORITHM || 'HS256') as Algorithm;
+
+const token = jwt.sign(payload, secret, {
+  algorithm,
   expiresIn: '7d',
 });
 console.log('Generated token:');

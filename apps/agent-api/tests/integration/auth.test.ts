@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-call */
 import request from 'supertest';
+import type { PrismaClient } from '@prisma/client';
+import type bcryptType from 'bcryptjs';
 
 // set JWT env for tests
 process.env.JWT_SECRET = process.env.JWT_SECRET ?? 'test-secret';
@@ -12,8 +15,8 @@ process.env.POSTGRES_URL =
 import '../setup';
 
 // Mock qdrant and llm services used by protected endpoint to avoid external calls
-jest.mock('../src/services/qdrant', () => ({ querySimilar: jest.fn(async () => []) }));
-jest.mock('../src/services/llm', () => ({ chat: jest.fn(async () => 'echo') }));
+jest.mock('../src/services/qdrant', () => ({ querySimilar: jest.fn().mockResolvedValue([]) }));
+jest.mock('../src/services/llm', () => ({ chat: jest.fn().mockResolvedValue('echo') }));
 
 import app from '../src/index';
 
@@ -32,8 +35,8 @@ describe('Auth integration (DB-backed)', () => {
 
     // Create a real user to login
     // Use the same prisma client used by the app
-    const { default: prisma } = await import('../src/db');
-    const bcrypt = (await import('bcryptjs')).default;
+    const { default: prisma } = (await import('../src/db')) as { default: PrismaClient };
+    const bcrypt = (await import('bcryptjs')).default as typeof bcryptType;
     const hashed = await bcrypt.hash('secret', 10);
     const testUser = await prisma.user.create({
       data: { email: 'existing@example.com', password: hashed },
@@ -66,8 +69,8 @@ describe('Auth integration (DB-backed)', () => {
   });
 
   it('token refresh rotates tokens correctly', async () => {
-    const { default: prisma } = await import('../src/db');
-    const bcrypt = (await import('bcryptjs')).default;
+    const { default: prisma } = (await import('../src/db')) as { default: PrismaClient };
+    const bcrypt = (await import('bcryptjs')).default as typeof bcryptType;
 
     // Create user and workspace
     const hashed = await bcrypt.hash('refresh-test', 10);
@@ -116,8 +119,8 @@ describe('Auth integration (DB-backed)', () => {
   });
 
   it('token revoke invalidates refresh token', async () => {
-    const { default: prisma } = await import('../src/db');
-    const bcrypt = (await import('bcryptjs')).default;
+    const { default: prisma } = (await import('../src/db')) as { default: PrismaClient };
+    const bcrypt = (await import('bcryptjs')).default as typeof bcryptType;
 
     // Create user and workspace
     const hashed = await bcrypt.hash('revoke-test', 10);
