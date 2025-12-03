@@ -113,6 +113,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Boot test (smoke test for missing deps)
+        run: pnpm --filter apps-agent-api boot-test:dist
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:

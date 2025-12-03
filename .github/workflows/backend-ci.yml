@@ -39,6 +39,9 @@ jobs:
           # Build all packages in the workspace
           pnpm -w -r build
 
+      - name: Boot test (smoke test for missing deps)
+        run: pnpm --filter apps-agent-api boot-test:dist
+
       - name: TypeScript check
         run: |
           # Run tsc across the workspace (no emit) to catch type errors and config drift
@@ -99,4 +102,3 @@ jobs:
 
       - name: Run integration tests
         run: pnpm --filter apps/agent-api test:integration
-
