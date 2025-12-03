@@ -1,6 +1,6 @@
 FROM node:22-slim AS builder
 
-# Force fresh build - v5
+# Force fresh build - v6
 ARG CACHEBUST=5
 WORKDIR /app
 
@@ -55,8 +55,12 @@ COPY --from=builder /app/deploy ./
 # Copy built dist
 COPY --from=builder /app/apps/agent-api/dist ./dist
 
-# Copy prisma schema for migrations
+# Copy prisma schema and config for generating client
 COPY --from=builder /app/apps/agent-api/prisma ./prisma
+COPY --from=builder /app/apps/agent-api/prisma.config.ts ./prisma.config.ts
+
+# Generate Prisma client in runtime (required for Prisma 7)
+RUN npx prisma generate
 
 EXPOSE 5000
 CMD ["node", "dist/src/index.js"]
