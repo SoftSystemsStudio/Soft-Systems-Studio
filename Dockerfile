@@ -32,6 +32,9 @@ FROM node:22-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
+# Install OpenSSL for Prisma and curl for healthcheck
+RUN apt-get update && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
+
 # Copy the apps/agent-api build output
 COPY --from=builder /app/apps/agent-api/dist ./apps/agent-api/dist
 COPY --from=builder /app/apps/agent-api/package.json ./apps/agent-api/package.json
@@ -52,10 +55,16 @@ COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
 WORKDIR /app/apps/agent-api
 RUN corepack enable && corepack prepare pnpm@8.11.0 --activate
-RUN pnpm install --prod --frozen-lockfile
+
+# Skip prepare scripts (husky) in production install
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
+
+# Generate Prisma client
+RUN npx prisma generate
+
 EXPOSE 5000
 CMD ["node", "dist/src/index.js"]
 
 # Healthcheck for runtime image
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-	CMD curl -f http://localhost:4000/health || exit 1
+	CMD curl -f http://localhost:5000/health || exit 1
