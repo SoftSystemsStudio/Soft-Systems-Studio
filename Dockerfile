@@ -1,7 +1,7 @@
 FROM node:22-slim AS builder
 WORKDIR /app
 
-# Cache bust: 2025-12-03-v2
+# Cache bust: 2025-12-03-v3
 # Install curl for healthcheck
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
