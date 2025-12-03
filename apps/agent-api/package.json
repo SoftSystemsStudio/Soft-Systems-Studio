@@ -6,6 +6,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "start": "node dist/src/index.js",
     "build": "npx prisma@6 generate && tsc -p tsconfig.json && cp -R prisma ./dist/prisma",
+    "boot-test": "ts-node scripts/boot-test.ts",
+    "boot-test:dist": "node dist/scripts/boot-test.js",
     "worker": "ts-node --transpile-only src/worker/ingestWorker.ts",
     "metrics": "ts-node --transpile-only src/metrics.ts",
     "prisma:generate": "npx prisma@6 generate",
