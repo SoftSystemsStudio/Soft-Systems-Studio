@@ -127,7 +127,7 @@ router.post(
       const deletedConversations = await prisma.conversation.deleteMany({
         where: {
           id: {
-            in: orphanedConversations.map((c) => c.id),
+            in: orphanedConversations.map((c: { id: string }) => c.id),
           },
         },
       });
