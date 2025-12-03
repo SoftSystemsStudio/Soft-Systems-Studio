@@ -13,11 +13,12 @@ async function requireWorkspaceImpl(
 
     // Must be authenticated first (unless using API key)
     if (!auth.apiKey && auth.anonymous) {
-      return res.status(401).json({
+      res.status(401).json({
         error: 'unauthorized',
         message: 'Authentication required',
         code: 'AUTH_REQUIRED',
       });
+      return;
     }
 
     const body = req.body as { workspaceId?: string } | undefined;
@@ -36,30 +37,33 @@ async function requireWorkspaceImpl(
         console.warn(
           `[SECURITY] Workspace mismatch attempt: token=${auth.workspaceId}, request=${workspaceId}, user=${auth.sub}`,
         );
-        return res.status(403).json({
+        res.status(403).json({
           error: 'forbidden',
           message: 'Cannot access resources from a different workspace',
           code: 'WORKSPACE_MISMATCH',
         });
+        return;
       }
       workspaceId = auth.workspaceId;
     }
 
     if (!workspaceId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'bad_request',
         message: 'Workspace ID is required',
         code: 'MISSING_WORKSPACE_ID',
       });
+      return;
     }
 
     const workspace = await prisma.workspace.findUnique({ where: { id: workspaceId } });
     if (!workspace) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'not_found',
         message: 'Workspace not found',
         code: 'WORKSPACE_NOT_FOUND',
       });
+      return;
     }
 
     // If authenticated user (not API key), verify membership
@@ -77,11 +81,12 @@ async function requireWorkspaceImpl(
         console.warn(
           `[SECURITY] Unauthorized workspace access attempt: user=${auth.sub}, workspace=${workspaceId}`,
         );
-        return res.status(403).json({
+        res.status(403).json({
           error: 'forbidden',
           message: 'You are not a member of this workspace',
           code: 'NOT_WORKSPACE_MEMBER',
         });
+        return;
       }
 
       // Attach membership role to auth for downstream handlers

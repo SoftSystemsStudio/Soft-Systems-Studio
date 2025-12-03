@@ -59,6 +59,9 @@ importers:
       ts-jest:
         specifier: ^29.4.5
         version: 29.4.5(@babel/core@7.28.5)(jest@30.2.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
 
   apps/agent-api:
     dependencies:
@@ -120,6 +123,9 @@ importers:
       '@types/cookie-parser':
         specifier: ^1.4.10
         version: 1.4.10(@types/express@4.17.25)
+      '@types/express-serve-static-core':
+        specifier: ^4.19.0
+        version: 4.19.7
       '@types/jest':
         specifier: ^29.0.0
         version: 29.5.14
@@ -132,6 +138,9 @@ importers:
       '@types/supertest':
         specifier: ^2.0.12
         version: 2.0.16
+      dotenv:
+        specifier: ^16.3.1
+        version: 16.6.1
       eslint-plugin-security:
         specifier: ^3.0.1
         version: 3.0.1
@@ -157,13 +166,24 @@ importers:
         specifier: ^5.4.2
         version: 5.9.3
 
-  packages/agency-core: {}
+  packages/agency-core:
+    devDependencies:
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
 
   packages/agent-customer-service:
     dependencies:
+      '@softsystems/core-llm':
+        specifier: workspace:*
+        version: link:../core-llm
       zod:
         specifier: ^3.22.2
         version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
 
   packages/api:
     dependencies:
@@ -208,7 +228,11 @@ importers:
         specifier: ^5.4.2
         version: 5.9.3
 
-  packages/core-llm: {}
+  packages/core-llm:
+    devDependencies:
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
 
   packages/frontend:
     dependencies:
@@ -3548,6 +3572,11 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       esutils: 2.0.3
+    dev: true
+
+  /dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
+    engines: {node: '>=12'}
     dev: true
 
   /draco3d@1.5.7:

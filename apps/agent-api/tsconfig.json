@@ -5,6 +5,9 @@
     "rootDir": ".",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    // Apps don't need declaration files
+    "declaration": false,
+    "declarationMap": false,
     // Enhanced type safety
     "strict": true,
     "noImplicitAny": true,

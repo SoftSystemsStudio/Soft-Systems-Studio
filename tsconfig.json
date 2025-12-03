@@ -8,10 +8,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "paths": {
-      "@softsystems/*": ["packages/*/src"]
-    },
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true
   },
   "include": ["packages/**/*", "types/**/*"]
 }
