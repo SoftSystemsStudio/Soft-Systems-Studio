@@ -32,9 +32,6 @@ RUN npx prisma@6 generate
 WORKDIR /app
 RUN pnpm -r --filter '!frontend' --filter '!api' build
 
-# Use pnpm deploy to create a clean production deployment
-RUN pnpm --filter apps-agent-api deploy --prod /app/deploy
-
 # Runtime stage
 FROM node:22-slim AS runtime
 
@@ -43,17 +40,28 @@ WORKDIR /app
 # Install runtime dependencies (OpenSSL needed for Prisma)
 RUN apt-get update && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
 
-# Copy the deployed production files
-COPY --from=builder /app/deploy ./
+# Copy workspace files
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
-# Copy built code
-COPY --from=builder /app/apps/agent-api/dist ./dist
+# Copy all node_modules from builder (includes generated Prisma client)
+COPY --from=builder /app/node_modules ./node_modules
 
-# Copy Prisma schema and migrations
-COPY --from=builder /app/apps/agent-api/prisma ./prisma
+# Copy built packages
+COPY --from=builder /app/packages/core-llm/dist ./packages/core-llm/dist
+COPY --from=builder /app/packages/core-llm/package.json ./packages/core-llm/package.json
+COPY --from=builder /app/packages/agency-core/dist ./packages/agency-core/dist
+COPY --from=builder /app/packages/agency-core/package.json ./packages/agency-core/package.json
+COPY --from=builder /app/packages/agent-customer-service/dist ./packages/agent-customer-service/dist
+COPY --from=builder /app/packages/agent-customer-service/package.json ./packages/agent-customer-service/package.json
 
-# Generate Prisma client in runtime using Prisma 6
-RUN npx prisma@6 generate
+# Copy agent-api app
+COPY --from=builder /app/apps/agent-api/dist ./apps/agent-api/dist
+COPY --from=builder /app/apps/agent-api/package.json ./apps/agent-api/package.json
+COPY --from=builder /app/apps/agent-api/prisma ./apps/agent-api/prisma
+
+WORKDIR /app/apps/agent-api
 
 EXPOSE 5000
 
