@@ -8,5 +8,8 @@
     "build": "tsc -p ./",
     "lint": "eslint 'src/**/*.ts' --ext .ts",
     "test": "jest --config ../../jest.config.ts --runTestsByPath src/mapping.test.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
   }
 }
