@@ -1,9 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import prisma from '../db';
 import '../types/auth'; // Import to register global types
 
 // Ensure request is scoped to a workspace (tenant) and that the workspace exists.
-export async function requireWorkspace(req: Request, res: Response, next: NextFunction) {
+async function requireWorkspaceImpl(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const auth = req.auth || {};
 
@@ -16,11 +20,14 @@ export async function requireWorkspace(req: Request, res: Response, next: NextFu
       });
     }
 
-    const bodyWorkspace =
-      (req.body && req.body.workspaceId) ||
-      (req.query && req.query.workspaceId) ||
-      req.headers['x-workspace-id'];
-    let workspaceId = bodyWorkspace as string | undefined;
+    const body = req.body as { workspaceId?: string } | undefined;
+    const query = req.query as { workspaceId?: string };
+    const headerWorkspace = req.headers['x-workspace-id'];
+    const bodyWorkspace: string | undefined =
+      body?.workspaceId ??
+      query?.workspaceId ??
+      (typeof headerWorkspace === 'string' ? headerWorkspace : undefined);
+    let workspaceId = bodyWorkspace;
 
     // If JWT contained workspace info, prefer that
     if (auth.workspaceId) {
@@ -90,9 +97,14 @@ export async function requireWorkspace(req: Request, res: Response, next: NextFu
     return next();
   } catch (err: unknown) {
     console.error('requireWorkspace error', err);
-    return res.status(500).json({ error: 'server_error' });
+    res.status(500).json({ error: 'server_error' });
   }
 }
+
+// Wrap async middleware to handle Promise correctly
+export const requireWorkspace: RequestHandler = (req, res, next) => {
+  void requireWorkspaceImpl(req, res, next);
+};
 
 // Middleware to scope database queries to current workspace
 // Use this to ensure all queries are tenant-isolated

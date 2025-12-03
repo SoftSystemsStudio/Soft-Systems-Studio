@@ -19,6 +19,8 @@ async function update() {
   }
 }
 
-setInterval(update, 5000);
+setInterval(() => {
+  void update();
+}, 5000);
 
 export default { ingestQueue, connection };

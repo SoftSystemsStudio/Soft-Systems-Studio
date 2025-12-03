@@ -12,7 +12,7 @@ import customerServiceRouter from './api/v1/agents/customer_service';
 import cleanupRouter from './api/v1/admin/cleanup';
 import { metricsHandler } from './metrics';
 import requireAuth from './middleware/auth-combined';
-import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { errorHandler, notFoundHandler, asyncHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
 import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
 
@@ -36,8 +36,9 @@ app.use(httpLogger);
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.post('/api/agents/customer-service/chat', async (req: Request, res: Response) => {
-  try {
+app.post(
+  '/api/agents/customer-service/chat',
+  asyncHandler(async (req: Request, res: Response) => {
     const result = await handleChat(req.body);
     if (result.status && result.body) {
       // Persist request and response for successful chats
@@ -68,15 +69,12 @@ app.post('/api/agents/customer-service/chat', async (req: Request, res: Response
       } catch (e) {
         console.error('failed to persist conversation', e);
       }
-      return res.status(result.status).json(result.body);
+      res.status(result.status).json(result.body);
+      return;
     }
-    return res.status(500).json({ error: 'unknown' });
-  } catch (err: unknown) {
-    console.error('chat error', err);
-    const message = (err as { message?: string })?.message ?? 'server_error';
-    return res.status(500).json({ error: message });
-  }
-});
+    res.status(500).json({ error: 'unknown' });
+  }),
+);
 
 app.use('/health', healthRouter);
 app.use('/status', statusRouter);

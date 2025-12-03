@@ -5,7 +5,7 @@ export interface ChatMessage {
 }
 
 // Import from workspace package
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const coreLlm = require('@softsystems/core-llm') as {
   callChat: (messages: ChatMessage[], model?: string) => Promise<string>;
   callEmbeddings: (text: string | string[], model?: string) => Promise<number[][]>;

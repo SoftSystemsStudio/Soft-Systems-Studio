@@ -30,15 +30,17 @@ async function updateQueueMetrics() {
   }
 }
 
-setInterval(updateQueueMetrics, 5000);
+setInterval(() => {
+  void updateQueueMetrics();
+}, 5000);
 
 // small express server to expose metrics when run standalone (optional)
-export function metricsHandler(_req: express.Request, res: express.Response) {
+export function metricsHandler(_req: express.Request, res: express.Response): void {
   res.set('Content-Type', client.register.contentType);
-  client.register
+  void client.register
     .metrics()
     .then((m) => res.send(m))
-    .catch((err) => res.status(500).send(err.message));
+    .catch((err: Error) => res.status(500).send(err.message));
 }
 
 export default client;

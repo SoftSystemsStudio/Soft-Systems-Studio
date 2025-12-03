@@ -11,11 +11,11 @@ async function main() {
   console.log('Seed: created demo workspace');
 }
 
-main()
-  .catch((e) => {
+void main()
+  .catch((e: unknown) => {
     console.error(e);
     process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect();
+  .finally(() => {
+    void prisma.$disconnect();
   });
