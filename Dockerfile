@@ -46,7 +46,10 @@ COPY --from=builder /app/apps/agent-api/dist ./apps/agent-api/dist
 COPY --from=builder /app/apps/agent-api/prisma ./apps/agent-api/prisma
 COPY --from=builder /app/apps/agent-api/package.json ./apps/agent-api/package.json
 
-# Dependencies (includes Prisma client and engines) - copy entire node_modules
+# Root node_modules (pnpm symlinks in app node_modules point here)
+COPY --from=builder /app/node_modules ./node_modules
+
+# App-specific node_modules (contains symlinks to root + .prisma)
 COPY --from=builder /app/apps/agent-api/node_modules ./apps/agent-api/node_modules
 
 # Copy required workspace packages (built output)
