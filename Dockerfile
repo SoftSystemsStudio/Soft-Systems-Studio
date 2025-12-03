@@ -47,7 +47,6 @@ COPY --from=builder /app/apps/agent-api/prisma ./apps/agent-api/prisma
 
 # Copy generated Prisma client from builder (explicit output in schema.prisma)
 COPY --from=builder /app/apps/agent-api/node_modules/.prisma ./apps/agent-api/node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
 
 # Copy required workspace packages
 COPY --from=builder /app/packages/core-llm/dist ./packages/core-llm/dist
