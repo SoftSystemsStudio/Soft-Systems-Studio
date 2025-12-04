@@ -62,7 +62,9 @@ export async function runChat(input: ChatInput): Promise<ChatResult> {
         where: { id: existingConversationId, workspaceId },
       });
       if (!existing) {
-        throw new Error(`Conversation ${existingConversationId} not found in workspace ${workspaceId}`);
+        throw new Error(
+          `Conversation ${existingConversationId} not found in workspace ${workspaceId}`,
+        );
       }
       conversationId = existing.id;
     } else {
@@ -152,7 +154,12 @@ export async function persistChatExchange(input: {
   assistantReply: string;
   conversationId?: string;
 }): Promise<{ conversationId: string; messageIds: string[] }> {
-  const { workspaceId, userMessage, assistantReply, conversationId: existingConversationId } = input;
+  const {
+    workspaceId,
+    userMessage,
+    assistantReply,
+    conversationId: existingConversationId,
+  } = input;
 
   const result = await prisma.$transaction(async (tx) => {
     let conversationId: string;
@@ -163,7 +170,9 @@ export async function persistChatExchange(input: {
         where: { id: existingConversationId, workspaceId },
       });
       if (!existing) {
-        throw new Error(`Conversation ${existingConversationId} not found in workspace ${workspaceId}`);
+        throw new Error(
+          `Conversation ${existingConversationId} not found in workspace ${workspaceId}`,
+        );
       }
       conversationId = existing.id;
     } else {
@@ -187,10 +196,7 @@ export async function persistChatExchange(input: {
     };
   });
 
-  logger.info(
-    { workspaceId, conversationId: result.conversationId },
-    'Chat exchange persisted',
-  );
+  logger.info({ workspaceId, conversationId: result.conversationId }, 'Chat exchange persisted');
 
   return result;
 }

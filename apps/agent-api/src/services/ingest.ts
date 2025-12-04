@@ -76,10 +76,7 @@ export async function ingestDocuments(input: IngestInput): Promise<IngestResult>
       data: rows,
     });
 
-    logger.debug(
-      { workspaceId, createdCount: created.count },
-      'Documents persisted to Postgres',
-    );
+    logger.debug({ workspaceId, createdCount: created.count }, 'Documents persisted to Postgres');
 
     // Get the IDs of created documents
     const createdDocs = await tx.kbDocument.findMany({

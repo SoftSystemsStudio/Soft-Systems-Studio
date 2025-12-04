@@ -17,7 +17,7 @@ router.post(
   '/cleanup-tokens',
   asyncHandler(async (req: Request, res: Response) => {
     // Verify cron secret
-    const cronSecret = process.env.CRON_SECRET;
+    const cronSecret = env.CRON_SECRET;
     const authHeader = req.headers.authorization;
 
     if (cronSecret) {
@@ -92,7 +92,7 @@ router.post(
   '/cleanup-sessions',
   asyncHandler(async (req: Request, res: Response) => {
     // Verify cron secret
-    const cronSecret = process.env.CRON_SECRET;
+    const cronSecret = env.CRON_SECRET;
     const authHeader = req.headers.authorization;
 
     if (cronSecret) {

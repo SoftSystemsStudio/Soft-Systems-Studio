@@ -103,10 +103,13 @@ const envSchema = z.object({
   // Optional: Stripe payments
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
+  // Optional: Cron job authentication
+  CRON_SECRET: z.string().optional(),
 });
 
 // Parse and validate environment variables
-function validateEnv() {
+function validateEnv(): Env {
   try {
     return envSchema.parse(process.env);
   } catch (error) {
@@ -121,9 +124,9 @@ function validateEnv() {
   }
 }
 
-export const env = validateEnv();
-
 // Type export for use in other modules
 export type Env = z.infer<typeof envSchema>;
+
+export const env: Env = validateEnv();
 
 export default env;

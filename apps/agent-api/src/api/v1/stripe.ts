@@ -5,6 +5,7 @@
 import { Router, Request, Response } from 'express';
 import { logger } from '../../logger';
 import { isStripeEnabled, verifyWebhookSignature } from '../../lib/stripe';
+import { asyncHandler } from '../../middleware/errorHandler';
 import type { Stripe } from 'stripe';
 
 const router = Router();
@@ -13,47 +14,41 @@ const router = Router();
  * Stripe webhook endpoint
  * This must receive raw body (not JSON parsed) for signature verification
  */
-router.post('/webhook', async (req: Request, res: Response): Promise<void> => {
-  if (!isStripeEnabled()) {
-    logger.warn('Stripe webhook received but Stripe is not configured');
-    res.status(503).json({ error: 'Stripe is not configured' });
-    return;
-  }
+router.post(
+  '/webhook',
+  // eslint-disable-next-line @typescript-eslint/require-await -- Required for asyncHandler pattern
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    if (!isStripeEnabled()) {
+      logger.warn('Stripe webhook received but Stripe is not configured');
+      res.status(503).json({ error: 'Stripe is not configured' });
+      return;
+    }
 
-  const signature = req.headers['stripe-signature'];
+    const signature = req.headers['stripe-signature'];
 
-  if (!signature || typeof signature !== 'string') {
-    logger.warn('Missing stripe-signature header');
-    res.status(400).json({ error: 'Missing stripe-signature header' });
-    return;
-  }
+    if (!signature || typeof signature !== 'string') {
+      logger.warn('Missing stripe-signature header');
+      res.status(400).json({ error: 'Missing stripe-signature header' });
+      return;
+    }
 
-  let event: Stripe.Event;
+    let event: Stripe.Event;
 
-  try {
-    // req.body should be raw Buffer for webhook verification
-    event = verifyWebhookSignature(req.body as string | Buffer, signature);
-  } catch (err) {
-    const error = err as Error;
-    logger.error('Webhook signature verification failed', { error: error.message });
-    res.status(400).json({ error: `Webhook Error: ${error.message}` });
-    return;
-  }
+    try {
+      // req.body should be raw Buffer for webhook verification
+      event = verifyWebhookSignature(req.body as string | Buffer, signature);
+    } catch (err) {
+      const error = err as Error;
+      logger.error('Webhook signature verification failed', { error: error.message });
+      res.status(400).json({ error: `Webhook Error: ${error.message}` });
+      return;
+    }
 
-  // Handle the event
-  try {
+    // Handle the event
     handleStripeEvent(event);
     res.json({ received: true });
-  } catch (err) {
-    const error = err as Error;
-    logger.error('Error handling webhook event', {
-      eventType: event.type,
-      error: error.message,
-    });
-    // Return 200 to prevent Stripe from retrying
-    res.json({ received: true, error: error.message });
-  }
-});
+  }),
+);
 
 /**
  * Handle Stripe webhook events

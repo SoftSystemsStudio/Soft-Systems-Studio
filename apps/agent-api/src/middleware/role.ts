@@ -26,7 +26,7 @@ function getRoleLevel(role: string): number {
 
 /**
  * requireRole middleware: check that the authenticated principal has at least one of the allowed roles.
- * 
+ *
  * SECURITY NOTES:
  * - API keys do NOT automatically bypass role checks
  * - API keys have 'service' role which must be explicitly allowed
@@ -89,7 +89,7 @@ export function requireRole(...allowed: string[]) {
 
 /**
  * requireMinRole middleware: check that user has at least the minimum role level (hierarchical)
- * 
+ *
  * SECURITY NOTES:
  * - Uses hierarchical comparison: owner > admin > manager > member > service > viewer
  * - API keys have 'service' role level

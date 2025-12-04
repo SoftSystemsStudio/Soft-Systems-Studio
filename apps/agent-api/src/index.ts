@@ -1,4 +1,4 @@
-import './env';
+import env from './env';
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -131,7 +131,7 @@ app.use(sentryErrorHandler);
 // Global error handler (must be last)
 app.use(errorHandler);
 
-const port = process.env.PORT ? Number(process.env.PORT) : 5000;
+const port = env.PORT ? Number(env.PORT) : 5000;
 
 if (require.main === module) {
   app.listen(port, () => logger.info({ port }, `agent-api listening on ${port}`));

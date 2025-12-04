@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { getRedisClient } from '../lib/redis';
 import logger from '../logger';
+import env from '../env';
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = env.NODE_ENV === 'production';
 
 /**
  * Redis-backed rate limiter for distributed rate limiting
