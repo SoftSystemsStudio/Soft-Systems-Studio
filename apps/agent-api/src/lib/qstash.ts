@@ -123,10 +123,7 @@ export async function listSchedules() {
 /**
  * Verify a QStash webhook signature
  */
-export async function verifyQStashSignature(
-  signature: string,
-  body: string,
-): Promise<boolean> {
+export async function verifyQStashSignature(signature: string, body: string): Promise<boolean> {
   try {
     const receiver = getQStashReceiver();
     await receiver.verify({
