@@ -98,10 +98,27 @@ export const strictLimiter = rateLimit({
   },
 });
 
+// Cron/Admin endpoint limiter - allows automated jobs but prevents abuse
+export const cronLimiter = rateLimit({
+  ...sharedOptions,
+  windowMs: 60 * 1000, // 1 minute
+  max: isProd ? 10 : 50, // 10/min in prod, 50/min in dev
+  keyGenerator: (req) => {
+    // Use IP as key - cron jobs typically come from known IPs
+    return req.ip || req.headers['x-forwarded-for']?.toString() || 'unknown';
+  },
+  message: {
+    error: 'too_many_requests',
+    message: 'Admin endpoint rate limit exceeded',
+    code: 'ADMIN_RATE_LIMITED',
+  },
+});
+
 export default {
   onboardingLimiter,
   loginLimiter,
   tokenLimiter,
   apiLimiter,
   strictLimiter,
+  cronLimiter,
 };

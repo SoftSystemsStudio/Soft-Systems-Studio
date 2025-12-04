@@ -1,8 +1,9 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import prisma from '../../../db';
-import env from '../../../env';
 import { logger } from '../../../logger';
 import { asyncHandler } from '../../../middleware/errorHandler';
+import { requireAdminAuth, logAdminAction, type AdminRequest } from '../../../middleware/adminAuth';
+import { cronLimiter } from '../../../middleware/rate';
 
 const router = Router();
 
@@ -10,28 +11,17 @@ const router = Router();
  * POST /api/v1/admin/cleanup-tokens
  * Clean up expired refresh tokens from the database
  *
+ * Authentication: Requires admin auth (CRON_SECRET, admin JWT, or admin API key)
+ * Rate limited: 10 requests/minute in production
+ *
  * This endpoint should be called by a cron job (e.g., Vercel Cron)
- * Protected by CRON_SECRET environment variable
  */
 router.post(
   '/cleanup-tokens',
-  asyncHandler(async (req: Request, res: Response) => {
-    // Verify cron secret
-    const cronSecret = env.CRON_SECRET;
-    const authHeader = req.headers.authorization;
-
-    if (cronSecret) {
-      if (!authHeader || authHeader !== `Bearer ${cronSecret}`) {
-        logger.warn('Unauthorized cleanup-tokens attempt');
-        res.status(401).json({ error: 'Unauthorized' });
-        return;
-      }
-    } else if (env.NODE_ENV === 'production') {
-      // In production, require CRON_SECRET
-      logger.error('CRON_SECRET not configured in production');
-      res.status(500).json({ error: 'CRON_SECRET not configured' });
-      return;
-    }
+  cronLimiter,
+  requireAdminAuth,
+  asyncHandler(async (req: AdminRequest, res: Response) => {
+    logAdminAction(req, 'cleanup_tokens_started');
 
     const startTime = Date.now();
 
@@ -58,6 +48,12 @@ router.post(
 
       const duration = Date.now() - startTime;
 
+      logAdminAction(req, 'cleanup_tokens_completed', {
+        expiredDeleted: expiredTokensResult.count,
+        revokedDeleted: revokedTokensResult.count,
+        durationMs: duration,
+      });
+
       logger.info(
         {
           expiredDeleted: expiredTokensResult.count,
@@ -75,6 +71,9 @@ router.post(
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
+      logAdminAction(req, 'cleanup_tokens_failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
       logger.error({ err: error }, 'Token cleanup failed');
       res.status(500).json({
         error: 'Cleanup failed',
@@ -87,23 +86,16 @@ router.post(
 /**
  * POST /api/v1/admin/cleanup-sessions
  * Clean up stale sessions and inactive user data
+ *
+ * Authentication: Requires admin auth (CRON_SECRET, admin JWT, or admin API key)
+ * Rate limited: 10 requests/minute in production
  */
 router.post(
   '/cleanup-sessions',
-  asyncHandler(async (req: Request, res: Response) => {
-    // Verify cron secret
-    const cronSecret = env.CRON_SECRET;
-    const authHeader = req.headers.authorization;
-
-    if (cronSecret) {
-      if (!authHeader || authHeader !== `Bearer ${cronSecret}`) {
-        res.status(401).json({ error: 'Unauthorized' });
-        return;
-      }
-    } else if (env.NODE_ENV === 'production') {
-      res.status(500).json({ error: 'CRON_SECRET not configured' });
-      return;
-    }
+  cronLimiter,
+  requireAdminAuth,
+  asyncHandler(async (req: AdminRequest, res: Response) => {
+    logAdminAction(req, 'cleanup_sessions_started');
 
     const startTime = Date.now();
 
@@ -134,6 +126,11 @@ router.post(
 
       const duration = Date.now() - startTime;
 
+      logAdminAction(req, 'cleanup_sessions_completed', {
+        conversationsDeleted: deletedConversations.count,
+        durationMs: duration,
+      });
+
       logger.info(
         {
           conversationsDeleted: deletedConversations.count,
@@ -149,6 +146,9 @@ router.post(
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
+      logAdminAction(req, 'cleanup_sessions_failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
       logger.error({ err: error }, 'Session cleanup failed');
       res.status(500).json({
         error: 'Cleanup failed',
