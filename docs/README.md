@@ -1,43 +1,92 @@
-# Soft Systems Agents — Monorepo Documentation
+# Documentation
 
-This `docs/README.md` is a developer-focused blueprint for the agent monorepo. It describes the high-level architecture, local dev flows, and where to find key pieces of code.
+Welcome to the Soft Systems Studio documentation.
 
-Repository layout (selected):
+---
 
-- `apps/agent-api/` — Backend API service (Express) exposing agent endpoints and webhooks.
-- `apps/marketing-site/` — Marketing + onboarding site (Next.js) (placeholder).
-- `packages/core-llm/` — Shared LLM client wrapper and utilities (OpenAI wrapper, retry logic).
-- `packages/agent-customer-service/` — Customer Service agent package (prompts, handlers, schemas).
-- `packages/ui-components/` — Shared UI components for embedding chat widgets (placeholder).
+## Getting Started
 
-Quickstart (developer)
+| Document | Description |
+|----------|-------------|
+| [Main README](../README.md) | Project overview and quick start |
+| [Contributing](../CONTRIBUTING.md) | Development setup and workflow |
 
-1. Ensure Node 22 + pnpm are available (or use the devcontainer in `.devcontainer/`).
+---
+
+## Reference
+
+| Document | Description |
+|----------|-------------|
+| [Architecture](ARCHITECTURE.md) | System design, data flows, and package structure |
+| [API Reference](API.md) | REST API endpoints, authentication, and examples |
+| [Environment Variables](ENV.md) | Complete environment variable reference |
+
+---
+
+## Operations
+
+| Document | Description |
+|----------|-------------|
+| [Deployment](DEPLOYMENT.md) | Production deployment guide for all platforms |
+| [Security](SECURITY.md) | Security model, authentication, and best practices |
+
+---
+
+## Internal
+
+| Document | Description |
+|----------|-------------|
+| [Client Config](CLIENT_CONFIG.md) | ClientConfig contract for intake → config → prompts |
+| [Tailwind Pivot](Tailwind-Pivot.md) | Frontend styling migration notes |
+
+---
+
+## Quick Links
+
+### Development
 
 ```bash
-corepack enable
-corepack prepare pnpm@8.11.0 --activate
-pnpm -w install
-pnpm --filter apps/agent-api dev
+# Start development
+pnpm dev
+
+# Run tests
+pnpm test
+
+# Lint & format
+pnpm lint
+pnpm format
 ```
 
-2. Start the local Postgres and API with the provided `docker-compose.dev.yml` if you want the DB and services in containers:
+### Database
 
 ```bash
+# Generate Prisma client
+pnpm --filter apps-agent-api prisma:generate
+
+# Run migrations
+pnpm --filter apps-agent-api migrate:dev
+
+# Open Prisma Studio
+pnpm --filter apps-agent-api prisma studio
+```
+
+### Docker
+
+```bash
+# Development stack
 docker compose -f docker-compose.dev.yml up --build
+
+# Production
+docker compose up --build
+
+# Local infrastructure only
+docker compose -f infra/docker-compose.yml up -d
 ```
 
-Where to extend
+---
 
-- Add new agent packages under `packages/` (e.g. `agent-appointment-booking`).
-- Shared data types and utilities go into `packages/core-llm` and `packages/ui-components`.
+## Support
 
-Notes about production and CI
-
-- Keep production images minimal (no bind mounts) and use the repository `Dockerfile`/package `Dockerfile`s in `/infra` or at package roots.
-- CI should run `pnpm -w -r lint`, `pnpm -w -r test`, and `pnpm -w -r build`.
-
-Next steps
-
-- Implement auth and multi-tenancy (workspace tables + RBAC).
-- Add tests for core LLM wrappers and handler flows.
+- **Issues**: [GitHub Issues](https://github.com/SoftSystemsStudio/Soft-Systems-Studio/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/SoftSystemsStudio/Soft-Systems-Studio/discussions)
+- **Security**: security@softsystems.studio
