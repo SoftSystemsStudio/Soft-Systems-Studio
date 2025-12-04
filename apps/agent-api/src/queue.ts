@@ -76,14 +76,20 @@ emailEvents.on('failed', ({ jobId, failedReason }) => {
 });
 
 // Helper functions to add jobs
-export async function addIngestJob(data: IngestJobData, options?: { priority?: number; delay?: number }) {
+export async function addIngestJob(
+  data: IngestJobData,
+  options?: { priority?: number; delay?: number },
+) {
   return ingestQueue.add('ingest', data, {
     priority: options?.priority,
     delay: options?.delay,
   });
 }
 
-export async function addEmailJob(data: EmailJobData, options?: { priority?: number; delay?: number }) {
+export async function addEmailJob(
+  data: EmailJobData,
+  options?: { priority?: number; delay?: number },
+) {
   return emailQueue.add('send', data, {
     priority: options?.priority,
     delay: options?.delay,
