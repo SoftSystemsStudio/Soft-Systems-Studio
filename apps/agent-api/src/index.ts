@@ -2,7 +2,6 @@ import './env';
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import prisma from './db';
 import healthRouter from './health';
 import statusRouter from './status';
 import onboardingRouter from './api/v1/auth/onboarding';
@@ -19,6 +18,7 @@ import { httpLogger, logger } from './logger';
 import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
 import { validateBody } from './lib/validate';
 import { chatRequestSchema, type ChatRequest } from './schemas/chat';
+import { persistChatExchange } from './services/chat';
 
 // Initialize Sentry early (before any routes)
 initSentry();
@@ -67,33 +67,45 @@ app.post(
 
     const result = await handleChat({ ...payload, workspaceId });
 
-    if (result.status && result.body) {
-      // Persist request and response for successful chats
-      try {
-        // Workspace is guaranteed to exist by requireWorkspace middleware
-        // Create conversation and messages
-        const conversation = await prisma.conversation.create({ data: { workspaceId } });
-
-        const reply = (result.body as { reply?: string })?.reply || '';
-        await prisma.message.createMany({
-          data: [
-            { conversationId: conversation.id, role: 'user', content: payload.message },
-            { conversationId: conversation.id, role: 'assistant', content: reply },
-          ],
-        });
-
-        logger.info('Chat completed', {
-          workspaceId,
-          conversationId: conversation.id,
-          messageLength: payload.message.length,
-        });
-      } catch (e) {
-        logger.error('Failed to persist conversation', { error: e, workspaceId });
-      }
-      res.status(result.status).json(result.body);
+    if (!result.status || !result.body) {
+      res.status(500).json({ error: 'chat_failed' });
       return;
     }
-    res.status(500).json({ error: 'chat_failed' });
+
+    const reply = (result.body as { reply?: string })?.reply || '';
+
+    // Persist conversation and messages using transactional service
+    // Fail the request if persistence fails - data integrity is critical
+    try {
+      const persistResult = await persistChatExchange({
+        workspaceId,
+        userMessage: payload.message,
+        assistantReply: reply,
+        conversationId: payload.conversationId,
+      });
+
+      logger.info('Chat completed', {
+        workspaceId,
+        conversationId: persistResult.conversationId,
+        messageLength: payload.message.length,
+      });
+
+      // Return reply with conversation context
+      res.status(result.status).json({
+        ...result.body,
+        conversationId: persistResult.conversationId,
+      });
+    } catch (persistError) {
+      logger.error('Failed to persist conversation', {
+        error: persistError,
+        workspaceId,
+      });
+      // Fail the request - don't return a reply if we can't persist it
+      res.status(500).json({
+        error: 'persistence_failed',
+        message: 'Failed to save conversation. Please try again.',
+      });
+    }
   }),
 );
 
