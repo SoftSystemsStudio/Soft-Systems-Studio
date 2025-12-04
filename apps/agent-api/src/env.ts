@@ -107,6 +107,9 @@ const envSchema = z.object({
   // Optional: Cron job authentication
   CRON_SECRET: z.string().optional(),
 
+  // Optional: Admin API key for service-to-service admin calls
+  ADMIN_API_KEY: z.string().min(32).optional(),
+
   // Server role: 'api' (default), 'worker', or 'all'
   // Used to gate background processes like queue metrics
   SERVER_ROLE: z.enum(['api', 'worker', 'all']).default('api'),
