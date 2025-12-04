@@ -31,7 +31,7 @@ const envSchema = z.object({
     .min(1, 'POSTGRES_URL or DATABASE_URL is required')
     .url('POSTGRES_URL must be a valid URL'),
 
-  // Redis
+  // Redis - supports Upstash Redis (rediss://) or standard Redis (redis://)
   REDIS_URL: z
     .string()
     .default('redis://localhost:6379')
@@ -39,6 +39,16 @@ const envSchema = z.object({
       (val) => val.startsWith('redis://') || val.startsWith('rediss://'),
       'REDIS_URL must start with redis:// or rediss://',
     ),
+
+  // Upstash Redis REST API (optional - for serverless environments)
+  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+
+  // Upstash QStash (optional - for background jobs in serverless)
+  QSTASH_URL: z.string().url().optional(),
+  QSTASH_TOKEN: z.string().optional(),
+  QSTASH_CURRENT_SIGNING_KEY: z.string().optional(),
+  QSTASH_NEXT_SIGNING_KEY: z.string().optional(),
 
   // OpenAI
   OPENAI_API_KEY: z
