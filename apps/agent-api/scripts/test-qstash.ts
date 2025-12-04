@@ -63,13 +63,14 @@ async function testQStash() {
       console.log('\n🔐 Testing Receiver setup...');
       const { Receiver } = await import('@upstash/qstash');
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _receiver = new Receiver({
+      const receiver = new Receiver({
         currentSigningKey: currentSigningKey.replace(/"/g, ''),
         nextSigningKey: nextSigningKey.replace(/"/g, ''),
       });
 
-      console.log('  ✅ Receiver initialized (ready to verify webhook signatures)');
+      // Verify receiver is properly initialized
+      console.log(`  ✅ Receiver initialized (ready to verify webhook signatures)`);
+      void receiver; // Use receiver to satisfy noUnusedLocals
     }
 
     console.log('\n✅ All QStash tests passed!\n');

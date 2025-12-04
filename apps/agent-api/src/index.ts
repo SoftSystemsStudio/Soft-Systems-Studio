@@ -10,6 +10,7 @@ import loginRouter from './api/v1/auth/login';
 import tokenRouter from './api/v1/auth/token';
 import customerServiceRouter from './api/v1/agents/customer_service';
 import cleanupRouter from './api/v1/admin/cleanup';
+import stripeRouter from './api/v1/stripe';
 import { metricsHandler } from './metrics';
 import requireAuth from './middleware/auth-combined';
 import { errorHandler, notFoundHandler, asyncHandler } from './middleware/errorHandler';
@@ -32,6 +33,9 @@ app.use(sentryRequestHandler);
 
 // Request logging (early middleware)
 app.use(httpLogger);
+
+// Stripe webhooks need raw body for signature verification (must be before bodyParser.json())
+app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -83,6 +87,7 @@ app.use('/api/v1/auth', onboardingRouter);
 app.use('/api/v1/auth', loginRouter);
 app.use('/api/v1/auth', tokenRouter);
 app.use('/api/v1/admin', cleanupRouter);
+app.use('/api/v1/stripe', stripeRouter);
 app.get('/metrics', metricsHandler);
 
 // Apply auth middleware to protected routes

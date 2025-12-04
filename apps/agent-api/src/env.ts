@@ -88,6 +88,14 @@ const envSchema = z.object({
     .string()
     .optional()
     .transform((val) => val === 'true'),
+
+  // Optional: Sentry
+  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_ENVIRONMENT: z.string().optional(),
+
+  // Optional: Stripe payments
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
 });
 
 // Parse and validate environment variables
