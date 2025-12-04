@@ -13,9 +13,12 @@ import cleanupRouter from './api/v1/admin/cleanup';
 import stripeRouter from './api/v1/stripe';
 import { metricsHandler } from './metrics';
 import requireAuth from './middleware/auth-combined';
+import requireWorkspace from './middleware/tenant';
 import { errorHandler, notFoundHandler, asyncHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
 import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
+import { validateBody } from './lib/validate';
+import { chatRequestSchema, type ChatRequest } from './schemas/chat';
 
 // Initialize Sentry early (before any routes)
 initSentry();
@@ -40,43 +43,57 @@ app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+// Extended request type with auth context
+interface AuthRequest extends Request {
+  auth?: { workspaceId?: string; userId?: string };
+}
+
+// Chat endpoint - requires authentication and workspace context
+// Validates payload with Zod schema
 app.post(
   '/api/agents/customer-service/chat',
-  asyncHandler(async (req: Request, res: Response) => {
-    const result = await handleChat(req.body);
+  requireAuth,
+  requireWorkspace,
+  validateBody(chatRequestSchema),
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    const payload = req.body as ChatRequest;
+    const workspaceId = req.auth?.workspaceId;
+
+    // This should never happen due to requireWorkspace middleware, but TypeScript needs it
+    if (!workspaceId) {
+      res.status(401).json({ error: 'workspace_required' });
+      return;
+    }
+
+    const result = await handleChat({ ...payload, workspaceId });
+
     if (result.status && result.body) {
       // Persist request and response for successful chats
       try {
-        const payload = req.body as { workspaceId?: string; message?: string };
-        const workspaceId = payload.workspaceId || 'demo';
-        // ensure workspace exists (seed/demo)
-        await prisma.workspace.upsert({
-          where: { id: workspaceId },
-          update: {},
-          create: { id: workspaceId, name: workspaceId },
-        });
-
-        // create conversation if provided or new
+        // Workspace is guaranteed to exist by requireWorkspace middleware
+        // Create conversation and messages
         const conversation = await prisma.conversation.create({ data: { workspaceId } });
 
         const reply = (result.body as { reply?: string })?.reply || '';
         await prisma.message.createMany({
           data: [
-            { conversationId: conversation.id, role: 'user', content: payload.message || '' },
-            {
-              conversationId: conversation.id,
-              role: 'assistant',
-              content: reply,
-            },
+            { conversationId: conversation.id, role: 'user', content: payload.message },
+            { conversationId: conversation.id, role: 'assistant', content: reply },
           ],
         });
+
+        logger.info('Chat completed', {
+          workspaceId,
+          conversationId: conversation.id,
+          messageLength: payload.message.length,
+        });
       } catch (e) {
-        console.error('failed to persist conversation', e);
+        logger.error('Failed to persist conversation', { error: e, workspaceId });
       }
       res.status(result.status).json(result.body);
       return;
     }
-    res.status(500).json({ error: 'unknown' });
+    res.status(500).json({ error: 'chat_failed' });
   }),
 );
 

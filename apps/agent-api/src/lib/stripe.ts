@@ -27,7 +27,7 @@ export function getStripe(): Stripe {
   }
 
   if (!stripeInstance) {
-    stripeInstance = new Stripe(env.STRIPE_SECRET_KEY, {
+    stripeInstance = new Stripe(env.STRIPE_SECRET_KEY!, {
       typescript: true,
       appInfo: {
         name: 'Soft Systems Studio',
