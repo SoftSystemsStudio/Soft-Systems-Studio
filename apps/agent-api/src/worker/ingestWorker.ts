@@ -22,7 +22,10 @@ const worker = new Worker(
       throw err;
     }
 
-    logger.info({ workspaceId, docCount: documents.length, jobId: job.id }, 'Processing ingest job');
+    logger.info(
+      { workspaceId, docCount: documents.length, jobId: job.id },
+      'Processing ingest job',
+    );
 
     // verify workspace exists before doing work
     const workspace = await prisma.workspace.findUnique({ where: { id: workspaceId } });

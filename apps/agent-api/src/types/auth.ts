@@ -8,7 +8,12 @@ export type AuthInfo = {
   role?: string;
   roles?: string[];
   workspace?: unknown;
+  // API key authentication - can be scoped to specific roles/workspaces
   apiKey?: true;
+  apiKeyId?: string;
+  apiKeyScopes?: string[]; // e.g., ['read', 'write', 'admin']
+  apiKeyWorkspaces?: string[]; // Restrict API key to specific workspaces
+  // Anonymous access (only in explicit dev mode)
   anonymous?: true;
   type?: 'access';
   [k: string]: unknown;

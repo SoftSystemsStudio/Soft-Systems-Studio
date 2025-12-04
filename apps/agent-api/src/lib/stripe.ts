@@ -27,6 +27,7 @@ export function getStripe(): Stripe {
   }
 
   if (!stripeInstance) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     stripeInstance = new Stripe(env.STRIPE_SECRET_KEY!, {
       typescript: true,
       appInfo: {

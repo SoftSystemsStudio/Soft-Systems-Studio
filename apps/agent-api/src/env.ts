@@ -89,6 +89,13 @@ const envSchema = z.object({
     .optional()
     .transform((val) => val === 'true'),
 
+  // Security: Allow anonymous access in development (MUST be explicitly enabled)
+  // Set to 'true' only for local development without auth
+  ALLOW_ANONYMOUS_DEV: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
+
   // Optional: Sentry
   SENTRY_DSN: z.string().url().optional(),
   SENTRY_ENVIRONMENT: z.string().optional(),

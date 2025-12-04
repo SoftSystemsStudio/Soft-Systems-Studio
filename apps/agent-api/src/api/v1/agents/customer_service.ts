@@ -19,7 +19,7 @@ router.post(
   '/ingest',
   requireAuth,
   requireWorkspace,
-  requireRole('admin', 'owner', 'agent'),
+  requireRole('admin', 'owner', 'agent', 'service'),
   asyncHandler(async (req: AuthRequest, res: Response) => {
     const body = req.body as { documents?: unknown };
     const documents = body.documents;
@@ -44,7 +44,7 @@ router.post(
   '/run',
   requireAuth,
   requireWorkspace,
-  requireRole('user', 'agent', 'admin'),
+  requireRole('user', 'agent', 'admin', 'service', 'member'),
   asyncHandler(async (req: AuthRequest, res: Response) => {
     const body = req.body as { message?: unknown; userId?: unknown };
     const message = body.message as string | undefined;
