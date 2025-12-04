@@ -10,6 +10,7 @@
     "test": "echo \"No frontend tests yet\""
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.35.6",
     "@react-three/drei": "9",
     "@react-three/fiber": "8",
     "framer-motion": "^12.23.25",
