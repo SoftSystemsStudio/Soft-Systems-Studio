@@ -30,6 +30,8 @@
     "@sentry/node": "^10.28.0",
     "@softsystems/agent-customer-service": "workspace:^",
     "@softsystems/core-llm": "workspace:^",
+    "@upstash/qstash": "^2.8.4",
+    "@upstash/redis": "^1.35.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "bullmq": "^5.65.0",
