@@ -1,3 +1,5 @@
+import { withSentryConfig } from '@sentry/nextjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -144,4 +146,49 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// Sentry configuration for error monitoring and source maps
+const sentryWebpackPluginOptions = {
+  // Organization and project from Sentry dashboard
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // Auth token for uploading source maps (from SENTRY_AUTH_TOKEN env var)
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Suppresses all logs in development
+  silent: process.env.NODE_ENV === 'development',
+
+  // Upload source maps for better stack traces
+  // Only upload in production builds
+  sourcemaps: {
+    disable: process.env.NODE_ENV !== 'production',
+  },
+
+  // Automatically delete source maps after uploading for security
+  deleteSourcemapsAfterUpload: true,
+
+  // Hide source maps from browser devtools in production
+  hideSourceMaps: true,
+
+  // Widen the error stack trace to 100 frames
+  widenClientFileUpload: true,
+
+  // Transpile SDK to be compatible with IE11 (optional)
+  transpileClientSDK: false,
+
+  // Route browser requests to Sentry through a Next.js rewrite for ad-blockers
+  tunnelRoute: '/monitoring',
+
+  // Disable logger to reduce bundle size
+  disableLogger: true,
+
+  // Automatically instrument server components with Sentry
+  automaticVercelMonitors: true,
+};
+
+// Only wrap with Sentry if DSN is configured
+const config = process.env.NEXT_PUBLIC_SENTRY_DSN
+  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+  : nextConfig;
+
+export default config;
