@@ -19,7 +19,7 @@ const mockClients = [
   },
 ];
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // Verify user is authenticated
   const { userId } = getAuth(req);
 
