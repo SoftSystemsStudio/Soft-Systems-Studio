@@ -1,105 +1,297 @@
-# Soft Systems Studio — Monorepo for AI Agents
+# Soft Systems Studio
 
-This repository is a production-focused monorepo scaffold for building AI agents and companion tooling. It's designed for developers working in GitHub Codespaces or similar environments and uses TypeScript, Node 22, pnpm workspaces, Next.js (frontend), Express (REST API backend), Prisma and PostgreSQL.
+<p align="center">
+  <strong>Production-Grade AI Agent Platform</strong><br>
+  Multi-tenant SaaS infrastructure for deploying intelligent business automation agents
+</p>
 
-**Architecture**
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#architecture">Architecture</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#documentation">Documentation</a> •
+  <a href="#deployment">Deployment</a>
+</p>
 
-- `packages/api`: Express + TypeScript API, Prisma ORM, health checks, structured logging (pino).
-- `packages/frontend`: Next.js TypeScript frontend.
+---
 
-Key features:
+## Overview
 
-- Monorepo using `pnpm` workspaces
-- Devcontainer for Codespaces with Node 22
-- ESLint + Prettier standard config
-- Jest testing setup
-- Prisma + PostgreSQL schema + seed
-- Dockerfile for production build
-- Minimal GitHub Actions CI: lint, test, build
+Soft Systems Studio is an enterprise-ready monorepo for building, deploying, and scaling AI-powered business agents. Built with TypeScript, it provides complete infrastructure for multi-tenant agent deployments with RAG-based knowledge retrieval, secure authentication, queue-based processing, and real-time observability.
 
-Quickstart
+### What It Does
 
-1. Install Node 22 and pnpm (or use Codespaces/devcontainer)
+- **Customer Service Agents** — AI-powered chat with knowledge base retrieval and conversation memory
+- **Document Ingestion** — Async processing pipeline for knowledge base documents with vector search
+- **Multi-Tenant Architecture** — Workspace isolation with role-based access control
+- **Production Infrastructure** — Queue workers, rate limiting, audit logging, and graceful shutdown
+
+---
+
+## Features
+
+### Core Capabilities
+
+| Feature | Description |
+|---------|-------------|
+| 🤖 **AI Agents** | Customer service agent with RAG retrieval and LLM reasoning |
+| 📚 **Knowledge Base** | Document ingestion with Qdrant vector search |
+| 🔐 **Authentication** | JWT + refresh tokens with workspace scoping |
+| 👥 **Multi-Tenancy** | Workspace isolation with RBAC (admin, owner, member, agent, service) |
+| 💳 **Billing** | Stripe integration for subscriptions and usage billing |
+| 📊 **Observability** | Prometheus metrics, Sentry error tracking, structured logging |
+
+### Security Hardening
+
+- **Zod Validation** — Strict schema validation on all API endpoints
+- **Rate Limiting** — Per-endpoint and per-tenant rate limits with Redis backing
+- **Timing-Safe Auth** — Constant-time comparison for secrets to prevent timing attacks
+- **Audit Logging** — All admin actions logged with IP, user agent, and timestamp
+- **Idempotent Operations** — Deterministic IDs and skip-duplicates for safe retries
+
+### Infrastructure
+
+- **BullMQ Queues** — Reliable background job processing with exponential backoff
+- **Graceful Shutdown** — Clean process termination for serverless and container deployments
+- **Environment Validation** — Fail-fast startup with comprehensive env var checking
+- **Docker Support** — Development and production Docker configurations
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              Frontend                                    │
+│                     Next.js + Clerk Auth + Tailwind                     │
+└─────────────────────────────────┬───────────────────────────────────────┘
+                                  │
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                             Agent API                                    │
+│                    Express + TypeScript + Prisma                        │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Routes          │  Middleware       │  Services                        │
+│  ─────────────   │  ────────────     │  ──────────                      │
+│  /auth/*         │  requireAuth      │  chat.ts (RAG + LLM)            │
+│  /agents/*       │  requireWorkspace │  ingest.ts (KB ingestion)       │
+│  /admin/*        │  requireRole      │  qdrant.ts (vector search)      │
+│  /stripe/*       │  validateBody     │  token.ts (JWT management)      │
+└─────────────────────────────────┬───────────────────────────────────────┘
+                                  │
+          ┌───────────────────────┼───────────────────────┐
+          ▼                       ▼                       ▼
+┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+│    PostgreSQL    │   │      Redis       │   │      Qdrant      │
+│   (Prisma ORM)   │   │  (BullMQ/Cache)  │   │  (Vector Store)  │
+└──────────────────┘   └────────┬─────────┘   └──────────────────┘
+                                │
+                                ▼
+                       ┌──────────────────┐
+                       │  Ingest Worker   │
+                       │   (BullMQ)       │
+                       └──────────────────┘
+```
+
+### Package Structure
+
+```
+soft-systems-studio/
+├── apps/
+│   └── agent-api/              # Main API service
+│       ├── src/
+│       │   ├── api/v1/         # REST endpoints
+│       │   ├── middleware/     # Auth, rate limiting, validation
+│       │   ├── services/       # Business logic
+│       │   ├── schemas/        # Zod validation schemas
+│       │   └── worker/         # BullMQ workers
+│       └── prisma/             # Database schema & migrations
+│
+├── packages/
+│   ├── frontend/               # Next.js web application
+│   ├── agency-core/            # Shared config types & prompts
+│   ├── agent-customer-service/ # Customer service agent logic
+│   ├── core-llm/               # LLM abstraction layer
+│   └── ui-components/          # Shared React components
+│
+├── docs/                       # Documentation
+├── infra/                      # Docker compose for local dev
+└── scripts/                    # Build & utility scripts
+```
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 22+
+- pnpm 8+
+- Docker (for local Postgres/Redis/Qdrant)
+
+### Development Setup
 
 ```bash
+# 1. Clone and install
+git clone https://github.com/SoftSystemsStudio/Soft-Systems-Studio.git
+cd Soft-Systems-Studio
 corepack enable
-corepack prepare pnpm@8.11.0 --activate
-pnpm -w install
-pnpm --filter api dev
-pnpm --filter frontend dev
+pnpm install
+
+# 2. Set up environment
+cp .env.example .env
+cp apps/agent-api/.env.example apps/agent-api/.env
+# Edit .env files with your credentials
+
+# 3. Start infrastructure
+docker compose -f infra/docker-compose.yml up -d
+
+# 4. Initialize database
+pnpm --filter apps-agent-api prisma:generate
+pnpm --filter apps-agent-api migrate:dev
+pnpm --filter apps-agent-api seed
+
+# 5. Start development servers
+pnpm dev
 ```
 
-Environment
-
-- Copy `.env.example` to `.env` in the root and in `packages/api` and adjust `POSTGRES_URL`.
-
-Syncing environment files
-
-- There's a helper script to merge example variables into your `.env` files without overwriting existing values.
-- Run from the repo root to update/create both root `.env` and `apps/agent-api/.env`:
+### Using Docker Compose
 
 ```bash
-pnpm sync-env
-# or: node scripts/sync-env.js
-```
+# Full stack with hot reload
+docker compose -f docker-compose.dev.yml up --build
 
-The script appends only missing keys from `.env.example` into the corresponding `.env` files and will not replace any existing values. It's a convenient way to keep local envs in sync with the repo examples while preserving developer secrets.
-
-Database
-
-- Uses Prisma. Migrations and seeds are wired in `packages/api/package.json`.
-
-CI and Production
-
-- `Dockerfile` builds production image for the `api` package. CI is in `.github/workflows/ci.yml`.
-
-Docker (local)
-
-- A `docker-compose.yml` is provided to run a local Postgres and the API service for quick testing.
-- Start services:
-
-```bash
-# start DB and API (builds the API image)
+# Production build
 docker compose up --build
 ```
 
-- The API will be available at `http://localhost:4000` and uses the internal Postgres service.
-- If you want the frontend in Docker as well we can add a `packages/frontend/Dockerfile` and service.
+---
 
-Dev Docker Compose
+## Documentation
 
-- For a one-command developer experience with hot reload, use the development compose file which mounts the repository into containers and starts the frontend and API in dev mode.
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/ARCHITECTURE.md) | System design and component overview |
+| [API Reference](docs/API.md) | REST API endpoints and schemas |
+| [Environment](docs/ENV.md) | Environment variables reference |
+| [Security](docs/SECURITY.md) | Security model and best practices |
+| [Deployment](docs/DEPLOYMENT.md) | Production deployment guide |
+| [Contributing](CONTRIBUTING.md) | Development workflow and testing |
+
+---
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/login` | User login with email/password |
+| POST | `/api/v1/auth/token` | Refresh access token |
+| POST | `/api/v1/auth/onboarding` | Create workspace and user |
+
+### Agents
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/agents/customer-service/run` | Chat with customer service agent |
+| POST | `/api/v1/agents/customer-service/ingest` | Ingest KB documents |
+
+### Admin
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/admin/cleanup` | Trigger data cleanup (cron) |
+
+### Billing
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/stripe/webhook` | Stripe webhook handler |
+
+### Health & Metrics
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+| GET | `/status` | Detailed system status |
+| GET | `/metrics` | Prometheus metrics |
+
+---
+
+## Deployment
+
+### Vercel (Recommended for Frontend)
+
+The frontend is configured for Vercel deployment. Set environment variables in the Vercel dashboard.
+
+### Railway / Render (API)
+
+The API includes a `Dockerfile` optimized for containerized deployments:
 
 ```bash
-# start DB, API (dev) and Next frontend (hot reload)
-docker compose -f docker-compose.dev.yml up --build
-
-# stop
-docker compose -f docker-compose.dev.yml down
+docker build -t soft-systems-api .
+docker run -p 5000:5000 --env-file .env soft-systems-api
 ```
 
-Notes
+### Environment Variables
 
-- `packages/api/docker-entrypoint.sh` will wait for Postgres, run Prisma generate/migrate/seed, then start the API in dev mode.
-- The dev compose mounts the workspace into the container. This is optimized for developer DX; do not use it for production images.
+See [docs/ENV.md](docs/ENV.md) for the complete environment variable reference.
 
-Next steps
+**Required for production:**
+- `DATABASE_URL` — PostgreSQL connection string
+- `REDIS_URL` — Redis connection string
+- `JWT_SECRET` — 32+ character secret for JWT signing
+- `OPENAI_API_KEY` — OpenAI API key for LLM calls
 
-- Add your agent services to `packages/api` or new packages under `packages/` and wire up inter-package types.
+---
 
-Pre-commit checks (local safety)
+## Tech Stack
 
-- This repository includes Husky pre-commit hooks that run quick safety checks before commits:
-  - `pnpm check-env-committed` — fails if `.env` files are tracked in git.
-  - `pnpm scan-placeholders` — scans tracked files for likely secret patterns or disallowed placeholder strings.
+| Layer | Technology |
+|-------|------------|
+| **Language** | TypeScript 5.x |
+| **Runtime** | Node.js 22 |
+| **Frontend** | Next.js 14, React 18, Tailwind CSS |
+| **Backend** | Express 4, Prisma 6, BullMQ |
+| **Database** | PostgreSQL 15 |
+| **Cache/Queue** | Redis (Upstash compatible) |
+| **Vector DB** | Qdrant |
+| **Auth** | JWT + Clerk (frontend) |
+| **Payments** | Stripe |
+| **Observability** | Pino, Prometheus, Sentry |
+| **Package Manager** | pnpm workspaces |
 
-  To enable Husky hooks locally after cloning:
+---
+
+## Scripts
 
 ```bash
-pnpm install
-pnpm prepare
+# Development
+pnpm dev                    # Start all services in dev mode
+pnpm build                  # Build all packages
+pnpm lint                   # Run ESLint
+pnpm typecheck              # TypeScript type checking
+pnpm test                   # Run all tests
+
+# Database
+pnpm --filter apps-agent-api migrate:dev      # Run migrations (dev)
+pnpm --filter apps-agent-api migrate:deploy   # Run migrations (prod)
+pnpm --filter apps-agent-api seed             # Seed database
+
+# Utilities
+pnpm sync-env               # Sync .env.example to .env
+pnpm format                 # Format code with Prettier
 ```
 
-    After that, the pre-commit checks will run automatically when you commit.
+---
 
-# Soft-Systems-Studio
+## License
+
+Copyright © 2025 Soft Systems Studio. All rights reserved.
+
+---
+
+<p align="center">
+  Built with ❤️ for production AI deployments
+</p>
