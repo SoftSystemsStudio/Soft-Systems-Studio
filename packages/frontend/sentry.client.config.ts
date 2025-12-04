@@ -26,11 +26,11 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 
-  // Only enable in production/staging
-  enabled: process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging',
+  // Enable Sentry (set to true to test in development)
+  enabled: true,
 
   // Debug mode for development (set to true to see Sentry logs)
-  debug: false,
+  debug: process.env.NODE_ENV === 'development',
 
   // Filter out common browser errors that are not actionable
   ignoreErrors: [
@@ -70,10 +70,9 @@ Sentry.init({
 
   // Scrub sensitive data from events before sending
   beforeSend(event, hint) {
-    // Don't send events in development
+    // Log in development for debugging
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[Sentry] Event captured (not sent in dev):', hint.originalException);
-      return null;
+      console.log('[Sentry] Sending event:', hint.originalException);
     }
 
     // Scrub sensitive data from breadcrumbs
@@ -111,12 +110,7 @@ Sentry.init({
     }),
     Sentry.browserTracingIntegration({
       // Trace requests to our API
-      tracePropagationTargets: [
-        'localhost',
-        /^\//,
-        /softsystems\.studio/,
-        /vercel\.app/,
-      ],
+      tracePropagationTargets: ['localhost', /^\//, /softsystems\.studio/, /vercel\.app/],
     }),
   ],
 });
