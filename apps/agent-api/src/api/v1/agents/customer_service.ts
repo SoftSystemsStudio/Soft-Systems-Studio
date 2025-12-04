@@ -2,14 +2,13 @@ import { Router, Request, Response } from 'express';
 interface AuthRequest extends Request {
   auth?: { workspaceId?: string };
 }
-import { querySimilar } from '../../../services/qdrant';
 import { ingestQueue } from '../../../queue';
-import { chat } from '../../../services/llm';
-import prisma from '../../../db';
+import { runChat } from '../../../services/chat';
 import requireAuth from '../../../middleware/auth-combined';
 import requireWorkspace from '../../../middleware/tenant';
 import { requireRole } from '../../../middleware/role';
 import { asyncHandler } from '../../../middleware/errorHandler';
+import { logger } from '../../../logger';
 
 const router = Router();
 
@@ -46,44 +45,35 @@ router.post(
   requireWorkspace,
   requireRole('user', 'agent', 'admin', 'service', 'member'),
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    const body = req.body as { message?: unknown; userId?: unknown };
+    const body = req.body as { message?: unknown; userId?: unknown; conversationId?: unknown };
     const message = body.message as string | undefined;
+    const conversationId = body.conversationId as string | undefined;
     const workspaceId = req.auth?.workspaceId;
+
     if (!workspaceId || !message) {
       res.status(400).json({ error: 'invalid_payload' });
       return;
     }
 
-    // Retrieve top contexts - filtered by workspaceId for tenant isolation
-    type SimilarItem = { id: string; score: number; payload?: { text?: string } };
-    const contexts = (await querySimilar(workspaceId, message, 4)) as SimilarItem[];
-    const contextText = contexts
-      .map((c, idx) => `Context ${idx + 1}: ${c.payload?.text || ''}`)
-      .join('\n\n');
-
-    const system = `You are a helpful customer support assistant. Use the context to answer user questions. If you cannot answer, ask a clarification.`;
-    const messages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
-      { role: 'system', content: system },
-      { role: 'user', content: `Context:\n${contextText}\n\nUser: ${message}` },
-    ];
-
-    const reply = await chat(messages);
-
-    // Persist conversation and messages
     try {
-      // Workspace already validated by middleware — create conversation and messages
-      const conversation = await prisma.conversation.create({ data: { workspaceId } });
-      await prisma.message.createMany({
-        data: [
-          { conversationId: conversation.id, role: 'user', content: message },
-          { conversationId: conversation.id, role: 'assistant', content: reply },
-        ],
+      // Use the chat service for transactional persistence
+      const result = await runChat({
+        workspaceId,
+        message,
+        conversationId,
       });
-    } catch (e: unknown) {
-      console.error('persist conversation failed', e);
-    }
 
-    res.json({ reply });
+      res.json({
+        reply: result.reply,
+        conversationId: result.conversationId,
+      });
+    } catch (error) {
+      logger.error({ error, workspaceId }, 'Chat failed');
+      res.status(500).json({
+        error: 'chat_failed',
+        message: 'Failed to process chat request. Please try again.',
+      });
+    }
   }),
 );
 
