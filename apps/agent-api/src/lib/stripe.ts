@@ -23,13 +23,11 @@ export function isStripeEnabled(): boolean {
  */
 export function getStripe(): Stripe {
   if (!isStripeEnabled()) {
-    throw new Error(
-      'Stripe is not configured. Set STRIPE_SECRET_KEY in your environment.'
-    );
+    throw new Error('Stripe is not configured. Set STRIPE_SECRET_KEY in your environment.');
   }
 
   if (!stripeInstance) {
-    stripeInstance = new Stripe(env.STRIPE_SECRET_KEY!, {
+    stripeInstance = new Stripe(env.STRIPE_SECRET_KEY, {
       typescript: true,
       appInfo: {
         name: 'Soft Systems Studio',
@@ -126,10 +124,7 @@ export async function getOrCreateCustomer(
 /**
  * Verify a webhook signature
  */
-export function verifyWebhookSignature(
-  payload: string | Buffer,
-  signature: string,
-): Stripe.Event {
+export function verifyWebhookSignature(payload: string | Buffer, signature: string): Stripe.Event {
   const stripe = getStripe();
   const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
 
