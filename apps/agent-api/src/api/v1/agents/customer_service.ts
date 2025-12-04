@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { randomUUID } from 'crypto';
 interface AuthRequest extends Request {
   auth?: { workspaceId?: string };
 }
@@ -8,6 +9,8 @@ import requireAuth from '../../../middleware/auth-combined';
 import requireWorkspace from '../../../middleware/tenant';
 import { requireRole } from '../../../middleware/role';
 import { asyncHandler } from '../../../middleware/errorHandler';
+import { validateBody } from '../../../lib/validate';
+import { ingestRequestSchema, type IngestRequest } from '../../../schemas/ingest';
 import { logger } from '../../../logger';
 
 const router = Router();
@@ -19,22 +22,25 @@ router.post(
   requireAuth,
   requireWorkspace,
   requireRole('admin', 'owner', 'agent', 'service'),
+  validateBody(ingestRequestSchema),
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    const body = req.body as { documents?: unknown };
-    const documents = body.documents;
+    const body = req.body as IngestRequest;
     const workspaceId = req.auth?.workspaceId;
-    if (!workspaceId || !Array.isArray(documents)) {
-      res.status(400).json({ error: 'invalid_payload' });
+    if (!workspaceId) {
+      res.status(400).json({ error: 'invalid_workspace' });
       return;
     }
+
+    // Generate stable ingestionId for idempotent retries
+    const ingestionId = randomUUID();
 
     // Enqueue ingestion job for async processing with retries/backoff
     await ingestQueue.add(
       'ingest-job',
-      { workspaceId, documents },
+      { workspaceId, documents: body.documents, ingestionId },
       { attempts: 3, backoff: { type: 'exponential', delay: 2000 } },
     );
-    res.json({ ok: true, enqueued: documents.length });
+    res.json({ ok: true, enqueued: body.documents.length, ingestionId });
   }),
 );
 

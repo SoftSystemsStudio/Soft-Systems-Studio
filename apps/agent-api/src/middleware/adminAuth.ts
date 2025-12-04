@@ -202,32 +202,7 @@ export function requireAdminAuth(req: AdminRequest, res: Response, next: NextFun
   // No valid authentication found
   auditLog(req, 'admin_auth_failed', 'cron_secret', { error: 'No credentials provided' });
 
-  // In production, always require authentication
-  if (env.NODE_ENV === 'production') {
-    logger.warn({ ip, path: req.path }, 'Unauthenticated admin endpoint access attempt');
-    return res.status(401).json({
-      error: 'unauthorized',
-      message: 'Admin authentication required',
-      code: 'ADMIN_AUTH_REQUIRED',
-    });
-  }
-
-  // In development, require CRON_SECRET to be set OR allow with warning
-  if (!cronSecret) {
-    logger.warn(
-      { ip, path: req.path },
-      'Admin endpoint accessed without CRON_SECRET in development - ALLOWING but this would fail in production',
-    );
-    req.adminAuth = {
-      source: 'cron_secret', // Treat as cron for audit purposes
-      ip,
-      userAgent,
-      timestamp: new Date(),
-    };
-    return next();
-  }
-
-  // CRON_SECRET is set but not provided
+  // Always require authentication - no silent bypass
   logger.warn({ ip, path: req.path }, 'Admin authentication required but not provided');
   return res.status(401).json({
     error: 'unauthorized',

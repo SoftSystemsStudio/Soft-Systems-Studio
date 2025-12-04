@@ -2,6 +2,7 @@
  * Knowledge Base Ingestion Service
  * Handles document ingestion with transactional persistence
  */
+import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { logger } from '../logger';
 import { upsertDocuments } from './qdrant';
@@ -15,6 +16,7 @@ export interface IngestDocument {
 export interface IngestInput {
   workspaceId: string;
   documents: IngestDocument[];
+  ingestionId?: string;
 }
 
 export interface IngestResult {
@@ -30,7 +32,7 @@ export interface IngestResult {
  * @throws Error if workspace not found or persistence fails
  */
 export async function ingestDocuments(input: IngestInput): Promise<IngestResult> {
-  const { workspaceId, documents } = input;
+  const { workspaceId, documents, ingestionId = randomUUID() } = input;
 
   if (!workspaceId) {
     throw new Error('workspaceId is required for ingestion');
@@ -54,10 +56,10 @@ export async function ingestDocuments(input: IngestInput): Promise<IngestResult>
     throw error;
   }
 
-  // Step 2: Prepare documents for ingestion
-  const timestamp = Date.now();
+  // Step 2: Prepare documents for ingestion with deterministic IDs
+  // Using ingestionId ensures idempotent retries generate the same doc IDs
   const preparedDocs = documents.map((d, i) => ({
-    id: `${workspaceId}-${timestamp}-${i}`,
+    id: `${workspaceId}-${ingestionId}-${i}`,
     text: d.text || d.content || '',
     metadata: { title: d.title || null },
   }));
@@ -66,7 +68,9 @@ export async function ingestDocuments(input: IngestInput): Promise<IngestResult>
   // If Postgres write fails, the whole operation fails
   const result = await prisma.$transaction(async (tx) => {
     // Persist to Postgres first (faster, local)
-    const rows = documents.map((d) => ({
+    // Use deterministic IDs for idempotent inserts on retry
+    const rows = documents.map((d, i) => ({
+      id: `${workspaceId}-${ingestionId}-${i}`,
       workspaceId,
       title: d.title || null,
       content: d.text || d.content || '',
@@ -74,39 +78,30 @@ export async function ingestDocuments(input: IngestInput): Promise<IngestResult>
 
     const created = await tx.kbDocument.createMany({
       data: rows,
+      skipDuplicates: true, // Idempotent: skip if doc ID already exists
     });
 
     logger.debug({ workspaceId, createdCount: created.count }, 'Documents persisted to Postgres');
 
-    // Get the IDs of created documents
-    const createdDocs = await tx.kbDocument.findMany({
-      where: { workspaceId },
-      orderBy: { createdAt: 'desc' },
-      take: documents.length,
-      select: { id: true },
-    });
-
     return {
       count: created.count,
-      ids: createdDocs.map((d) => d.id),
+      ids: preparedDocs.map((d) => d.id),
     };
   });
 
   // Step 4: Upsert to Qdrant (after Postgres succeeds)
-  // If Qdrant fails, the documents are still in Postgres
-  // A retry mechanism can re-sync them later
+  // Surface Qdrant failures so retries can fix them
   try {
     await upsertDocuments(workspaceId, preparedDocs);
     logger.debug({ workspaceId, docCount: preparedDocs.length }, 'Documents upserted to Qdrant');
   } catch (qdrantError) {
-    // Log the error but don't fail the whole operation
-    // Documents are safely in Postgres and can be re-indexed
+    // Log and rethrow - let BullMQ retry the job
+    // Documents are safely in Postgres and Qdrant upsert is idempotent
     logger.error(
       { workspaceId, error: qdrantError },
-      'Failed to upsert documents to Qdrant - documents saved to Postgres, will need re-indexing',
+      'Failed to upsert documents to Qdrant - will retry',
     );
-    // We could optionally throw here to make Qdrant failures fatal:
-    // throw new Error(`Qdrant ingestion failed: ${qdrantError}`);
+    throw new Error(`Qdrant ingestion failed: ${String(qdrantError)}`);
   }
 
   logger.info(
