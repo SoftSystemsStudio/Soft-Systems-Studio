@@ -46,6 +46,7 @@
     "pino-http": "^11.0.0",
     "pino-pretty": "^13.1.2",
     "prom-client": "^14.0.1",
+    "stripe": "^20.0.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
