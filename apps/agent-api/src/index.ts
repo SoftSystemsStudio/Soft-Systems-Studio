@@ -19,6 +19,7 @@ import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
 import { validateBody } from './lib/validate';
 import { chatRequestSchema, type ChatRequest } from './schemas/chat';
 import { persistChatExchange } from './services/chat';
+import { startQueueMetrics, gracefulShutdown } from './queue';
 
 // Initialize Sentry early (before any routes)
 initSentry();
@@ -134,7 +135,17 @@ app.use(errorHandler);
 const port = env.PORT ? Number(env.PORT) : 5000;
 
 if (require.main === module) {
-  app.listen(port, () => logger.info({ port }, `agent-api listening on ${port}`));
+  // Start queue metrics if enabled for this server role
+  startQueueMetrics();
+
+  const server = app.listen(port, () => {
+    logger.info({ port, serverRole: env.SERVER_ROLE }, `agent-api listening on ${port}`);
+  });
+
+  // Graceful shutdown on server close
+  server.on('close', () => {
+    void gracefulShutdown();
+  });
 }
 
 export default app;

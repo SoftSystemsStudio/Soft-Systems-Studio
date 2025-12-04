@@ -106,6 +106,17 @@ const envSchema = z.object({
 
   // Optional: Cron job authentication
   CRON_SECRET: z.string().optional(),
+
+  // Server role: 'api' (default), 'worker', or 'all'
+  // Used to gate background processes like queue metrics
+  SERVER_ROLE: z.enum(['api', 'worker', 'all']).default('api'),
+
+  // Enable queue metrics polling (auto-enabled for 'worker' and 'all' roles)
+  // Set to 'true' to explicitly enable in any role
+  ENABLE_QUEUE_METRICS: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
 });
 
 // Parse and validate environment variables
