@@ -24,7 +24,7 @@ export function isStripeEnabled(): boolean {
 export function getStripe(): Promise<Stripe | null> {
   if (!isStripeEnabled()) {
     console.warn(
-      'Stripe is not configured. Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY in your environment.'
+      'Stripe is not configured. Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY in your environment.',
     );
     return Promise.resolve(null);
   }
