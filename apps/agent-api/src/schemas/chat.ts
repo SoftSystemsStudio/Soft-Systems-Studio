@@ -12,13 +12,8 @@ export const chatRequestSchema = z.object({
     .min(1, 'Message is required')
     .max(10000, 'Message must be at most 10000 characters')
     .trim(),
-  conversationId: z
-    .string()
-    .uuid('Invalid conversation ID format')
-    .optional(),
-  context: z
-    .record(z.unknown())
-    .optional(),
+  conversationId: z.string().uuid('Invalid conversation ID format').optional(),
+  context: z.record(z.unknown()).optional(),
 });
 
 /**
