@@ -6,6 +6,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { captureException } from '../sentry';
 import { logger } from '../logger';
+import env from '../env';
 
 /**
  * Custom application error class with status codes
@@ -114,7 +115,7 @@ export function errorHandler(
   }
 
   // Log error with structured logging
-  if (process.env.NODE_ENV !== 'test') {
+  if (env.NODE_ENV !== 'test') {
     if (err instanceof AppError && err.statusCode < 500) {
       logger.warn({ err, ...errorContext }, 'Client error');
     } else {
@@ -136,7 +137,7 @@ export function errorHandler(
     };
 
     // Include stack trace in development
-    if (process.env.NODE_ENV === 'development') {
+    if (env.NODE_ENV === 'development') {
       response.stack = err.stack;
     }
 
@@ -171,7 +172,7 @@ export function errorHandler(
   }
 
   // Handle unknown errors (don't leak details in production)
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = env.NODE_ENV === 'production';
 
   const response: ErrorResponse = {
     error: isProduction ? 'Internal server error' : err.message,

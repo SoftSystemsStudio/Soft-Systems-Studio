@@ -14,7 +14,9 @@ let stripeInstance: Stripe | null = null;
  */
 export function isStripeEnabled(): boolean {
   const secretKey = env.STRIPE_SECRET_KEY;
-  return !!secretKey && !secretKey.includes('YOUR_SECRET_KEY');
+  return (
+    typeof secretKey === 'string' && secretKey.length > 0 && !secretKey.includes('YOUR_SECRET_KEY')
+  );
 }
 
 /**
@@ -27,8 +29,9 @@ export function getStripe(): Stripe {
   }
 
   if (!stripeInstance) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    stripeInstance = new Stripe(env.STRIPE_SECRET_KEY!, {
+    const secretKey = env.STRIPE_SECRET_KEY as string;
+
+    stripeInstance = new Stripe(secretKey, {
       typescript: true,
       appInfo: {
         name: 'Soft Systems Studio',

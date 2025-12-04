@@ -43,7 +43,7 @@ router.get(
       },
       env: {
         nodeEnv: env.NODE_ENV,
-        openaiKeyPresent: Boolean(process.env.OPENAI_API_KEY),
+        openaiKeyPresent: Boolean(env.OPENAI_API_KEY),
       },
     });
   }),

@@ -33,7 +33,7 @@ type CreateWorkspaceInput = z.infer<typeof createWorkspaceSchema>;
 // Cookie options for refresh token
 const getRefreshCookieOptions = () => ({
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
+  secure: env.NODE_ENV === 'production',
   sameSite: 'strict' as const,
   maxAge: TOKEN_CONFIG.refreshToken.expiresInMs,
   path: '/api/v1/auth/token', // Only sent to token endpoints

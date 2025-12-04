@@ -17,7 +17,7 @@ function isJwtError(err: unknown): err is Error & { name: JwtErrorCode } {
 
 /**
  * Combined auth middleware: prefer JWT Bearer token, fallback to API key (x-api-key)
- * 
+ *
  * SECURITY NOTES:
  * - Anonymous access is ONLY allowed when ALLOW_ANONYMOUS_DEV=true AND NODE_ENV=development
  * - API keys are service accounts with limited scope (not full admin access)

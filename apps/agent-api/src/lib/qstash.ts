@@ -1,5 +1,6 @@
 import { Client, Receiver } from '@upstash/qstash';
 import logger from '../logger';
+import env from '../env';
 
 /**
  * Upstash QStash client for background job scheduling
@@ -13,7 +14,7 @@ let qstashReceiver: Receiver | null = null;
  * Check if QStash is configured
  */
 export function isQStashConfigured(): boolean {
-  return Boolean(process.env.QSTASH_TOKEN);
+  return Boolean(env.QSTASH_TOKEN);
 }
 
 /**
@@ -21,12 +22,12 @@ export function isQStashConfigured(): boolean {
  */
 export function getQStashClient(): Client {
   if (!qstashClient) {
-    if (!process.env.QSTASH_TOKEN) {
+    if (!env.QSTASH_TOKEN) {
       throw new Error('QSTASH_TOKEN not configured');
     }
 
     qstashClient = new Client({
-      token: process.env.QSTASH_TOKEN,
+      token: env.QSTASH_TOKEN,
     });
 
     logger.info('QStash client initialized');
@@ -40,13 +41,13 @@ export function getQStashClient(): Client {
  */
 export function getQStashReceiver(): Receiver {
   if (!qstashReceiver) {
-    if (!process.env.QSTASH_CURRENT_SIGNING_KEY || !process.env.QSTASH_NEXT_SIGNING_KEY) {
+    if (!env.QSTASH_CURRENT_SIGNING_KEY || !env.QSTASH_NEXT_SIGNING_KEY) {
       throw new Error('QStash signing keys not configured');
     }
 
     qstashReceiver = new Receiver({
-      currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
-      nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
+      currentSigningKey: env.QSTASH_CURRENT_SIGNING_KEY,
+      nextSigningKey: env.QSTASH_NEXT_SIGNING_KEY,
     });
   }
 

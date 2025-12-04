@@ -1,5 +1,6 @@
 import { Redis } from '@upstash/redis';
 import logger from '../logger';
+import env from '../env';
 
 /**
  * Upstash Redis client for serverless environments
@@ -12,7 +13,7 @@ let upstashClient: Redis | null = null;
  * Check if Upstash REST credentials are configured
  */
 export function isUpstashConfigured(): boolean {
-  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  return Boolean(env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN);
 }
 
 /**
@@ -20,13 +21,13 @@ export function isUpstashConfigured(): boolean {
  */
 export function getUpstashClient(): Redis {
   if (!upstashClient) {
-    if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    if (!env.UPSTASH_REDIS_REST_URL || !env.UPSTASH_REDIS_REST_TOKEN) {
       throw new Error('Upstash Redis REST credentials not configured');
     }
 
     upstashClient = new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      url: env.UPSTASH_REDIS_REST_URL,
+      token: env.UPSTASH_REDIS_REST_TOKEN,
     });
 
     logger.info('Upstash Redis client initialized');

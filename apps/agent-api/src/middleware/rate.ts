@@ -1,6 +1,7 @@
 import rateLimit, { Options } from 'express-rate-limit';
+import env from '../env';
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = env.NODE_ENV === 'production';
 
 // Rate limit configuration per environment
 const RATE_LIMITS = {
