@@ -1,38 +1,45 @@
 import client from 'prom-client';
 import express from 'express';
-import { ingestQueue } from './queue';
 
 const collectDefault = client.collectDefaultMetrics;
 collectDefault();
 
-// custom metrics
+// Queue metrics with labels for different queues
 export const queueWaitingGauge = new client.Gauge({
-  name: 'ingest_queue_waiting',
-  help: 'Number of waiting jobs in ingest queue',
+  name: 'job_queue_waiting',
+  help: 'Number of waiting jobs in queue',
+  labelNames: ['queue'],
 });
 export const queueActiveGauge = new client.Gauge({
-  name: 'ingest_queue_active',
-  help: 'Number of active jobs in ingest queue',
+  name: 'job_queue_active',
+  help: 'Number of active jobs in queue',
+  labelNames: ['queue'],
 });
 export const queueFailedGauge = new client.Gauge({
-  name: 'ingest_queue_failed',
-  help: 'Number of failed jobs in ingest queue',
+  name: 'job_queue_failed',
+  help: 'Number of failed jobs in queue',
+  labelNames: ['queue'],
 });
 
-async function updateQueueMetrics() {
-  try {
-    const counts = await ingestQueue.getJobCounts();
-    queueWaitingGauge.set(counts.waiting || 0);
-    queueActiveGauge.set(counts.active || 0);
-    queueFailedGauge.set(counts.failed || 0);
-  } catch (e) {
-    // ignore
-  }
-}
+// Rate limit metrics
+export const rateLimitHitsCounter = new client.Counter({
+  name: 'rate_limit_hits_total',
+  help: 'Total number of rate limit hits',
+  labelNames: ['endpoint', 'limit_type'],
+});
 
-setInterval(() => {
-  void updateQueueMetrics();
-}, 5000);
+// Redis connection metrics
+export const redisConnectionGauge = new client.Gauge({
+  name: 'redis_connection_status',
+  help: 'Redis connection status (1 = connected, 0 = disconnected)',
+});
+
+// Email metrics
+export const emailsSentCounter = new client.Counter({
+  name: 'emails_sent_total',
+  help: 'Total number of emails sent',
+  labelNames: ['template', 'status'],
+});
 
 // small express server to expose metrics when run standalone (optional)
 export function metricsHandler(_req: express.Request, res: express.Response): void {
