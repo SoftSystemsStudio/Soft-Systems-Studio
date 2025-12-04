@@ -5,6 +5,9 @@ if (process.env.POSTGRES_URL) {
   process.env.DATABASE_URL = process.env.POSTGRES_URL;
 }
 
+// Ensure queue metrics are disabled in tests
+process.env.ENABLE_QUEUE_METRICS = 'false';
+
 // Apply schema to the test database. This uses `prisma db push` which is safe for CI.
 try {
   // Generate client and push schema. Use npx so it works in environments without global prisma.
@@ -20,6 +23,7 @@ try {
 
 // Connect prisma client used by the app
 import prisma from '../src/db';
+import { closeQueues, stopQueueMetrics } from '../src/queue';
 
 beforeAll(async () => {
   await prisma.$connect();
@@ -38,6 +42,14 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  try {
+    // Stop queue metrics and close queue connections
+    stopQueueMetrics();
+    await closeQueues();
+  } catch (e) {
+    // ignore queue cleanup errors
+  }
+
   try {
     await prisma.$disconnect();
   } catch (e) {

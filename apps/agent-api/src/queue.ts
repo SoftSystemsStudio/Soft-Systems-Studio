@@ -2,6 +2,7 @@ import { Queue, QueueEvents } from 'bullmq';
 import { getRedisClient } from './lib/redis';
 import { queueWaitingGauge, queueActiveGauge, queueFailedGauge } from './metrics';
 import logger from './logger';
+import env from './env';
 
 // Get the shared Redis connection
 const connection = getRedisClient();
@@ -134,12 +135,75 @@ async function updateMetrics() {
   }
 }
 
-setInterval(() => {
-  void updateMetrics();
-}, 5000);
+// Track the metrics interval for cleanup
+let metricsInterval: NodeJS.Timeout | null = null;
+
+/**
+ * Determine if queue metrics should be enabled based on server role and explicit flag
+ */
+function shouldEnableQueueMetrics(): boolean {
+  // Explicit flag takes precedence
+  if (env.ENABLE_QUEUE_METRICS) {
+    return true;
+  }
+
+  // Auto-enable for worker and all roles
+  if (env.SERVER_ROLE === 'worker' || env.SERVER_ROLE === 'all') {
+    return true;
+  }
+
+  // Disable for pure API servers and test environment
+  if (env.NODE_ENV === 'test') {
+    return false;
+  }
+
+  return false;
+}
+
+/**
+ * Start the queue metrics polling interval
+ * Only starts if enabled by server role or explicit flag
+ */
+export function startQueueMetrics(): void {
+  if (metricsInterval) {
+    logger.debug('Queue metrics already running');
+    return;
+  }
+
+  if (!shouldEnableQueueMetrics()) {
+    logger.debug(
+      { serverRole: env.SERVER_ROLE, enableFlag: env.ENABLE_QUEUE_METRICS },
+      'Queue metrics disabled for this server role',
+    );
+    return;
+  }
+
+  metricsInterval = setInterval(() => {
+    void updateMetrics();
+  }, 5000);
+
+  // Ensure interval doesn't prevent Node from exiting
+  metricsInterval.unref();
+
+  logger.info({ serverRole: env.SERVER_ROLE }, 'Queue metrics polling started');
+}
+
+/**
+ * Stop the queue metrics polling interval
+ */
+export function stopQueueMetrics(): void {
+  if (metricsInterval) {
+    clearInterval(metricsInterval);
+    metricsInterval = null;
+    logger.debug('Queue metrics polling stopped');
+  }
+}
 
 // Graceful shutdown
 export async function closeQueues(): Promise<void> {
+  // Stop metrics polling first
+  stopQueueMetrics();
+
   await Promise.all([
     ingestQueue.close(),
     emailQueue.close(),
@@ -149,6 +213,38 @@ export async function closeQueues(): Promise<void> {
   logger.info('Queues closed');
 }
 
+/**
+ * Graceful shutdown handler for the entire queue system
+ * Call this on process exit signals
+ */
+export async function gracefulShutdown(): Promise<void> {
+  logger.info('Queue system shutting down...');
+  await closeQueues();
+}
+
+// Register shutdown handlers (only in non-test environments)
+if (env.NODE_ENV !== 'test') {
+  // Handle process termination signals
+  const shutdownSignals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT'];
+
+  shutdownSignals.forEach((signal) => {
+    process.on(signal, () => {
+      logger.info({ signal }, 'Received shutdown signal');
+      void gracefulShutdown().then(() => {
+        process.exit(0);
+      });
+    });
+  });
+
+  // Handle uncaught exceptions - close queues before crashing
+  process.on('uncaughtException', (error) => {
+    logger.error({ error }, 'Uncaught exception, shutting down queues');
+    void gracefulShutdown().finally(() => {
+      process.exit(1);
+    });
+  });
+}
+
 export default {
   ingestQueue,
   emailQueue,
@@ -156,5 +252,8 @@ export default {
   addEmailJob,
   scheduleRecurringJob,
   closeQueues,
+  gracefulShutdown,
+  startQueueMetrics,
+  stopQueueMetrics,
   connection,
 };
