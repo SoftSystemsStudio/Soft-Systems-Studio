@@ -54,9 +54,9 @@ router.post(
       return;
     }
 
-    // Retrieve top contexts
+    // Retrieve top contexts - filtered by workspaceId for tenant isolation
     type SimilarItem = { id: string; score: number; payload?: { text?: string } };
-    const contexts = (await querySimilar(message, 4)) as SimilarItem[];
+    const contexts = (await querySimilar(workspaceId, message, 4)) as SimilarItem[];
     const contextText = contexts
       .map((c, idx) => `Context ${idx + 1}: ${c.payload?.text || ''}`)
       .join('\n\n');
