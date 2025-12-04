@@ -13,6 +13,7 @@ export type IngestJobData = {
   workspaceId?: string;
   documentId?: string;
   documents?: unknown[];
+  ingestionId?: string;
   source?: string;
   content?: string;
   metadata?: Record<string, unknown>;
@@ -222,8 +223,26 @@ export async function gracefulShutdown(): Promise<void> {
   await closeQueues();
 }
 
-// Register shutdown handlers (only in non-test environments)
-if (env.NODE_ENV !== 'test') {
+// Track whether shutdown handlers have been registered
+let shutdownHandlersRegistered = false;
+
+/**
+ * Register shutdown handlers for graceful queue cleanup
+ * Call this explicitly from your main entry point
+ * Opt-in pattern prevents duplicate handlers and test interference
+ */
+export function registerQueueShutdownHandlers(): void {
+  if (shutdownHandlersRegistered) {
+    logger.debug('Queue shutdown handlers already registered');
+    return;
+  }
+
+  // Don't register in test environment
+  if (env.NODE_ENV === 'test') {
+    logger.debug('Skipping shutdown handler registration in test environment');
+    return;
+  }
+
   // Handle process termination signals
   const shutdownSignals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT'];
 
@@ -243,6 +262,9 @@ if (env.NODE_ENV !== 'test') {
       process.exit(1);
     });
   });
+
+  shutdownHandlersRegistered = true;
+  logger.info('Queue shutdown handlers registered');
 }
 
 export default {
@@ -253,6 +275,7 @@ export default {
   scheduleRecurringJob,
   closeQueues,
   gracefulShutdown,
+  registerQueueShutdownHandlers,
   startQueueMetrics,
   stopQueueMetrics,
   connection,

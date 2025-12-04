@@ -10,11 +10,11 @@ const connection = new IORedis(env.REDIS_URL);
 const worker = new Worker(
   'ingest',
   async (job) => {
-    type IngestJob = { workspaceId: string; documents: IngestDocument[] };
-    const { workspaceId, documents } = job.data as IngestJob;
+    type IngestJob = { workspaceId: string; documents: IngestDocument[]; ingestionId?: string };
+    const { workspaceId, documents, ingestionId } = job.data as IngestJob;
 
     logger.info(
-      { workspaceId, docCount: documents.length, jobId: job.id },
+      { workspaceId, docCount: documents.length, jobId: job.id, ingestionId },
       'Processing ingest job',
     );
 
@@ -22,6 +22,7 @@ const worker = new Worker(
     const result = await ingestDocuments({
       workspaceId,
       documents,
+      ingestionId,
     });
 
     logger.info(
