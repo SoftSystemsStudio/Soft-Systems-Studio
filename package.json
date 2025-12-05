@@ -23,6 +23,8 @@
     "check-env-committed": "node scripts/check-env-committed.js",
     "scan-placeholders": "node scripts/scan-placeholders.js",
     "check-git-lfs": "node scripts/check-git-lfs.js",
+    "security-audit": "bash scripts/security-audit.sh",
+    "audit": "pnpm audit && bash scripts/security-audit.sh",
     "prepare": "husky install",
     "ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
