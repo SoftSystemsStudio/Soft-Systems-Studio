@@ -31,17 +31,19 @@ The API uses JSON Web Tokens (JWT) for stateless authentication:
 ```
 
 **Token Structure:**
+
 ```json
 {
-  "sub": "user_123",           // User ID
-  "workspaceId": "ws_abc",     // Workspace scope
-  "role": "admin",             // User role
-  "iat": 1701691200,           // Issued at
-  "exp": 1701692100            // Expires (15 min)
+  "sub": "user_123", // User ID
+  "workspaceId": "ws_abc", // Workspace scope
+  "role": "admin", // User role
+  "iat": 1701691200, // Issued at
+  "exp": 1701692100 // Expires (15 min)
 }
 ```
 
 **Token Lifetimes:**
+
 - Access Token: 15 minutes
 - Refresh Token: 7 days
 
@@ -70,26 +72,27 @@ This prevents token replay attacks if a refresh token is compromised.
 
 Users are assigned roles within each workspace:
 
-| Role | Description | Permissions |
-|------|-------------|-------------|
-| `owner` | Workspace owner | Full access, billing, delete workspace |
-| `admin` | Administrator | Manage users, settings, all operations |
-| `member` | Regular member | Chat, view documents |
-| `agent` | Service agent | Ingest, chat, API access |
-| `service` | Service account | API access only |
-| `user` | End user | Chat only |
+| Role      | Description     | Permissions                            |
+| --------- | --------------- | -------------------------------------- |
+| `owner`   | Workspace owner | Full access, billing, delete workspace |
+| `admin`   | Administrator   | Manage users, settings, all operations |
+| `member`  | Regular member  | Chat, view documents                   |
+| `agent`   | Service agent   | Ingest, chat, API access               |
+| `service` | Service account | API access only                        |
+| `user`    | End user        | Chat only                              |
 
 ### Middleware Stack
 
 Protected routes use layered middleware:
 
 ```typescript
-router.post('/ingest',
-  requireAuth,              // 1. Validate JWT
-  requireWorkspace,         // 2. Extract & validate workspaceId
+router.post(
+  '/ingest',
+  requireAuth, // 1. Validate JWT
+  requireWorkspace, // 2. Extract & validate workspaceId
   requireRole('admin', 'owner', 'agent'), // 3. Check role
-  validateBody(schema),     // 4. Validate request body
-  asyncHandler(handler)     // 5. Handle with error boundary
+  validateBody(schema), // 4. Validate request body
+  asyncHandler(handler), // 5. Handle with error boundary
 );
 ```
 
@@ -113,12 +116,13 @@ All data is scoped to workspaces with strict isolation:
 
 ```sql
 -- Every query includes workspace filter
-SELECT * FROM "KbDocument" 
+SELECT * FROM "KbDocument"
 WHERE "workspaceId" = $1  -- Always filtered
 AND "deletedAt" IS NULL;
 ```
 
 **Isolation Points:**
+
 - Database queries always filter by `workspaceId`
 - Vector search (Qdrant) filtered by workspace metadata
 - JWT tokens scoped to single workspace
@@ -132,10 +136,8 @@ Qdrant queries include workspace filtering:
 await qdrantClient.search(collection, {
   vector: embedding,
   filter: {
-    must: [
-      { key: 'workspaceId', match: { value: workspaceId } }
-    ]
-  }
+    must: [{ key: 'workspaceId', match: { value: workspaceId } }],
+  },
 });
 ```
 
@@ -149,16 +151,20 @@ All endpoints use Zod schemas for strict validation:
 
 ```typescript
 const ingestRequestSchema = z.object({
-  documents: z.array(
-    z.object({
-      text: z.string().max(20000).optional(),
-      content: z.string().max(20000).optional(),
-      title: z.string().max(500).optional(),
-    }).refine(
-      (doc) => doc.text || doc.content,
-      { message: 'Either text or content is required' }
+  documents: z
+    .array(
+      z
+        .object({
+          text: z.string().max(20000).optional(),
+          content: z.string().max(20000).optional(),
+          title: z.string().max(500).optional(),
+        })
+        .refine((doc) => doc.text || doc.content, {
+          message: 'Either text or content is required',
+        }),
     )
-  ).min(1).max(100),
+    .min(1)
+    .max(100),
 });
 ```
 
@@ -166,12 +172,12 @@ const ingestRequestSchema = z.object({
 
 Multi-layer rate limiting protects against abuse:
 
-| Layer | Limit | Scope |
-|-------|-------|-------|
-| Global | 1000/min | IP address |
-| Auth endpoints | 10/min | IP address |
-| Agent endpoints | 60/min | Tenant |
-| Admin endpoints | 5/min | IP + Auth |
+| Layer           | Limit    | Scope      |
+| --------------- | -------- | ---------- |
+| Global          | 1000/min | IP address |
+| Auth endpoints  | 10/min   | IP address |
+| Agent endpoints | 60/min   | Tenant     |
+| Admin endpoints | 5/min    | IP + Auth  |
 
 Implementation uses Redis for distributed rate limiting:
 
@@ -194,9 +200,9 @@ res.status(500).json({ error: error.stack });
 
 // Good: Generic message, details logged server-side
 logger.error({ error, workspaceId }, 'Operation failed');
-res.status(500).json({ 
+res.status(500).json({
   error: 'internal_error',
-  message: 'An unexpected error occurred'
+  message: 'An unexpected error occurred',
 });
 ```
 
@@ -244,12 +250,12 @@ export function registerQueueShutdownHandlers(): void {
 
 ### Environment Variables
 
-| Secret | Usage | Minimum Requirements |
-|--------|-------|---------------------|
-| `JWT_SECRET` | Token signing | 32+ characters, random |
-| `CRON_SECRET` | Cron authentication | 32+ characters |
-| `ADMIN_API_KEY` | Admin API access | 32+ characters |
-| `STRIPE_WEBHOOK_SECRET` | Stripe verification | From Stripe dashboard |
+| Secret                  | Usage               | Minimum Requirements   |
+| ----------------------- | ------------------- | ---------------------- |
+| `JWT_SECRET`            | Token signing       | 32+ characters, random |
+| `CRON_SECRET`           | Cron authentication | 32+ characters         |
+| `ADMIN_API_KEY`         | Admin API access    | 32+ characters         |
+| `STRIPE_WEBHOOK_SECRET` | Stripe verification | From Stripe dashboard  |
 
 ### Best Practices
 
@@ -282,33 +288,37 @@ function auditLog(
   req: AdminRequest,
   action: string,
   source: AdminAuthSource,
-  details?: Record<string, unknown>
+  details?: Record<string, unknown>,
 ): void {
-  logger.info({
-    action,
-    source,          // 'cron_secret', 'jwt_admin', 'api_key_admin'
-    ip: req.ip,
-    userAgent: req.headers['user-agent'],
-    userId: req.adminAuth?.userId,
-    path: req.path,
-    method: req.method,
-    ...details,
-  }, `Admin action: ${action}`);
+  logger.info(
+    {
+      action,
+      source, // 'cron_secret', 'jwt_admin', 'api_key_admin'
+      ip: req.ip,
+      userAgent: req.headers['user-agent'],
+      userId: req.adminAuth?.userId,
+      path: req.path,
+      method: req.method,
+      ...details,
+    },
+    `Admin action: ${action}`,
+  );
 }
 ```
 
 ### What's Logged
 
-| Event | Data Captured |
-|-------|---------------|
-| Auth success | IP, user agent, auth method, user ID |
-| Auth failure | IP, user agent, failure reason |
-| Admin actions | All above + operation details |
-| API errors | Request path, error type, workspace ID |
+| Event         | Data Captured                          |
+| ------------- | -------------------------------------- |
+| Auth success  | IP, user agent, auth method, user ID   |
+| Auth failure  | IP, user agent, failure reason         |
+| Admin actions | All above + operation details          |
+| API errors    | Request path, error type, workspace ID |
 
 ### Log Storage
 
 Production logs should be:
+
 - Shipped to centralized logging (CloudWatch, Datadog, etc.)
 - Retained for compliance period (90+ days)
 - Searchable for incident response

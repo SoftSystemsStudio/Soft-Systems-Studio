@@ -24,13 +24,13 @@ Production deployment guide for Soft Systems Studio.
 
 ### Recommended Stack
 
-| Component | Recommended Service | Alternatives |
-|-----------|-------------------|--------------|
-| Frontend | Vercel | Netlify, Cloudflare Pages |
-| API | Railway, Render | AWS ECS, GCP Cloud Run |
-| Database | Neon, Supabase | AWS RDS, PlanetScale |
-| Redis | Upstash | AWS ElastiCache, Redis Cloud |
-| Vector DB | Qdrant Cloud | Pinecone, Weaviate |
+| Component | Recommended Service | Alternatives                 |
+| --------- | ------------------- | ---------------------------- |
+| Frontend  | Vercel              | Netlify, Cloudflare Pages    |
+| API       | Railway, Render     | AWS ECS, GCP Cloud Run       |
+| Database  | Neon, Supabase      | AWS RDS, PlanetScale         |
+| Redis     | Upstash             | AWS ElastiCache, Redis Cloud |
+| Vector DB | Qdrant Cloud        | Pinecone, Weaviate           |
 
 ### Deployment Topology
 
@@ -104,6 +104,7 @@ vercel link
 ### 2. Configure Project
 
 In Vercel dashboard:
+
 - **Framework Preset:** Next.js
 - **Root Directory:** `packages/frontend`
 - **Build Command:** `pnpm build`
@@ -382,7 +383,7 @@ jobs:
       - uses: pnpm/action-setup@v2
       - run: pnpm install
       - run: pnpm lint
-      
+
   typecheck:
     runs-on: ubuntu-latest
     steps:
@@ -390,7 +391,7 @@ jobs:
       - uses: pnpm/action-setup@v2
       - run: pnpm install
       - run: pnpm typecheck
-      
+
   test:
     runs-on: ubuntu-latest
     services:
@@ -430,6 +431,7 @@ scrape_configs:
 ```
 
 Key metrics:
+
 - `http_requests_total` — Request count by route/status
 - `http_request_duration_seconds` — Latency histogram
 - `queue_waiting_jobs` — Queue depth
@@ -465,6 +467,7 @@ Structured JSON logs with Pino:
 ```
 
 Ship logs to:
+
 - Railway: Built-in log viewer
 - Render: Built-in logs
 - AWS: CloudWatch Logs
@@ -477,11 +480,13 @@ Ship logs to:
 ### Horizontal Scaling
 
 **API Servers:**
+
 - Stateless design allows horizontal scaling
 - Use load balancer (Railway/Render handle this)
 - Session state in Redis, not memory
 
 **Workers:**
+
 - Scale workers independently
 - Set `SERVER_ROLE=worker` for dedicated worker instances
 - BullMQ handles job distribution
@@ -489,30 +494,33 @@ Ship logs to:
 ### Database Scaling
 
 **PostgreSQL:**
+
 - Neon: Automatic scaling with connection pooling
 - Add read replicas for heavy read workloads
 - Consider pgBouncer for connection management
 
 **Redis:**
+
 - Upstash: Automatic scaling
 - Increase memory for larger queues
 
 ### Vector Database
 
 **Qdrant:**
+
 - Scale collection shards for larger datasets
 - Add replicas for read performance
 - Consider dedicated cluster for >1M vectors
 
 ### Cost Optimization
 
-| Tier | Expected Cost | Capacity |
-|------|--------------|----------|
-| Starter | ~$50/mo | 10K MAU, 100K API calls |
-| Growth | ~$200/mo | 50K MAU, 500K API calls |
-| Scale | ~$500/mo | 200K MAU, 2M API calls |
+| Tier    | Expected Cost | Capacity                |
+| ------- | ------------- | ----------------------- |
+| Starter | ~$50/mo       | 10K MAU, 100K API calls |
+| Growth  | ~$200/mo      | 50K MAU, 500K API calls |
+| Scale   | ~$500/mo      | 200K MAU, 2M API calls  |
 
-*Costs vary by provider and usage patterns.*
+_Costs vary by provider and usage patterns._
 
 ---
 
@@ -521,6 +529,7 @@ Ship logs to:
 ### Common Issues
 
 **Database connection failed:**
+
 ```bash
 # Check connection string
 psql $DATABASE_URL -c "SELECT 1"
@@ -530,12 +539,14 @@ psql $DATABASE_URL -c "SELECT 1"
 ```
 
 **Redis connection failed:**
+
 ```bash
 # Test connection
 redis-cli -u $REDIS_URL ping
 ```
 
 **Prisma migration failed:**
+
 ```bash
 # Reset and re-run (development only!)
 npx prisma migrate reset
@@ -545,6 +556,7 @@ npx prisma migrate status
 ```
 
 **Container won't start:**
+
 ```bash
 # Check logs
 docker logs soft-systems-api
