@@ -216,13 +216,13 @@ Client                  API                 Queue                Worker
 
 ### Service Responsibilities
 
-| Service | File | Responsibility |
-|---------|------|----------------|
-| **Chat** | `services/chat.ts` | RAG retrieval, LLM orchestration, conversation persistence |
+| Service    | File                 | Responsibility                                                 |
+| ---------- | -------------------- | -------------------------------------------------------------- |
+| **Chat**   | `services/chat.ts`   | RAG retrieval, LLM orchestration, conversation persistence     |
 | **Ingest** | `services/ingest.ts` | Document preparation, transactional persistence, vector upsert |
-| **Qdrant** | `services/qdrant.ts` | Vector database operations, embedding generation |
-| **Token** | `services/token.ts` | JWT generation, refresh token management |
-| **LLM** | `services/llm.ts` | OpenAI API wrapper, streaming support |
+| **Qdrant** | `services/qdrant.ts` | Vector database operations, embedding generation               |
+| **Token**  | `services/token.ts`  | JWT generation, refresh token management                       |
+| **LLM**    | `services/llm.ts`    | OpenAI API wrapper, streaming support                          |
 
 ### Transaction Pattern
 
@@ -237,7 +237,7 @@ export async function ingestDocuments(input: IngestInput): Promise<IngestResult>
     // 1. Persist to Postgres
     const created = await tx.kbDocument.createMany({
       data: rows,
-      skipDuplicates: true,  // Idempotent on retry
+      skipDuplicates: true, // Idempotent on retry
     });
 
     return { count: created.count, ids };
@@ -328,7 +328,7 @@ const systemPrompt = `
 You are a helpful customer service agent for ${companyName}.
 
 CONTEXT FROM KNOWLEDGE BASE:
-${retrievedDocuments.map(d => d.content).join('\n---\n')}
+${retrievedDocuments.map((d) => d.content).join('\n---\n')}
 
 INSTRUCTIONS:
 1. Answer based on the knowledge base context
@@ -450,48 +450,47 @@ export const ingestQueue = new Queue<IngestJobData>('ingest', {
 
 ### Integration Points
 
-| Service | Purpose | Configuration |
-|---------|---------|---------------|
-| **OpenAI** | LLM inference, embeddings | `OPENAI_API_KEY` |
-| **Qdrant** | Vector similarity search | `QDRANT_HOST`, `QDRANT_API_KEY` |
-| **Stripe** | Payment processing | `STRIPE_SECRET_KEY`, webhook |
-| **Clerk** | Frontend authentication | `CLERK_SECRET_KEY` |
-| **Sentry** | Error tracking | `SENTRY_DSN` |
-| **Upstash** | Serverless Redis/QStash | `UPSTASH_*` vars |
+| Service     | Purpose                   | Configuration                   |
+| ----------- | ------------------------- | ------------------------------- |
+| **OpenAI**  | LLM inference, embeddings | `OPENAI_API_KEY`                |
+| **Qdrant**  | Vector similarity search  | `QDRANT_HOST`, `QDRANT_API_KEY` |
+| **Stripe**  | Payment processing        | `STRIPE_SECRET_KEY`, webhook    |
+| **Clerk**   | Frontend authentication   | `CLERK_SECRET_KEY`              |
+| **Sentry**  | Error tracking            | `SENTRY_DSN`                    |
+| **Upstash** | Serverless Redis/QStash   | `UPSTASH_*` vars                |
 
 ### Integration Patterns
 
 **OpenAI Integration:**
+
 ```typescript
 // core-llm package abstracts the OpenAI client
 const response = await callOpenAI({
   model: 'gpt-4o-mini',
   messages: [
     { role: 'system', content: systemPrompt },
-    { role: 'user', content: userMessage }
+    { role: 'user', content: userMessage },
   ],
   temperature: 0.7,
 });
 ```
 
 **Qdrant Integration:**
+
 ```typescript
 // Vector search with workspace isolation
 const results = await qdrantClient.search(collection, {
   vector: await getEmbedding(query),
   filter: {
-    must: [{ key: 'workspaceId', match: { value: workspaceId } }]
+    must: [{ key: 'workspaceId', match: { value: workspaceId } }],
   },
   limit: 5,
 });
 ```
 
 **Stripe Integration:**
+
 ```typescript
 // Webhook signature verification
-const event = stripe.webhooks.constructEvent(
-  body,
-  signature,
-  env.STRIPE_WEBHOOK_SECRET
-);
+const event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
 ```

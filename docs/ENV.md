@@ -32,12 +32,12 @@ pnpm sync-env
 
 These variables are **required** for the API to start:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:5432/db` |
-| `REDIS_URL` | Redis connection string | `redis://localhost:6379` |
-| `JWT_SECRET` | JWT signing secret (32+ chars) | `your-super-secret-key-min-32-chars` |
-| `OPENAI_API_KEY` | OpenAI API key | `sk-...` |
+| Variable         | Description                    | Example                               |
+| ---------------- | ------------------------------ | ------------------------------------- |
+| `DATABASE_URL`   | PostgreSQL connection string   | `postgresql://user:pass@host:5432/db` |
+| `REDIS_URL`      | Redis connection string        | `redis://localhost:6379`              |
+| `JWT_SECRET`     | JWT signing secret (32+ chars) | `your-super-secret-key-min-32-chars`  |
+| `OPENAI_API_KEY` | OpenAI API key                 | `sk-...`                              |
 
 ---
 
@@ -45,69 +45,69 @@ These variables are **required** for the API to start:
 
 ### Server Configuration
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NODE_ENV` | Environment mode | `development` |
-| `PORT` | HTTP server port | `5000` |
-| `SERVER_ROLE` | Server role (`api`, `worker`, `all`) | `api` |
-| `LOG_LEVEL` | Logging verbosity | `info` |
+| Variable      | Description                          | Default       |
+| ------------- | ------------------------------------ | ------------- |
+| `NODE_ENV`    | Environment mode                     | `development` |
+| `PORT`        | HTTP server port                     | `5000`        |
+| `SERVER_ROLE` | Server role (`api`, `worker`, `all`) | `api`         |
+| `LOG_LEVEL`   | Logging verbosity                    | `info`        |
 
 ### Authentication
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `JWT_ALGORITHM` | JWT signing algorithm | `HS256` |
-| `API_KEY` | Service-to-service API key | - |
-| `CRON_SECRET` | Cron job authentication | - |
-| `ADMIN_API_KEY` | Admin API key (32+ chars) | - |
+| Variable              | Description                      | Default |
+| --------------------- | -------------------------------- | ------- |
+| `JWT_ALGORITHM`       | JWT signing algorithm            | `HS256` |
+| `API_KEY`             | Service-to-service API key       | -       |
+| `CRON_SECRET`         | Cron job authentication          | -       |
+| `ADMIN_API_KEY`       | Admin API key (32+ chars)        | -       |
 | `ALLOW_ANONYMOUS_DEV` | Allow unauthenticated dev access | `false` |
 
 ### Vector Database (Qdrant)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `QDRANT_HOST` | Qdrant server hostname | `localhost` |
-| `QDRANT_PORT` | Qdrant server port | `6333` |
-| `QDRANT_COLLECTION` | Collection name | `kb` |
-| `QDRANT_API_KEY` | API key for Qdrant Cloud | - |
-| `QDRANT_USE_HTTPS` | Use HTTPS connection | `false` |
+| Variable            | Description              | Default     |
+| ------------------- | ------------------------ | ----------- |
+| `QDRANT_HOST`       | Qdrant server hostname   | `localhost` |
+| `QDRANT_PORT`       | Qdrant server port       | `6333`      |
+| `QDRANT_COLLECTION` | Collection name          | `kb`        |
+| `QDRANT_API_KEY`    | API key for Qdrant Cloud | -           |
+| `QDRANT_USE_HTTPS`  | Use HTTPS connection     | `false`     |
 
 ### Upstash (Serverless Redis/QStash)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `UPSTASH_REDIS_REST_URL` | Upstash REST API URL | - |
-| `UPSTASH_REDIS_REST_TOKEN` | Upstash REST API token | - |
-| `QSTASH_URL` | QStash URL | - |
-| `QSTASH_TOKEN` | QStash token | - |
-| `QSTASH_CURRENT_SIGNING_KEY` | QStash signing key | - |
-| `QSTASH_NEXT_SIGNING_KEY` | QStash next signing key | - |
+| Variable                     | Description             | Default |
+| ---------------------------- | ----------------------- | ------- |
+| `UPSTASH_REDIS_REST_URL`     | Upstash REST API URL    | -       |
+| `UPSTASH_REDIS_REST_TOKEN`   | Upstash REST API token  | -       |
+| `QSTASH_URL`                 | QStash URL              | -       |
+| `QSTASH_TOKEN`               | QStash token            | -       |
+| `QSTASH_CURRENT_SIGNING_KEY` | QStash signing key      | -       |
+| `QSTASH_NEXT_SIGNING_KEY`    | QStash next signing key | -       |
 
 ### Stripe (Billing)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `STRIPE_SECRET_KEY` | Stripe secret key | - |
-| `STRIPE_WEBHOOK_SECRET` | Webhook signing secret | - |
+| Variable                | Description            | Default |
+| ----------------------- | ---------------------- | ------- |
+| `STRIPE_SECRET_KEY`     | Stripe secret key      | -       |
+| `STRIPE_WEBHOOK_SECRET` | Webhook signing secret | -       |
 
 ### Observability
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `SENTRY_DSN` | Sentry DSN for error tracking | - |
-| `SENTRY_ENVIRONMENT` | Sentry environment tag | - |
-| `ENABLE_QUEUE_METRICS` | Enable queue metrics polling | `false` |
-| `LOG_ENABLED` | Enable logging output | `true` |
+| Variable               | Description                   | Default |
+| ---------------------- | ----------------------------- | ------- |
+| `SENTRY_DSN`           | Sentry DSN for error tracking | -       |
+| `SENTRY_ENVIRONMENT`   | Sentry environment tag        | -       |
+| `ENABLE_QUEUE_METRICS` | Enable queue metrics polling  | `false` |
+| `LOG_ENABLED`          | Enable logging output         | `true`  |
 
 ### Frontend (Next.js)
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NEXT_PUBLIC_API_URL` | API base URL | Yes |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk public key | Yes |
-| `CLERK_SECRET_KEY` | Clerk secret key | Yes |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe public key | No |
-| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN (client-side) | No |
+| Variable                             | Description              | Required |
+| ------------------------------------ | ------------------------ | -------- |
+| `NEXT_PUBLIC_API_URL`                | API base URL             | Yes      |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`  | Clerk public key         | Yes      |
+| `CLERK_SECRET_KEY`                   | Clerk secret key         | Yes      |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe public key        | No       |
+| `NEXT_PUBLIC_SENTRY_DSN`             | Sentry DSN (client-side) | No       |
 
 ---
 
@@ -215,11 +215,13 @@ soft-systems-studio/
 ### Loading Priority
 
 **API (agent-api):**
+
 1. Process environment (platform env vars)
 2. `apps/agent-api/.env`
 3. Root `.env`
 
 **Frontend (Next.js):**
+
 1. `.env.local` (highest priority)
 2. `.env.[environment].local`
 3. `.env.[environment]`
@@ -245,11 +247,14 @@ The API validates all environment variables at startup using Zod:
 ```typescript
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().default('5000').transform(v => parseInt(v, 10)),
+  PORT: z
+    .string()
+    .default('5000')
+    .transform((v) => parseInt(v, 10)),
   DATABASE_URL: z.string().url(),
-  REDIS_URL: z.string().refine(v => v.startsWith('redis://') || v.startsWith('rediss://')),
+  REDIS_URL: z.string().refine((v) => v.startsWith('redis://') || v.startsWith('rediss://')),
   JWT_SECRET: z.string().min(32),
-  OPENAI_API_KEY: z.string().refine(v => v.startsWith('sk-') || process.env.NODE_ENV === 'test'),
+  OPENAI_API_KEY: z.string().refine((v) => v.startsWith('sk-') || process.env.NODE_ENV === 'test'),
   // ... more fields
 });
 ```
@@ -306,6 +311,7 @@ Before deploying to production:
 ### Secret Managers
 
 For production, consider:
+
 - **AWS Secrets Manager**
 - **GCP Secret Manager**
 - **HashiCorp Vault**

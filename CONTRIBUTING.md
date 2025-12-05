@@ -101,14 +101,14 @@ soft-systems-studio/
 
 ### Key Files
 
-| File | Purpose |
-|------|---------|
-| `apps/agent-api/src/index.ts` | API entry point |
-| `apps/agent-api/src/env.ts` | Environment validation |
-| `apps/agent-api/prisma/schema.prisma` | Database schema |
-| `packages/frontend/src/pages/` | Next.js pages |
-| `jest.config.ts` | Test configuration |
-| `tsconfig.json` | TypeScript config |
+| File                                  | Purpose                |
+| ------------------------------------- | ---------------------- |
+| `apps/agent-api/src/index.ts`         | API entry point        |
+| `apps/agent-api/src/env.ts`           | Environment validation |
+| `apps/agent-api/prisma/schema.prisma` | Database schema        |
+| `packages/frontend/src/pages/`        | Next.js pages          |
+| `jest.config.ts`                      | Test configuration     |
+| `tsconfig.json`                       | TypeScript config      |
 
 ---
 
@@ -215,10 +215,12 @@ import { ingestDocuments } from '../services/ingest';
 
 describe('ingestDocuments', () => {
   it('should validate workspaceId', async () => {
-    await expect(ingestDocuments({ 
-      workspaceId: '', 
-      documents: [] 
-    })).rejects.toThrow('workspaceId is required');
+    await expect(
+      ingestDocuments({
+        workspaceId: '',
+        documents: [],
+      }),
+    ).rejects.toThrow('workspaceId is required');
   });
 });
 ```
@@ -226,6 +228,7 @@ describe('ingestDocuments', () => {
 ### Test Coverage
 
 Aim for:
+
 - **Services**: 80%+ coverage
 - **Middleware**: 90%+ coverage
 - **Critical paths**: 100% coverage
@@ -293,7 +296,9 @@ const result = await prisma.user.findUnique({ where: { email } });
 const data: any = req.body;
 
 // ❌ Bad: Ignoring errors
-try { /* ... */ } catch (e) { }
+try {
+  /* ... */
+} catch (e) {}
 ```
 
 ### File Naming
@@ -339,6 +344,7 @@ git commit -m "test(ingest): add integration tests"
 ```
 
 **Types:**
+
 - `feat` — New feature
 - `fix` — Bug fix
 - `docs` — Documentation
@@ -353,6 +359,7 @@ git push origin feature/add-new-agent
 ```
 
 Then create a Pull Request on GitHub with:
+
 - Clear title describing the change
 - Description of what and why
 - Link to related issues

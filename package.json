@@ -9,9 +9,9 @@
   ],
   "scripts": {
     "setup": "pnpm -w install && pnpm -w -r build",
-    "dev": "pnpm --parallel --filter api --filter frontend dev",
+    "dev": "pnpm --parallel --filter apps-agent-api --filter frontend dev",
     "build": "pnpm -w -r build",
-    "start": "pnpm --filter api start",
+    "start": "pnpm --filter apps-agent-api start",
     "lint:fix": "pnpm -w -r lint -- --fix",
     "lint": "pnpm -w -r lint",
     "typecheck": "pnpm -r exec tsc --noEmit",

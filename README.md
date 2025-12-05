@@ -32,14 +32,14 @@ Soft Systems Studio is an enterprise-ready monorepo for building, deploying, and
 
 ### Core Capabilities
 
-| Feature | Description |
-|---------|-------------|
-| 🤖 **AI Agents** | Customer service agent with RAG retrieval and LLM reasoning |
-| 📚 **Knowledge Base** | Document ingestion with Qdrant vector search |
-| 🔐 **Authentication** | JWT + refresh tokens with workspace scoping |
-| 👥 **Multi-Tenancy** | Workspace isolation with RBAC (admin, owner, member, agent, service) |
-| 💳 **Billing** | Stripe integration for subscriptions and usage billing |
-| 📊 **Observability** | Prometheus metrics, Sentry error tracking, structured logging |
+| Feature               | Description                                                          |
+| --------------------- | -------------------------------------------------------------------- |
+| 🤖 **AI Agents**      | Customer service agent with RAG retrieval and LLM reasoning          |
+| 📚 **Knowledge Base** | Document ingestion with Qdrant vector search                         |
+| 🔐 **Authentication** | JWT + refresh tokens with workspace scoping                          |
+| 👥 **Multi-Tenancy**  | Workspace isolation with RBAC (admin, owner, member, agent, service) |
+| 💳 **Billing**        | Stripe integration for subscriptions and usage billing               |
+| 📊 **Observability**  | Prometheus metrics, Sentry error tracking, structured logging        |
 
 ### Security Hardening
 
@@ -169,14 +169,14 @@ docker compose up --build
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
+| Document                             | Description                          |
+| ------------------------------------ | ------------------------------------ |
 | [Architecture](docs/ARCHITECTURE.md) | System design and component overview |
-| [API Reference](docs/API.md) | REST API endpoints and schemas |
-| [Environment](docs/ENV.md) | Environment variables reference |
-| [Security](docs/SECURITY.md) | Security model and best practices |
-| [Deployment](docs/DEPLOYMENT.md) | Production deployment guide |
-| [Contributing](CONTRIBUTING.md) | Development workflow and testing |
+| [API Reference](docs/API.md)         | REST API endpoints and schemas       |
+| [Environment](docs/ENV.md)           | Environment variables reference      |
+| [Security](docs/SECURITY.md)         | Security model and best practices    |
+| [Deployment](docs/DEPLOYMENT.md)     | Production deployment guide          |
+| [Contributing](CONTRIBUTING.md)      | Development workflow and testing     |
 
 ---
 
@@ -184,38 +184,38 @@ docker compose up --build
 
 ### Authentication
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/v1/auth/login` | User login with email/password |
-| POST | `/api/v1/auth/token` | Refresh access token |
-| POST | `/api/v1/auth/onboarding` | Create workspace and user |
+| Method | Endpoint                  | Description                    |
+| ------ | ------------------------- | ------------------------------ |
+| POST   | `/api/v1/auth/login`      | User login with email/password |
+| POST   | `/api/v1/auth/token`      | Refresh access token           |
+| POST   | `/api/v1/auth/onboarding` | Create workspace and user      |
 
 ### Agents
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/v1/agents/customer-service/run` | Chat with customer service agent |
-| POST | `/api/v1/agents/customer-service/ingest` | Ingest KB documents |
+| Method | Endpoint                                 | Description                      |
+| ------ | ---------------------------------------- | -------------------------------- |
+| POST   | `/api/v1/agents/customer-service/run`    | Chat with customer service agent |
+| POST   | `/api/v1/agents/customer-service/ingest` | Ingest KB documents              |
 
 ### Admin
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/v1/admin/cleanup` | Trigger data cleanup (cron) |
+| Method | Endpoint                | Description                 |
+| ------ | ----------------------- | --------------------------- |
+| POST   | `/api/v1/admin/cleanup` | Trigger data cleanup (cron) |
 
 ### Billing
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/v1/stripe/webhook` | Stripe webhook handler |
+| Method | Endpoint                 | Description            |
+| ------ | ------------------------ | ---------------------- |
+| POST   | `/api/v1/stripe/webhook` | Stripe webhook handler |
 
 ### Health & Metrics
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/health` | Health check |
-| GET | `/status` | Detailed system status |
-| GET | `/metrics` | Prometheus metrics |
+| Method | Endpoint   | Description            |
+| ------ | ---------- | ---------------------- |
+| GET    | `/health`  | Health check           |
+| GET    | `/status`  | Detailed system status |
+| GET    | `/metrics` | Prometheus metrics     |
 
 ---
 
@@ -239,6 +239,7 @@ docker run -p 5000:5000 --env-file .env soft-systems-api
 See [docs/ENV.md](docs/ENV.md) for the complete environment variable reference.
 
 **Required for production:**
+
 - `DATABASE_URL` — PostgreSQL connection string
 - `REDIS_URL` — Redis connection string
 - `JWT_SECRET` — 32+ character secret for JWT signing
@@ -248,19 +249,19 @@ See [docs/ENV.md](docs/ENV.md) for the complete environment variable reference.
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Language** | TypeScript 5.x |
-| **Runtime** | Node.js 22 |
-| **Frontend** | Next.js 14, React 18, Tailwind CSS |
-| **Backend** | Express 4, Prisma 6, BullMQ |
-| **Database** | PostgreSQL 15 |
-| **Cache/Queue** | Redis (Upstash compatible) |
-| **Vector DB** | Qdrant |
-| **Auth** | JWT + Clerk (frontend) |
-| **Payments** | Stripe |
-| **Observability** | Pino, Prometheus, Sentry |
-| **Package Manager** | pnpm workspaces |
+| Layer               | Technology                         |
+| ------------------- | ---------------------------------- |
+| **Language**        | TypeScript 5.x                     |
+| **Runtime**         | Node.js 22                         |
+| **Frontend**        | Next.js 14, React 18, Tailwind CSS |
+| **Backend**         | Express 4, Prisma 6, BullMQ        |
+| **Database**        | PostgreSQL 15                      |
+| **Cache/Queue**     | Redis (Upstash compatible)         |
+| **Vector DB**       | Qdrant                             |
+| **Auth**            | JWT + Clerk (frontend)             |
+| **Payments**        | Stripe                             |
+| **Observability**   | Pino, Prometheus, Sentry           |
+| **Package Manager** | pnpm workspaces                    |
 
 ---
 

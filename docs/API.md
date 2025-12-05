@@ -29,6 +29,7 @@ Authorization: Bearer <access_token>
 ```
 
 Tokens are workspace-scoped. Each token contains:
+
 - `sub` — User ID
 - `workspaceId` — Workspace ID
 - `role` — User role (admin, owner, member, agent, service)
@@ -41,6 +42,7 @@ Tokens are workspace-scoped. Each token contains:
 Create a new workspace and user account.
 
 **Request Body:**
+
 ```json
 {
   "email": "user@example.com",
@@ -51,6 +53,7 @@ Create a new workspace and user account.
 ```
 
 **Response (201):**
+
 ```json
 {
   "user": {
@@ -69,6 +72,7 @@ Create a new workspace and user account.
 ```
 
 **Errors:**
+
 - `400` — Invalid payload or email already exists
 - `500` — Server error
 
@@ -79,6 +83,7 @@ Create a new workspace and user account.
 Authenticate with email and password.
 
 **Request Body:**
+
 ```json
 {
   "email": "user@example.com",
@@ -88,6 +93,7 @@ Authenticate with email and password.
 ```
 
 **Response (200):**
+
 ```json
 {
   "accessToken": "eyJhbG...",
@@ -102,6 +108,7 @@ Authenticate with email and password.
 ```
 
 **Errors:**
+
 - `400` — Missing required fields
 - `401` — Invalid credentials
 - `403` — User not a member of workspace
@@ -113,6 +120,7 @@ Authenticate with email and password.
 Refresh an expired access token.
 
 **Request Body:**
+
 ```json
 {
   "refreshToken": "rt_xyz..."
@@ -120,6 +128,7 @@ Refresh an expired access token.
 ```
 
 **Response (200):**
+
 ```json
 {
   "accessToken": "eyJhbG...",
@@ -129,6 +138,7 @@ Refresh an expired access token.
 ```
 
 **Errors:**
+
 - `400` — Missing refresh token
 - `401` — Invalid or expired refresh token
 
@@ -143,14 +153,16 @@ Chat with the customer service agent. Uses RAG retrieval from the workspace's kn
 **Authentication:** Required (roles: user, agent, admin, service, member)
 
 **Request Body:**
+
 ```json
 {
   "message": "How do I reset my password?",
-  "conversationId": "conv_123"  // Optional, omit to start new conversation
+  "conversationId": "conv_123" // Optional, omit to start new conversation
 }
 ```
 
 **Response (200):**
+
 ```json
 {
   "reply": "To reset your password, go to Settings > Security > Reset Password...",
@@ -159,6 +171,7 @@ Chat with the customer service agent. Uses RAG retrieval from the workspace's kn
 ```
 
 **Errors:**
+
 - `400` — Invalid payload (missing message)
 - `401` — Unauthorized
 - `500` — Chat processing failed
@@ -172,6 +185,7 @@ Ingest documents into the workspace's knowledge base. Documents are processed as
 **Authentication:** Required (roles: admin, owner, agent, service)
 
 **Request Body:**
+
 ```json
 {
   "documents": [
@@ -188,11 +202,13 @@ Ingest documents into the workspace's knowledge base. Documents are processed as
 ```
 
 **Validation:**
+
 - 1-100 documents per request
 - Each document max 20,000 characters
 - Either `text` or `content` required
 
 **Response (200):**
+
 ```json
 {
   "ok": true,
@@ -204,6 +220,7 @@ Ingest documents into the workspace's knowledge base. Documents are processed as
 The `ingestionId` can be used to track the ingestion job. Documents are stored in PostgreSQL and indexed in Qdrant for vector search.
 
 **Errors:**
+
 - `400` — Invalid payload (validation failed)
 - `401` — Unauthorized
 - `403` — Insufficient role
@@ -217,11 +234,13 @@ The `ingestionId` can be used to track the ingestion job. Documents are stored i
 Trigger data cleanup operations. Intended for cron jobs.
 
 **Authentication:** Admin auth required via one of:
+
 - `Authorization: Bearer <CRON_SECRET>`
 - JWT with admin/owner role
 - `X-API-Key: <ADMIN_API_KEY>`
 
 **Request Body:**
+
 ```json
 {
   "operation": "expired_tokens",
@@ -230,6 +249,7 @@ Trigger data cleanup operations. Intended for cron jobs.
 ```
 
 **Response (200):**
+
 ```json
 {
   "ok": true,
@@ -240,6 +260,7 @@ Trigger data cleanup operations. Intended for cron jobs.
 ```
 
 **Errors:**
+
 - `401` — Unauthorized (invalid or missing admin credentials)
 - `429` — Rate limited
 
@@ -254,12 +275,14 @@ Handle Stripe webhook events. This endpoint receives events from Stripe for subs
 **Authentication:** Stripe signature verification via `stripe-signature` header
 
 **Headers:**
+
 ```
 stripe-signature: t=1234567890,v1=abc123...
 Content-Type: application/json
 ```
 
 **Supported Events:**
+
 - `checkout.session.completed`
 - `customer.subscription.created`
 - `customer.subscription.updated`
@@ -268,6 +291,7 @@ Content-Type: application/json
 - `invoice.payment_failed`
 
 **Response (200):**
+
 ```json
 {
   "received": true
@@ -275,6 +299,7 @@ Content-Type: application/json
 ```
 
 **Errors:**
+
 - `400` — Invalid signature or payload
 
 ---
@@ -286,6 +311,7 @@ Content-Type: application/json
 Basic health check endpoint.
 
 **Response (200):**
+
 ```json
 {
   "status": "ok",
@@ -300,6 +326,7 @@ Basic health check endpoint.
 Detailed system status including database and service connectivity.
 
 **Response (200):**
+
 ```json
 {
   "status": "healthy",
@@ -347,14 +374,14 @@ All errors follow a consistent format:
 
 ### Common Error Codes
 
-| HTTP Status | Error Code | Description |
-|-------------|------------|-------------|
-| 400 | `invalid_payload` | Request body validation failed |
-| 401 | `unauthorized` | Missing or invalid authentication |
-| 403 | `forbidden` | Insufficient permissions |
-| 404 | `not_found` | Resource not found |
-| 429 | `rate_limited` | Too many requests |
-| 500 | `internal_error` | Server error |
+| HTTP Status | Error Code        | Description                       |
+| ----------- | ----------------- | --------------------------------- |
+| 400         | `invalid_payload` | Request body validation failed    |
+| 401         | `unauthorized`    | Missing or invalid authentication |
+| 403         | `forbidden`       | Insufficient permissions          |
+| 404         | `not_found`       | Resource not found                |
+| 429         | `rate_limited`    | Too many requests                 |
+| 500         | `internal_error`  | Server error                      |
 
 ### Validation Errors
 
@@ -379,11 +406,11 @@ For Zod validation failures, the response includes field-level details:
 
 Rate limits are applied per IP and per tenant:
 
-| Endpoint Pattern | Limit | Window |
-|------------------|-------|--------|
-| `/api/v1/auth/*` | 10 requests | 1 minute |
+| Endpoint Pattern   | Limit       | Window   |
+| ------------------ | ----------- | -------- |
+| `/api/v1/auth/*`   | 10 requests | 1 minute |
 | `/api/v1/agents/*` | 60 requests | 1 minute |
-| `/api/v1/admin/*` | 5 requests | 1 minute |
+| `/api/v1/admin/*`  | 5 requests  | 1 minute |
 
 Rate limit headers are included in responses:
 
@@ -419,8 +446,8 @@ const loginResponse = await fetch(`${API_BASE}/api/v1/auth/login`, {
   body: JSON.stringify({
     email: 'user@example.com',
     password: 'password',
-    workspaceId: 'ws_abc123'
-  })
+    workspaceId: 'ws_abc123',
+  }),
 });
 const { accessToken } = await loginResponse.json();
 
@@ -429,11 +456,11 @@ const chatResponse = await fetch(`${API_BASE}/api/v1/agents/customer-service/run
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${accessToken}`
+    Authorization: `Bearer ${accessToken}`,
   },
   body: JSON.stringify({
-    message: 'How do I reset my password?'
-  })
+    message: 'How do I reset my password?',
+  }),
 });
 const { reply, conversationId } = await chatResponse.json();
 ```
@@ -463,4 +490,4 @@ curl -X POST https://api.softsystems.studio/api/v1/agents/customer-service/inges
 
 ## Webhooks (Outgoing)
 
-*Coming soon:* Webhook delivery for agent events, ingestion completion, and billing changes.
+_Coming soon:_ Webhook delivery for agent events, ingestion completion, and billing changes.

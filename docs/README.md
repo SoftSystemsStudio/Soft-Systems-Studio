@@ -6,38 +6,38 @@ Welcome to the Soft Systems Studio documentation.
 
 ## Getting Started
 
-| Document | Description |
-|----------|-------------|
-| [Main README](../README.md) | Project overview and quick start |
-| [Contributing](../CONTRIBUTING.md) | Development setup and workflow |
+| Document                           | Description                      |
+| ---------------------------------- | -------------------------------- |
+| [Main README](../README.md)        | Project overview and quick start |
+| [Contributing](../CONTRIBUTING.md) | Development setup and workflow   |
 
 ---
 
 ## Reference
 
-| Document | Description |
-|----------|-------------|
+| Document                        | Description                                      |
+| ------------------------------- | ------------------------------------------------ |
 | [Architecture](ARCHITECTURE.md) | System design, data flows, and package structure |
-| [API Reference](API.md) | REST API endpoints, authentication, and examples |
-| [Environment Variables](ENV.md) | Complete environment variable reference |
+| [API Reference](API.md)         | REST API endpoints, authentication, and examples |
+| [Environment Variables](ENV.md) | Complete environment variable reference          |
 
 ---
 
 ## Operations
 
-| Document | Description |
-|----------|-------------|
-| [Deployment](DEPLOYMENT.md) | Production deployment guide for all platforms |
-| [Security](SECURITY.md) | Security model, authentication, and best practices |
+| Document                    | Description                                        |
+| --------------------------- | -------------------------------------------------- |
+| [Deployment](DEPLOYMENT.md) | Production deployment guide for all platforms      |
+| [Security](SECURITY.md)     | Security model, authentication, and best practices |
 
 ---
 
 ## Internal
 
-| Document | Description |
-|----------|-------------|
-| [Client Config](CLIENT_CONFIG.md) | ClientConfig contract for intake → config → prompts |
-| [Tailwind Pivot](Tailwind-Pivot.md) | Frontend styling migration notes |
+| Document                            | Description                                         |
+| ----------------------------------- | --------------------------------------------------- |
+| [Client Config](CLIENT_CONFIG.md)   | ClientConfig contract for intake → config → prompts |
+| [Tailwind Pivot](Tailwind-Pivot.md) | Frontend styling migration notes                    |
 
 ---
 
