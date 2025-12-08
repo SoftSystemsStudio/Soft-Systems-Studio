@@ -182,6 +182,50 @@ docker compose up --build
 
 ## API Endpoints
 
+## Secrets and configuration
+
+Runtime secrets are sourced from HashiCorp Vault at process startup via `bootstrapVault` (see `apps/agent-api/src/bootstrap/vault.ts`). The bootstrapper authenticates to Vault, reads KV v2 secrets, and populates `process.env` before the application is loaded.
+
+Key environment variables:
+
+- `VAULT_ADDR` – Vault base URL.
+- `VAULT_TOKEN` or `VAULT_ROLE_ID` / `VAULT_SECRET_ID` – authentication (token or AppRole).
+- `VAULT_MOUNT` – KV mount name (default: `secret`).
+- `VAULT_PREFIX` – optional path prefix for all secret lookups (e.g. `myteam`).
+- `VAULT_MAPPING` – JSON mapping from env var names to Vault KV v2 paths, e.g.:
+
+  ```json
+  {
+    "DATABASE_URL": "app/prod/db#DATABASE_URL",
+    "REDIS_URL": "app/prod/redis#url",
+    "JWT_SECRET": "app/prod/jwt#secret"
+  }
+  ```
+
+Each mapping value uses the format `<relativePath>#<fieldName>`, where:
+
+- `relativePath` is combined with `VAULT_MOUNT` and `VAULT_PREFIX`, e.g. `secret/myteam/app/prod/db`.
+- `fieldName` is the key within the secret’s data.
+
+### Required environment variables
+
+To enforce that certain variables are present after Vault hydration, set:
+
+- `REQUIRED_ENV_VARS` – comma-separated list of required env vars, e.g.:
+
+  ```bash
+  REQUIRED_ENV_VARS=DATABASE_URL,REDIS_URL,JWT_SECRET
+  ```
+
+Enforcement semantics:
+
+- In non-production (`NODE_ENV !== "production"`): missing vars are logged as warnings.
+- In production (`NODE_ENV === "production"`):
+  - Default behavior: missing vars are fatal and cause startup to fail.
+  - `VAULT_FATAL=false`: disables fatal behavior and downgrades to warnings (escape hatch).
+
+> Note: `bootstrapVault` runs before the application entrypoint. All required variables must be resolvable from Vault or set in the process environment prior to app startup.
+
 ### Authentication
 
 | Method | Endpoint                  | Description                    |

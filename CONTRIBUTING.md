@@ -275,6 +275,43 @@ pnpm install
 pnpm prepare
 ```
 
+### Secrets + local development
+
+Secrets are managed centrally in HashiCorp Vault. The application bootstraps secrets into `process.env` on startup; see `apps/agent-api/src/bootstrap/vault.ts`.
+
+#### Local development
+
+- You may use a local `.env` file for development overrides, but `.env` files **must never** be committed.
+- `.env` patterns are already in `.gitignore`.
+- Pre-commit and CI use `secretlint` to guard against committing secrets.
+
+Typical local workflow:
+
+1. Configure minimal Vault-related env vars (`VAULT_ADDR`, `VAULT_TOKEN` or AppRole, `VAULT_MOUNT`, optional `VAULT_PREFIX`).
+2. Optionally define `VAULT_MAPPING` for your environment.
+3. Run the app via the standard dev script; `bootstrapVault` will load secrets before the app code runs.
+
+#### Required env vars and enforcement
+
+Production enforcement is controlled via:
+
+- `REQUIRED_ENV_VARS` – comma-separated list of env vars that must be present post-bootstrap.
+- `VAULT_FATAL` – optional escape hatch.
+
+Behavior:
+
+- Non-prod: missing vars → warnings only.
+- Prod:
+  - Default: missing required vars → startup fails fast.
+  - `VAULT_FATAL=false`: temporary override to downgrade failures to warnings.
+
+Recommended rollout:
+
+1. Deploy code with `REQUIRED_ENV_VARS` unset → no change in behavior.
+2. In staging, set `REQUIRED_ENV_VARS` and `VAULT_FATAL=false` → verify logs.
+3. Remove `VAULT_FATAL` in staging → verify fail-fast semantics.
+4. Gradually enable in production starting with a minimal `REQUIRED_ENV_VARS` set (e.g. `DATABASE_URL`).
+
 ### TypeScript Guidelines
 
 ```typescript
