@@ -8,15 +8,21 @@ import {
   enforceRequiredEnv,
 } from '../vault';
 
+import { withEnv, captureWarnings, captureWarningsAsync, withEnvAsync } from '../../test/utils';
+
 class FakeVaultClient implements VaultClient {
   calls: string[] = [];
-  constructor(public data: Record<string, Record<string, unknown>>) {}
-  async read(path: string) {
+  constructor(private readonly data: Record<string, Record<string, unknown>>) {}
+
+  // eslint-disable-next-line security/detect-object-injection
+  read(path: string): Promise<Record<string, unknown>> {
     this.calls.push(path);
-    if (!(path in this.data)) {
+    const value = this.data[path];
+    if (!value) {
+      // Mirror real client behavior for "not found"
       throw new Error(`not found: ${path}`);
     }
-    return this.data[path];
+    return Promise.resolve(value);
   }
 }
 
@@ -34,24 +40,28 @@ describe('parseVaultMapping', () => {
     expect(entries).toHaveLength(2);
     const paths = entries.map((e) => e.path).sort();
     expect(paths).toEqual(['secret/myteam/app/prod/db', 'secret/myteam/app/prod/redis'].sort());
-    expect(entries.find((e) => e.envName === 'DATABASE_URL')!.key).toBe('DATABASE_URL');
+    const found = entries.find((e) => e.envName === 'DATABASE_URL');
+    expect(found).toBeDefined();
+    if (!found) throw new Error('Expected DATABASE_URL mapping');
+    expect(found.key).toBe('DATABASE_URL');
   });
 
   it('returns [] and warns on invalid JSON', () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const entries = parseVaultMapping('{not: json', { mount: 'secret' });
-    expect(entries).toEqual([]);
-    expect(spy).toHaveBeenCalled();
-    spy.mockRestore();
+    const warnings = captureWarnings(() => {
+      const entries = parseVaultMapping('{not: json', { mount: 'secret' });
+      expect(entries).toEqual([]);
+    });
+    expect(warnings.length).toBeGreaterThan(0);
   });
 
   it('skips invalid entry formats', () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const raw = JSON.stringify({ DATABASE_URL: 'no-hash-delimiter', VALID: 'a/b#c' });
-    const entries = parseVaultMapping(raw, { mount: 'secret' });
-    expect(entries).toHaveLength(1);
-    expect(entries[0].envName).toBe('VALID');
-    spy.mockRestore();
+    const warnings = captureWarnings(() => {
+      const raw = JSON.stringify({ DATABASE_URL: 'no-hash-delimiter', VALID: 'a/b#c' });
+      const entries = parseVaultMapping(raw, { mount: 'secret' });
+      expect(entries).toHaveLength(1);
+      expect(entries[0].envName).toBe('VALID');
+    });
+    expect(warnings.length).toBeGreaterThan(0);
   });
 });
 
@@ -92,25 +102,21 @@ describe('hydrateEnvFromVault', () => {
   });
 
   it('logs warning when key missing', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     const mappings: MappingEntry[] = [{ envName: 'MISSING', path: 'secret/x', key: 'nope' }];
     const fake = new FakeVaultClient({ 'secret/x': { something: 'x' } });
-    await hydrateEnvFromVault(fake, mappings, 1000);
-    expect(spy).toHaveBeenCalled();
-    spy.mockRestore();
+    const warnings = await captureWarningsAsync(() => hydrateEnvFromVault(fake, mappings, 1000));
+    expect(warnings.length).toBeGreaterThan(0);
   });
 
   it('continues when client.read throws', async () => {
-    const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     const mappings: MappingEntry[] = [
       { envName: 'A', path: 'secret/ok', key: 'a' },
       { envName: 'B', path: 'secret/missing', key: 'b' },
     ];
     const fake = new FakeVaultClient({ 'secret/ok': { a: '1' } });
-    await hydrateEnvFromVault(fake, mappings, 1000);
+    const warnings = await captureWarningsAsync(() => hydrateEnvFromVault(fake, mappings, 1000));
     expect(process.env.A).toBe('1');
-    expect(spy).toHaveBeenCalled();
-    spy.mockRestore();
+    expect(warnings.length).toBeGreaterThan(0);
   });
 });
 
@@ -121,13 +127,13 @@ describe('assertRequiredEnv', () => {
   });
 
   it('throws when fatal and missing', () => {
-    process.env.FOO = undefined as unknown as string;
+    delete process.env.FOO;
     expect(() => assertRequiredEnv(['FOO'], { fatal: true })).toThrow();
   });
 
   it('warns when non-fatal', () => {
     const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    process.env.FOO = undefined as unknown as string;
+    delete process.env.FOO;
     expect(() => assertRequiredEnv(['FOO'], { fatal: false })).not.toThrow();
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
