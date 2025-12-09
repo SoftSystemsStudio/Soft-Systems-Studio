@@ -2,7 +2,7 @@
 (async () => {
   try {
     // Dynamic import so this file can be required by ts-node-dev easily.
-    const mod = await import('./bootstrap/vault');
+    const mod = await import('./bootstrap/vault.js');
     if (mod && typeof mod.bootstrapVault === 'function') {
       // attempt to bootstrap Vault (no-op if VAULT_ADDR not set)
       await mod.bootstrapVault();

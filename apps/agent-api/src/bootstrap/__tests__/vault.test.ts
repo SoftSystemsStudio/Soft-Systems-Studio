@@ -8,7 +8,7 @@ import {
   enforceRequiredEnv,
 } from '../vault';
 
-import { withEnv, captureWarnings, captureWarningsAsync, withEnvAsync } from '../../test/utils';
+import { captureWarnings, captureWarningsAsync } from '../../test/utils';
 
 class FakeVaultClient implements VaultClient {
   calls: string[] = [];
@@ -59,7 +59,10 @@ describe('parseVaultMapping', () => {
       const raw = JSON.stringify({ DATABASE_URL: 'no-hash-delimiter', VALID: 'a/b#c' });
       const entries = parseVaultMapping(raw, { mount: 'secret' });
       expect(entries).toHaveLength(1);
-      expect(entries[0].envName).toBe('VALID');
+      const found = entries[0];
+      expect(found).toBeDefined();
+      if (!found) throw new Error('Expected mapping entry');
+      expect(found.envName).toBe('VALID');
     });
     expect(warnings.length).toBeGreaterThan(0);
   });

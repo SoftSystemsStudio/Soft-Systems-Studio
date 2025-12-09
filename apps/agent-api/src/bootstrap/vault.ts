@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
+import type { VaultKVv2ReadResponse, VaultKVv2Secret } from './vault.types';
 
 export type VaultClient = {
-  read(path: string): Promise<Record<string, unknown>>;
+  read(path: string): Promise<VaultKVv2Secret<Record<string, unknown>>>;
 };
 
 export type MappingEntry = {
@@ -47,7 +48,7 @@ export function parseVaultMapping(
       console.warn(`Warning: VAULT_MAPPING entry for ${envName} is invalid and will be skipped.`);
       continue;
     }
-    const [relativePath, key] = mapping.split('#');
+    const [relativePath = '', key = ''] = mapping.split('#');
     const rel = relativePath.replace(/^\/+|\/+$/g, '');
     const parts = [mount];
     if (prefix) parts.push(prefix);
@@ -83,7 +84,7 @@ async function getToken(): Promise<string | undefined> {
 }
 
 class HttpVaultClient implements VaultClient {
-  constructor(private mount: string = DEFAULT_MOUNT) {}
+  constructor() {}
 
   async read(path: string) {
     if (!VAULT_ADDR) throw new Error('Vault address is not configured');
@@ -96,9 +97,9 @@ class HttpVaultClient implements VaultClient {
       const body = await res.text();
       throw new Error(`Vault read failed ${res.status} ${body}`);
     }
-    const json = await res.json();
+    const json = (await res.json()) as VaultKVv2ReadResponse<Record<string, unknown>> | null;
     // For KV v2 the secret data is under data.data
-    return (json?.data?.data as Record<string, unknown>) ?? {};
+    return (json?.data?.data as VaultKVv2Secret<Record<string, unknown>>) ?? {};
   }
 }
 
