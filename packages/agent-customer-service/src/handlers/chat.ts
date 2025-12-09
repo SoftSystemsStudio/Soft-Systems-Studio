@@ -1,8 +1,7 @@
 import { ChatRequest, ChatResponse } from '../schemas';
-import { callChat } from '@softsystems/core-llm';
-import type { ChatMessage } from '@softsystems/core-llm';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { ContextWindowManager, TokenCounter, CostAccountingService, ExecutionController } from '@softsystems/agent-orchestrator';
 
 export async function handleChat(body: unknown) {
   const parse = ChatRequest.safeParse(body);
@@ -12,27 +11,29 @@ export async function handleChat(body: unknown) {
 
   const { message, workspaceId, userId } = parse.data;
 
-  // Minimal prompt composition: load system prompt and user prompt from package files
+  // Load prompts
   const systemPath = path.join(__dirname, '../prompts/system.md');
   const userPath = path.join(__dirname, '../prompts/user.md');
   const systemPrompt = String(await fs.readFile(systemPath, 'utf-8'));
   const userHint = String(await fs.readFile(userPath, 'utf-8'));
 
-  const messages: ChatMessage[] = [
-    { role: 'system', content: systemPrompt },
-    { role: 'user', content: `${userHint}\n\nUser: ${message}` },
-  ];
+  // Compose input for orchestrator
+  const input = { workspaceId, userId, message };
 
-  // Call shared LLM wrapper
-  const reply = await callChat(messages);
+  // instantiate minimal collaborators (these can be injected in a richer app)
+  const ctxManager = new ContextWindowManager();
+  const tokenCounter = new TokenCounter();
+  const costService = new CostAccountingService();
+  const controller = new ExecutionController(ctxManager as any, tokenCounter as any, costService as any);
 
-  // Rudimentary detection for escalation token
-  const needsHuman = /NEEDS_HUMAN/.test(reply);
+  const result = await controller.runChat(input, systemPrompt + '\n\n' + userHint + `\n\nUser: ${message}`);
 
-  const response = ChatResponse.parse({ reply, needsHuman });
+  const needsHuman = /NEEDS_HUMAN/.test(result.reply);
 
-  // TODO: persist to conversation store (Postgres) and log
-  console.log('[handleChat] workspace', workspaceId, 'user', userId, 'reply', reply.slice(0, 120));
+  const response = ChatResponse.parse({ reply: result.reply, needsHuman });
+
+  // TODO: persist to conversation store (Postgres) and log structured metadata
+  console.log('[handleChat] workspace', workspaceId, 'user', userId, 'replyLength', result.reply.length, 'tokensIn', result.tokensIn);
 
   return { status: 200, body: response };
 }
