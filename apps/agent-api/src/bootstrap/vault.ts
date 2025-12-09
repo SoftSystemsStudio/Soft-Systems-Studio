@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import type { VaultKVv2ReadResponse, VaultKVv2Secret } from './vault.types';
+import type { VaultKVv2Secret } from './vault.types';
 
 export type VaultClient = {
   read(path: string): Promise<VaultKVv2Secret<Record<string, unknown>>>;
@@ -59,7 +59,7 @@ export function parseVaultMapping(
   return entries;
 }
 
-async function approleLogin(roleId: string, secretId: string): Promise<string> {
+async function approleLogin(roleId: string, secretId: string): Promise<string | undefined> {
   const url = `${VAULT_ADDR}/v1/auth/approle/login`;
   const res = await fetch(url, {
     method: 'POST',
@@ -69,8 +69,13 @@ async function approleLogin(roleId: string, secretId: string): Promise<string> {
   if (!res.ok) {
     throw new Error(`Vault AppRole login failed: ${res.status} ${await res.text()}`);
   }
-  const json = await res.json();
-  return json?.auth?.client_token;
+  const raw: unknown = await res.json();
+  if (!raw || typeof raw !== 'object') return undefined;
+  const asObj = raw as Record<string, unknown>;
+  const auth = asObj['auth'];
+  if (!auth || typeof auth !== 'object') return undefined;
+  const clientToken = (auth as Record<string, unknown>)['client_token'];
+  return typeof clientToken === 'string' ? clientToken : undefined;
 }
 
 async function getToken(): Promise<string | undefined> {
@@ -86,7 +91,7 @@ async function getToken(): Promise<string | undefined> {
 class HttpVaultClient implements VaultClient {
   constructor() {}
 
-  async read(path: string) {
+  async read(path: string): Promise<VaultKVv2Secret<Record<string, unknown>>> {
     if (!VAULT_ADDR) throw new Error('Vault address is not configured');
     const t = await getToken();
     if (!t) throw new Error('No Vault token available for reading secrets');
@@ -97,9 +102,15 @@ class HttpVaultClient implements VaultClient {
       const body = await res.text();
       throw new Error(`Vault read failed ${res.status} ${body}`);
     }
-    const json = (await res.json()) as VaultKVv2ReadResponse<Record<string, unknown>> | null;
-    // For KV v2 the secret data is under data.data
-    return (json?.data?.data as VaultKVv2Secret<Record<string, unknown>>) ?? {};
+    const raw: unknown = await res.json();
+    if (!raw || typeof raw !== 'object') return {} as VaultKVv2Secret<Record<string, unknown>>;
+    const j = raw as Record<string, unknown>;
+    const dataNode = j['data'];
+    if (!dataNode || typeof dataNode !== 'object')
+      return {} as VaultKVv2Secret<Record<string, unknown>>;
+    const inner = (dataNode as Record<string, unknown>)['data'];
+    if (!inner || typeof inner !== 'object') return {} as VaultKVv2Secret<Record<string, unknown>>;
+    return inner as VaultKVv2Secret<Record<string, unknown>>;
   }
 }
 
@@ -133,8 +144,14 @@ export async function hydrateEnvFromVault(
 
       for (const e of entries) {
         try {
+          // eslint-disable-next-line security/detect-object-injection -- accessing process.env by dynamic key is intentional
           if (process.env[e.envName]) continue; // do not overwrite existing env
-          const v = data ? data[e.key] : undefined;
+          // Guard access to avoid object-injection issues
+          let v: unknown = undefined;
+          if (data && Object.prototype.hasOwnProperty.call(data, e.key)) {
+            // eslint-disable-next-line security/detect-object-injection
+            v = data[e.key];
+          }
           if (v === undefined) {
             // eslint-disable-next-line no-console
             console.warn(
@@ -142,6 +159,7 @@ export async function hydrateEnvFromVault(
             );
             continue;
           }
+          // eslint-disable-next-line security/detect-object-injection -- setting process.env by dynamic key is intentional
           process.env[e.envName] = String(v);
           // eslint-disable-next-line no-console
           console.info(`Vault: populated env ${e.envName} from ${path}#${e.key}`);
@@ -160,6 +178,7 @@ export async function hydrateEnvFromVault(
 }
 
 export function assertRequiredEnv(vars: string[], opts: { fatal: boolean }) {
+  // eslint-disable-next-line security/detect-object-injection -- iterating required env var names is intentional
   const missing = vars.filter((v) => !process.env[v]);
   if (missing.length === 0) return;
   if (opts.fatal) {

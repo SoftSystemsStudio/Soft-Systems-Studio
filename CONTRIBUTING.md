@@ -73,6 +73,22 @@ JWT_SECRET=dev-secret-at-least-32-characters-long
 OPENAI_API_KEY=sk-your-key-here
 ```
 
+### Secrets Policy
+
+- **Never** commit real secrets (API keys, tokens, passwords) to the repository. Only store example values in `.env.example` or `docs` files.
+- The repository enforces secret scanning with `secretlint`. The project-level ignore rules live in `.secretlintignore` — if you believe a pattern should be ignored, open a PR and explain the rationale for team review.
+- For CI and deployments, store secrets in your platform's secret store (GitHub Actions secrets, Vercel/Render/Railway environment settings, or HashiCorp Vault).
+
+Quick checks:
+
+```bash
+# Run secret scanner locally
+pnpm -w run secretlint
+
+# Run the placeholder scanner
+node scripts/scan-placeholders.js
+```
+
 Use the sync script to merge example variables:
 
 ```bash

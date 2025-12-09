@@ -320,7 +320,7 @@ JWT_SECRET=your-32-character-minimum-secret-here
 JWT_ALGORITHM=HS256
 
 # OpenAI
-OPENAI_API_KEY=sk-xxx
+OPENAI_API_KEY=sk-your-openai-api-key
 
 # ===========================================
 # RECOMMENDED

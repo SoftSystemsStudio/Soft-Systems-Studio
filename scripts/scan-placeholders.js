@@ -55,6 +55,8 @@ function run() {
   const offenders = [];
 
   for (const f of files) {
+    // Skip our own scanner script so it doesn't self-flag
+    if (f === 'scripts/scan-placeholders.js') continue;
     if (isExample(f) || f.startsWith('.github/') || f.endsWith('.md')) continue;
     const m = checkFile(f);
     if (m.length) offenders.push({ file: f, matches: m });

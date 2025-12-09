@@ -16,7 +16,10 @@ function bootTest(): void {
   process.env.POSTGRES_URL = 'postgresql://test:test@localhost:5432/test';
   process.env.DATABASE_URL = process.env.POSTGRES_URL;
   process.env.REDIS_URL = 'redis://localhost:6379';
-  process.env.OPENAI_API_KEY = 'sk-test-key-for-boot-test';
+  // Use an environment-provided OpenAI key in CI or developer machines.
+  // Avoid hard-coded keys in source (they trigger secret scanners).
+  // Provide a non-secret placeholder for local boot tests that won't match secret patterns.
+  process.env.OPENAI_API_KEY = process.env.OPENAI_API_KEY || 'test-openai-key';
   process.env.JWT_SECRET = 'test-jwt-secret-must-be-32-chars-long';
 
   try {

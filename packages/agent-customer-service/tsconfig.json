@@ -2,10 +2,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "..",
     "module": "NodeNext",
+    "baseUrl": ".",
+    "paths": {
+      "@softsystems/core-llm": ["../core-llm/src"]
+    },
     "declaration": true,
     "declarationMap": true
   },
-  "include": ["src"]
+  "include": ["src", "../core-llm/src"]
 }
