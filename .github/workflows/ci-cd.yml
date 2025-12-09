@@ -105,8 +105,14 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Typecheck
-        run: pnpm -r exec tsc --noEmit
+      - name: Typecheck @softsystems/core-llm
+        run: pnpm --filter @softsystems/core-llm run typecheck
+
+      - name: Typecheck @softsystems/agent-customer-service
+        run: pnpm --filter @softsystems/agent-customer-service run typecheck
+
+      - name: Typecheck apps-agent-api
+        run: pnpm --filter apps-agent-api run typecheck
 
       - name: Test
         run: pnpm test

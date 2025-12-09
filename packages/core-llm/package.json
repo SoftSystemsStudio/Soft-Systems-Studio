@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "echo \"no tests\""
+    "test": "echo \"no tests\"",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {},
   "devDependencies": {
