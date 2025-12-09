@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  vault:
+    image: vault:1.14.0
+    container_name: local-vault
+    environment:
+      # dev root token for local development only. Do NOT use in production.
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    ports:
+      - "8200:8200"
+    command: server -dev -dev-root-token-id=root
+    volumes:
+      - ./infra/vault:/vault/config:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8200/v1/sys/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
