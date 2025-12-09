@@ -1,0 +1,61 @@
+name: Integration Tests - agent-api
+
+on:
+  pull_request:
+    paths:
+      - 'apps/agent-api/**'
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/agent-api/**'
+
+jobs:
+  integration:
+    name: Integration tests (apps/agent-api)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: agent_api_test
+        ports:
+          - 5432:5432
+        # health check to ensure Postgres is ready
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable corepack (pnpm)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install -w
+
+      - name: Wait for Postgres to accept connections
+        run: |
+          for i in {1..60}; do
+            if nc -z localhost 5432; then
+              echo "Postgres is up" && break
+            fi
+            echo "Waiting for Postgres..." && sleep 1
+          done
+
+      - name: Run integration tests for apps-agent-api
+        env:
+          POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/agent_api_test
+          PRISMA_ACCEPT_DATA_LOSS: 'true'
+          NODE_ENV: test
+        run: pnpm -w --filter apps-agent-api test:integration
