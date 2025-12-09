@@ -53,9 +53,16 @@ export type ToolExecutionResult = {
 };
 
 export interface IToolSchemaValidator {
-  validate(toolName: string, args: unknown): { ok: true; parsed: unknown } | { ok: false; errors: string[] };
+  validate(
+    toolName: string,
+    args: unknown,
+  ): { ok: true; parsed: unknown } | { ok: false; errors: string[] };
 }
 
 export interface IToolExecutor {
-  execute(toolName: string, args: unknown, opts?: { timeoutMs?: number }): Promise<ToolExecutionResult>;
+  execute(
+    toolName: string,
+    args: unknown,
+    opts?: { timeoutMs?: number },
+  ): Promise<ToolExecutionResult>;
 }

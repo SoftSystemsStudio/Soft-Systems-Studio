@@ -41,7 +41,7 @@ export async function callChat(
   validateMessages(messages);
 
   const opts: CallOptions =
-    typeof modelOrOpts === 'string' ? { model: modelOrOpts } : modelOrOpts ?? {};
+    typeof modelOrOpts === 'string' ? { model: modelOrOpts } : (modelOrOpts ?? {});
 
   const model = opts.model ?? process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
   const timeoutMs = opts.timeoutMs ?? Number(process.env.LLM_TIMEOUT_MS ?? 15000);
@@ -59,11 +59,15 @@ export async function callChat(
   let lastErr: any = null;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const res = await fetchWithTimeout('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-        body: JSON.stringify(body),
-      }, timeoutMs);
+      const res = await fetchWithTimeout(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+          body: JSON.stringify(body),
+        },
+        timeoutMs,
+      );
 
       if (!res.ok) {
         const txt = await res.text();
@@ -87,7 +91,10 @@ export async function callChat(
       // simple retry/backoff
       const backoff = 200 * Math.pow(2, attempt);
       // eslint-disable-next-line no-console
-      console.warn(`LLM call attempt ${attempt} failed, retry in ${backoff}ms:`, (err as any)?.message ?? err);
+      console.warn(
+        `LLM call attempt ${attempt} failed, retry in ${backoff}ms:`,
+        (err as any)?.message ?? err,
+      );
       await new Promise((r) => setTimeout(r, backoff));
     }
   }
@@ -107,11 +114,15 @@ export async function callEmbeddings(
   if (!apiKey) throw new ProviderError('OPENAI_API_KEY not configured');
 
   const body = { model, input: Array.isArray(input) ? input : [input] };
-  const res = await fetchWithTimeout('https://api.openai.com/v1/embeddings', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify(body),
-  }, timeoutMs);
+  const res = await fetchWithTimeout(
+    'https://api.openai.com/v1/embeddings',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify(body),
+    },
+    timeoutMs,
+  );
 
   if (!res.ok) {
     const txt = await res.text();
