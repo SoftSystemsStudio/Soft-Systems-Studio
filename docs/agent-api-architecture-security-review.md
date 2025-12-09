@@ -157,7 +157,7 @@ How:
 
 ---
 
-This document captures the security, reliability, observability, and architecture findings and proposes an initial set of prioritized changes.  If you want, I can:
+This document captures the security, reliability, observability, and architecture findings and proposes an initial set of prioritized changes. If you want, I can:
 
 - Implement the schema + validation + rate-limit changes for `/run` as a next step (I recommend Zod + centralized rate middleware).
 - Create `services/chatController.ts` and refactor the existing handler into it, with unit tests.
