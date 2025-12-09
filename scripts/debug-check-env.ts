@@ -1,6 +1,7 @@
 // Quick helper to load the app env and print validation errors for debugging.
 process.env.NODE_ENV = process.env.NODE_ENV ?? 'test';
-process.env.POSTGRES_URL = process.env.POSTGRES_URL ?? 'postgresql://postgres:postgres@localhost:5432/agent_api_test';
+process.env.POSTGRES_URL =
+  process.env.POSTGRES_URL ?? 'postgresql://postgres:postgres@localhost:5432/agent_api_test';
 process.env.JWT_SECRET = process.env.JWT_SECRET ?? 'test-secret-that-is-long-enough-123456';
 
 (async () => {

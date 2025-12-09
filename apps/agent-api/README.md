@@ -1,5 +1,4 @@
-Integration tests
------------------
+## Integration tests
 
 To run the integration tests for `apps/agent-api` you need a dedicated Postgres test database. These tests may apply schema changes and can be destructive; run them only against a disposable test database.
 
@@ -24,5 +23,6 @@ pnpm -w --filter apps-agent-api test
 ```
 
 Notes:
+
 - The test setup will skip applying Prisma schema changes unless both `POSTGRES_URL` is set and `PRISMA_ACCEPT_DATA_LOSS=true`.
 - This is deliberate to prevent accidental data loss in development or CI environments.

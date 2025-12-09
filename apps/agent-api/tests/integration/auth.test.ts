@@ -164,7 +164,9 @@ if (process.env.PRISMA_ACCEPT_DATA_LOSS === 'true') {
   });
 } else {
   // eslint-disable-next-line no-console
-  console.warn('Skipping integration tests: set PRISMA_ACCEPT_DATA_LOSS=true and POSTGRES_URL to run them');
+  console.warn(
+    'Skipping integration tests: set PRISMA_ACCEPT_DATA_LOSS=true and POSTGRES_URL to run them',
+  );
   describe('integration tests skipped', () => {
     it('skipped - set PRISMA_ACCEPT_DATA_LOSS=true to run integration tests', () => {
       expect(true).toBe(true);

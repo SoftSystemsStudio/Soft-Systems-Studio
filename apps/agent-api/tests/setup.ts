@@ -9,7 +9,8 @@ if (process.env.POSTGRES_URL) {
 }
 
 // Provide safe defaults for test environment to satisfy env validation
-process.env.POSTGRES_URL = process.env.POSTGRES_URL ?? 'postgresql://postgres:postgres@localhost:5432/agent_api_test';
+process.env.POSTGRES_URL =
+  process.env.POSTGRES_URL ?? 'postgresql://postgres:postgres@localhost:5432/agent_api_test';
 process.env.DATABASE_URL = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
 process.env.JWT_SECRET = process.env.JWT_SECRET ?? 'test-secret-that-is-long-enough-123456';
 
