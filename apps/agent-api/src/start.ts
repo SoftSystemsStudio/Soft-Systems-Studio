@@ -8,6 +8,20 @@
       await mod.bootstrapVault();
     }
   } catch (err) {
+    const nodeEnv = process.env.NODE_ENV;
+    const vaultFatal = process.env.VAULT_FATAL;
+    const fatal =
+      nodeEnv === 'production' && (vaultFatal === undefined || vaultFatal.toLowerCase() === 'true');
+    if (fatal) {
+      // eslint-disable-next-line no-console
+      console.error(
+        'Vault bootstrap failed (fatal) — exiting to avoid running without required secrets:',
+        err,
+      );
+      // Ensure a non-zero exit so orchestrators notice the failure
+      // eslint-disable-next-line no-process-exit
+      process.exit(1);
+    }
     // Warn but continue startup to avoid blocking local dev when Vault isn't available.
     // eslint-disable-next-line no-console
     console.warn('Vault bootstrap error (continuing startup):', err);

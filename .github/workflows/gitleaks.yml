@@ -2,9 +2,9 @@ name: Gitleaks Scan
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   push:
-    branches: [ main ]
+    branches: [main]
   schedule:
     - cron: '0 3 * * *' # daily at 03:00 UTC
 

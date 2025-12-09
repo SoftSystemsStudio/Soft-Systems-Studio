@@ -315,5 +315,6 @@ For production, consider:
 - **AWS Secrets Manager**
 - **GCP Secret Manager**
 - **HashiCorp Vault**
+- See `docs/VAULT.md` for local dev, mapping examples, and CI guidance.
 - **Doppler**
 - Platform-native (Vercel, Railway env vars)
