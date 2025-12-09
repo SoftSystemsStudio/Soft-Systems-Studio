@@ -11,7 +11,14 @@ export class CostAccountingService {
     const cost = (tokensIn / 1000) * p.inputCostPer1k + (tokensOut / 1000) * p.outputCostPer1k;
     // basic console metric for visibility
     // eslint-disable-next-line no-console
-    console.info('metric', JSON.stringify({ name: 'cost_estimate_usd', value: Math.round(cost * 1000000) / 1000000, labels: { model } }));
+    console.info(
+      'metric',
+      JSON.stringify({
+        name: 'cost_estimate_usd',
+        value: Math.round(cost * 1000000) / 1000000,
+        labels: { model },
+      }),
+    );
     return { cost };
   }
 }

@@ -19,7 +19,9 @@ export class TokenCounter {
         try {
           const enc = tiktoken.encoding_for_model('gpt-4o-mini');
           const tokens = enc.encode(text).length;
-          try { enc.free(); } catch (e) {}
+          try {
+            enc.free();
+          } catch (e) {}
           total += tokens;
           method = 'exact';
           continue;

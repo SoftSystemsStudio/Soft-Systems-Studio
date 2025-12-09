@@ -17,5 +17,10 @@ export function getPricingForModel(model: string): PricingModel {
 export function estimateCost(tokensIn: number, tokensOut: number, model: string) {
   const p = getPricingForModel(model);
   const cost = (tokensIn / 1000) * p.inputCostPer1k + (tokensOut / 1000) * p.outputCostPer1k;
-  return { cost, model: p.model, inputCostPer1k: p.inputCostPer1k, outputCostPer1k: p.outputCostPer1k };
+  return {
+    cost,
+    model: p.model,
+    inputCostPer1k: p.inputCostPer1k,
+    outputCostPer1k: p.outputCostPer1k,
+  };
 }

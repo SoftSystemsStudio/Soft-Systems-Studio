@@ -3,8 +3,18 @@ declare module '@softsystems/agent-orchestrator' {
 
   export class ContextWindowManager {
     constructor();
-    buildPrompt(history: string[], systemPrompt: string, tools?: unknown[], config?: unknown): Promise<ChatMessage[]>;
-    enforceTokenBudget(messages: ChatMessage[], model: string, maxTokens: number, safetyMargin?: number): Promise<ChatMessage[]>;
+    buildPrompt(
+      history: string[],
+      systemPrompt: string,
+      tools?: unknown[],
+      config?: unknown,
+    ): Promise<ChatMessage[]>;
+    enforceTokenBudget(
+      messages: ChatMessage[],
+      model: string,
+      maxTokens: number,
+      safetyMargin?: number,
+    ): Promise<ChatMessage[]>;
   }
 
   export class TokenCounter {
@@ -16,7 +26,13 @@ declare module '@softsystems/agent-orchestrator' {
   }
 
   export type RunInput = { workspaceId: string; userId?: string; message: string };
-  export type RunResult = { reply: string; needsHuman?: boolean; tokensIn?: number; tokensOut?: number; costEstimateUsd?: number };
+  export type RunResult = {
+    reply: string;
+    needsHuman?: boolean;
+    tokensIn?: number;
+    tokensOut?: number;
+    costEstimateUsd?: number;
+  };
 
   export class ExecutionController {
     constructor(ctxManager: any, tokenCounter: any, costService: any, toolExecutor?: any);

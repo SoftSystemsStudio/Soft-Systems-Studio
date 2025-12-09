@@ -1,7 +1,12 @@
 import { ChatRequest, ChatResponse } from '../schemas';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { ContextWindowManager, TokenCounter, CostAccountingService, ExecutionController } from '@softsystems/agent-orchestrator';
+import {
+  ContextWindowManager,
+  TokenCounter,
+  CostAccountingService,
+  ExecutionController,
+} from '@softsystems/agent-orchestrator';
 
 export async function handleChat(body: unknown) {
   const parse = ChatRequest.safeParse(body);
@@ -24,16 +29,43 @@ export async function handleChat(body: unknown) {
   const ctxManager = new ContextWindowManager();
   const tokenCounter = new TokenCounter();
   const costService = new CostAccountingService();
-  const controller = new ExecutionController(ctxManager as any, tokenCounter as any, costService as any);
+  // initialize the shared orchestrator state manager
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const orchestrator = require('@softsystems/agent-orchestrator');
+  if (typeof orchestrator.initState === 'function') {
+    const requireRedis = process.env.NODE_ENV === 'production' && !!process.env.REDIS_URL;
+    await orchestrator.initState({ requireRedis });
+  }
+  const stateManager = orchestrator.getStateManager();
 
-  const result = await controller.runChat(input, systemPrompt + '\n\n' + userHint + `\n\nUser: ${message}`);
+  const controller = new ExecutionController(
+    ctxManager as any,
+    tokenCounter as any,
+    costService as any,
+    undefined,
+    stateManager,
+  );
+
+  const result = await controller.runChat(
+    input,
+    systemPrompt + '\n\n' + userHint + `\n\nUser: ${message}`,
+  );
 
   const needsHuman = /NEEDS_HUMAN/.test(result.reply);
 
   const response = ChatResponse.parse({ reply: result.reply, needsHuman });
 
   // TODO: persist to conversation store (Postgres) and log structured metadata
-  console.log('[handleChat] workspace', workspaceId, 'user', userId, 'replyLength', result.reply.length, 'tokensIn', result.tokensIn);
+  console.log(
+    '[handleChat] workspace',
+    workspaceId,
+    'user',
+    userId,
+    'replyLength',
+    result.reply.length,
+    'tokensIn',
+    result.tokensIn,
+  );
 
   return { status: 200, body: response };
 }

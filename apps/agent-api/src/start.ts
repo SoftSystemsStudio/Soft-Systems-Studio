@@ -29,5 +29,19 @@
 
   // Now require the app entry which imports `env` synchronously.
   // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // initialize shared state manager before loading the app
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const init = require('./lib/initState');
+    if (init && typeof init.initState === 'function') {
+      const requireRedis = process.env.NODE_ENV === 'production' && !!process.env.REDIS_URL;
+      await init.initState({ requireRedis });
+    }
+  } catch (e) {
+    // ignore init errors and continue; handlers will fallback to in-memory when needed
+    // eslint-disable-next-line no-console
+    console.warn('initState failed (continuing):', e?.message || e);
+  }
+
   require('./index');
 })();
