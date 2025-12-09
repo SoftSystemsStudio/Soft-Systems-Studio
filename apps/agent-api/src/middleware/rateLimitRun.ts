@@ -6,10 +6,7 @@ const MAX_REQUESTS_PER_WINDOW = 60;
 
 type Key = string;
 
-const buckets = new Map<
-  Key,
-  { windowStart: number; count: number }
->();
+const buckets = new Map<Key, { windowStart: number; count: number }>();
 
 function getClientKey(req: Request): string {
   // Prefer auth principal or workspace id if available; fallback to IP.
@@ -19,11 +16,7 @@ function getClientKey(req: Request): string {
   return `ip:${req.ip}`;
 }
 
-export function rateLimitRun(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function rateLimitRun(req: Request, res: Response, next: NextFunction) {
   const key = getClientKey(req);
   const now = Date.now();
   const bucket = buckets.get(key);

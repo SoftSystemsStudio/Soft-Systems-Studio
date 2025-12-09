@@ -1,9 +1,7 @@
 import type { Request, Response } from 'express';
 import type { RunRequest } from '../schemas/run';
 import { logger } from '../logger';
-
-// Import your orchestrator / service here when ready
-// import { runAgent } from '../services/runAgent';
+import { runChat } from '../services/runChat';
 
 export async function runController(req: Request, res: Response) {
   // Prefer validatedBody if middleware attaches it, otherwise fall back to req.body
@@ -14,22 +12,30 @@ export async function runController(req: Request, res: Response) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const principal = (req as any).authPrincipal;
 
-    // Example orchestrator call; adjust to your actual service
-    // const result = await runAgent({
-    //   workspaceId: body.workspaceId,
-    //   agentId: body.agentId,
-    //   input: body.input,
-    //   stream: body.stream,
-    //   principal,
-    // });
+    // Reshape RunRequest -> ChatInput expected by runChat
+    // Prefer the last user message as the primary message for the chat service
+    const messages = body.input?.messages ?? [];
+    const lastUserMessage =
+      [...messages].reverse().find((m) => m.role === 'user') ?? messages[messages.length - 1];
+    const message = lastUserMessage?.content ?? '';
 
-    // Placeholder response until wired to actual orchestrator:
-    const result = {
-      runId: 'placeholder-run-id',
-      status: 'queued',
-    };
+    const result = await runChat({
+      workspaceId: body.workspaceId,
+      agentId: body.agentId,
+      input: body.input,
+      stream: body.stream ?? false,
+      principal: {
+        userId: principal?.userId,
+        workspaceId: body.workspaceId,
+        roles: principal?.roles,
+      },
+      requestId: (req as any).requestId,
+    });
 
-    return res.status(202).json(result);
+    const statusCode = result.statusCode ?? (result.status === 'completed' ? 200 : 202);
+    return res
+      .status(statusCode)
+      .json({ runId: result.runId, status: result.status, reply: result.reply });
   } catch (err) {
     logger.error({ err }, 'runController failed');
     return res.status(500).json({
