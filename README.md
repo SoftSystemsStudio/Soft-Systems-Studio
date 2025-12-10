@@ -1,17 +1,10 @@
 # Soft Systems Studio
 
-<p align="center">
-  <strong>Production-Grade AI Agent Platform</strong><br>
-  Multi-tenant SaaS infrastructure for deploying intelligent business automation agents
-</p>
+## Production-Grade AI Agent Platform
 
-<p align="center">
-  <a href="#features">Features</a> •
-  <a href="#architecture">Architecture</a> •
-  <a href="#quick-start">Quick Start</a> •
-  <a href="#documentation">Documentation</a> •
-  <a href="#deployment">Deployment</a>
-</p>
+Multi-tenant SaaS infrastructure for deploying intelligent business automation agents.
+
+[Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Deployment](#deployment)
 
 ---
 
@@ -60,7 +53,7 @@ Soft Systems Studio is an enterprise-ready monorepo for building, deploying, and
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                              Frontend                                    │
 │                     Next.js + Clerk Auth + Tailwind                     │
@@ -95,7 +88,7 @@ Soft Systems Studio is an enterprise-ready monorepo for building, deploying, and
 
 ### Package Structure
 
-```
+```text
 soft-systems-studio/
 ├── apps/
 │   └── agent-api/              # Main API service
@@ -188,7 +181,6 @@ docker compose up --build
 - Validation & Middleware: introduced a Zod `RunRequest` schema, `validateBody` middleware, and an in-memory `rateLimitRun` middleware for the `/run` endpoint.
 - Controller + Tests: extracted `/run` handling into a controller (`runController`) and added unit and optional integration tests (Jest + supertest). Tests mock the orchestrator for unit tests and can run integration checks when `RUN_INTEGRATION_TESTS=true` and a test DB is configured.
 - Docs: updated architecture/security review and docs to reflect these changes.
-
 
 ## Secrets and configuration
 
@@ -345,6 +337,4 @@ Copyright © 2025 Soft Systems Studio. All rights reserved.
 
 ---
 
-<p align="center">
-  Built with ❤️ for production AI deployments
-</p>
+Built with ❤️ for production AI deployments.

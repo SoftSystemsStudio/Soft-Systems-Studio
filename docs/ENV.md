@@ -197,7 +197,7 @@ ENABLE_QUEUE_METRICS=true
 
 ### File Structure
 
-```
+```text
 soft-systems-studio/
 ├── .env                          # Root env (shared)
 ├── .env.example                  # Template
@@ -263,7 +263,7 @@ const envSchema = z.object({
 
 If validation fails, you'll see detailed errors:
 
-```
+```text
 ❌ Environment validation failed:
   - JWT_SECRET: must be at least 32 characters for security
   - OPENAI_API_KEY: should start with sk-

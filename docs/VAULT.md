@@ -1,8 +1,8 @@
-**HashiCorp Vault (overview and local dev)**
+# HashiCorp Vault (overview and local dev)
 
 This project sources runtime secrets from HashiCorp Vault via `bootstrapVault` in `apps/agent-api`.
 
-Local development (quick start)
+## Local development (quick start)
 
 - Start a local Vault dev server (for developer use only):
 

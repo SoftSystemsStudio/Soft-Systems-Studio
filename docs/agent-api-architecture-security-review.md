@@ -86,7 +86,7 @@ Date: 2025-12-09
 
 1. Add schema validation and rate limiting to `/run` chat endpoint
 
-- Severity: High | Area: Security/Reliability
+- Severity: High | Area: Security/Reliability  
 
 What: Validate and throttle chat requests to prevent malformed input and abuse.
 
@@ -96,9 +96,9 @@ How:
 - Apply `validateBody` and `rate` middleware to `/run` in `api/v1/agents/customer_service.ts`.
 - Return structured 400 errors on invalid input; add tests for invalid payloads and rate hits.
 
-2. Refactor chat route to dedicated router and service layer
+1. Refactor chat route to dedicated router and service layer
 
-- Severity: High | Area: Architecture/Maintainability
+- Severity: High | Area: Architecture/Maintainability  
 
 What: Remove monolithic handler from `index.ts`; isolate business logic.
 
@@ -108,9 +108,9 @@ How:
 - Create `services/chatController.ts` handling `handleChat` invocation and persistence.
 - Update tests to cover controller success/failure paths.
 
-3. Add resiliency around external LLM provider calls
+1. Add resiliency around external LLM provider calls
 
-- Severity: High | Area: Reliability
+- Severity: High | Area: Reliability  
 
 What: Prevent stalled or failing AI calls from hanging requests.
 
@@ -120,9 +120,9 @@ How:
 - Surface circuit-breaker state via metrics/logs.
 - Add tests simulating slow responses to ensure timeouts return `504/500` gracefully.
 
-4. Standardize request correlation and error envelope
+1. Standardize request correlation and error envelope
 
-- Severity: Medium | Area: Observability
+- Severity: Medium | Area: Observability  
 
 What: Ensure every log and error response includes request/workspace/user context.
 
@@ -132,9 +132,9 @@ How:
 - Update `errorHandler` to include `requestId` in responses while keeping stack traces only in non-prod.
 - Add middleware tests verifying headers and response bodies carry the IDs.
 
-5. Enforce consistent middleware ordering and configuration
+1. Enforce consistent middleware ordering and configuration
 
-- Severity: Medium | Area: Operations
+- Severity: Medium | Area: Operations  
 
 What: Codify middleware stack to avoid regressions when adding new routes.
 
@@ -144,9 +144,9 @@ How:
 - Apply the registry in `index.ts` to reduce per-route duplication.
 - Document required middleware per route type and add a smoke test ensuring protected routes reject unauthenticated requests.
 
-6. Document operational modes and server roles
+1. Document operational modes and server roles
 
-- Severity: Low | Area: DX/Deployment
+- Severity: Low | Area: DX/Deployment  
 
 What: Clarify how `SERVER_ROLE` influences queue metrics/startup.
 
@@ -157,10 +157,5 @@ How:
 
 ---
 
-This document captures the security, reliability, observability, and architecture findings and proposes an initial set of prioritized changes. If you want, I can:
-
-- Implement the schema + validation + rate-limit changes for `/run` as a next step (I recommend Zod + centralized rate middleware).
-- Create `services/chatController.ts` and refactor the existing handler into it, with unit tests.
-- Implement `services/llmProvider.ts` with timeouts and retries and add tests simulating slow responses.
-
-Tell me which action you want me to take next and I'll create a focused TODO plan and start implementing it.
+This version should clear the MD029 ordered-list errors for this file.
+::contentReference[oaicite:0]{index=0}
