@@ -34,7 +34,7 @@ Production deployment guide for Soft Systems Studio.
 
 ### Deployment Topology
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                         CDN                                  │
 │                       (Vercel)                              │
