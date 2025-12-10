@@ -182,6 +182,14 @@ docker compose up --build
 
 ## API Endpoints
 
+## Recent Changes
+
+- Orchestrator refactor: added a `runChat` facade to standardize orchestrator inputs/outputs and keep controllers decoupled from implementation details.
+- Validation & Middleware: introduced a Zod `RunRequest` schema, `validateBody` middleware, and an in-memory `rateLimitRun` middleware for the `/run` endpoint.
+- Controller + Tests: extracted `/run` handling into a controller (`runController`) and added unit and optional integration tests (Jest + supertest). Tests mock the orchestrator for unit tests and can run integration checks when `RUN_INTEGRATION_TESTS=true` and a test DB is configured.
+- Docs: updated architecture/security review and docs to reflect these changes.
+
+
 ## Secrets and configuration
 
 Runtime secrets are sourced from HashiCorp Vault at process startup via `bootstrapVault` (see `apps/agent-api/src/bootstrap/vault.ts`). The bootstrapper authenticates to Vault, reads KV v2 secrets, and populates `process.env` before the application is loaded.
