@@ -45,9 +45,9 @@ Date: 2025-12-09
 **Steps:**
 
 1. Create `apps/agent-api/src/routes/chat.ts` to host chat routes only.
-2. Extract persistence + reply logic from `index.ts` into `services/chatController.ts` that calls `handleChat` and `persistChatExchange`.
-3. Update `index.ts` to import and mount `chatRouter`; remove inline handler.
-4. Add unit tests for `chatController` to verify error paths and workspace scoping.
+1. Extract persistence + reply logic from `index.ts` into `services/chatController.ts` that calls `handleChat` and `persistChatExchange`.
+1. Update `index.ts` to import and mount `chatRouter`; remove inline handler.
+1. Add unit tests for `chatController` to verify error paths and workspace scoping.
 
 #### Introduce validation + rate limiting middleware consistently
 
@@ -56,9 +56,9 @@ Date: 2025-12-09
 **Steps:**
 
 1. Add a schema (e.g., Zod) for `/run` payload in `schemas/chat.ts`.
-2. Wrap `/run` handler with `validateBody` and `rateLimit` middleware.
-3. Ensure shared rate middleware is configurable per route via options.
-4. Add integration tests covering invalid payloads and rate-limit responses.
+1. Wrap `/run` handler with `validateBody` and `rateLimit` middleware.
+1. Ensure shared rate middleware is configurable per route via options.
+1. Add integration tests covering invalid payloads and rate-limit responses.
 
 #### Isolate external AI provider calls with resiliency
 
@@ -67,9 +67,9 @@ Date: 2025-12-09
 **Steps:**
 
 1. Create `services/llmProvider.ts` that wraps `handleChat` with configurable timeout and retries.
-2. Replace direct `handleChat` usage in chat controller with provider call.
-3. Add metrics/logging for provider latency and error rates.
-4. Write unit tests simulating slow/failing provider responses.
+1. Replace direct `handleChat` usage in chat controller with provider call.
+1. Add metrics/logging for provider latency and error rates.
+1. Write unit tests simulating slow/failing provider responses.
 
 #### Standardize observability
 
@@ -78,9 +78,9 @@ Date: 2025-12-09
 **Steps:**
 
 1. Add middleware to generate/propagate a `requestId` and attach to `req`.
-2. Ensure logger includes `requestId`, `workspaceId`, and `userId` fields in all logs.
-3. Update `errorHandler` to always include a stable code and optional `requestId` in responses.
-4. Add tests asserting error responses include code and omit stack traces in production mode.
+1. Ensure logger includes `requestId`, `workspaceId`, and `userId` fields in all logs.
+1. Update `errorHandler` to always include a stable code and optional `requestId` in responses.
+1. Add tests asserting error responses include code and omit stack traces in production mode.
 
 ## Section 8 — Initial Prioritized Action Plan (Draft)
 
