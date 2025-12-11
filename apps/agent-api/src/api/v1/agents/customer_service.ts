@@ -3,7 +3,8 @@ import { randomUUID } from 'crypto';
 interface AuthRequest extends Request {
   auth?: { workspaceId?: string };
 }
-import { ingestQueue } from '../../../queue';
+// Temporarily disable to debug server hang
+// import { ingestQueue } from '../../../queue';
 import { runChat } from '../../../services/chat';
 import requireAuth from '../../../middleware/auth-combined';
 import requireWorkspace from '../../../middleware/tenant';
@@ -38,13 +39,20 @@ router.post(
     // Generate stable ingestionId for idempotent retries
     const ingestionId = randomUUID();
 
+    // TODO: Re-enable queue after implementing BullMQ-compatible adapter for Upstash
     // Enqueue ingestion job for async processing with retries/backoff
-    await ingestQueue.add(
-      'ingest-job',
-      { workspaceId, documents: body.documents, ingestionId },
-      { attempts: 3, backoff: { type: 'exponential', delay: 2000 } },
-    );
-    res.json({ ok: true, enqueued: body.documents.length, ingestionId });
+    // await ingestQueue.add(
+    //   'ingest-job',
+    //   { workspaceId, documents: body.documents, ingestionId },
+    //   { attempts: 3, backoff: { type: 'exponential', delay: 2000 } },
+    // );
+    // res.json({ ok: true, enqueued: body.documents.length, ingestionId });
+
+    // Temporary: Return 503 Service Unavailable until queue system is re-enabled
+    res.status(503).json({
+      error: 'queue_unavailable',
+      message: 'Ingestion queue temporarily unavailable while migrating to Upstash Redis',
+    });
   }),
 );
 

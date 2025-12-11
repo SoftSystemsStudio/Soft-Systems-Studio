@@ -20,16 +20,18 @@ import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
 import { validateBody } from './lib/validate';
 import { chatRequestSchema, type ChatRequest } from './schemas/chat';
 import { persistChatExchange } from './services/chat';
-import { startQueueMetrics, gracefulShutdown, registerQueueShutdownHandlers } from './queue';
+// Temporarily disable queue to debug server hang
+// import { startQueueMetrics, gracefulShutdown, registerQueueShutdownHandlers } from './queue';
 
 // Initialize Sentry early (before any routes)
 initSentry();
 
 // Import handler using require to bypass TypeScript rootDir constraints
+// TODO: Debug why this causes server to hang - use dynamic import for now
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-const { handleChat } = require('@softsystems/agent-customer-service') as {
-  handleChat: (body: unknown) => Promise<{ status?: number; body?: unknown }>;
-};
+// const { handleChat } = require('@softsystems/agent-customer-service') as {
+//   handleChat: (body: unknown) => Promise<{ status?: number; body?: unknown }>;
+// };
 
 const app = express();
 
@@ -92,6 +94,8 @@ app.post(
       return;
     }
 
+    // Dynamic import to avoid hanging on module load
+    const { handleChat } = await import('@softsystems/agent-customer-service');
     const result = await handleChat({ ...payload, workspaceId });
 
     if (!result.status || !result.body) {
@@ -160,21 +164,20 @@ app.use(errorHandler);
 
 const port = env.PORT ? Number(env.PORT) : 5000;
 
-if (require.main === module) {
-  // Register shutdown handlers for graceful queue cleanup
-  registerQueueShutdownHandlers();
+// Start server - note: require.main may be start.ts when required from there
+if (require.main === module || require.main?.filename?.includes('start.ts')) {
+  // TODO: Re-enable queue after debugging server hang
+  // registerQueueShutdownHandlers();
+  // startQueueMetrics();
 
-  // Start queue metrics if enabled for this server role
-  startQueueMetrics();
-
+  console.log('[index.ts] Starting server on port', port);
   const server = app.listen(port, () => {
     logger.info({ port, serverRole: env.SERVER_ROLE }, `agent-api listening on ${port}`);
   });
 
-  // Graceful shutdown on server close
-  server.on('close', () => {
-    void gracefulShutdown();
-  });
+  // server.on('close', () => {
+  //   void gracefulShutdown();
+  // });
 }
 
 export default app;
