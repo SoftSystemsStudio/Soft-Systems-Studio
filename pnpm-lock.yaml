@@ -201,6 +201,9 @@ importers:
 
   packages/agent-customer-service:
     dependencies:
+      '@softsystems/agent-orchestrator':
+        specifier: workspace:*
+        version: link:../agent-orchestrator
       '@softsystems/core-llm':
         specifier: workspace:*
         version: link:../core-llm

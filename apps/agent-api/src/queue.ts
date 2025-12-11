@@ -4,8 +4,14 @@ import { queueWaitingGauge, queueActiveGauge, queueFailedGauge } from './metrics
 import logger from './logger';
 import env from './env';
 
-// Get the shared Redis connection
-const connection = getRedisClient();
+// Lazy connection - only connect when queues are actually used
+let connection: ReturnType<typeof getRedisClient> | null = null;
+function getConnection() {
+  if (!connection) {
+    connection = getRedisClient();
+  }
+  return connection;
+}
 
 // Define job types
 export type IngestJobData = {
@@ -30,36 +36,74 @@ export type EmailJobData = {
 
 export type JobData = IngestJobData | EmailJobData;
 
-// Queue definitions
-export const ingestQueue = new Queue<IngestJobData>('ingest', {
-  connection,
-  defaultJobOptions: {
-    attempts: 3,
-    backoff: {
-      type: 'exponential',
-      delay: 1000,
+// Queue definitions - use lazy getter
+function createIngestQueue() {
+  return new Queue<IngestJobData>('ingest', {
+    connection: getConnection(),
+    defaultJobOptions: {
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 1000,
+      },
+      removeOnComplete: 100, // Keep last 100 completed jobs
+      removeOnFail: 500, // Keep last 500 failed jobs for debugging
     },
-    removeOnComplete: 100, // Keep last 100 completed jobs
-    removeOnFail: 500, // Keep last 500 failed jobs for debugging
+  });
+}
+
+function createEmailQueue() {
+  return new Queue<EmailJobData>('email', {
+    connection: getConnection(),
+    defaultJobOptions: {
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 2000,
+      },
+      removeOnComplete: 50,
+      removeOnFail: 200,
+    },
+  });
+}
+
+// Lazy queue instances
+let _ingestQueue: Queue<IngestJobData> | null = null;
+let _emailQueue: Queue<EmailJobData> | null = null;
+let _ingestEvents: QueueEvents | null = null;
+let _emailEvents: QueueEvents | null = null;
+
+export const ingestQueue = new Proxy({} as Queue<IngestJobData>, {
+  get(_target, prop) {
+    if (!_ingestQueue) _ingestQueue = createIngestQueue();
+    return Reflect.get(_ingestQueue, prop);
   },
 });
 
-export const emailQueue = new Queue<EmailJobData>('email', {
-  connection,
-  defaultJobOptions: {
-    attempts: 3,
-    backoff: {
-      type: 'exponential',
-      delay: 2000,
-    },
-    removeOnComplete: 50,
-    removeOnFail: 200,
+export const emailQueue = new Proxy({} as Queue<EmailJobData>, {
+  get(_target, prop) {
+    if (!_emailQueue) _emailQueue = createEmailQueue();
+    return Reflect.get(_emailQueue, prop);
   },
 });
 
-// Queue events for logging
-const ingestEvents = new QueueEvents('ingest', { connection });
-const emailEvents = new QueueEvents('email', { connection });
+// Queue events for logging - only create when accessed
+function getIngestEvents() {
+  if (!_ingestEvents) {
+    _ingestEvents = new QueueEvents('ingest', { connection: getConnection() });
+  }
+  return _ingestEvents;
+}
+
+function getEmailEvents() {
+  if (!_emailEvents) {
+    _emailEvents = new QueueEvents('email', { connection: getConnection() });
+  }
+  return _emailEvents;
+}
+
+const ingestEvents = getIngestEvents();
+const emailEvents = getEmailEvents();
 
 ingestEvents.on('completed', ({ jobId }) => {
   logger.debug({ jobId, queue: 'ingest' }, 'Job completed');

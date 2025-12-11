@@ -5,20 +5,35 @@ import logger from '../logger';
 /**
  * Redis client singleton for the application
  * Used for caching, rate limiting, and general key-value storage
+ *
+ * Uses IORedis client with native Redis protocol
+ * Works with both local Redis and Upstash Redis native endpoint (rediss://)
  */
 
 let redisClient: Redis | null = null;
 
 /**
  * Get or create the Redis client singleton
+ * Returns IORedis client (works with both local and Upstash native endpoints)
  */
 export function getRedisClient(): Redis {
   if (!redisClient) {
-    redisClient = new IORedis(env.REDIS_URL, {
-      maxRetriesPerRequest: 3,
+    // Always use IORedis for native Redis protocol (required for BullMQ)
+    // Supports both local Redis and Upstash native endpoint (rediss://)
+    logger.info('Initializing Redis client');
+    const redisUrl = env.REDIS_URL;
+    const options: any = {
+      maxRetriesPerRequest: null, // Required for BullMQ
       enableReadyCheck: true,
       lazyConnect: true,
-    });
+      connectTimeout: 10000, // 10 second timeout
+      retryStrategy(times: number) {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
+    };
+
+    redisClient = new IORedis(redisUrl, options);
 
     redisClient.on('connect', () => {
       logger.info('Redis connected');
@@ -33,7 +48,7 @@ export function getRedisClient(): Redis {
     });
   }
 
-  return redisClient;
+  return redisClient as Redis;
 }
 
 /**
