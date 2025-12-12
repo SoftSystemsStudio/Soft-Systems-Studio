@@ -1,5 +1,6 @@
 import env from './env';
 import express from 'express';
+import cors from 'cors';
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -35,6 +36,18 @@ const app = express();
 
 // Sentry request handler (must be first middleware)
 app.use(sentryRequestHandler);
+
+// CORS - Allow frontend to make requests
+app.use(cors({
+  origin: env.NODE_ENV === 'production' 
+    ? [
+        'https://softsystems.studio',
+        'https://www.softsystems.studio',
+        /^https:\/\/.*\.vercel\.app$/
+      ]
+    : true, // Allow all origins in development
+  credentials: true,
+}));
 
 // Security headers via helmet
 app.use(
