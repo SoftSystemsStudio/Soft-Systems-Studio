@@ -1,6 +1,12 @@
 import { Queue, QueueEvents } from 'bullmq';
 import { getRedisClient } from './lib/redis';
-import { queueWaitingGauge, queueActiveGauge, queueFailedGauge } from './metrics';
+import { 
+  queueWaitingGauge, 
+  queueActiveGauge, 
+  queueFailedGauge,
+  dlqDepthGauge,
+  jobFailureCounter,
+} from './metrics';
 import logger from './logger';
 import env from './env';
 
@@ -41,13 +47,24 @@ function createIngestQueue() {
   return new Queue<IngestJobData>('ingest', {
     connection: getConnection(),
     defaultJobOptions: {
-      attempts: 3,
+      attempts: 5, // Increased from 3 to give more retry opportunities
       backoff: {
         type: 'exponential',
-        delay: 1000,
+        delay: 2000, // Start with 2s delay
       },
       removeOnComplete: 100, // Keep last 100 completed jobs
-      removeOnFail: 500, // Keep last 500 failed jobs for debugging
+      removeOnFail: false, // Never auto-remove failed jobs - they go to DLQ
+    },
+  });
+}
+
+// Dead Letter Queue for permanently failed ingestion jobs
+function createIngestDLQ() {
+  return new Queue<IngestJobData>('ingest-dlq', {
+    connection: getConnection(),
+    defaultJobOptions: {
+      removeOnComplete: false, // Keep all DLQ entries for investigation
+      removeOnFail: false,
     },
   });
 }
@@ -69,6 +86,7 @@ function createEmailQueue() {
 
 // Lazy queue instances
 let _ingestQueue: Queue<IngestJobData> | null = null;
+let _ingestDLQ: Queue<IngestJobData> | null = null;
 let _emailQueue: Queue<EmailJobData> | null = null;
 let _ingestEvents: QueueEvents | null = null;
 let _emailEvents: QueueEvents | null = null;
@@ -77,6 +95,13 @@ export const ingestQueue = new Proxy({} as Queue<IngestJobData>, {
   get(_target, prop) {
     if (!_ingestQueue) _ingestQueue = createIngestQueue();
     return Reflect.get(_ingestQueue, prop);
+  },
+});
+
+export const ingestDLQ = new Proxy({} as Queue<IngestJobData>, {
+  get(_target, prop) {
+    if (!_ingestDLQ) _ingestDLQ = createIngestDLQ();
+    return Reflect.get(_ingestDLQ, prop);
   },
 });
 
@@ -109,9 +134,72 @@ ingestEvents.on('completed', ({ jobId }) => {
   logger.debug({ jobId, queue: 'ingest' }, 'Job completed');
 });
 
-ingestEvents.on('failed', ({ jobId, failedReason }) => {
+ingestEvents.on('failed', async ({ jobId, failedReason }) => {
   logger.error({ jobId, queue: 'ingest', reason: failedReason }, 'Job failed');
+  
+  // Increment failure counter
+  const job = await ingestQueue.getJob(jobId);
+  if (job) {
+    const attemptsMade = job.attemptsMade || 0;
+    const maxAttempts = job.opts?.attempts || 5;
+    const isFinal = attemptsMade >= maxAttempts;
+    
+    // Extract failure reason category
+    const reason = extractFailureReason(failedReason);
+    jobFailureCounter.inc({ queue: 'ingest', reason, final: isFinal ? 'true' : 'false' });
+    
+    // Move to DLQ if all retries exhausted
+    if (isFinal) {
+      logger.warn(
+        { 
+          jobId, 
+          workspaceId: job.data.workspaceId,
+          ingestionId: job.data.ingestionId,
+          attempts: attemptsMade,
+          reason: failedReason,
+        },
+        'Job exhausted all retries, moving to DLQ',
+      );
+      
+      try {
+        await ingestDLQ.add('dlq-entry', {
+          ...job.data,
+          metadata: {
+            ...job.data.metadata,
+            originalJobId: jobId,
+            failedReason,
+            attemptsMade,
+            failedAt: new Date().toISOString(),
+          },
+        });
+        logger.info({ jobId, dlqJobId: jobId }, 'Job moved to DLQ');
+      } catch (dlqError) {
+        logger.error({ jobId, error: dlqError }, 'Failed to move job to DLQ');
+      }
+    }
+  }
 });
+
+// Track retry attempts
+ingestEvents.on('retries-exhausted', ({ jobId }) => {
+  logger.error({ jobId, queue: 'ingest' }, 'Job retries exhausted');
+});
+
+/**
+ * Extract categorized failure reason from error message
+ */
+function extractFailureReason(errorMessage: string): string {
+  if (!errorMessage) return 'unknown';
+  
+  const msg = errorMessage.toLowerCase();
+  if (msg.includes('workspace not found')) return 'workspace_not_found';
+  if (msg.includes('qdrant')) return 'qdrant_error';
+  if (msg.includes('database') || msg.includes('prisma')) return 'database_error';
+  if (msg.includes('timeout')) return 'timeout';
+  if (msg.includes('validation')) return 'validation_error';
+  
+  return 'unknown';
+}
 
 emailEvents.on('completed', ({ jobId }) => {
   logger.debug({ jobId, queue: 'email' }, 'Email job completed');
@@ -167,6 +255,7 @@ async function updateMetrics() {
   try {
     const ingestCounts = await ingestQueue.getJobCounts();
     const emailCounts = await emailQueue.getJobCounts();
+    const dlqCounts = await ingestDLQ.getJobCounts();
 
     queueWaitingGauge.set({ queue: 'ingest' }, ingestCounts.waiting || 0);
     queueActiveGauge.set({ queue: 'ingest' }, ingestCounts.active || 0);
@@ -175,6 +264,12 @@ async function updateMetrics() {
     queueWaitingGauge.set({ queue: 'email' }, emailCounts.waiting || 0);
     queueActiveGauge.set({ queue: 'email' }, emailCounts.active || 0);
     queueFailedGauge.set({ queue: 'email' }, emailCounts.failed || 0);
+    
+    // Track DLQ depth
+    dlqDepthGauge.set(
+      { queue: 'ingest' },
+      (dlqCounts.waiting || 0) + (dlqCounts.active || 0) + (dlqCounts.completed || 0)
+    );
   } catch (e) {
     // ignore metrics errors
   }
@@ -251,6 +346,7 @@ export async function closeQueues(): Promise<void> {
 
   await Promise.all([
     ingestQueue.close(),
+    ingestDLQ.close(),
     emailQueue.close(),
     ingestEvents.close(),
     emailEvents.close(),
@@ -313,6 +409,7 @@ export function registerQueueShutdownHandlers(): void {
 
 export default {
   ingestQueue,
+  ingestDLQ,
   emailQueue,
   addIngestJob,
   addEmailJob,
