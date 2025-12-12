@@ -38,6 +38,7 @@ Soft Systems Studio is an **enterprise-ready TypeScript monorepo** designed for 
 Building production-grade AI agents from scratch requires solving complex infrastructure challenges: multi-tenancy, authentication, rate limiting, job queues, vector search, observability, and more. Soft Systems Studio provides battle-tested solutions to all these problems, letting you focus on your unique business logic instead of reinventing infrastructure.
 
 **Business Value:**
+
 - **Faster Time to Market:** Pre-built authentication, billing, and agent framework reduce development time by 70%
 - **Production-Ready:** Security hardening, error handling, and monitoring built-in from day one
 - **Scalable Architecture:** Designed to scale from MVP to millions of users without major refactoring
@@ -45,12 +46,14 @@ Building production-grade AI agents from scratch requires solving complex infras
 - **Developer Experience:** Type-safe APIs, comprehensive tests, and clear documentation accelerate development
 
 **Competitive Advantages:**
+
 - **Full-Stack Solution:** Unlike agent-only frameworks, includes complete API, frontend, and infrastructure
 - **Multi-Tenant Native:** Built for SaaS from the ground up, not retrofitted
 - **Production Hardened:** Real-world security practices, not just proof-of-concept code
 - **Extensible Architecture:** Clean interfaces make it easy to add custom agents and integrations
 
 **Target Use Cases:**
+
 - Customer service automation with 24/7 AI support
 - Document-based Q&A systems for internal knowledge bases
 - Internal knowledge management agents for teams
@@ -193,10 +196,11 @@ Multi-layered security with defense-in-depth principles:
   - Database-backed for instant revocation
 
 - **Security Implementation Details:**
+
   ```typescript
   // Timing-safe comparison prevents timing attacks
   import { timingSafeEqual } from 'crypto';
-  
+
   function verifySecret(provided: string, actual: string): boolean {
     const providedBuf = Buffer.from(provided);
     const actualBuf = Buffer.from(actual);
@@ -221,18 +225,18 @@ Multi-layered security with defense-in-depth principles:
 
 **Threat Model & Mitigations:**
 
-| Threat | Mitigation |
-|--------|------------|
-| **SQL Injection** | Prisma ORM with parameterized queries |
-| **XSS Attacks** | React's automatic escaping + CSP headers |
-| **CSRF** | SameSite cookies + CSRF tokens for state-changing ops |
-| **Timing Attacks** | Constant-time comparisons for secrets |
-| **Replay Attacks** | JWT expiry + nonce tracking |
-| **Man-in-the-Middle** | TLS 1.3 enforced, HSTS headers |
-| **DDoS** | Rate limiting, connection limits, Cloudflare |
-| **Credential Stuffing** | Rate limiting, CAPTCHA after failures |
-| **Session Hijacking** | Secure cookies, session fingerprinting |
-| **Data Exfiltration** | Workspace-scoped queries, audit logging |
+| Threat                  | Mitigation                                            |
+| ----------------------- | ----------------------------------------------------- |
+| **SQL Injection**       | Prisma ORM with parameterized queries                 |
+| **XSS Attacks**         | React's automatic escaping + CSP headers              |
+| **CSRF**                | SameSite cookies + CSRF tokens for state-changing ops |
+| **Timing Attacks**      | Constant-time comparisons for secrets                 |
+| **Replay Attacks**      | JWT expiry + nonce tracking                           |
+| **Man-in-the-Middle**   | TLS 1.3 enforced, HSTS headers                        |
+| **DDoS**                | Rate limiting, connection limits, Cloudflare          |
+| **Credential Stuffing** | Rate limiting, CAPTCHA after failures                 |
+| **Session Hijacking**   | Secure cookies, session fingerprinting                |
+| **Data Exfiltration**   | Workspace-scoped queries, audit logging               |
 
 **Authorization**
 
@@ -275,17 +279,20 @@ Multi-layered security with defense-in-depth principles:
 Comprehensive metrics for production monitoring and SLO tracking:
 
 - **HTTP Metrics:**
+
   ```text
   http_request_duration_seconds{method="POST",route="/api/v1/agents/*/run",status="200"}
   http_requests_total{method="POST",route="/api/v1/agents/*/run",status="200"}
   http_request_size_bytes{method="POST",route="/api/v1/agents/*/run"}
   http_response_size_bytes{method="POST",route="/api/v1/agents/*/run"}
   ```
+
   - P50, P95, P99 latency tracking
   - Status code distribution
   - Request rate per endpoint
 
 - **Queue Metrics:**
+
   ```text
   job_queue_waiting{queue="ingest"} 42
   job_queue_active{queue="ingest"} 5
@@ -313,6 +320,7 @@ Comprehensive metrics for production monitoring and SLO tracking:
 Production-grade structured logging with privacy protection:
 
 - **Log Structure:**
+
   ```json
   {
     "level": 30,
@@ -361,19 +369,20 @@ Real-time error monitoring with rich context:
   - Custom error boundaries
 
 - **Context Enrichment:**
+
   ```javascript
   Sentry.setContext('user', {
     id: user.id,
     email: user.email,
     workspace: workspace.name,
-    role: user.role
+    role: user.role,
   });
-  
+
   Sentry.addBreadcrumb({
     category: 'agent',
     message: 'Starting RAG retrieval',
     level: 'info',
-    data: { query: query.substring(0, 100) }
+    data: { query: query.substring(0, 100) },
   });
   ```
 
@@ -464,17 +473,18 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
 **Caching Strategy**
 
 - **Redis Usage Patterns:**
+
   ```typescript
   // Cache-aside pattern for user data
   async function getUser(userId: string): Promise<User> {
     const cached = await redis.get(`user:${userId}`);
     if (cached) return JSON.parse(cached);
-    
+
     const user = await db.user.findUnique({ where: { id: userId } });
     await redis.setex(`user:${userId}`, 3600, JSON.stringify(user));
     return user;
   }
-  
+
   // Write-through for critical data
   async function updateWorkspace(id: string, data: any) {
     await db.workspace.update({ where: { id }, data });
@@ -491,6 +501,7 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
 **Horizontal Scaling**
 
 - **API Layer Scaling:**
+
   ```yaml
   # Kubernetes HPA configuration
   apiVersion: autoscaling/v2
@@ -505,19 +516,19 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
     minReplicas: 3
     maxReplicas: 20
     metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70
-    - type: Pods
-      pods:
-        metric:
-          name: http_requests_per_second
-        target:
-          type: AverageValue
-          averageValue: "1000"
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 70
+      - type: Pods
+        pods:
+          metric:
+            name: http_requests_per_second
+          target:
+            type: AverageValue
+            averageValue: '1000'
   ```
 
 - **Worker Scaling:**
@@ -534,16 +545,16 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
 
 **Performance Targets**
 
-| Metric | Target | Current |
-|--------|--------|--------|
-| API Response Time (P95) | < 500ms | 340ms |
-| Agent Response Time (P95) | < 5s | 3.2s |
-| Document Ingestion Rate | 100/min/worker | 120/min |
-| Concurrent Users | 10,000+ | Tested to 15K |
-| Database Queries/sec | 5,000+ | Tested to 8K |
-| Vector Search Latency (P95) | < 100ms | 65ms |
-| Job Queue Throughput | 1,000 jobs/min | 1,200/min |
-| System Uptime | 99.9% | 99.95% |
+| Metric                      | Target         | Current       |
+| --------------------------- | -------------- | ------------- |
+| API Response Time (P95)     | < 500ms        | 340ms         |
+| Agent Response Time (P95)   | < 5s           | 3.2s          |
+| Document Ingestion Rate     | 100/min/worker | 120/min       |
+| Concurrent Users            | 10,000+        | Tested to 15K |
+| Database Queries/sec        | 5,000+         | Tested to 8K  |
+| Vector Search Latency (P95) | < 100ms        | 65ms          |
+| Job Queue Throughput        | 1,000 jobs/min | 1,200/min     |
+| System Uptime               | 99.9%          | 99.95%        |
 
 ---
 
@@ -868,17 +879,18 @@ const response = await fetch('https://api.softsystems.studio/api/v1/agents/custo
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + accessToken,
-    'X-Workspace-ID': workspaceId
+    Authorization: 'Bearer ' + accessToken,
+    'X-Workspace-ID': workspaceId,
   },
   body: JSON.stringify({
     message: 'How do I reset my password?',
     conversationId: 'conv_abc123', // Optional, for multi-turn
-    context: { // Optional metadata
+    context: {
+      // Optional metadata
       userId: 'usr_xyz',
-      pageUrl: '/account/settings'
-    }
-  })
+      pageUrl: '/account/settings',
+    },
+  }),
 });
 
 const data = await response.json();
@@ -899,24 +911,24 @@ const data = await response.json();
 async function runChatAgent(input: ChatInput): Promise<ChatOutput> {
   // 1. Load conversation history
   const history = await getConversationHistory(input.conversationId);
-  
+
   // 2. Generate query embedding
   const queryEmbedding = await openai.embeddings.create({
     model: 'text-embedding-ada-002',
-    input: input.message
+    input: input.message,
   });
-  
+
   // 3. Search vector database
   const relevantDocs = await qdrant.search({
     collection: `workspace_${input.workspaceId}`,
     vector: queryEmbedding.data[0].embedding,
     limit: 5,
-    scoreThreshold: 0.75
+    scoreThreshold: 0.75,
   });
-  
+
   // 4. Build context window
-  const context = relevantDocs.map(doc => doc.payload.text).join('\n\n');
-  
+  const context = relevantDocs.map((doc) => doc.payload.text).join('\n\n');
+
   // 5. Construct prompt
   const prompt = `
     You are a helpful customer service agent.
@@ -925,32 +937,36 @@ async function runChatAgent(input: ChatInput): Promise<ChatOutput> {
     ${context}
     
     Conversation history:
-    ${history.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
+    ${history.map((msg) => `${msg.role}: ${msg.content}`).join('\n')}
     
     User: ${input.message}
     Assistant:`;
-  
+
   // 6. Call LLM
   const completion = await openai.chat.completions.create({
     model: 'gpt-4',
-    messages: [{ role: 'system', content: systemPrompt }, ...history, { role: 'user', content: input.message }],
+    messages: [
+      { role: 'system', content: systemPrompt },
+      ...history,
+      { role: 'user', content: input.message },
+    ],
     temperature: 0.7,
-    max_tokens: 500
+    max_tokens: 500,
   });
-  
+
   // 7. Save to conversation history
   await saveMessage(input.conversationId, {
     role: 'assistant',
-    content: completion.choices[0].message.content
+    content: completion.choices[0].message.content,
   });
-  
+
   return {
     reply: completion.choices[0].message.content,
     conversationId: input.conversationId,
-    sources: relevantDocs.map(doc => ({
+    sources: relevantDocs.map((doc) => ({
       title: doc.payload.title,
-      url: doc.payload.url
-    }))
+      url: doc.payload.url,
+    })),
   };
 }
 ```
@@ -1374,9 +1390,10 @@ spec:
 
 **High API Latency**
 
-*Symptoms:* P95 response time > 1 second
+_Symptoms:_ P95 response time > 1 second
 
-*Diagnosis:*
+_Diagnosis:_
+
 ```bash
 # Check Prometheus metrics
 curl http://localhost:4000/api/v1/observability/metrics | grep http_request_duration
@@ -1388,7 +1405,8 @@ tail -f logs/api.log | grep 'duration":[0-9]\{4,\}'
 SELECT count(*) FROM pg_stat_activity WHERE state = 'active';
 ```
 
-*Solutions:*
+_Solutions:_
+
 1. Scale up API instances if CPU > 80%
 2. Check for slow database queries and add indexes
 3. Verify Redis cache hit rate (should be > 80%)
@@ -1396,9 +1414,10 @@ SELECT count(*) FROM pg_stat_activity WHERE state = 'active';
 
 **Queue Backlog Growing**
 
-*Symptoms:* `job_queue_waiting{queue="ingest"}` > 1000
+_Symptoms:_ `job_queue_waiting{queue="ingest"}` > 1000
 
-*Diagnosis:*
+_Diagnosis:_
+
 ```bash
 # Check worker status
 curl http://localhost:4000/api/v1/system/status | jq '.queues'
@@ -1407,7 +1426,8 @@ curl http://localhost:4000/api/v1/system/status | jq '.queues'
 curl http://localhost:4000/api/v1/admin/dlq/stats
 ```
 
-*Solutions:*
+_Solutions:_
+
 1. Scale up worker instances
 2. Check DLQ for systematic failures
 3. Verify external service availability (OpenAI, Qdrant)
@@ -1415,19 +1435,21 @@ curl http://localhost:4000/api/v1/admin/dlq/stats
 
 **Database Connection Pool Exhausted**
 
-*Symptoms:* `Error: Too many clients already`
+_Symptoms:_ `Error: Too many clients already`
 
-*Diagnosis:*
+_Diagnosis:_
+
 ```sql
-SELECT 
+SELECT
   state,
   count(*),
   max(now() - state_change) as max_duration
-FROM pg_stat_activity 
+FROM pg_stat_activity
 GROUP BY state;
 ```
 
-*Solutions:*
+_Solutions:_
+
 1. Increase pool size in `DATABASE_URL` (currently 20)
 2. Check for connection leaks (missing `await` or `.finally()`)
 3. Implement PgBouncer for connection pooling
@@ -1435,9 +1457,10 @@ GROUP BY state;
 
 **Vector Search Errors**
 
-*Symptoms:* `QdrantError: Collection not found`
+_Symptoms:_ `QdrantError: Collection not found`
 
-*Solutions:*
+_Solutions:_
+
 1. Verify collection exists: `curl http://qdrant:6333/collections`
 2. Create missing collection: `POST /api/v1/admin/collections/create`
 3. Check Qdrant logs for initialization errors
@@ -1454,27 +1477,35 @@ GROUP BY state;
     "panels": [
       {
         "title": "API Request Rate",
-        "targets": [{
-          "expr": "rate(http_requests_total[5m])"
-        }]
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])"
+          }
+        ]
       },
       {
         "title": "API Latency (P95)",
-        "targets": [{
-          "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))"
-        }]
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))"
+          }
+        ]
       },
       {
         "title": "Queue Depth",
-        "targets": [{
-          "expr": "job_queue_waiting"
-        }]
+        "targets": [
+          {
+            "expr": "job_queue_waiting"
+          }
+        ]
       },
       {
         "title": "Error Rate",
-        "targets": [{
-          "expr": "rate(http_requests_total{status=~\"5..\"}[5m])"
-        }]
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{status=~\"5..\"}[5m])"
+          }
+        ]
       }
     ]
   }
@@ -1484,6 +1515,7 @@ GROUP BY state;
 ### Backup & Recovery Procedures
 
 **Daily Backup:**
+
 ```bash
 #!/bin/bash
 # Automated backup script (cron: 0 2 * * *)
@@ -1508,6 +1540,7 @@ find /backups/postgres -name "*.sql.gz" -mtime +30 -delete
 ```
 
 **Disaster Recovery:**
+
 ```bash
 # 1. Restore PostgreSQL
 gunzip -c backup_20251212_020000.sql.gz | psql $DATABASE_URL
@@ -1526,6 +1559,7 @@ curl http://localhost:4000/api/v1/system/health
 ### Security Incident Response
 
 **Suspected Breach:**
+
 1. **Immediately:** Rotate all secrets (JWT_SECRET, API keys)
 2. **Investigate:** Check audit logs for suspicious activity
 3. **Contain:** Block IP addresses if identified
@@ -1533,6 +1567,7 @@ curl http://localhost:4000/api/v1/system/health
 5. **Document:** Create incident report with timeline
 
 **Rate Limit Abuse:**
+
 ```bash
 # Identify top offenders
 redis-cli --scan --pattern 'ratelimit:*' | \
