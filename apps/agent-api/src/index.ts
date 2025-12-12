@@ -12,6 +12,7 @@ import customerServiceRouter from './api/v1/agents/customer_service';
 import cleanupRouter from './api/v1/admin/cleanup';
 import stripeRouter from './api/v1/stripe';
 import metricsRouter from './api/v1/observability/metrics';
+import publicRouter from './api/v1/public';
 import requireAuth from './middleware/auth-combined';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
@@ -77,6 +78,7 @@ app.use(requestContext);
 // All routes now handled by routers for consistency and testability
 app.use('/health', healthRouter);
 app.use('/status', statusRouter);
+app.use('/api/v1/public', publicRouter); // Public routes (no auth required)
 app.use('/api/v1/agents/customer-service', customerServiceRouter);
 app.use('/api/v1/auth', onboardingRouter);
 app.use('/api/v1/auth', loginRouter);
