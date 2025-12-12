@@ -76,7 +76,7 @@ async function main() {
   console.log('✅ Created workspace memberships');
 
   // Create sample conversation
-  const conversation = await prisma.conversation.create({
+  await prisma.conversation.create({
     data: {
       workspaceId: demoWorkspace.id,
       title: 'Getting Started with Soft Systems Studio',
@@ -355,7 +355,6 @@ async function main() {
         workspaceId: demoWorkspace.id,
         title: doc.title,
         content: doc.content,
-        status: doc.status,
         metadata: {},
       },
     });

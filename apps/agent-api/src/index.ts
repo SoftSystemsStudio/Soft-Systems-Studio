@@ -38,16 +38,19 @@ const app = express();
 app.use(sentryRequestHandler);
 
 // CORS - Allow frontend to make requests
-app.use(cors({
-  origin: env.NODE_ENV === 'production' 
-    ? [
-        'https://softsystems.studio',
-        'https://www.softsystems.studio',
-        /^https:\/\/.*\.vercel\.app$/
-      ]
-    : true, // Allow all origins in development
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin:
+      env.NODE_ENV === 'production'
+        ? [
+            'https://softsystems.studio',
+            'https://www.softsystems.studio',
+            /^https:\/\/.*\.vercel\.app$/,
+          ]
+        : true, // Allow all origins in development
+    credentials: true,
+  }),
+);
 
 // Security headers via helmet
 app.use(
