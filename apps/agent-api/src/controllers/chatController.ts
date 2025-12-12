@@ -4,7 +4,7 @@
  */
 import type { Request, Response } from 'express';
 import type { ChatRequest } from '../schemas/chat';
-import { logger } from '../logger';
+import { getRequestLogger } from '../middleware/requestContext';
 import { runChat } from '../services/chat';
 
 /**
@@ -24,6 +24,7 @@ interface AuthRequest extends Request {
  */
 export async function chatController(req: Request, res: Response) {
   const authReq = req as AuthRequest;
+  const log = getRequestLogger(req); // Use request-bound logger with context
 
   // Get validated body from middleware or fallback to req.body
   const payload = authReq.validatedBody ?? (authReq.body as ChatRequest);
@@ -39,10 +40,8 @@ export async function chatController(req: Request, res: Response) {
   }
 
   try {
-    logger.info(
+    log.info(
       {
-        workspaceId,
-        userId,
         messageLength: payload.message.length,
         hasConversationId: !!payload.conversationId,
       },
@@ -58,9 +57,8 @@ export async function chatController(req: Request, res: Response) {
     });
 
     logger.info(
-      {
-        workspaceId,
-        conversationId: result.conversationId,
+      {.info(
+      {Id: result.conversationId,
         messageIds: result.messageIds,
       },
       'Chat completed successfully',
@@ -72,11 +70,9 @@ export async function chatController(req: Request, res: Response) {
       conversationId: result.conversationId,
     });
   } catch (err) {
-    logger.error(
+    log.error(
       {
         err,
-        workspaceId,
-        userId,
       },
       'Chat controller failed',
     );

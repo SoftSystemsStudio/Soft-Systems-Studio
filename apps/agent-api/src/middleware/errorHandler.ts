@@ -96,14 +96,19 @@ export function errorHandler(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction,
 ): void {
-  // Prepare error context for logging
+  // Use request context if available (preferred), fallback to extracting from request
+  const context = (req as any).context || {
+    requestId: (req as { id?: string }).id || 'unknown',
+    method: req.method,
+    path: req.url,
+  };
+
+  // Prepare error context for logging with bound fields from request context
   const errorContext = {
     message: err.message,
     url: req.url,
     method: req.method,
-    userId: (req as { userId?: string }).userId,
-    workspaceId: (req as { workspaceId?: string }).workspaceId,
-    requestId: (req as { id?: string }).id,
+    ...context, // Includes requestId, userId, workspaceId, role, apiKeyId
   };
 
   // Capture error with Sentry for 5xx errors
@@ -114,12 +119,14 @@ export function errorHandler(
     }
   }
 
-  // Log error with structured logging
+  // Log error with structured logging using request logger if available
   if (env.NODE_ENV !== 'test') {
+    const log = (req as any).log || logger;
+    
     if (err instanceof AppError && err.statusCode < 500) {
-      logger.warn({ err, ...errorContext }, 'Client error');
+      log.warn({ err, ...errorContext }, 'Client error');
     } else {
-      logger.error({ err, ...errorContext }, 'Server error');
+      log.error({ err, ...errorContext }, 'Server error');
     }
   }
 

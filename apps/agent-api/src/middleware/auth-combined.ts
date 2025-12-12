@@ -4,6 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import '../types/auth'; // Import to register global types
 import type { AuthInfo } from '../types/auth';
 import { logger } from '../logger';
+import { refreshRequestContext } from './requestContext';
 
 // JWT Error types for better error handling
 type JwtErrorCode = 'TokenExpiredError' | 'JsonWebTokenError' | 'NotBeforeError';
@@ -53,6 +54,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
       }
 
       req.auth = payload;
+      refreshRequestContext(req);
       return next();
     } catch (err: unknown) {
       if (isJwtError(err)) {
@@ -103,6 +105,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
       apiKeyScopes: ['read', 'write'],
     };
     logger.debug({ apiKeyId: 'default' }, 'API key authenticated');
+    refreshRequestContext(req);
     return next();
   }
 
@@ -111,6 +114,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   if (env.NODE_ENV === 'development' && env.ALLOW_ANONYMOUS_DEV === true) {
     logger.warn('Anonymous access allowed (ALLOW_ANONYMOUS_DEV=true in development)');
     req.auth = { anonymous: true };
+    refreshRequestContext(req);
     return next();
   }
 
@@ -144,6 +148,7 @@ export function optionalAuth(req: Request, res: Response, next: NextFunction) {
     // Only allow anonymous if explicitly enabled in development
     if (env.NODE_ENV === 'development' && env.ALLOW_ANONYMOUS_DEV === true) {
       req.auth = { anonymous: true };
+      refreshRequestContext(req);
       return next();
     }
     // In production, optionalAuth still requires auth for protected operations
