@@ -18,6 +18,7 @@ import { rateLimitMetrics } from './middleware/rateLimitMetrics';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
 import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
+import { requestContext } from './middleware/requestContext';
 // Temporarily disable queue to debug server hang
 // import { startQueueMetrics, gracefulShutdown, registerQueueShutdownHandlers } from './queue';
 
@@ -69,6 +70,11 @@ app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+// Request context propagation (after httpLogger, before authentication)
+// This must come after httpLogger (which sets request ID) but can be before auth
+// Auth middleware will be called per-route, and context will be updated accordingly
+app.use(requestContext);
 
 // All routes now handled by routers for consistency and testability
 app.use('/health', healthRouter);
