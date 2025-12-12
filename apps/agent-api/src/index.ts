@@ -3,18 +3,16 @@ import express from 'express';
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import healthRouter from './health';
-import statusRouter from './status';
+import healthRouter from './api/v1/system/health';
+import statusRouter from './api/v1/system/status';
 import onboardingRouter from './api/v1/auth/onboarding';
 import loginRouter from './api/v1/auth/login';
 import tokenRouter from './api/v1/auth/token';
 import customerServiceRouter from './api/v1/agents/customer_service';
 import cleanupRouter from './api/v1/admin/cleanup';
 import stripeRouter from './api/v1/stripe';
-import { metricsHandler } from './metrics';
+import metricsRouter from './api/v1/observability/metrics';
 import requireAuth from './middleware/auth-combined';
-import { requireMetricsAuth } from './middleware/requireMetricsAuth';
-import { rateLimitMetrics } from './middleware/rateLimitMetrics';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
 import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
@@ -85,9 +83,7 @@ app.use('/api/v1/auth', loginRouter);
 app.use('/api/v1/auth', tokenRouter);
 app.use('/api/v1/admin', cleanupRouter);
 app.use('/api/v1/stripe', stripeRouter);
-
-// Metrics endpoint - secured with admin API key and rate limiting
-app.get('/metrics', requireMetricsAuth, rateLimitMetrics, metricsHandler);
+app.use('/api/v1/observability', metricsRouter);
 
 // Apply auth middleware to protected routes
 app.use('/api/v1/agents', requireAuth);

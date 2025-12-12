@@ -61,10 +61,7 @@ describe('Metrics Endpoint Security', () => {
     });
 
     it('should reject requests with invalid API key', async () => {
-      const response = await request(app)
-        .get('/metrics')
-        .set('x-api-key', 'wrong-key')
-        .expect(403);
+      const response = await request(app).get('/metrics').set('x-api-key', 'wrong-key').expect(403);
 
       expect(response.body).toEqual({
         error: 'invalid_credentials',

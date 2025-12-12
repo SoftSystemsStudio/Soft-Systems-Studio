@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import prisma from './db';
-import env from './env';
+import prisma from '../../../db';
+import env from '../../../env';
 import { execSync } from 'child_process';
-import { logger } from './logger';
+import { logger } from '../../../logger';
 
 // Wrap async handler to avoid ESLint no-misused-promises
 const asyncHandler =

@@ -1,6 +1,6 @@
 /**
  * Integration tests for /api/v1/agents/customer-service/chat route
- * 
+ *
  * NOTE: These tests require a running database and env vars to be set.
  * To run: ensure DATABASE_URL, OPENAI_API_KEY, and JWT_SECRET are set.
  */

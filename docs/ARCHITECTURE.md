@@ -151,6 +151,62 @@ soft-systems-studio/
 └──────────────────┘
 ```
 
+### Bootstrap Layer
+
+The `agent-api` bootstrap (`src/index.ts`) follows strict separation of concerns:
+
+**Responsibilities:**
+- Express app initialization
+- Security middleware setup (Helmet, Sentry)
+- HTTP logging and request context propagation
+- Body parsing and cookie handling
+- Router mounting (no direct handlers)
+- Error handling middleware
+
+**Prohibited:**
+- Direct route handlers (`app.get('/path', handler)`)
+- Business logic or service calls
+- Database queries
+- Complex conditional logic
+
+**Architecture Boundaries:**
+
+```
+src/
+├── index.ts                    # Bootstrap only - middleware + router mounting
+├── api/v1/                     # Versioned API routes
+│   ├── auth/                   # Authentication endpoints
+│   ├── agents/                 # Agent endpoints  
+│   ├── admin/                  # Admin endpoints
+│   ├── observability/          # Metrics, health (system endpoints)
+│   │   └── metrics.ts          # Prometheus metrics router
+│   └── system/                 # Health & status routers
+│       ├── health.ts           # Kubernetes health checks
+│       └── status.ts           # Service status endpoint
+├── middleware/                 # Express middleware
+├── controllers/                # Route controllers
+├── services/                   # Business logic
+└── worker/                     # Background job processors
+```
+
+**Route Versioning Strategy:**
+
+All API routes must be versioned under `/api/v{N}/`:
+- `/api/v1/auth/*` - Authentication
+- `/api/v1/agents/*` - Agent interactions
+- `/api/v1/admin/*` - Administrative operations
+- `/api/v1/observability/*` - Metrics and monitoring
+
+System endpoints for infrastructure (health/status) are under `/api/v1/system/`.
+
+**Testing:**
+
+Bootstrap layering is enforced by smoke tests (`tests/integration/bootstrap-layering.test.ts`):
+- Verify no direct handlers in index.ts
+- Check proper middleware ordering
+- Validate route structure compliance
+- Ensure documentation alignment
+
 ---
 
 ## Data Flow

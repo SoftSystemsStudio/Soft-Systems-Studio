@@ -15,6 +15,7 @@ The metrics endpoint requires an admin API key for access:
 - **Format**: Any secure random string
 
 Generate a secure key:
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
@@ -22,12 +23,14 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ### Authorization Methods
 
 #### 1. Header-based (Recommended)
+
 ```bash
 curl http://localhost:4000/metrics \
   -H "x-api-key: your-admin-api-key-here"
 ```
 
 #### 2. Query Parameter
+
 ```bash
 curl "http://localhost:4000/metrics?api_key=your-admin-api-key-here"
 ```
@@ -39,6 +42,7 @@ curl "http://localhost:4000/metrics?api_key=your-admin-api-key-here"
 - **Response**: `429 Too Many Requests` with `Retry-After` header
 
 This limit is suitable for:
+
 - Prometheus scrape intervals of 15s or longer
 - Multiple Prometheus instances with different scrape intervals
 - Ad-hoc metrics queries
@@ -55,22 +59,22 @@ scrape_configs:
     scrape_interval: 30s
     scrape_timeout: 10s
     metrics_path: '/metrics'
-    scheme: https  # or http for local
-    
+    scheme: https # or http for local
+
     static_configs:
       - targets:
           - 'api.yourdomain.com:443'
-    
+
     # Authentication via custom header
     params:
       # Option 1: Query parameter (less secure, visible in logs)
       # api_key: ['your-admin-api-key-here']
-    
+
     # Option 2: Custom headers (recommended)
     authorization:
       type: Bearer
       credentials_file: /etc/prometheus/api_key.txt
-    
+
     # OR use basic auth with headers
     headers:
       x-api-key: 'your-admin-api-key-here'
@@ -81,6 +85,7 @@ scrape_configs:
 #### Option 1: File-based (Recommended)
 
 Create a credentials file:
+
 ```bash
 echo "your-admin-api-key-here" > /etc/prometheus/api_key.txt
 chmod 600 /etc/prometheus/api_key.txt
@@ -88,6 +93,7 @@ chown prometheus:prometheus /etc/prometheus/api_key.txt
 ```
 
 Reference in `prometheus.yml`:
+
 ```yaml
 scrape_configs:
   - job_name: 'agent-api'
@@ -98,11 +104,13 @@ scrape_configs:
 #### Option 2: Environment Variable
 
 Set in Prometheus environment:
+
 ```bash
 export ADMIN_API_KEY="your-admin-api-key-here"
 ```
 
 Use in `prometheus.yml`:
+
 ```yaml
 scrape_configs:
   - job_name: 'agent-api'
@@ -113,12 +121,14 @@ scrape_configs:
 #### Option 3: Kubernetes Secret
 
 Create secret:
+
 ```bash
 kubectl create secret generic metrics-auth \
   --from-literal=api-key=your-admin-api-key-here
 ```
 
 Reference in Prometheus configuration:
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -166,6 +176,7 @@ Each instance should use the same `ADMIN_API_KEY` value.
 ## Available Metrics
 
 ### System Metrics (Default)
+
 - `process_cpu_user_seconds_total` - CPU time in user mode
 - `process_cpu_system_seconds_total` - CPU time in system mode
 - `process_resident_memory_bytes` - Resident memory size
@@ -176,6 +187,7 @@ Each instance should use the same `ADMIN_API_KEY` value.
 ### Application Metrics
 
 #### Queue Metrics
+
 ```
 job_queue_waiting{queue="ingest"}
 job_queue_active{queue="ingest"}
@@ -183,17 +195,20 @@ job_queue_failed{queue="ingest"}
 ```
 
 #### Rate Limiting
+
 ```
 rate_limit_hits_total{endpoint="/chat",limit_type="per_workspace"}
 rate_limit_hits_total{endpoint="/run",limit_type="per_workspace"}
 ```
 
 #### Redis
+
 ```
 redis_connection_status  # 1 = connected, 0 = disconnected
 ```
 
 #### Email
+
 ```
 emails_sent_total{template="welcome",status="success"}
 emails_sent_total{template="welcome",status="error"}
@@ -202,9 +217,11 @@ emails_sent_total{template="welcome",status="error"}
 ## Troubleshooting
 
 ### 401 Unauthorized
+
 **Problem**: Missing or invalid API key
 
 **Solution**:
+
 ```bash
 # Check if ADMIN_API_KEY is set
 echo $ADMIN_API_KEY
@@ -218,9 +235,11 @@ curl -v http://localhost:4000/metrics \
 ```
 
 ### 503 Service Unavailable
+
 **Problem**: `ADMIN_API_KEY` not configured in application
 
 **Solution**:
+
 ```bash
 # Set in .env
 echo 'ADMIN_API_KEY=your-admin-api-key-here' >> .env
@@ -230,14 +249,17 @@ pnpm --filter agent-api dev
 ```
 
 ### 429 Too Many Requests
+
 **Problem**: Exceeding rate limit (10 requests/minute)
 
 **Solution**:
+
 1. Increase scrape interval to 15s or higher
 2. Reduce number of Prometheus instances scraping same endpoint
 3. Check for misconfigured scrapers making excessive requests
 
 **Check rate limit headers**:
+
 ```bash
 curl -I http://localhost:4000/metrics \
   -H "x-api-key: your-admin-api-key-here"
@@ -247,10 +269,13 @@ curl -I http://localhost:4000/metrics \
 ```
 
 ### Empty Metrics
+
 **Problem**: Authentication succeeds but no metrics returned
 
 **Solution**:
+
 1. Check if metrics are being registered:
+
    ```typescript
    import client from './metrics';
    console.log(await client.register.metrics());
@@ -265,6 +290,7 @@ curl -I http://localhost:4000/metrics \
 ## Security Best Practices
 
 ### 1. Key Rotation
+
 Rotate admin API keys regularly (e.g., every 90 days):
 
 ```bash
@@ -281,6 +307,7 @@ echo "$NEW_KEY" > /etc/prometheus/api_key.txt
 ```
 
 ### 2. Network Security
+
 - Use HTTPS in production
 - Restrict metrics endpoint to internal network
 - Use firewall rules to limit access:
@@ -291,7 +318,9 @@ echo "$NEW_KEY" > /etc/prometheus/api_key.txt
   ```
 
 ### 3. Audit Logging
+
 All metrics access is logged:
+
 ```json
 {
   "level": "info",
@@ -302,6 +331,7 @@ All metrics access is logged:
 ```
 
 Monitor for suspicious activity:
+
 ```bash
 # Count failed authentication attempts
 grep "Invalid admin API key attempt" logs/app.log | wc -l
@@ -311,6 +341,7 @@ grep "Metrics access granted" logs/app.log | jq '.ip' | sort | uniq -c
 ```
 
 ### 4. Minimize Exposure
+
 - Don't expose metrics endpoint publicly
 - Use internal load balancer for Prometheus access
 - Consider separate metrics service for isolation
@@ -318,6 +349,7 @@ grep "Metrics access granted" logs/app.log | jq '.ip' | sort | uniq -c
 ## Grafana Dashboards
 
 ### Import Datasource
+
 ```json
 {
   "name": "Agent API Metrics",
@@ -330,21 +362,25 @@ grep "Metrics access granted" logs/app.log | jq '.ip' | sort | uniq -c
 ### Sample Queries
 
 #### Request Rate
+
 ```promql
 rate(rate_limit_hits_total[5m])
 ```
 
 #### Queue Depth
+
 ```promql
 job_queue_waiting{queue="ingest"}
 ```
 
 #### Error Rate
+
 ```promql
 rate(emails_sent_total{status="error"}[5m])
 ```
 
 #### Redis Status
+
 ```promql
 redis_connection_status
 ```
@@ -352,6 +388,7 @@ redis_connection_status
 ## Production Deployment
 
 ### Environment Variables
+
 ```bash
 # Required
 ADMIN_API_KEY=<32+ char secure key>
@@ -362,7 +399,9 @@ LOG_LEVEL=info
 ```
 
 ### Health Check
+
 Verify metrics endpoint is secured:
+
 ```bash
 # Should return 401
 curl http://api.yourdomain.com/metrics
@@ -373,12 +412,15 @@ curl http://api.yourdomain.com/metrics \
 ```
 
 ### Monitoring
+
 Set up alerts for:
+
 1. Failed authentication attempts
 2. Rate limit violations
 3. Metrics endpoint downtime
 
 Example Prometheus alert:
+
 ```yaml
 groups:
   - name: metrics_security
@@ -386,7 +428,7 @@ groups:
       - alert: MetricsAuthFailures
         expr: increase(rate_limit_hits_total{endpoint="/metrics"}[5m]) > 10
         annotations:
-          summary: "High rate of metrics authentication failures"
+          summary: 'High rate of metrics authentication failures'
 ```
 
 ## References

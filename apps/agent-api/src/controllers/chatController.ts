@@ -56,9 +56,9 @@ export async function chatController(req: Request, res: Response) {
       conversationId: payload.conversationId,
     });
 
-    logger.info(
-      {.info(
-      {Id: result.conversationId,
+    log.info(
+      {
+        conversationId: result.conversationId,
         messageIds: result.messageIds,
       },
       'Chat completed successfully',
