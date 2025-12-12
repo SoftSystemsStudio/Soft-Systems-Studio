@@ -90,4 +90,4 @@ docker compose -f infra/docker-compose.yml up -d
 
 - **Issues**: [GitHub Issues](https://github.com/SoftSystemsStudio/Soft-Systems-Studio/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/SoftSystemsStudio/Soft-Systems-Studio/discussions)
-- **Security**: security@softsystems.studio
+- **Security**: <security@softsystems.studio>
