@@ -69,7 +69,7 @@ Consolidated the chat endpoint from an inline route in `index.ts` into a proper 
 
 #### Before
 
-```
+```text
 index.ts (184 lines)
 ├── Inline chat route (70 lines)
 │   ├── Auth middleware
@@ -82,7 +82,7 @@ index.ts (184 lines)
 
 #### After
 
-```
+```text
 index.ts (113 lines - 38% reduction)
 └── Routes → customer_service.ts
     └── /chat → chatController.ts
@@ -114,7 +114,7 @@ index.ts (113 lines - 38% reduction)
 
 ### Chat Endpoint
 
-```
+```http
 POST /api/v1/agents/customer-service/chat
 ```
 

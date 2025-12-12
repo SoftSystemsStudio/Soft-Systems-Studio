@@ -188,28 +188,28 @@ Each instance should use the same `ADMIN_API_KEY` value.
 
 #### Queue Metrics
 
-```
+```text
 job_queue_waiting{queue="ingest"}
 job_queue_active{queue="ingest"}
 job_queue_failed{queue="ingest"}
 ```
 
-#### Rate Limiting
+#### Rate Limiting Metrics
 
-```
+```text
 rate_limit_hits_total{endpoint="/chat",limit_type="per_workspace"}
 rate_limit_hits_total{endpoint="/run",limit_type="per_workspace"}
 ```
 
 #### Redis
 
-```
+```text
 redis_connection_status  # 1 = connected, 0 = disconnected
 ```
 
 #### Email
 
-```
+```text
 emails_sent_total{template="welcome",status="success"}
 emails_sent_total{template="welcome",status="error"}
 ```
@@ -282,6 +282,7 @@ curl -I http://localhost:4000/metrics \
    ```
 
 2. Verify metric collection is enabled:
+
    ```typescript
    import { queueWaitingGauge } from './metrics';
    queueWaitingGauge.set({ queue: 'test' }, 10);
@@ -311,6 +312,7 @@ echo "$NEW_KEY" > /etc/prometheus/api_key.txt
 - Use HTTPS in production
 - Restrict metrics endpoint to internal network
 - Use firewall rules to limit access:
+
   ```bash
   # Allow only Prometheus server
   iptables -A INPUT -p tcp --dport 4000 -s prometheus-server-ip -j ACCEPT

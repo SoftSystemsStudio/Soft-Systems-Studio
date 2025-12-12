@@ -6,7 +6,7 @@ The ingestion queue uses a Dead Letter Queue (DLQ) system to handle permanently 
 
 ## Architecture
 
-```
+```text
 ┌─────────────────┐
 │  Ingest Queue   │
 │   (main queue)  │
@@ -105,7 +105,7 @@ Shows total jobs, failure breakdown by reason.
 
 **Output**:
 
-```
+```text
 📊 DLQ Statistics:
 Total jobs: 42
 Waiting: 42
@@ -342,7 +342,7 @@ sum(rate(job_failures_total{queue="ingest"}[5m]))
 2. **Simulate retries** - Test exponential backoff behavior
 3. **Log contextually** - Include workspace ID, ingestion ID in all logs
 
-### Operations
+### Operational Guidelines
 
 1. **Monitor DLQ depth daily** - Zero is ideal, <10 is acceptable
 2. **Investigate spikes immediately** - Pattern may indicate systemic issue
