@@ -6,10 +6,11 @@ Welcome to the Soft Systems Studio documentation.
 
 ## Getting Started
 
-| Document                           | Description                      |
-| ---------------------------------- | -------------------------------- |
-| [Main README](../README.md)        | Project overview and quick start |
-| [Contributing](../CONTRIBUTING.md) | Development setup and workflow   |
+| Document                               | Description                                |
+| -------------------------------------- | ------------------------------------------ |
+| [Project Overview](PROJECT_OVERVIEW.md)| **High-level system overview (START HERE)**|
+| [Main README](../README.md)            | Project overview and quick start           |
+| [Contributing](../CONTRIBUTING.md)     | Development setup and workflow             |
 
 ---
 
