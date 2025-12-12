@@ -48,18 +48,24 @@ COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 # Copy all node_modules from builder (includes generated Prisma client)
 COPY --from=builder /app/node_modules ./node_modules
 
-# Copy built packages
+# Copy built packages with their node_modules
 COPY --from=builder /app/packages/core-llm/dist ./packages/core-llm/dist
 COPY --from=builder /app/packages/core-llm/package.json ./packages/core-llm/package.json
+COPY --from=builder /app/packages/core-llm/node_modules ./packages/core-llm/node_modules
+
 COPY --from=builder /app/packages/agency-core/dist ./packages/agency-core/dist
 COPY --from=builder /app/packages/agency-core/package.json ./packages/agency-core/package.json
+COPY --from=builder /app/packages/agency-core/node_modules ./packages/agency-core/node_modules
+
 COPY --from=builder /app/packages/agent-customer-service/dist ./packages/agent-customer-service/dist
 COPY --from=builder /app/packages/agent-customer-service/package.json ./packages/agent-customer-service/package.json
+COPY --from=builder /app/packages/agent-customer-service/node_modules ./packages/agent-customer-service/node_modules
 
-# Copy agent-api app
+# Copy agent-api app with its node_modules
 COPY --from=builder /app/apps/agent-api/dist ./apps/agent-api/dist
 COPY --from=builder /app/apps/agent-api/package.json ./apps/agent-api/package.json
 COPY --from=builder /app/apps/agent-api/prisma ./apps/agent-api/prisma
+COPY --from=builder /app/apps/agent-api/node_modules ./apps/agent-api/node_modules
 
 WORKDIR /app/apps/agent-api
 
