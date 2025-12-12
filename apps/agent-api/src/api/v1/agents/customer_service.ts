@@ -1,22 +1,21 @@
 import { Router, Request, Response } from 'express';
-import { randomUUID } from 'crypto';
 interface AuthRequest extends Request {
   auth?: { workspaceId?: string };
 }
 // Temporarily disable to debug server hang
 // import { ingestQueue } from '../../../queue';
-import { runChat } from '../../../services/chat';
 import requireAuth from '../../../middleware/auth-combined';
 import requireWorkspace from '../../../middleware/tenant';
 import { requireRole } from '../../../middleware/role';
 import { asyncHandler } from '../../../middleware/errorHandler';
-import { validateBody as validateBodyLib } from '../../../lib/validate';
 import { validateBody } from '../../../middleware/validateBody';
 import { rateLimitRun } from '../../../middleware/rateLimitRun';
+import { rateLimitChat } from '../../../middleware/rateLimitChat';
 import { runRequestSchema } from '../../../schemas/run';
+import { chatRequestSchema } from '../../../schemas/chat';
 import { runController } from '../../../controllers/runController';
-import { ingestRequestSchema, type IngestRequest } from '../../../schemas/ingest';
-import { logger } from '../../../logger';
+import { chatController } from '../../../controllers/chatController';
+import { ingestRequestSchema } from '../../../schemas/ingest';
 
 const router = Router();
 
@@ -29,15 +28,11 @@ router.post(
   requireRole('admin', 'owner', 'agent', 'service'),
   validateBody(ingestRequestSchema),
   asyncHandler(async (req: AuthRequest, res: Response) => {
-    const body = req.body as IngestRequest;
     const workspaceId = req.auth?.workspaceId;
     if (!workspaceId) {
       res.status(400).json({ error: 'invalid_workspace' });
       return;
     }
-
-    // Generate stable ingestionId for idempotent retries
-    const ingestionId = randomUUID();
 
     // TODO: Re-enable queue after implementing BullMQ-compatible adapter for Upstash
     // Enqueue ingestion job for async processing with retries/backoff
@@ -54,6 +49,18 @@ router.post(
       message: 'Ingestion queue temporarily unavailable while migrating to Upstash Redis',
     });
   }),
+);
+
+// Chat endpoint - customer service conversations with RAG retrieval
+// Requires authentication, workspace context, and appropriate role
+router.post(
+  '/chat',
+  requireAuth,
+  requireWorkspace,
+  requireRole('user', 'agent', 'admin', 'service', 'member'),
+  rateLimitChat,
+  validateBody(chatRequestSchema),
+  asyncHandler(chatController),
 );
 
 // Run chat with RAG-lite retrieval

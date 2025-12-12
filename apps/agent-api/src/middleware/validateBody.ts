@@ -22,6 +22,6 @@ export function validateBody<T>(schema: ZodSchema<T>) {
     // Attach parsed, typed body to request for downstream consumers
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (req as any).validatedBody = result.data;
-    next();
+    return next();
   };
 }

@@ -1,5 +1,5 @@
 import env from './env';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -13,13 +13,9 @@ import cleanupRouter from './api/v1/admin/cleanup';
 import stripeRouter from './api/v1/stripe';
 import { metricsHandler } from './metrics';
 import requireAuth from './middleware/auth-combined';
-import requireWorkspace from './middleware/tenant';
-import { errorHandler, notFoundHandler, asyncHandler } from './middleware/errorHandler';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
 import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
-import { validateBody } from './lib/validate';
-import { chatRequestSchema, type ChatRequest } from './schemas/chat';
-import { persistChatExchange } from './services/chat';
 // Temporarily disable queue to debug server hang
 // import { startQueueMetrics, gracefulShutdown, registerQueueShutdownHandlers } from './queue';
 
@@ -72,74 +68,7 @@ app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// Extended request type with auth context
-interface AuthRequest extends Request {
-  auth?: { workspaceId?: string; userId?: string };
-}
-
-// Chat endpoint - requires authentication and workspace context
-// Validates payload with Zod schema
-app.post(
-  '/api/agents/customer-service/chat',
-  requireAuth,
-  requireWorkspace,
-  validateBody(chatRequestSchema),
-  asyncHandler(async (req: AuthRequest, res: Response) => {
-    const payload = req.body as ChatRequest;
-    const workspaceId = req.auth?.workspaceId;
-
-    // This should never happen due to requireWorkspace middleware, but TypeScript needs it
-    if (!workspaceId) {
-      res.status(401).json({ error: 'workspace_required' });
-      return;
-    }
-
-    // Dynamic import to avoid hanging on module load
-    const { handleChat } = await import('@softsystems/agent-customer-service');
-    const result = await handleChat({ ...payload, workspaceId });
-
-    if (!result.status || !result.body) {
-      res.status(500).json({ error: 'chat_failed' });
-      return;
-    }
-
-    const reply = (result.body as { reply?: string })?.reply || '';
-
-    // Persist conversation and messages using transactional service
-    // Fail the request if persistence fails - data integrity is critical
-    try {
-      const persistResult = await persistChatExchange({
-        workspaceId,
-        userMessage: payload.message,
-        assistantReply: reply,
-        conversationId: payload.conversationId,
-      });
-
-      logger.info('Chat completed', {
-        workspaceId,
-        conversationId: persistResult.conversationId,
-        messageLength: payload.message.length,
-      });
-
-      // Return reply with conversation context
-      res.status(result.status).json({
-        ...result.body,
-        conversationId: persistResult.conversationId,
-      });
-    } catch (persistError) {
-      logger.error('Failed to persist conversation', {
-        error: persistError,
-        workspaceId,
-      });
-      // Fail the request - don't return a reply if we can't persist it
-      res.status(500).json({
-        error: 'persistence_failed',
-        message: 'Failed to save conversation. Please try again.',
-      });
-    }
-  }),
-);
-
+// All routes now handled by routers for consistency and testability
 app.use('/health', healthRouter);
 app.use('/status', statusRouter);
 app.use('/api/v1/agents/customer-service', customerServiceRouter);
@@ -171,13 +100,13 @@ if (require.main === module || require.main?.filename?.includes('start.ts')) {
   // startQueueMetrics();
 
   console.log('[index.ts] Starting server on port', port);
-  const server = app.listen(port, () => {
+  app.listen(port, () => {
     logger.info({ port, serverRole: env.SERVER_ROLE }, `agent-api listening on ${port}`);
   });
 
-  // server.on('close', () => {
-  //   void gracefulShutdown();
-  // });
+  // When re-enabling queue system:
+  // const server = app.listen(port, () => { ... });
+  // server.on('close', () => { void gracefulShutdown(); });
 }
 
 export default app;
