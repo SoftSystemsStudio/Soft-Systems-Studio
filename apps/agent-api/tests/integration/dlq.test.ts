@@ -133,7 +133,7 @@ describe('Dead Letter Queue', () => {
         },
       });
 
-      const details = await inspectDLQJob(job.id!);
+      const details = await inspectDLQJob(job.id);
       expect(details).toBeTruthy();
       expect(details?.data.workspaceId).toBe('test-workspace');
       expect(details?.data.metadata?.failedReason).toBe('Database connection failed');
@@ -155,7 +155,7 @@ describe('Dead Letter Queue', () => {
       };
 
       const dlqJob = await ingestDLQ.add('dlq-entry', jobData);
-      const result = await retryDLQJob(dlqJob.id!);
+      const result = await retryDLQJob(dlqJob.id);
 
       expect(result.success).toBe(true);
       expect(result.newJobId).toBeDefined();
