@@ -22,7 +22,7 @@ Deep dive into the Soft Systems Studio system architecture.
 
 Soft Systems Studio is a multi-tenant AI agent platform built as a TypeScript monorepo. The architecture follows a layered approach with clear separation of concerns:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           PRESENTATION LAYER                             │
 ├─────────────────────────────────────────────────────────────────────────┤
@@ -73,7 +73,7 @@ Soft Systems Studio is a multi-tenant AI agent platform built as a TypeScript mo
 
 ### Monorepo Structure
 
-```
+```text
 soft-systems-studio/
 ├── apps/
 │   └── agent-api/                 # Main API application
@@ -132,7 +132,7 @@ soft-systems-studio/
 
 ### Package Dependencies
 
-```
+```text
                     ┌─────────────────┐
                     │   agent-api     │
                     │   (Express)     │
@@ -156,6 +156,7 @@ soft-systems-studio/
 The `agent-api` bootstrap (`src/index.ts`) follows strict separation of concerns:
 
 **Responsibilities:**
+
 - Express app initialization
 - Security middleware setup (Helmet, Sentry)
 - HTTP logging and request context propagation
@@ -164,6 +165,7 @@ The `agent-api` bootstrap (`src/index.ts`) follows strict separation of concerns
 - Error handling middleware
 
 **Prohibited:**
+
 - Direct route handlers (`app.get('/path', handler)`)
 - Business logic or service calls
 - Database queries
@@ -171,12 +173,12 @@ The `agent-api` bootstrap (`src/index.ts`) follows strict separation of concerns
 
 **Architecture Boundaries:**
 
-```
+```text
 src/
 ├── index.ts                    # Bootstrap only - middleware + router mounting
 ├── api/v1/                     # Versioned API routes
 │   ├── auth/                   # Authentication endpoints
-│   ├── agents/                 # Agent endpoints  
+│   ├── agents/                 # Agent endpoints
 │   ├── admin/                  # Admin endpoints
 │   ├── observability/          # Metrics, health (system endpoints)
 │   │   └── metrics.ts          # Prometheus metrics router
@@ -192,6 +194,7 @@ src/
 **Route Versioning Strategy:**
 
 All API routes must be versioned under `/api/v{N}/`:
+
 - `/api/v1/auth/*` - Authentication
 - `/api/v1/agents/*` - Agent interactions
 - `/api/v1/admin/*` - Administrative operations
@@ -202,6 +205,7 @@ System endpoints for infrastructure (health/status) are under `/api/v1/system/`.
 **Testing:**
 
 Bootstrap layering is enforced by smoke tests (`tests/integration/bootstrap-layering.test.ts`):
+
 - Verify no direct handlers in index.ts
 - Check proper middleware ordering
 - Validate route structure compliance
@@ -213,7 +217,7 @@ Bootstrap layering is enforced by smoke tests (`tests/integration/bootstrap-laye
 
 ### Chat Request Flow
 
-```
+```text
 Client                  API                    Services              Data
   │                      │                        │                    │
   │  POST /run           │                        │                    │
@@ -244,7 +248,7 @@ Client                  API                    Services              Data
 
 ### Ingestion Flow
 
-```
+```text
 Client                  API                 Queue                Worker
   │                      │                    │                      │
   │  POST /ingest        │                    │                      │
@@ -312,7 +316,7 @@ export async function ingestDocuments(input: IngestInput): Promise<IngestResult>
 
 ### Login Flow
 
-```
+```text
 ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
 │  Client  │     │   API    │     │   DB     │     │  Redis   │
 └────┬─────┘     └────┬─────┘     └────┬─────┘     └────┬─────┘
@@ -334,7 +338,7 @@ export async function ingestDocuments(input: IngestInput): Promise<IngestResult>
 
 ### Token Refresh Flow
 
-```
+```text
 ┌──────────┐     ┌──────────┐     ┌──────────┐
 │  Client  │     │   API    │     │   DB     │
 └────┬─────┘     └────┬─────┘     └────┬─────┘
@@ -358,7 +362,7 @@ export async function ingestDocuments(input: IngestInput): Promise<IngestResult>
 
 ### Customer Service Agent
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Customer Service Agent                    │
 ├─────────────────────────────────────────────────────────────┤
@@ -402,7 +406,7 @@ ${conversationHistory}
 
 ### BullMQ Architecture
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │                      Queue System                             │
 ├──────────────────────────────────────────────────────────────┤
@@ -451,7 +455,7 @@ export const ingestQueue = new Queue<IngestJobData>('ingest', {
 
 ### Entity Relationship Diagram
 
-```
+```text
 ┌──────────────────┐       ┌──────────────────┐
 │      User        │       │    Workspace     │
 ├──────────────────┤       ├──────────────────┤
