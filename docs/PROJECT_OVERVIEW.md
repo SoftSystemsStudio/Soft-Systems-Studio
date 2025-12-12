@@ -1,6 +1,6 @@
 # Soft Systems Studio - Project Overview
 
-**Production-Grade Multi-Tenant AI Agent Platform**
+Production-Grade Multi-Tenant AI Agent Platform
 
 Version: 0.1.0  
 Last Updated: December 12, 2025
@@ -96,7 +96,7 @@ Soft Systems Studio is a **full-stack platform** that provides everything needed
 
 ### 🤖 AI Agent System
 
-**Customer Service Agent**
+#### Customer Service Agent
 
 The customer service agent uses a sophisticated RAG (Retrieval-Augmented Generation) pipeline to provide accurate, context-aware responses:
 
@@ -133,7 +133,7 @@ The customer service agent uses a sophisticated RAG (Retrieval-Augmented Generat
   - Support for concurrent conversations: 1000+ per instance
   - Memory footprint: ~50MB per 100 active sessions
 
-**Document Knowledge Base**
+#### Document Knowledge Base
 
 Robust asynchronous document ingestion system with enterprise-grade reliability:
 
@@ -176,7 +176,7 @@ Robust asynchronous document ingestion system with enterprise-grade reliability:
 
 ### 🔐 Security & Authentication
 
-**Authentication Layer**
+#### Authentication Layer
 
 Multi-layered security with defense-in-depth principles:
 
@@ -223,7 +223,7 @@ Multi-layered security with defense-in-depth principles:
   - Rate limiting on failed login attempts
   - Account lockout after 5 failed attempts
 
-**Threat Model & Mitigations:**
+#### Threat Model & Mitigations
 
 | Threat                  | Mitigation                                            |
 | ----------------------- | ----------------------------------------------------- |
@@ -238,7 +238,7 @@ Multi-layered security with defense-in-depth principles:
 | **Session Hijacking**   | Secure cookies, session fingerprinting                |
 | **Data Exfiltration**   | Workspace-scoped queries, audit logging               |
 
-**Authorization**
+#### Authorization
 
 - Role-Based Access Control (RBAC)
   - `admin` - Platform administrators
@@ -249,7 +249,7 @@ Multi-layered security with defense-in-depth principles:
 - Workspace-scoped resource isolation
 - API key authentication for service-to-service calls
 
-**Security Hardening**
+#### Security Hardening
 
 - Helmet.js security headers
 - Rate limiting (per-IP, per-workspace, per-endpoint)
@@ -259,14 +259,14 @@ Multi-layered security with defense-in-depth principles:
 
 ### 👥 Multi-Tenancy
 
-**Workspace Isolation**
+#### Workspace Isolation
 
 - Each workspace operates as an isolated tenant
 - Database-level data isolation with workspace_id foreign keys
 - Redis-based rate limit tracking per workspace
 - Independent billing and usage metering
 
-**User Management**
+#### User Management
 
 - Users can belong to multiple workspaces
 - Role assignments per workspace
@@ -274,7 +274,7 @@ Multi-layered security with defense-in-depth principles:
 
 ### 📊 Observability
 
-**Metrics (Prometheus)**
+#### Metrics (Prometheus)
 
 Comprehensive metrics for production monitoring and SLO tracking:
 
@@ -308,6 +308,7 @@ Comprehensive metrics for production monitoring and SLO tracking:
   - Slow query counter (>100ms)
 
 - **Business Metrics:**
+
   ```text
   llm_api_calls_total{model="gpt-4",workspace="acme-corp"}
   llm_tokens_used{model="gpt-4",type="prompt",workspace="acme-corp"}
@@ -315,7 +316,7 @@ Comprehensive metrics for production monitoring and SLO tracking:
   agent_conversations_active{workspace="acme-corp"}
   ```
 
-**Logging (Pino)**
+#### Logging (Pino)
 
 Production-grade structured logging with privacy protection:
 
@@ -358,7 +359,7 @@ Production-grade structured logging with privacy protection:
   - `error`: Application errors (API call failed, validation error)
   - `fatal`: System failure (database unreachable, out of memory)
 
-**Error Tracking (Sentry)**
+#### Error Tracking (Sentry)
 
 Real-time error monitoring with rich context:
 
@@ -397,7 +398,7 @@ Real-time error monitoring with rich context:
   - PagerDuty for P0/P1 incidents
   - Email digests for error trends
 
-**Recommended Alerting Rules:**
+#### Recommended Alerting Rules
 
 ```yaml
 # High error rate
@@ -418,27 +419,27 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
 
 ### 🚀 Infrastructure
 
-**Queue System (BullMQ)**
+#### Queue System (BullMQ)
 
 - Reliable background job processing
 - Exponential backoff retry logic
 - Dead Letter Queue (DLQ) for failed jobs
 - Job prioritization and concurrency control
 
-**Database (PostgreSQL + Prisma)**
+#### Database (PostgreSQL + Prisma)
 
 - Type-safe database access
 - Automatic migrations
 - Connection pooling
 - Query performance monitoring
 
-**Caching (Redis)**
+#### Caching (Redis)
 
 - Rate limit storage
 - Session caching
 - Queue backing store
 
-**Vector Store (Qdrant)**
+#### Vector Store (Qdrant)
 
 - Efficient similarity search
 - Hybrid search (vector + keyword)
@@ -446,7 +447,7 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
 
 ### 💾 Data Persistence & Scaling
 
-**Database Architecture**
+#### Database Architecture
 
 - **PostgreSQL Schema Design:**
   - Normalized schema with strategic denormalization for read performance
@@ -470,7 +471,7 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
   - Recovery Time Objective (RTO): 1 hour
   - Recovery Point Objective (RPO): 5 minutes
 
-**Caching Strategy**
+#### Caching Strategy
 
 - **Redis Usage Patterns:**
 
@@ -498,7 +499,7 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
   - Cache stampede prevention with locking
   - Lazy loading for non-critical data
 
-**Horizontal Scaling**
+#### Horizontal Scaling
 
 - **API Layer Scaling:**
 
@@ -543,7 +544,7 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
   - Table partitioning for large datasets
   - Vertical scaling for primary (up to 64 vCPU, 256GB RAM)
 
-**Performance Targets**
+#### Performance Targets
 
 | Metric                      | Target         | Current       |
 | --------------------------- | -------------- | ------------- |
@@ -679,13 +680,13 @@ rate(llm_api_calls_total{status="error"}[5m]) > 0.1
 
 ### Request Flow
 
-**1. User Request → API Gateway**
+#### 1. User Request → API Gateway
 
 ```text
 Client → Nginx/Load Balancer → Express Server → Route Handler
 ```
 
-**2. Authentication & Authorization**
+#### 2. Authentication & Authorization
 
 ```text
 Route Handler → requireAuth middleware → JWT verification
@@ -694,14 +695,14 @@ Route Handler → requireAuth middleware → JWT verification
               → Controller function
 ```
 
-**3. Service Layer Processing**
+#### 3. Service Layer Processing
 
 ```text
 Controller → Service → Database/External APIs → Response
                     → Queue job (async)
 ```
 
-**4. Background Processing**
+#### 4. Background Processing
 
 ```text
 BullMQ Queue → Worker → Service → Database/APIs
@@ -1351,7 +1352,7 @@ spec:
 
 ---
 
-## Getting Started
+## Quick Start Guides
 
 ### For New Developers
 
@@ -1379,8 +1380,8 @@ spec:
 
 1. **Read [Security](SECURITY.md)** for security model
 2. **Review [Authentication & Authorization](#3-authentication--authorization)**
-3. **Check [Security Hardening](#security--authentication)** features
-4. \*\*Review audit logging and compliance features
+3. **Check [Security Hardening](#security-hardening)** features
+4. **Review audit logging and compliance features
 
 ---
 
@@ -1388,7 +1389,7 @@ spec:
 
 ### Common Issues & Solutions
 
-**High API Latency**
+#### High API Latency
 
 _Symptoms:_ P95 response time > 1 second
 
@@ -1412,7 +1413,7 @@ _Solutions:_
 3. Verify Redis cache hit rate (should be > 80%)
 4. Check external API latency (OpenAI, Qdrant)
 
-**Queue Backlog Growing**
+#### Queue Backlog Growing
 
 _Symptoms:_ `job_queue_waiting{queue="ingest"}` > 1000
 
@@ -1433,7 +1434,7 @@ _Solutions:_
 3. Verify external service availability (OpenAI, Qdrant)
 4. Increase job timeout if legitimate jobs are timing out
 
-**Database Connection Pool Exhausted**
+#### Database Connection Pool Exhausted
 
 _Symptoms:_ `Error: Too many clients already`
 
@@ -1455,7 +1456,7 @@ _Solutions:_
 3. Implement PgBouncer for connection pooling
 4. Add query timeouts to prevent long-running queries
 
-**Vector Search Errors**
+#### Vector Search Errors
 
 _Symptoms:_ `QdrantError: Collection not found`
 
@@ -1608,8 +1609,8 @@ redis-cli SET "blocked:ip:1.2.3.4" "1" EX 86400
 
 ### Contact
 
-- **Security Issues:** security@softsystems.studio
-- **General Inquiries:** contact@softsystemsstudio.com
+- **Security Issues:** <security@softsystems.studio>
+- **General Inquiries:** <contact@softsystemsstudio.com>
 
 ---
 
