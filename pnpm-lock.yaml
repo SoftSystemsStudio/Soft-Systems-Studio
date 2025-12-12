@@ -80,6 +80,9 @@ importers:
       '@softsystems/agent-customer-service':
         specifier: workspace:^
         version: link:../../packages/agent-customer-service
+      '@softsystems/agent-orchestrator':
+        specifier: workspace:^
+        version: link:../../packages/agent-orchestrator
       '@softsystems/core-llm':
         specifier: workspace:^
         version: link:../../packages/core-llm

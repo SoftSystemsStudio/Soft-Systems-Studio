@@ -1381,7 +1381,7 @@ spec:
 1. **Read [Security](SECURITY.md)** for security model
 2. **Review [Authentication & Authorization](#3-authentication--authorization)**
 3. **Check [Security Hardening](#security-hardening)** features
-4. **Review audit logging and compliance features
+4. \*\*Review audit logging and compliance features
 
 ---
 
