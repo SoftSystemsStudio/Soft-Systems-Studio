@@ -41,6 +41,25 @@ export const emailsSentCounter = new client.Counter({
   labelNames: ['template', 'status'],
 });
 
+// Dead Letter Queue metrics
+export const dlqDepthGauge = new client.Gauge({
+  name: 'job_dlq_depth',
+  help: 'Number of jobs in dead letter queue',
+  labelNames: ['queue'],
+});
+
+export const jobFailureCounter = new client.Counter({
+  name: 'job_failures_total',
+  help: 'Total number of job failures by reason',
+  labelNames: ['queue', 'reason', 'final'],
+});
+
+export const jobRetryCounter = new client.Counter({
+  name: 'job_retries_total',
+  help: 'Total number of job retry attempts',
+  labelNames: ['queue', 'attempt'],
+});
+
 // small express server to expose metrics when run standalone (optional)
 export function metricsHandler(_req: express.Request, res: express.Response): void {
   res.set('Content-Type', client.register.contentType);

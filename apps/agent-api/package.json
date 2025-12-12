@@ -20,10 +20,15 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "test:integration": "NODE_ENV=test jest tests/integration --runInBand",
-    "typecheck": "tsc --noEmit",
     "deploy:staging": "pnpm build && pnpm migrate:staging",
     "deploy:production": "pnpm build && pnpm migrate:production",
-    "health:check": "curl -f http://localhost:${PORT:-5000}/health || exit 1"
+    "health:check": "curl -f http://localhost:${PORT:-5000}/health || exit 1",
+    "dlq:stats": "ts-node scripts/dlq-cli.ts stats",
+    "dlq:list": "ts-node scripts/dlq-cli.ts list",
+    "dlq:inspect": "ts-node scripts/dlq-cli.ts inspect",
+    "dlq:retry": "ts-node scripts/dlq-cli.ts retry",
+    "dlq:retry-all": "ts-node scripts/dlq-cli.ts retry-all",
+    "dlq:purge": "ts-node scripts/dlq-cli.ts purge"
   },
   "bin": {},
   "dependencies": {
