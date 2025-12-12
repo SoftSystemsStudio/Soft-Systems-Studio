@@ -13,6 +13,8 @@ import cleanupRouter from './api/v1/admin/cleanup';
 import stripeRouter from './api/v1/stripe';
 import { metricsHandler } from './metrics';
 import requireAuth from './middleware/auth-combined';
+import { requireMetricsAuth } from './middleware/requireMetricsAuth';
+import { rateLimitMetrics } from './middleware/rateLimitMetrics';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
 import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
@@ -77,7 +79,9 @@ app.use('/api/v1/auth', loginRouter);
 app.use('/api/v1/auth', tokenRouter);
 app.use('/api/v1/admin', cleanupRouter);
 app.use('/api/v1/stripe', stripeRouter);
-app.get('/metrics', metricsHandler);
+
+// Metrics endpoint - secured with admin API key and rate limiting
+app.get('/metrics', requireMetricsAuth, rateLimitMetrics, metricsHandler);
 
 // Apply auth middleware to protected routes
 app.use('/api/v1/agents', requireAuth);
