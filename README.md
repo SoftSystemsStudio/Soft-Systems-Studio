@@ -4,7 +4,7 @@
 
 Multi-tenant SaaS infrastructure for deploying intelligent business automation agents.
 
-[Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Deployment](#deployment)
+**🚀 [Try the Demo](docs/DEMO.md)** | [Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Deployment](#deployment)
 
 ---
 
@@ -116,13 +116,25 @@ soft-systems-studio/
 
 ## Quick Start
 
+### 🎯 One-Command Demo
+
+```bash
+git clone https://github.com/SoftSystemsStudio/Soft-Systems-Studio.git
+cd Soft-Systems-Studio
+./scripts/demo.sh
+```
+
+This will install dependencies, start services, seed demo data, and launch the API server.
+
+📖 **Full Demo Guide:** [docs/DEMO.md](docs/DEMO.md)
+
 ### Prerequisites
 
 - Node.js 22+
 - pnpm 8+
 - Docker (for local Postgres/Redis/Qdrant)
 
-### Development Setup
+### Manual Development Setup
 
 ```bash
 # 1. Clone and install
@@ -164,6 +176,7 @@ docker compose up --build
 
 | Document                             | Description                          |
 | ------------------------------------ | ------------------------------------ |
+| [**Demo Guide**](docs/DEMO.md)       | **Quick start demo with examples**   |
 | [Architecture](docs/ARCHITECTURE.md) | System design and component overview |
 | [API Reference](docs/API.md)         | REST API endpoints and schemas       |
 | [Environment](docs/ENV.md)           | Environment variables reference      |

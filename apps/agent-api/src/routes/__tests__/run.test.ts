@@ -8,7 +8,7 @@ import { runRequestSchema } from '../../schemas/run';
 
 // Mock the real orchestration to keep tests deterministic and fast
 jest.mock('../../services/runChat', () => ({
-  runChat: jest.fn(async (input: any) => ({
+  runChat: jest.fn(async (_input: any) => ({
     runId: 'mock-run-id',
     status: 'completed',
     statusCode: 200,

@@ -12,13 +12,6 @@ export async function runController(req: Request, res: Response) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const principal = (req as any).authPrincipal;
 
-    // Reshape RunRequest -> ChatInput expected by runChat
-    // Prefer the last user message as the primary message for the chat service
-    const messages = body.input?.messages ?? [];
-    const lastUserMessage =
-      [...messages].reverse().find((m) => m.role === 'user') ?? messages[messages.length - 1];
-    const message = lastUserMessage?.content ?? '';
-
     const result = await runChat({
       workspaceId: body.workspaceId,
       agentId: body.agentId,
