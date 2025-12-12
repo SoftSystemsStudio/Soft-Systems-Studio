@@ -323,7 +323,9 @@ export default function Home() {
 
       {/* Chat Widget */}
       <ChatWidget
-        apiUrl={(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + '/api/v1/public/chat'}
+        apiUrl={
+          (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + '/api/v1/public/chat'
+        }
         title="Ask about Soft Systems Studio"
         greeting="Hi! I'm an AI assistant. Ask me anything about our platform, features, pricing, or how to get started!"
         primaryColor="#a3e635"
