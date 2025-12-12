@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import prisma from './db';
-import env from './env';
-import { isRedisHealthy } from './lib/redis';
+import prisma from '../../../db';
+import env from '../../../env';
+import { isRedisHealthy } from '../../../lib/redis';
 
 const router = Router();
 

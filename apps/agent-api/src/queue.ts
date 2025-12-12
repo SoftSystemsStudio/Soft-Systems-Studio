@@ -1,8 +1,8 @@
 import { Queue, QueueEvents } from 'bullmq';
 import { getRedisClient } from './lib/redis';
-import { 
-  queueWaitingGauge, 
-  queueActiveGauge, 
+import {
+  queueWaitingGauge,
+  queueActiveGauge,
   queueFailedGauge,
   dlqDepthGauge,
   jobFailureCounter,
@@ -136,23 +136,23 @@ ingestEvents.on('completed', ({ jobId }) => {
 
 ingestEvents.on('failed', async ({ jobId, failedReason }) => {
   logger.error({ jobId, queue: 'ingest', reason: failedReason }, 'Job failed');
-  
+
   // Increment failure counter
   const job = await ingestQueue.getJob(jobId);
   if (job) {
     const attemptsMade = job.attemptsMade || 0;
     const maxAttempts = job.opts?.attempts || 5;
     const isFinal = attemptsMade >= maxAttempts;
-    
+
     // Extract failure reason category
     const reason = extractFailureReason(failedReason);
     jobFailureCounter.inc({ queue: 'ingest', reason, final: isFinal ? 'true' : 'false' });
-    
+
     // Move to DLQ if all retries exhausted
     if (isFinal) {
       logger.warn(
-        { 
-          jobId, 
+        {
+          jobId,
           workspaceId: job.data.workspaceId,
           ingestionId: job.data.ingestionId,
           attempts: attemptsMade,
@@ -160,7 +160,7 @@ ingestEvents.on('failed', async ({ jobId, failedReason }) => {
         },
         'Job exhausted all retries, moving to DLQ',
       );
-      
+
       try {
         await ingestDLQ.add('dlq-entry', {
           ...job.data,
@@ -190,14 +190,14 @@ ingestEvents.on('retries-exhausted', ({ jobId }) => {
  */
 function extractFailureReason(errorMessage: string): string {
   if (!errorMessage) return 'unknown';
-  
+
   const msg = errorMessage.toLowerCase();
   if (msg.includes('workspace not found')) return 'workspace_not_found';
   if (msg.includes('qdrant')) return 'qdrant_error';
   if (msg.includes('database') || msg.includes('prisma')) return 'database_error';
   if (msg.includes('timeout')) return 'timeout';
   if (msg.includes('validation')) return 'validation_error';
-  
+
   return 'unknown';
 }
 
@@ -264,11 +264,11 @@ async function updateMetrics() {
     queueWaitingGauge.set({ queue: 'email' }, emailCounts.waiting || 0);
     queueActiveGauge.set({ queue: 'email' }, emailCounts.active || 0);
     queueFailedGauge.set({ queue: 'email' }, emailCounts.failed || 0);
-    
+
     // Track DLQ depth
     dlqDepthGauge.set(
       { queue: 'ingest' },
-      (dlqCounts.waiting || 0) + (dlqCounts.active || 0) + (dlqCounts.completed || 0)
+      (dlqCounts.waiting || 0) + (dlqCounts.active || 0) + (dlqCounts.completed || 0),
     );
   } catch (e) {
     // ignore metrics errors

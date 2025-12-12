@@ -4,7 +4,11 @@
  */
 import request from 'supertest';
 import express, { Express, Request, Response, NextFunction } from 'express';
-import { requestContext, getRequestContext, getRequestLogger } from '../../src/middleware/requestContext';
+import {
+  requestContext,
+  getRequestContext,
+  getRequestLogger,
+} from '../../src/middleware/requestContext';
 import { httpLogger } from '../../src/logger';
 import { errorHandler } from '../../src/middleware/errorHandler';
 import { refreshRequestContext } from '../../src/middleware/requestContext';
@@ -18,7 +22,7 @@ jest.mock('../../src/logger', () => {
     error: jest.fn(),
     debug: jest.fn(),
   };
-  
+
   return {
     logger: mockLogger,
     httpLogger: jest.fn((_req: any, _res: any, next: any) => {
@@ -45,7 +49,7 @@ describe('Request Context Propagation', () => {
     // Get mocked logger instance
     mockLogger = require('../../src/logger').logger;
     jest.clearAllMocks();
-    
+
     app = express();
     app.use(express.json());
     app.use(httpLogger as any);
@@ -65,7 +69,7 @@ describe('Request Context Propagation', () => {
       });
 
       const response = await request(app).get('/test');
-      
+
       expect(response.body.hasContext).toBe(true);
       expect(response.body.requestId).toMatch(/^req-/);
       expect(response.body.method).toBe('GET');
@@ -81,7 +85,7 @@ describe('Request Context Propagation', () => {
       });
 
       await request(app).get('/test');
-      
+
       // Verify child logger was created
       expect(mockLogger.child).toHaveBeenCalled();
       const childCall = mockLogger.child.mock.calls[0][0];
@@ -119,7 +123,7 @@ describe('Request Context Propagation', () => {
       });
 
       const response = await request(app).get('/test');
-      
+
       expect(response.body.userId).toBe('user-123');
       expect(response.body.workspaceId).toBe('workspace-456');
     });
@@ -204,7 +208,7 @@ describe('Request Context Propagation', () => {
       expect(mockLogger.child).toHaveBeenCalledWith(
         expect.objectContaining({
           requestId: expect.stringMatching(/^req-/),
-        })
+        }),
       );
     });
 
@@ -227,7 +231,7 @@ describe('Request Context Propagation', () => {
       expect(mockLogger.child).toHaveBeenLastCalledWith(
         expect.objectContaining({
           userId: 'user-999',
-        })
+        }),
       );
     });
 
@@ -252,7 +256,7 @@ describe('Request Context Propagation', () => {
         expect.objectContaining({
           userId: 'user-123',
           workspaceId: 'ws-abc',
-        })
+        }),
       );
     });
 
@@ -267,7 +271,7 @@ describe('Request Context Propagation', () => {
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         expect.objectContaining({ action: 'test' }),
-        'Test log message'
+        'Test log message',
       );
     });
   });
@@ -318,7 +322,7 @@ describe('Request Context Propagation', () => {
       });
 
       app.get('/test', async (_req: Request, _res: Response) => {
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         throw new Error('Async error');
       });
 
@@ -328,7 +332,7 @@ describe('Request Context Propagation', () => {
       expect(errorLogCall[0]).toMatchObject(
         expect.objectContaining({
           userId: 'async-user',
-        })
+        }),
       );
     });
   });

@@ -1,10 +1,10 @@
 /**
  * Tests for Dead Letter Queue functionality
  */
-import { 
-  getDLQJobs, 
-  getDLQStats, 
-  retryDLQJob, 
+import {
+  getDLQJobs,
+  getDLQStats,
+  retryDLQJob,
   retryAllDLQJobs,
   purgeDLQEntries,
   inspectDLQJob,
@@ -133,7 +133,7 @@ describe('Dead Letter Queue', () => {
         },
       });
 
-      const details = await inspectDLQJob(job.id!);
+      const details = await inspectDLQJob(job.id);
       expect(details).toBeTruthy();
       expect(details?.data.workspaceId).toBe('test-workspace');
       expect(details?.data.metadata?.failedReason).toBe('Database connection failed');
@@ -155,7 +155,7 @@ describe('Dead Letter Queue', () => {
       };
 
       const dlqJob = await ingestDLQ.add('dlq-entry', jobData);
-      const result = await retryDLQJob(dlqJob.id!);
+      const result = await retryDLQJob(dlqJob.id);
 
       expect(result.success).toBe(true);
       expect(result.newJobId).toBeDefined();
@@ -168,7 +168,7 @@ describe('Dead Letter Queue', () => {
       const mainQueueJobs = await ingestQueue.getJobs(['waiting']);
       expect(mainQueueJobs.length).toBe(1);
       expect(mainQueueJobs[0]?.data.workspaceId).toBe('test-workspace');
-      
+
       // Verify DLQ metadata was cleaned
       expect(mainQueueJobs[0]?.data.metadata?.originalJobId).toBeUndefined();
       expect(mainQueueJobs[0]?.data.metadata?.failedReason).toBeUndefined();
@@ -219,7 +219,7 @@ describe('Dead Letter Queue', () => {
 
       const result = await retryAllDLQJobs(3);
       expect(result.attempted).toBe(3);
-      
+
       // 2 jobs should remain in DLQ
       const dlqJobs = await getDLQJobs();
       expect(dlqJobs.length).toBe(2);
@@ -256,7 +256,7 @@ describe('Dead Letter Queue', () => {
         documents: [],
         metadata: { failedReason: 'Test' },
       });
-      
+
       await ingestDLQ.add('dlq-entry', {
         workspaceId: 'ws-2',
         documents: [],
@@ -276,7 +276,7 @@ describe('Dead Letter Queue', () => {
       const errorMessage = 'Workspace not found: abc-123';
       // The extractFailureReason function is internal, so we test via the event handler
       // by checking the metrics after a failure
-      
+
       await ingestDLQ.add('dlq-entry', {
         workspaceId: 'missing-ws',
         documents: [],

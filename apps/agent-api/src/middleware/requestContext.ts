@@ -1,7 +1,7 @@
 /**
  * Request Context Middleware
  * Propagates request ID and authentication context into logs and error handlers
- * 
+ *
  * Flow:
  * 1. Extract request ID from pino-http (already set)
  * 2. Attach auth context from authentication middleware
@@ -43,7 +43,7 @@ declare global {
  */
 function extractAuthContext(req: Request): Partial<RequestContext> {
   const auth = req.auth;
-  
+
   if (!auth) {
     return {};
   }
@@ -80,22 +80,18 @@ function extractAuthContext(req: Request): Partial<RequestContext> {
 
 /**
  * Request context middleware
- * 
+ *
  * Usage: app.use(requestContext)
- * 
+ *
  * Must be placed AFTER:
  * - httpLogger (pino-http) - provides request ID
  * - authentication middleware - provides auth context
- * 
+ *
  * Provides:
  * - req.context - structured context object
  * - req.log - child logger with bound context
  */
-export function requestContext(
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-): void {
+export function requestContext(req: Request, _res: Response, next: NextFunction): void {
   // Extract request ID from pino-http
   const requestId = (req.id || (req as any).log?.bindings?.()?.reqId || 'unknown') as string;
 
@@ -153,7 +149,7 @@ export function refreshRequestContext(req: Request): void {
   }
 
   const authContext = extractAuthContext(req);
-  
+
   // Update context with auth info
   Object.assign(req.context, authContext);
 

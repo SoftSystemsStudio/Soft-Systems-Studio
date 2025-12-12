@@ -25,7 +25,7 @@ function getClientKey(req: Request): string {
 /**
  * Rate limit middleware for metrics endpoint
  * Enforces per-scraper rate limiting using token bucket algorithm
- * 
+ *
  * Configuration:
  * - 10 requests per minute per admin API key
  * - Suitable for Prometheus scrape intervals of 15s or longer

@@ -18,8 +18,8 @@ export interface DLQJob {
  */
 export async function getDLQJobs(limit = 100): Promise<DLQJob[]> {
   const jobs = await ingestDLQ.getJobs(['waiting', 'active', 'completed'], 0, limit - 1);
-  
-  return jobs.map(job => ({
+
+  return jobs.map((job) => ({
     id: job.id || 'unknown',
     data: job.data,
     timestamp: job.timestamp,
@@ -34,14 +34,14 @@ export async function getDLQJobs(limit = 100): Promise<DLQJob[]> {
 export async function getDLQStats() {
   const counts = await ingestDLQ.getJobCounts();
   const jobs = await getDLQJobs(1000);
-  
+
   // Count failures by reason
   const failuresByReason: Record<string, number> = {};
-  jobs.forEach(job => {
+  jobs.forEach((job) => {
     const reason = job.failedReason || 'unknown';
     failuresByReason[reason] = (failuresByReason[reason] || 0) + 1;
   });
-  
+
   return {
     total: jobs.length,
     waiting: counts.waiting || 0,
@@ -57,41 +57,44 @@ export async function getDLQStats() {
  */
 export async function retryDLQJob(jobId: string): Promise<{ success: boolean; newJobId?: string }> {
   const job = await ingestDLQ.getJob(jobId);
-  
+
   if (!job) {
     logger.warn({ jobId }, 'DLQ job not found');
     return { success: false };
   }
-  
+
   try {
     // Extract original job data (without DLQ metadata)
     const { metadata, ...originalData } = job.data;
     const cleanData: IngestJobData = {
       ...originalData,
-      metadata: metadata ? Object.fromEntries(
-        Object.entries(metadata).filter(([key]) => 
-          !['originalJobId', 'failedReason', 'attemptsMade', 'failedAt'].includes(key)
-        )
-      ) : undefined,
+      metadata: metadata
+        ? Object.fromEntries(
+            Object.entries(metadata).filter(
+              ([key]) =>
+                !['originalJobId', 'failedReason', 'attemptsMade', 'failedAt'].includes(key),
+            ),
+          )
+        : undefined,
     };
-    
+
     // Re-queue to main ingest queue
     const newJob = await ingestQueue.add('retry', cleanData, {
       priority: 1, // Higher priority for retries
     });
-    
+
     // Remove from DLQ
     await job.remove();
-    
+
     logger.info(
-      { 
+      {
         dlqJobId: jobId,
         newJobId: newJob.id,
         workspaceId: cleanData.workspaceId,
       },
       'DLQ job re-queued successfully',
     );
-    
+
     return { success: true, newJobId: newJob.id };
   } catch (error) {
     logger.error({ jobId, error }, 'Failed to retry DLQ job');
@@ -109,12 +112,12 @@ export async function retryAllDLQJobs(maxJobs = 100): Promise<{
   failed: number;
 }> {
   const jobs = await getDLQJobs(maxJobs);
-  
+
   let succeeded = 0;
   let failed = 0;
-  
+
   logger.info({ totalJobs: jobs.length }, 'Starting bulk DLQ retry');
-  
+
   for (const job of jobs) {
     const result = await retryDLQJob(job.id);
     if (result.success) {
@@ -122,13 +125,13 @@ export async function retryAllDLQJobs(maxJobs = 100): Promise<{
     } else {
       failed++;
     }
-    
+
     // Add small delay to avoid overwhelming the system
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  
+
   logger.info({ attempted: jobs.length, succeeded, failed }, 'Bulk DLQ retry completed');
-  
+
   return {
     attempted: jobs.length,
     succeeded,
@@ -142,10 +145,10 @@ export async function retryAllDLQJobs(maxJobs = 100): Promise<{
  */
 export async function purgeDLQEntries(olderThanDays = 30): Promise<number> {
   const jobs = await getDLQJobs(10000);
-  const cutoffTime = Date.now() - (olderThanDays * 24 * 60 * 60 * 1000);
-  
+  const cutoffTime = Date.now() - olderThanDays * 24 * 60 * 60 * 1000;
+
   let purged = 0;
-  
+
   for (const job of jobs) {
     if (job.timestamp < cutoffTime) {
       const fullJob = await ingestDLQ.getJob(job.id);
@@ -155,9 +158,9 @@ export async function purgeDLQEntries(olderThanDays = 30): Promise<number> {
       }
     }
   }
-  
+
   logger.info({ purged, olderThanDays }, 'DLQ entries purged');
-  
+
   return purged;
 }
 
@@ -166,11 +169,11 @@ export async function purgeDLQEntries(olderThanDays = 30): Promise<number> {
  */
 export async function inspectDLQJob(jobId: string) {
   const job = await ingestDLQ.getJob(jobId);
-  
+
   if (!job) {
     return null;
   }
-  
+
   return {
     id: job.id,
     data: job.data,

@@ -17,14 +17,17 @@ const worker = new Worker(
     // Track retry attempts
     if (job.attemptsMade > 1) {
       jobRetryCounter.inc({ queue: 'ingest', attempt: job.attemptsMade.toString() });
-      logger.warn(
-        { workspaceId, jobId: job.id, attempt: job.attemptsMade },
-        'Retrying ingest job',
-      );
+      logger.warn({ workspaceId, jobId: job.id, attempt: job.attemptsMade }, 'Retrying ingest job');
     }
 
     logger.info(
-      { workspaceId, docCount: documents.length, jobId: job.id, ingestionId, attempt: job.attemptsMade },
+      {
+        workspaceId,
+        docCount: documents.length,
+        jobId: job.id,
+        ingestionId,
+        attempt: job.attemptsMade,
+      },
       'Processing ingest job',
     );
 

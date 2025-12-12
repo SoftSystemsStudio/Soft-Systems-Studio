@@ -8,14 +8,14 @@ import { logger } from '../logger';
 
 /**
  * Middleware to require admin API key for metrics endpoint
- * 
+ *
  * Usage: app.get('/metrics', requireMetricsAuth, metricsHandler)
- * 
+ *
  * Security notes:
  * - Protects against information leakage (workspaces, users, system internals)
  * - Rate limited separately to prevent scrape abuse
  * - Used by Prometheus scraper with dedicated service account
- * 
+ *
  * Configuration:
  * - Set ADMIN_API_KEY in environment (min 32 chars)
  * - Use x-api-key header or api_key query param

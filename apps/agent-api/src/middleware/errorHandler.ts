@@ -122,7 +122,7 @@ export function errorHandler(
   // Log error with structured logging using request logger if available
   if (env.NODE_ENV !== 'test') {
     const log = (req as any).log || logger;
-    
+
     if (err instanceof AppError && err.statusCode < 500) {
       log.warn({ err, ...errorContext }, 'Client error');
     } else {

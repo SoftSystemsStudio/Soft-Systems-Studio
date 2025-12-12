@@ -2,7 +2,7 @@
 /**
  * DLQ Management CLI
  * Command-line utility for inspecting and managing the dead letter queue
- * 
+ *
  * Usage:
  *   pnpm dlq:stats              - Show DLQ statistics
  *   pnpm dlq:list [limit]       - List DLQ jobs (default: 20)
@@ -47,7 +47,7 @@ async function main() {
         const limit = arg1 ? parseInt(arg1, 10) : 20;
         const jobs = await getDLQJobs(limit);
         console.log(`\n📋 DLQ Jobs (showing ${jobs.length}):\n`);
-        
+
         if (jobs.length === 0) {
           console.log('  No jobs in DLQ ✅');
         } else {
@@ -69,13 +69,13 @@ async function main() {
           console.error('❌ Job ID required');
           process.exit(1);
         }
-        
+
         const details = await inspectDLQJob(arg1);
         if (!details) {
           console.error(`❌ Job not found: ${arg1}`);
           process.exit(1);
         }
-        
+
         console.log('\n🔍 Job Details:\n');
         console.log(JSON.stringify(details, null, 2));
         break;
@@ -86,10 +86,10 @@ async function main() {
           console.error('❌ Job ID required');
           process.exit(1);
         }
-        
+
         console.log(`🔄 Retrying job ${arg1}...`);
         const result = await retryDLQJob(arg1);
-        
+
         if (result.success) {
           console.log(`✅ Job retried successfully. New job ID: ${result.newJobId}`);
         } else {
@@ -102,7 +102,7 @@ async function main() {
       case 'retry-all': {
         const maxJobs = arg1 ? parseInt(arg1, 10) : 100;
         console.log(`🔄 Retrying up to ${maxJobs} DLQ jobs...`);
-        
+
         const result = await retryAllDLQJobs(maxJobs);
         console.log(`\n✅ Retry completed:`);
         console.log(`   Attempted: ${result.attempted}`);
@@ -114,7 +114,7 @@ async function main() {
       case 'purge': {
         const days = arg1 ? parseInt(arg1, 10) : 30;
         console.log(`🗑️  Purging DLQ entries older than ${days} days...`);
-        
+
         const purged = await purgeDLQEntries(days);
         console.log(`✅ Purged ${purged} entries`);
         break;
