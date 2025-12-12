@@ -29,7 +29,7 @@ export const rateLimitPublicChat = rateLimit({
       req.hostname === 'localhost' || req.hostname === '127.0.0.1' || req.hostname === '::1';
     return process.env.NODE_ENV === 'development' && isLocal;
   },
-  handler: (req, res) => {
+  handler: (_req, res) => {
     res.status(429).json({
       error: 'TOO_MANY_REQUESTS',
       message: 'Too many chat requests. Please wait a minute and try again.',
