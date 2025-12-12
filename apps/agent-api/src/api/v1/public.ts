@@ -12,7 +12,7 @@ const router = Router();
 /**
  * Public chat endpoint for website visitors
  * POST /api/v1/public/chat
- * 
+ *
  * No authentication required
  * Rate limited by IP (10 req/min)
  */
