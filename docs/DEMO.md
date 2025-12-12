@@ -22,6 +22,7 @@ cd Soft-Systems-Studio
 ```
 
 This will:
+
 1. Check prerequisites
 2. Install dependencies
 3. Start Docker services (Postgres, Redis, Qdrant)
@@ -61,14 +62,14 @@ cp apps/agent-api/.env.example apps/agent-api/.env
 
 **Required Environment Variables:**
 
-| Variable | Example | Purpose |
-|----------|---------|---------|
-| `DATABASE_URL` | `postgresql://postgres:password@localhost:5432/softsystems` | PostgreSQL connection |
-| `REDIS_URL` | `redis://localhost:6379` | Redis for queues & cache |
-| `QDRANT_URL` | `http://localhost:6333` | Vector database |
-| `OPENAI_API_KEY` | `sk-...` | OpenAI for embeddings & LLM |
-| `JWT_SECRET` | `<random-32-bytes>` | JWT signing secret |
-| `PORT` | `5000` | API server port |
+| Variable         | Example                                                     | Purpose                     |
+| ---------------- | ----------------------------------------------------------- | --------------------------- |
+| `DATABASE_URL`   | `postgresql://postgres:password@localhost:5432/softsystems` | PostgreSQL connection       |
+| `REDIS_URL`      | `redis://localhost:6379`                                    | Redis for queues & cache    |
+| `QDRANT_URL`     | `http://localhost:6333`                                     | Vector database             |
+| `OPENAI_API_KEY` | `sk-...`                                                    | OpenAI for embeddings & LLM |
+| `JWT_SECRET`     | `<random-32-bytes>`                                         | JWT signing secret          |
+| `PORT`           | `5000`                                                      | API server port             |
 
 ### 3. Start Infrastructure Services
 
@@ -81,6 +82,7 @@ docker compose -f infra/docker-compose.yml ps
 ```
 
 Expected output:
+
 ```
 NAME                IMAGE                    STATUS
 infra-db-1          postgres:15-alpine       Up
@@ -112,6 +114,7 @@ pnpm --filter apps-agent-api start
 ```
 
 Or for development with hot reload:
+
 ```bash
 pnpm --filter apps-agent-api dev
 ```
@@ -127,6 +130,7 @@ curl http://localhost:5000/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "ok",
@@ -154,6 +158,7 @@ curl -X POST http://localhost:5000/api/v1/auth/register \
 ```
 
 Expected response:
+
 ```json
 {
   "userId": "usr_...",
@@ -174,6 +179,7 @@ curl -X POST http://localhost:5000/api/v1/auth/login \
 ```
 
 Expected response:
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -214,6 +220,7 @@ curl -X POST http://localhost:5000/api/v1/agents/customer-service/run \
 ```
 
 Expected response:
+
 ```json
 {
   "runId": "run_...",
@@ -241,6 +248,7 @@ curl -X POST http://localhost:5000/api/v1/workspaces/demo/documents \
 ```
 
 Expected response:
+
 ```json
 {
   "documentId": "doc_...",
@@ -257,6 +265,7 @@ curl -X GET "http://localhost:5000/api/v1/workspaces/demo/documents/doc_.../stat
 ```
 
 Expected response:
+
 ```json
 {
   "documentId": "doc_...",
@@ -286,6 +295,7 @@ curl -X GET http://localhost:5000/api/v1/admin/workspaces/demo/stats \
 ```
 
 Expected response:
+
 ```json
 {
   "workspaceId": "demo",
@@ -380,11 +390,13 @@ curl -X POST http://localhost:5000/api/v1/agents/customer-service/run \
 ### View Real-Time Metrics
 
 Open Prometheus metrics endpoint:
+
 ```bash
 curl http://localhost:5000/metrics | grep -E "^(http|job|llm)_"
 ```
 
 Key metrics to watch:
+
 - `http_request_duration_seconds` - API response times
 - `job_queue_waiting` - Pending background jobs
 - `llm_api_calls_total` - LLM API usage
@@ -409,6 +421,7 @@ pnpm --filter apps-agent-api dlq:list
 **Symptom:** `Error: Cannot connect to database`
 
 **Solution:**
+
 ```bash
 # Check Docker services are running
 docker compose -f infra/docker-compose.yml ps
@@ -425,6 +438,7 @@ docker compose -f infra/docker-compose.yml logs db
 **Symptom:** `401 Unauthorized` on API requests
 
 **Solutions:**
+
 1. Verify JWT_SECRET is set in `.env`
 2. Check token hasn't expired (15 min lifetime)
 3. Ensure Authorization header format: `Bearer <token>`
@@ -439,6 +453,7 @@ echo $TOKEN | cut -d. -f2 | base64 -d | jq .exp
 **Symptom:** Requests take >10 seconds
 
 **Checklist:**
+
 - [ ] OPENAI_API_KEY is valid
 - [ ] Qdrant service is running
 - [ ] Redis is connected (check with `redis-cli ping`)
@@ -456,6 +471,7 @@ psql $DATABASE_URL -c "SELECT 1"    # Postgres
 **Symptom:** Status stuck at "queued"
 
 **Solution:**
+
 ```bash
 # Check worker is running
 pnpm --filter apps-agent-api worker
@@ -472,6 +488,7 @@ pnpm --filter apps-agent-api dlq:inspect <jobId>
 **Symptom:** `Error: listen EADDRINUSE :::5000`
 
 **Solution:**
+
 ```bash
 # Find process using port 5000
 lsof -i :5000
@@ -531,11 +548,13 @@ After running the demo:
 ## 🔐 Demo Credentials
 
 **Default Demo Workspace:**
+
 - Workspace ID: `demo`
 - Name: Demo Workspace
 
 **Test Users:**
 After running seed script, you can login with:
+
 - Email: `demo@example.com`
 - Password: `SecurePass123!`
 

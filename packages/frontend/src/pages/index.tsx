@@ -13,6 +13,7 @@ import {
   GlowText,
 } from '../components/ui';
 import { FadeIn, StaggerContainer } from '../components/motion';
+import { ChatWidget } from '@softsystems/ui-components';
 
 // Dynamic import types
 interface SceneProps {
@@ -319,6 +320,15 @@ export default function Home() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Chat Widget */}
+      <ChatWidget
+        apiUrl={(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + '/api/v1/public/chat'}
+        title="Ask about Soft Systems Studio"
+        greeting="Hi! I'm an AI assistant. Ask me anything about our platform, features, pricing, or how to get started!"
+        primaryColor="#a3e635"
+        position="bottom-right"
+      />
     </div>
   );
 }
