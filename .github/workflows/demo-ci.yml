@@ -81,4 +81,16 @@ jobs:
         run: pnpm --filter apps-agent-api start & sleep 6
 
       - name: Health check
-        run: curl -sSf http://localhost:5000/health
+        run: |
+          set -euo pipefail
+          echo "Waiting for API health..."
+          for i in {1..15}; do
+            if curl -s http://localhost:5000/health | jq -e '.qdrant.healthy == true' >/dev/null 2>&1; then
+              echo "API health ok and Qdrant healthy"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Health check failed: Qdrant not healthy" >&2
+          curl -s http://localhost:5000/health || true
+          exit 1

@@ -11,11 +11,11 @@ const QDRANT_USE_HTTPS = env.QDRANT_USE_HTTPS;
 const QDRANT_API_KEY = env.QDRANT_API_KEY || '';
 
 // Network configuration (configurable via env)
-const REQUEST_TIMEOUT_MS = Number(env.QDRANT_TIMEOUT_MS ?? 30000); // default 30s
-const CONNECT_TIMEOUT_MS = Number(env.QDRANT_CONNECT_TIMEOUT_MS ?? 5000); // default 5s
-const MAX_RETRIES = Number(env.QDRANT_RETRY_MAX ?? 3);
-const RETRY_BASE_MS = Number(env.QDRANT_RETRY_BASE_MS ?? 250); // base backoff
-const RETRY_JITTER_MS = Number(env.QDRANT_RETRY_JITTER_MS ?? 100);
+const REQUEST_TIMEOUT_MS = Number((env as any).QDRANT_TIMEOUT_MS ?? 30000); // default 30s
+// connect timeout intentionally not used directly; keep for future if needed
+const MAX_RETRIES = Number((env as any).QDRANT_RETRY_MAX ?? 3);
+const RETRY_BASE_MS = Number((env as any).QDRANT_RETRY_BASE_MS ?? 250); // base backoff
+const RETRY_JITTER_MS = Number((env as any).QDRANT_RETRY_JITTER_MS ?? 100);
 
 // Error taxonomy for clearer handling
 class QdrantError extends Error {
@@ -181,7 +181,7 @@ async function ensureCollection(): Promise<void> {
     const checkRes = await fetchWithTimeout(collectionUrl, {
       method: 'GET',
       headers: getHeaders(),
-      timeout: Number(env.QDRANT_COLLECTION_CHECK_TIMEOUT_MS ?? 5000),
+      timeout: Number((env as any).QDRANT_COLLECTION_CHECK_TIMEOUT_MS ?? 5000),
     });
 
     if (checkRes.ok) {
@@ -253,7 +253,7 @@ async function ensureCollection(): Promise<void> {
 /**
  * Lightweight ping for health checks - returns true if Qdrant is reachable
  */
-export async function pingQdrant(timeoutMs = Number(env.QDRANT_TIMEOUT_MS ?? 3000)) {
+export async function pingQdrant(timeoutMs = Number((env as any).QDRANT_TIMEOUT_MS ?? 3000)) {
   try {
     const res = await fetchWithTimeout(buildUrl('/collections'), {
       method: 'GET',

@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import prisma from '../../../db';
 import env from '../../../env';
 import { isRedisHealthy } from '../../../lib/redis';
+import { pingQdrant } from '../../../services/qdrant';
 
 const router = Router();
 
@@ -17,6 +18,8 @@ router.get(
   asyncHandler(async (_req, res) => {
     let db = false;
     let redis = false;
+    let qdrantHealthy = false;
+    let qdrantLatency: number | null = null;
 
     // Check database
     try {
@@ -33,13 +36,31 @@ router.get(
       console.error('[health] redis check failed', e);
     }
 
-    const allHealthy = db && redis;
+    // Check Qdrant quickly with a small timeout budget
+    try {
+      const start = Date.now();
+      // short timeout (250-500ms) so health doesn't block
+      qdrantHealthy = await pingQdrant(Number((env as any).QDRANT_HEALTH_TIMEOUT_MS ?? 500));
+      qdrantLatency = Date.now() - start;
+    } catch (e) {
+      console.error('[health] qdrant check failed', e);
+      qdrantHealthy = false;
+      qdrantLatency = null;
+    }
+
+    // Consider Qdrant a critical dependency: health must include it.
+    const allHealthy = db && redis && qdrantHealthy;
 
     res.status(allHealthy ? 200 : 503).json({
       status: allHealthy ? 'ok' : 'degraded',
       services: {
         database: db ? 'healthy' : 'unhealthy',
         redis: redis ? 'healthy' : 'unhealthy',
+        qdrant: qdrantHealthy ? 'healthy' : 'unhealthy',
+      },
+      qdrant: {
+        healthy: qdrantHealthy,
+        latencyMs: qdrantLatency,
       },
       env: {
         nodeEnv: env.NODE_ENV,
