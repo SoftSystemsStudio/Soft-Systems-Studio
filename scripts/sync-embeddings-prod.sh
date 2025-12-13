@@ -116,6 +116,18 @@ async function syncEmbeddings() {
       });
     }
 
+    // Ensure payload index exists for workspaceId filtering
+    console.log('🔍 Creating payload index for workspaceId...');
+    try {
+      await qdrantRequest(`/collections/${COLLECTION_NAME}/index`, 'PUT', {
+        field_name: 'workspaceId',
+        field_schema: 'keyword',
+      });
+      console.log('   Payload index created/verified');
+    } catch (e) {
+      console.log('   Payload index may already exist (ignoring error)');
+    }
+
     console.log('🚀 Generating embeddings...');
     
     for (let i = 0; i < documents.length; i++) {

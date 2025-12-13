@@ -153,6 +153,28 @@ async function ensureCollection(): Promise<void> {
       }
 
       logger.info({ collection: QDRANT_COLLECTION }, 'Qdrant collection created');
+
+      // Create payload index for workspaceId filtering
+      logger.info({ collection: QDRANT_COLLECTION }, 'Creating payload index for workspaceId');
+      const indexResponse = await fetchWithRetry(buildUrl(`/collections/${QDRANT_COLLECTION}/index`), {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          field_name: 'workspaceId',
+          field_schema: 'keyword',
+        }),
+      });
+
+      if (!indexResponse.ok) {
+        // Log but don't fail - index may already exist
+        const errorBody = await indexResponse.text();
+        logger.warn(
+          { status: indexResponse.status, error: errorBody },
+          'Failed to create payload index (may already exist)',
+        );
+      } else {
+        logger.info({ collection: QDRANT_COLLECTION }, 'Payload index created');
+      }
     }
   } catch (error) {
     logger.error({ error, collection: QDRANT_COLLECTION }, 'Failed to ensure Qdrant collection');
