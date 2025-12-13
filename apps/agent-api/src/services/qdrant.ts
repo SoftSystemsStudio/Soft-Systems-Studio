@@ -10,10 +10,43 @@ const QDRANT_PORT = env.QDRANT_PORT;
 const QDRANT_USE_HTTPS = env.QDRANT_USE_HTTPS;
 const QDRANT_API_KEY = env.QDRANT_API_KEY || '';
 
-// Network configuration
-const REQUEST_TIMEOUT_MS = 30000; // 30 second timeout
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 1000; // 1 second base delay
+// Network configuration (configurable via env)
+const REQUEST_TIMEOUT_MS = Number(env.QDRANT_TIMEOUT_MS ?? 30000); // default 30s
+const CONNECT_TIMEOUT_MS = Number(env.QDRANT_CONNECT_TIMEOUT_MS ?? 5000); // default 5s
+const MAX_RETRIES = Number(env.QDRANT_RETRY_MAX ?? 3);
+const RETRY_BASE_MS = Number(env.QDRANT_RETRY_BASE_MS ?? 250); // base backoff
+const RETRY_JITTER_MS = Number(env.QDRANT_RETRY_JITTER_MS ?? 100);
+
+// Error taxonomy for clearer handling
+class QdrantError extends Error {
+  public meta: Record<string, unknown>;
+  constructor(message: string, meta: Record<string, unknown> = {}) {
+    super(message);
+    this.name = 'QdrantError';
+    this.meta = meta;
+  }
+}
+
+class QdrantTimeout extends QdrantError {
+  constructor(message: string, meta: Record<string, unknown> = {}) {
+    super(message, meta);
+    this.name = 'QdrantTimeout';
+  }
+}
+
+class QdrantUnavailable extends QdrantError {
+  constructor(message: string, meta: Record<string, unknown> = {}) {
+    super(message, meta);
+    this.name = 'QdrantUnavailable';
+  }
+}
+
+class QdrantBadRequest extends QdrantError {
+  constructor(message: string, meta: Record<string, unknown> = {}) {
+    super(message, meta);
+    this.name = 'QdrantBadRequest';
+  }
+}
 
 /**
  * Build Qdrant URL from validated config
@@ -70,52 +103,71 @@ async function fetchWithRetry(
   url: string,
   options: RequestInit = {},
   maxRetries = MAX_RETRIES,
+  operation = 'qdrant',
 ): Promise<Response> {
   let lastError: Error | null = null;
+  const start = Date.now();
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const response = await fetchWithTimeout(url, options);
+      const response = await fetchWithTimeout(url, options as any);
 
-      // Don't retry on client errors (4xx), only server errors (5xx)
-      if (response.ok || (response.status >= 400 && response.status < 500)) {
-        return response;
+      // Retryable: 429, 408, 5xx
+      if (response.ok) return response;
+
+      if (response.status >= 400 && response.status < 500) {
+        // Bad request - don't retry
+        const body = await response.text();
+        logger.warn({ url, status: response.status, operation }, 'Qdrant bad request');
+        throw new QdrantBadRequest(`Bad request ${response.status}: ${body}`, {
+          url,
+          status: response.status,
+          operation,
+        });
       }
 
-      // Server error - log and retry
-      logger.warn(
-        { url, status: response.status, attempt, maxRetries },
-        'Qdrant request failed, retrying',
-      );
-      lastError = new Error(`Qdrant returned ${response.status}`);
+      // Server errors - retryable
+      logger.warn({ url, status: response.status, attempt, maxRetries, operation }, 'Qdrant server error, retrying');
+      lastError = new QdrantUnavailable(`Qdrant returned ${response.status}`, {
+        url,
+        status: response.status,
+        attempt,
+        operation,
+      });
     } catch (err) {
-      const error = err as Error;
+      const error = err as any;
       lastError = error;
 
-      // Check if it's a timeout or network error
-      if (error.name === 'AbortError') {
-        logger.warn({ url, attempt, maxRetries }, 'Qdrant request timed out, retrying');
-      } else if (error instanceof FetchError) {
-        logger.warn(
-          { url, attempt, maxRetries, code: error.code },
-          'Qdrant network error, retrying',
-        );
-      } else {
-        // Unknown error - don't retry
+      // Timeout / abort
+      if (error && error.name === 'AbortError') {
+        logger.warn({ url, attempt, maxRetries, operation }, 'Qdrant request timed out');
+        lastError = new QdrantTimeout('Qdrant request timed out', { url, attempt, operation });
+      } else if (error instanceof FetchError || (error && (error.code || error.errno))) {
+        // network issue
+        logger.warn({ url, attempt, maxRetries, code: (error && error.code) || undefined, operation }, 'Qdrant network error');
+        lastError = new QdrantUnavailable('Qdrant network error', { url, attempt, operation });
+      } else if (error instanceof QdrantError) {
+        // rethrow typed qdrant errors
         throw error;
+      } else {
+        // Unknown - wrap and throw
+        logger.error({ url, attempt, error, operation }, 'Unexpected Qdrant error');
+        throw new QdrantError(String(error?.message ?? error), { url, attempt, operation });
       }
     }
 
-    // Exponential backoff before retry
+    // Exponential backoff + jitter before retry
     if (attempt < maxRetries) {
-      const delay = RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+      const exp = RETRY_BASE_MS * Math.pow(2, attempt - 1);
+      const jitter = Math.floor(Math.random() * RETRY_JITTER_MS);
+      const delay = exp + jitter;
       await sleep(delay);
     }
   }
 
-  // All retries exhausted
-  logger.error({ url, maxRetries }, 'Qdrant request failed after all retries');
-  throw lastError || new Error('Qdrant request failed after all retries');
+  const elapsed = Date.now() - start;
+  logger.error({ url, maxRetries, elapsed }, 'Qdrant request failed after retries');
+  throw lastError || new QdrantUnavailable('Qdrant request failed after retries', { url, operation });
 }
 
 /**
@@ -125,45 +177,59 @@ async function ensureCollection(): Promise<void> {
   const collectionUrl = buildUrl(`/collections/${QDRANT_COLLECTION}`);
 
   try {
-    const response = await fetchWithRetry(collectionUrl, {
+    // Quick existence check (no retries) so we can react to 404
+    const checkRes = await fetchWithTimeout(collectionUrl, {
       method: 'GET',
       headers: getHeaders(),
+      timeout: Number(env.QDRANT_COLLECTION_CHECK_TIMEOUT_MS ?? 5000),
     });
 
-    if (response.ok) {
+    if (checkRes.ok) {
       return; // Collection exists
     }
 
-    if (response.status === 404) {
+    if (checkRes.status === 404) {
       // Collection doesn't exist - create it
       logger.info({ collection: QDRANT_COLLECTION }, 'Creating Qdrant collection');
 
-      const createResponse = await fetchWithRetry(buildUrl('/collections'), {
-        method: 'PUT',
-        headers: getHeaders(),
-        body: JSON.stringify({
-          name: QDRANT_COLLECTION,
-          vectors: { size: 1536, distance: 'Cosine' },
-        }),
-      });
+      const createResponse = await fetchWithRetry(
+        buildUrl('/collections'),
+        {
+          method: 'PUT',
+          headers: getHeaders(),
+          body: JSON.stringify({
+            name: QDRANT_COLLECTION,
+            vectors: { size: 1536, distance: 'Cosine' },
+          }),
+        },
+        MAX_RETRIES,
+        'ensureCollection:create',
+      );
 
       if (!createResponse.ok) {
         const errorBody = await createResponse.text();
-        throw new Error(`Failed to create collection: ${createResponse.status} ${errorBody}`);
+        throw new QdrantError(`Failed to create collection: ${createResponse.status} ${errorBody}`, {
+          status: createResponse.status,
+        });
       }
 
       logger.info({ collection: QDRANT_COLLECTION }, 'Qdrant collection created');
 
       // Create payload index for workspaceId filtering
       logger.info({ collection: QDRANT_COLLECTION }, 'Creating payload index for workspaceId');
-      const indexResponse = await fetchWithRetry(buildUrl(`/collections/${QDRANT_COLLECTION}/index`), {
-        method: 'PUT',
-        headers: getHeaders(),
-        body: JSON.stringify({
-          field_name: 'workspaceId',
-          field_schema: 'keyword',
-        }),
-      });
+      const indexResponse = await fetchWithRetry(
+        buildUrl(`/collections/${QDRANT_COLLECTION}/index`),
+        {
+          method: 'PUT',
+          headers: getHeaders(),
+          body: JSON.stringify({
+            field_name: 'workspaceId',
+            field_schema: 'keyword',
+          }),
+        },
+        MAX_RETRIES,
+        'ensureCollection:createIndex',
+      );
 
       if (!indexResponse.ok) {
         // Log but don't fail - index may already exist
@@ -178,7 +244,27 @@ async function ensureCollection(): Promise<void> {
     }
   } catch (error) {
     logger.error({ error, collection: QDRANT_COLLECTION }, 'Failed to ensure Qdrant collection');
-    throw error;
+    // wrap unknown errors for callers
+    if (error instanceof QdrantError) throw error;
+    throw new QdrantError('Failed to ensure Qdrant collection', { collection: QDRANT_COLLECTION, original: String(error) });
+  }
+}
+
+/**
+ * Lightweight ping for health checks - returns true if Qdrant is reachable
+ */
+export async function pingQdrant(timeoutMs = Number(env.QDRANT_TIMEOUT_MS ?? 3000)) {
+  try {
+    const res = await fetchWithTimeout(buildUrl('/collections'), {
+      method: 'GET',
+      headers: getHeaders(),
+      timeout: timeoutMs,
+    });
+    if (res.ok) return true;
+    throw new QdrantUnavailable(`Qdrant ping returned ${res.status}`, { status: res.status });
+  } catch (err) {
+    logger.error({ err }, 'Qdrant ping failed');
+    return false;
   }
 }
 

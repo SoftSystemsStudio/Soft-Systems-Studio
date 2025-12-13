@@ -16,7 +16,7 @@ describe('Embedding stub - determinism & contract', () => {
     const a = await callEmbeddings('hello world');
     const b = await callEmbeddings('goodbye world');
     // at least one element differs
-    const identical = a[0].every((v, i) => v === b[0][i]);
+    const identical = a[0].every((v: number, i: number) => v === b[0][i]);
     expect(identical).toBe(false);
   });
 
