@@ -63,6 +63,7 @@ jobs:
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/demo" >> $GITHUB_ENV
           echo "REDIS_URL=redis://localhost:6379" >> $GITHUB_ENV
           echo "QDRANT_URL=http://localhost:6333" >> $GITHUB_ENV
+          echo "EMBEDDINGS_PROVIDER=stub" >> $GITHUB_ENV
 
       - name: Generate Prisma client
         run: pnpm --filter apps-agent-api prisma:generate

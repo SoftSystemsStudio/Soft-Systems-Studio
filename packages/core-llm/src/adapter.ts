@@ -109,11 +109,46 @@ export async function callEmbeddings(
   const opts = typeof optsOrModel === 'string' ? { model: optsOrModel } : optsOrModel;
   const model = opts.model ?? process.env.OPENAI_EMBEDDING_MODEL ?? 'text-embedding-3-small';
   const timeoutMs = opts.timeoutMs ?? Number(process.env.LLM_TIMEOUT_MS ?? 15000);
+  // CI/local stub support: when EMBEDDINGS_PROVIDER=stub, return deterministic pseudo-embeddings
+  const provider = process.env.EMBEDDINGS_PROVIDER ?? 'openai';
+  const inputs = Array.isArray(input) ? input : [input];
+
+  if (provider === 'stub') {
+    // Deterministic pseudo-embedding generator using simple hashing
+    const dim = 1536;
+    function hashString(s: string) {
+      let h = 2166136261 >>> 0;
+      for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 16777619) >>> 0;
+      }
+      return h >>> 0;
+    }
+
+    function pseudoEmbedding(s: string) {
+      const base = hashString(s).toString();
+      const vec: number[] = new Array(dim);
+      let h = 2166136261 >>> 0;
+      for (let i = 0; i < dim; i++) {
+        const c = base.charCodeAt(i % base.length) || 31;
+        // simple xorshift-ish update
+        h ^= c;
+        h = Math.imul(h, 16777619) >>> 0;
+        // map to float in [-1,1]
+        const v = ((h % 100000) / 100000) * 2 - 1;
+        vec[i] = Number(v.toFixed(6));
+      }
+      return vec;
+    }
+
+    const embeddings = inputs.map((s) => pseudoEmbedding(String(s)));
+    return embeddings;
+  }
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new ProviderError('OPENAI_API_KEY not configured');
 
-  const body = { model, input: Array.isArray(input) ? input : [input] };
+  const body = { model, input: inputs };
   const res = await fetchWithTimeout(
     'https://api.openai.com/v1/embeddings',
     {
