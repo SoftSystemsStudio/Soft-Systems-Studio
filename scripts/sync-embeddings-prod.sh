@@ -44,8 +44,8 @@ echo "   This may take a minute..."
 # Create a Node script to sync embeddings
 node <<'EOF'
 const { PrismaClient } = require('@prisma/client');
-const { QdrantClient } = require('@qdrant/js-client-rest');
 const { OpenAI } = require('openai');
+const https = require('https');
 
 const prisma = new PrismaClient();
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -57,13 +57,37 @@ const qdrantUrl = process.env.QDRANT_URL
       : `https://${process.env.QDRANT_HOST}:${process.env.QDRANT_PORT || 6333}`)
     : undefined);
 
-const qdrant = new QdrantClient({
-  url: qdrantUrl,
-  apiKey: process.env.QDRANT_API_KEY,
-  checkCompatibility: false,
-});
+const COLLECTION_NAME = 'kb'; // Hardcode to kb for production
+const API_KEY = process.env.QDRANT_API_KEY;
 
-const COLLECTION_NAME = process.env.QDRANT_COLLECTION || 'kb';
+// Helper to make Qdrant API requests
+async function qdrantRequest(path, method = 'GET', body = null) {
+  const url = new URL(path, qdrantUrl);
+  const options = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': API_KEY,
+    },
+  };
+  
+  if (body) {
+    options.body = JSON.stringify(body);
+  }
+
+  const response = await fetch(url.toString(), options);
+  if (!response.ok) {
+    const text = await response.text();
+    console.error(`Qdrant request failed: ${method} ${path} - ${response.status}`);
+    console.error(`Response: ${text}`);
+    throw new Error(`Qdrant request failed: ${response.status} ${text}`);
+  }
+  const result = await response.json();
+  if (method !== 'GET') {
+    console.log(`   ✓ ${method} ${path} - ${result.status}`);
+  }
+  return result;
+}
 
 async function syncEmbeddings() {
   try {
@@ -81,16 +105,16 @@ async function syncEmbeddings() {
     }
 
     // Ensure collection exists
-    console.log('🗄️  Creating/updating Qdrant collection...');
+    console.log('🗄️  Checking Qdrant collection...');
     try {
-      await qdrant.deleteCollection(COLLECTION_NAME);
+      await qdrantRequest(`/collections/${COLLECTION_NAME}`, 'GET');
+      console.log('   Collection already exists');
     } catch (e) {
-      // Collection might not exist
+      console.log('   Creating new collection');
+      await qdrantRequest(`/collections/${COLLECTION_NAME}`, 'PUT', {
+        vectors: { size: 1536, distance: 'Cosine' },
+      });
     }
-
-    await qdrant.createCollection(COLLECTION_NAME, {
-      vectors: { size: 1536, distance: 'Cosine' },
-    });
 
     console.log('🚀 Generating embeddings...');
     
@@ -107,7 +131,7 @@ async function syncEmbeddings() {
 
       const embedding = response.data[0].embedding;
 
-      await qdrant.upsert(COLLECTION_NAME, {
+      await qdrantRequest(`/collections/${COLLECTION_NAME}/points`, 'PUT', {
         points: [
           {
             id: i + 1, // Use numeric ID (1-based index)
