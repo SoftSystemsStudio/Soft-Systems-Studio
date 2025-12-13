@@ -94,7 +94,8 @@ async function syncEmbeddings() {
 
     console.log('🚀 Generating embeddings...');
     
-    for (const doc of documents) {
+    for (let i = 0; i < documents.length; i++) {
+      const doc = documents[i];
       const text = `${doc.title}\n\n${doc.content}`;
       
       console.log(`   Embedding: ${doc.title.substring(0, 50)}...`);
@@ -109,12 +110,13 @@ async function syncEmbeddings() {
       await qdrant.upsert(COLLECTION_NAME, {
         points: [
           {
-            id: doc.id,
+            id: i + 1, // Use numeric ID (1-based index)
             vector: embedding,
             payload: {
               documentId: doc.id,
               title: doc.title,
               content: doc.content,
+              text: text, // Include full text for retrieval
               workspaceId: 'demo',
             },
           },
