@@ -24,7 +24,7 @@ try {
   commitDate = execSync('git log -1 --format=%ci', { encoding: 'utf8' }).trim();
 } catch {
   // Git not available or not a git repo - use env var if set
-  commitHash = process.env.GIT_COMMIT_SHA || process.env.COMMIT_SHA || 'unknown';
+  commitHash = env.GIT_COMMIT_SHA || env.COMMIT_SHA || 'unknown';
 }
 
 interface StatusResponse {
@@ -150,7 +150,7 @@ router.get(
         commit: commitHash,
         commitDate,
         nodeVersion: process.version,
-        appVersion: process.env.npm_package_version || '0.1.0',
+        appVersion: env.npm_package_version || '0.1.0',
       },
       uptime: {
         seconds: uptimeSeconds,
