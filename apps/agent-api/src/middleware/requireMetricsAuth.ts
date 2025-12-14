@@ -62,7 +62,15 @@ export function requireMetricsAuth(req: Request, res: Response, next: NextFuncti
   logger.info({ ip: req.ip, path: req.path }, 'Metrics access granted');
 
   // Attach auth info for rate limiter to use
-  (req as any).auth = {
+  type AdminAuth = {
+    apiKey?: boolean;
+    apiKeyId?: string;
+    role?: string;
+    roles?: string[];
+  };
+
+  const reqWithAuth = req as unknown as { auth?: AdminAuth };
+  reqWithAuth.auth = {
     apiKey: true,
     apiKeyId: 'admin',
     role: 'admin',

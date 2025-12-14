@@ -46,7 +46,10 @@ describe('vault hardening: hydrateSecretsIntoProcessEnv', () => {
 
     // allowlist restricts written keys
     delete process.env.B;
-    await hydrateSecretsIntoProcessEnv(client as any, mappings, { overwrite: true, allowlist: ['B'] });
+    await hydrateSecretsIntoProcessEnv(client as any, mappings, {
+      overwrite: true,
+      allowlist: ['B'],
+    });
     expect(process.env.B).toBe('2');
     // other keys untouched when allowlist present
     expect(process.env.C).toBe('3');

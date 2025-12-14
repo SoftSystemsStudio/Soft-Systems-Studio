@@ -92,8 +92,17 @@ function extractAuthContext(req: Request): Partial<RequestContext> {
  * - req.log - child logger with bound context
  */
 export function requestContext(req: Request, _res: Response, next: NextFunction): void {
-  // Extract request ID from pino-http
-  const requestId = (req.id || (req as any).log?.bindings?.()?.reqId || 'unknown') as string;
+  // Extract request ID from pino-http or logger bindings safely
+  let requestId = 'unknown';
+  if (typeof req.id === 'string' && req.id) {
+    requestId = req.id;
+  } else {
+    const maybeLog = (req as unknown as { log?: { bindings?: () => Record<string, unknown> } }).log;
+    const bindings = maybeLog?.bindings?.();
+    if (bindings && typeof (bindings as Record<string, unknown>)['reqId'] === 'string') {
+      requestId = (bindings as Record<string, unknown>)['reqId'] as string;
+    }
+  }
 
   // Build context from request metadata
   const authContext = extractAuthContext(req);

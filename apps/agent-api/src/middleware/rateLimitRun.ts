@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 
+type AuthPrincipal = { workspaceId?: string };
+
 // In-memory token bucket as a starting point; replace with Redis-based limiter in prod.
 const WINDOW_MS = 60_000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 60;
@@ -10,8 +12,7 @@ const buckets = new Map<Key, { windowStart: number; count: number }>();
 
 function getClientKey(req: Request): string {
   // Prefer auth principal or workspace id if available; fallback to IP.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const principal = (req as any).authPrincipal;
+  const principal = (req as Request & { authPrincipal?: AuthPrincipal }).authPrincipal;
   if (principal?.workspaceId) return `ws:${principal.workspaceId}`;
   return `ip:${req.ip}`;
 }

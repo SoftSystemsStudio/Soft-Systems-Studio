@@ -1,4 +1,4 @@
-import IORedis, { Redis } from 'ioredis';
+import IORedis, { type Redis, type RedisOptions } from 'ioredis';
 import env from '../env';
 import logger from '../logger';
 
@@ -22,7 +22,7 @@ export function getRedisClient(): Redis {
     // Supports both local Redis and Upstash native endpoint (rediss://)
     logger.info('Initializing Redis client');
     const redisUrl = env.REDIS_URL;
-    const options: any = {
+    const options: RedisOptions = {
       maxRetriesPerRequest: null, // Required for BullMQ
       enableReadyCheck: true,
       lazyConnect: true,
@@ -87,7 +87,8 @@ export const cache = {
     const value = await client.get(key);
     if (!value) return null;
     try {
-      return JSON.parse(value) as T;
+      const parsed = JSON.parse(value) as unknown;
+      return parsed as T;
     } catch {
       return value as unknown as T;
     }
