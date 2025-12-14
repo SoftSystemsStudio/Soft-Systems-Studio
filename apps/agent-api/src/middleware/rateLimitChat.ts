@@ -4,6 +4,8 @@
  */
 import type { Request, Response, NextFunction } from 'express';
 
+type AuthPrincipal = { userId?: string; workspaceId?: string };
+
 // Chat-specific rate limits (more generous than /run endpoint)
 const WINDOW_MS = 60_000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 30; // 30 chat messages per minute per workspace
@@ -14,8 +16,7 @@ const buckets = new Map<Key, { windowStart: number; count: number }>();
 
 function getClientKey(req: Request): string {
   // Prefer workspace ID for multi-tenant isolation
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const auth = (req as any).auth;
+  const auth = (req as Request & { auth?: AuthPrincipal }).auth;
   if (auth?.workspaceId) return `ws:${auth.workspaceId}`;
 
   // Fallback to user ID
