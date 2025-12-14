@@ -11,11 +11,10 @@ const QDRANT_USE_HTTPS = env.QDRANT_USE_HTTPS;
 const QDRANT_API_KEY = env.QDRANT_API_KEY || '';
 
 // Network configuration (configurable via env)
-const REQUEST_TIMEOUT_MS = Number((env as any).QDRANT_TIMEOUT_MS ?? 30000); // default 30s
-// connect timeout intentionally not used directly; keep for future if needed
-const MAX_RETRIES = Number((env as any).QDRANT_RETRY_MAX ?? 3);
-const RETRY_BASE_MS = Number((env as any).QDRANT_RETRY_BASE_MS ?? 250); // base backoff
-const RETRY_JITTER_MS = Number((env as any).QDRANT_RETRY_JITTER_MS ?? 100);
+const QDRANT_TIMEOUT_MS = env.QDRANT_TIMEOUT_MS;
+const MAX_RETRIES = env.QDRANT_RETRY_MAX;
+const RETRY_BASE_MS = env.QDRANT_RETRY_BASE_MS;
+const RETRY_JITTER_MS = env.QDRANT_RETRY_JITTER_MS;
 
 // Error taxonomy for clearer handling
 class QdrantError extends Error {
@@ -80,7 +79,7 @@ async function fetchWithTimeout(
   url: string,
   options: RequestInit & { timeout?: number } = {},
 ): Promise<Response> {
-  const { timeout = REQUEST_TIMEOUT_MS, ...fetchOptions } = options;
+  const { timeout = QDRANT_TIMEOUT_MS, ...fetchOptions } = options;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -127,7 +126,10 @@ async function fetchWithRetry(
       }
 
       // Server errors - retryable
-      logger.warn({ url, status: response.status, attempt, maxRetries, operation }, 'Qdrant server error, retrying');
+      logger.warn(
+        { url, status: response.status, attempt, maxRetries, operation },
+        'Qdrant server error, retrying',
+      );
       lastError = new QdrantUnavailable(`Qdrant returned ${response.status}`, {
         url,
         status: response.status,
@@ -144,7 +146,10 @@ async function fetchWithRetry(
         lastError = new QdrantTimeout('Qdrant request timed out', { url, attempt, operation });
       } else if (error instanceof FetchError || (error && (error.code || error.errno))) {
         // network issue
-        logger.warn({ url, attempt, maxRetries, code: (error && error.code) || undefined, operation }, 'Qdrant network error');
+        logger.warn(
+          { url, attempt, maxRetries, code: (error && error.code) || undefined, operation },
+          'Qdrant network error',
+        );
         lastError = new QdrantUnavailable('Qdrant network error', { url, attempt, operation });
       } else if (error instanceof QdrantError) {
         // rethrow typed qdrant errors
@@ -167,7 +172,9 @@ async function fetchWithRetry(
 
   const elapsed = Date.now() - start;
   logger.error({ url, maxRetries, elapsed }, 'Qdrant request failed after retries');
-  throw lastError || new QdrantUnavailable('Qdrant request failed after retries', { url, operation });
+  throw (
+    lastError || new QdrantUnavailable('Qdrant request failed after retries', { url, operation })
+  );
 }
 
 /**
@@ -181,7 +188,7 @@ async function ensureCollection(): Promise<void> {
     const checkRes = await fetchWithTimeout(collectionUrl, {
       method: 'GET',
       headers: getHeaders(),
-      timeout: Number((env as any).QDRANT_COLLECTION_CHECK_TIMEOUT_MS ?? 5000),
+      timeout: env.QDRANT_COLLECTION_CHECK_TIMEOUT_MS,
     });
 
     if (checkRes.ok) {
@@ -208,9 +215,12 @@ async function ensureCollection(): Promise<void> {
 
       if (!createResponse.ok) {
         const errorBody = await createResponse.text();
-        throw new QdrantError(`Failed to create collection: ${createResponse.status} ${errorBody}`, {
-          status: createResponse.status,
-        });
+        throw new QdrantError(
+          `Failed to create collection: ${createResponse.status} ${errorBody}`,
+          {
+            status: createResponse.status,
+          },
+        );
       }
 
       logger.info({ collection: QDRANT_COLLECTION }, 'Qdrant collection created');
@@ -246,14 +256,17 @@ async function ensureCollection(): Promise<void> {
     logger.error({ error, collection: QDRANT_COLLECTION }, 'Failed to ensure Qdrant collection');
     // wrap unknown errors for callers
     if (error instanceof QdrantError) throw error;
-    throw new QdrantError('Failed to ensure Qdrant collection', { collection: QDRANT_COLLECTION, original: String(error) });
+    throw new QdrantError('Failed to ensure Qdrant collection', {
+      collection: QDRANT_COLLECTION,
+      original: String(error),
+    });
   }
 }
 
 /**
  * Lightweight ping for health checks - returns true if Qdrant is reachable
  */
-export async function pingQdrant(timeoutMs = Number((env as any).QDRANT_TIMEOUT_MS ?? 3000)) {
+export async function pingQdrant(timeoutMs = env.QDRANT_HEALTH_TIMEOUT_MS ?? 3000) {
   try {
     const res = await fetchWithTimeout(buildUrl('/collections'), {
       method: 'GET',
