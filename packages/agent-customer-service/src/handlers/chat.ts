@@ -43,7 +43,6 @@ export async function handleChat(body: unknown) {
     tokenCounter as any,
     costService as any,
     undefined,
-    stateManager,
   );
 
   const result = await controller.runChat(
