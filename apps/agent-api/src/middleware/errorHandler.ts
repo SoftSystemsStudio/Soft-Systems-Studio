@@ -7,6 +7,19 @@ import { ZodError } from 'zod';
 import { captureException } from '../sentry';
 import { logger } from '../logger';
 import env from '../env';
+import type pino from 'pino';
+
+type MinimalRequestContext = {
+  requestId?: string;
+  userId?: string;
+  workspaceId?: string;
+  role?: string;
+  apiKeyId?: string;
+  method?: string;
+  path?: string;
+};
+
+type RequestWithContext = Request & { context?: MinimalRequestContext; log?: pino.Logger };
 
 /**
  * Custom application error class with status codes
@@ -97,7 +110,8 @@ export function errorHandler(
   _next: NextFunction,
 ): void {
   // Use request context if available (preferred), fallback to extracting from request
-  const context = (req as any).context || {
+  const reqCtx = req as RequestWithContext;
+  const context: MinimalRequestContext = reqCtx.context || {
     requestId: (req as { id?: string }).id || 'unknown',
     method: req.method,
     path: req.url,
@@ -120,8 +134,9 @@ export function errorHandler(
   }
 
   // Log error with structured logging using request logger if available
-  if (env.NODE_ENV !== 'test') {
-    const log = (req as any).log || logger;
+  {
+    const reqCtx = req as RequestWithContext;
+    const log = reqCtx.log || logger;
 
     if (err instanceof AppError && err.statusCode < 500) {
       log.warn({ err, ...errorContext }, 'Client error');

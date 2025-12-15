@@ -12,6 +12,8 @@ import { Request, Response, NextFunction } from 'express';
 import { logger } from '../logger';
 import '../types/auth';
 
+// Keep namespace augmentation for Express Request to allow `req.context` and `req.log`
+
 /**
  * Request context that should be propagated through logs and errors
  */
@@ -33,7 +35,7 @@ declare global {
   namespace Express {
     interface Request {
       context?: RequestContext;
-      log?: any; // Use any for Pino logger to avoid complex type issues
+      log?: any;
     }
   }
 }
@@ -66,7 +68,7 @@ function extractAuthContext(req: Request): Partial<RequestContext> {
   }
 
   // API key authentication
-  if (auth.apiKey && auth.apiKeyId) {
+  if (auth.apiKeyId) {
     context.apiKeyId = auth.apiKeyId;
   }
 
@@ -99,8 +101,8 @@ export function requestContext(req: Request, _res: Response, next: NextFunction)
   } else {
     const maybeLog = (req as unknown as { log?: { bindings?: () => Record<string, unknown> } }).log;
     const bindings = maybeLog?.bindings?.();
-    if (bindings && typeof (bindings as Record<string, unknown>)['reqId'] === 'string') {
-      requestId = (bindings as Record<string, unknown>)['reqId'] as string;
+    if (bindings && typeof bindings['reqId'] === 'string') {
+      requestId = bindings['reqId'];
     }
   }
 
