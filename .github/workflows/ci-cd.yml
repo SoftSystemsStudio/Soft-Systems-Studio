@@ -92,6 +92,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build workspace
+        run: pnpm -w -r build
+
       - name: Generate Prisma clients
         run: |
           pnpm --filter apps-agent-api prisma generate
