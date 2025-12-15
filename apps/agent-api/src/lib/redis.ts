@@ -48,7 +48,7 @@ export function getRedisClient(): Redis {
     });
   }
 
-  return redisClient as Redis;
+  return redisClient;
 }
 
 /**
