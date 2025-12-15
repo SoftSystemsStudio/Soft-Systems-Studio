@@ -120,6 +120,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Inspect built scripts
+        run: ls -la apps/agent-api/dist/scripts || true
+
       - name: Boot test (smoke test for missing deps)
         run: pnpm --filter apps-agent-api boot-test:dist
 
