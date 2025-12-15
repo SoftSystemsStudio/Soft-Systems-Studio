@@ -131,7 +131,12 @@ function validateEnv(): Env {
       const formatted = error.errors
         .map((err) => `  - ${err.path.join('.')}: ${err.message}`)
         .join('\n');
-      console.error('❌ Environment validation failed:\n' + formatted);
+      const message = '❌ Environment validation failed:\n' + formatted;
+      // In test environments we throw so Jest can surface failures without killing the runner.
+      if (process.env.NODE_ENV === 'test') {
+        throw new Error(message);
+      }
+      console.error(message);
       process.exit(1);
     }
     throw error;
