@@ -17,7 +17,7 @@
     "migrate:production": "NODE_ENV=production npx prisma@6 migrate deploy",
     "seed": "ts-node prisma/seed.ts",
     "lint": "eslint . --ext .ts",
-    "test": "jest",
+    "test": "jest --config jest.config.cjs",
     "typecheck": "tsc --noEmit",
     "test:integration": "NODE_ENV=test jest tests/integration --runInBand",
     "deploy:staging": "pnpm build && pnpm migrate:staging",

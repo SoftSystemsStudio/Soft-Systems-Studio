@@ -32,13 +32,14 @@ const envSchema = z.object({
     .url('POSTGRES_URL must be a valid URL'),
 
   // Redis - supports Upstash Redis (rediss://) or standard Redis (redis://)
+  // In tests we allow REDIS_URL to be missing so the test-time stub can be used.
   REDIS_URL: z
     .string()
-    .default('redis://localhost:6379')
-    .refine(
-      (val) => val.startsWith('redis://') || val.startsWith('rediss://'),
-      'REDIS_URL must start with redis:// or rediss://',
-    ),
+    .optional()
+    .refine((val) => {
+      if (!val) return process.env.NODE_ENV === 'test';
+      return val.startsWith('redis://') || val.startsWith('rediss://');
+    }, 'REDIS_URL must start with redis:// or rediss://'),
 
   // Upstash Redis REST API (optional - for serverless environments)
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
