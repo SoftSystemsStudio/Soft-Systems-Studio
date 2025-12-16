@@ -80,7 +80,8 @@ Sentry.init({
       event.breadcrumbs = event.breadcrumbs.map((breadcrumb) => {
         if (breadcrumb.category === 'fetch' && breadcrumb.data?.url) {
           try {
-            const url = new URL(breadcrumb.data.url, window.location.origin);
+            const urlString = String(breadcrumb.data.url);
+            const url = new URL(urlString, window.location.origin);
             const sensitiveParams = ['token', 'key', 'secret', 'password', 'auth', 'api_key'];
             sensitiveParams.forEach((param) => {
               if (url.searchParams.has(param)) {

@@ -21,6 +21,28 @@ export function getRedisClient(): Redis {
     // Always use IORedis for native Redis protocol (required for BullMQ)
     // Supports both local Redis and Upstash native endpoint (rediss://)
     logger.info('Initializing Redis client');
+    // If running tests locally and no REDIS_URL was provided, avoid connecting
+    // to a real Redis instance to prevent ECONNREFUSED during unit tests.
+    const redisEnvVar = process.env.REDIS_URL;
+    if (process.env.NODE_ENV === 'test' && !redisEnvVar) {
+      logger.info('Test environment without REDIS_URL: using stub Redis client');
+      // Minimal stub implementing methods used by the app tests
+      // Minimal typed stub implementing a small Redis surface used in tests
+      const stubObj = {
+        on: (_event: string, _cb?: any) => stubObj as unknown as Redis,
+        ping: async () => 'PONG',
+        get: async () => null,
+        set: async () => 'OK',
+        setex: async () => 'OK',
+        del: async () => 0,
+        exists: async () => 0,
+        incr: async () => 1,
+        quit: async () => 'OK',
+      } as unknown as Redis;
+      redisClient = stubObj;
+      return redisClient as Redis;
+    }
+
     const redisUrl = env.REDIS_URL;
     const options: any = {
       maxRetriesPerRequest: null, // Required for BullMQ
