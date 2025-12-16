@@ -74,6 +74,21 @@ export function getRedisClient(): Redis {
 }
 
 /**
+ * Return true when Redis is configured (used to gate BullMQ / QueueEvents creation)
+ */
+export function hasRedis(): boolean {
+  return Boolean(process.env.REDIS_URL || env.REDIS_URL);
+}
+
+/**
+ * Create or return a Redis connection suitable for BullMQ/Bull usage.
+ * In test environments this will return the stubbed client when REDIS_URL is not provided.
+ */
+export function createRedisConnection(): Redis {
+  return getRedisClient();
+}
+
+/**
  * Close the Redis connection gracefully
  */
 export async function closeRedis(): Promise<void> {

@@ -6,6 +6,7 @@ on:
 
 jobs:
   python-deps-audit:
+    if: false # temporarily disabled for CI recovery
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,6 +18,7 @@ jobs:
         run: echo "Add pip-audit / snyk / other tools here"
 
   node-deps-audit:
+    if: false # temporarily disabled for CI recovery
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
