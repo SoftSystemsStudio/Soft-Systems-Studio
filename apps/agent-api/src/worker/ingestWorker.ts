@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { Worker } from 'bullmq';
-import env from '../env';
 import { ingestDocuments, type IngestDocument } from '../services/ingest';
 import { logger } from '../logger';
 import { jobRetryCounter } from '../metrics';

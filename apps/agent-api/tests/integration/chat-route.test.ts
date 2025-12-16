@@ -5,7 +5,6 @@
  * To run: ensure DATABASE_URL, OPENAI_API_KEY, and JWT_SECRET are set.
  */
 import request from 'supertest';
-import app from '../../src/index';
 import * as chatService from '../../src/services/chat';
 
 // Mock the chat service to avoid real LLM/vector DB calls
@@ -21,13 +20,20 @@ jest.mock('../../src/logger', () => ({
   },
 }));
 
-// Skip integration tests if env vars not available
-const skipIntegration = !process.env.DATABASE_URL || !process.env.OPENAI_API_KEY;
+// Skip during CI recovery unless explicitly enabled
+const describeSkipIfNotStable = process.env.CI_STABLE ? describe : describe.skip;
 
-describe.skip('POST /api/v1/agents/customer-service/chat', () => {
+describeSkipIfNotStable('POST /api/v1/agents/customer-service/chat', () => {
+  let app: any;
+
   const validToken = 'test-jwt-token';
   const workspaceId = 'ws-test-123';
   const userId = 'user-test-456';
+
+  beforeAll(() => {
+    // Only import app when suite runs (defers env validation after skip gate)
+    app = require('../../src/index').default;
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();

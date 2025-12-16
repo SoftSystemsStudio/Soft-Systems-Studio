@@ -55,7 +55,9 @@ export function getRedisClient(): Redis {
       },
     };
 
-    redisClient = new IORedis(redisUrl, options);
+    // `redisUrl` is present here because we return early with a stub when
+    // running tests without REDIS_URL. Cast to string for the IORedis overload.
+    redisClient = new IORedis(redisUrl as string, options);
 
     redisClient.on('connect', () => {
       logger.info('Redis connected');
