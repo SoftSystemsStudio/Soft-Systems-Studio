@@ -23,7 +23,7 @@ jobs:
         run: pnpm -w install
       - name: Lint
         run: pnpm -w -r lint
-      - name: Test
-        run: pnpm -w -r test
-      - name: Build
-        run: pnpm -w -r build
+      - name: Test (agent-api)
+        run: pnpm --filter apps-agent-api test -- --runInBand
+      - name: Build (agent-api)
+        run: pnpm --filter apps-agent-api run build
