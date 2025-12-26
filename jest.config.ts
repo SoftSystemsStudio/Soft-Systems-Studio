@@ -7,6 +7,9 @@ const config: Config.InitialOptions = {
     '^.+\\.tsx?$': 'ts-jest',
   },
   testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
+  // Ignore compiled output to avoid running tests from `dist/`
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  modulePathIgnorePatterns: ['/dist/'],
 };
 
 export default config;

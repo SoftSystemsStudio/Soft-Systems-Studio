@@ -92,6 +92,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build workspace
+        run: pnpm -w -r build
+
       - name: Generate Prisma clients
         run: |
           pnpm --filter apps-agent-api prisma generate
@@ -119,6 +122,9 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Inspect built scripts
+        run: ls -la apps/agent-api/dist/scripts || true
 
       - name: Boot test (smoke test for missing deps)
         run: pnpm --filter apps-agent-api boot-test:dist

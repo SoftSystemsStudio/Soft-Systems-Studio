@@ -18,6 +18,7 @@
     "noImplicitThis": true,
     "useUnknownInCatchVariables": true,
     "alwaysStrict": true,
+    "isolatedModules": true,
     // Additional checks
     "noUnusedLocals": true,
     "noUnusedParameters": true,
