@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "client": {
+    "client_id": "midwifery_prattville",
+    "name": "Prattville Midwifery, LLC",
+    "timezone": "America/Chicago"
+  },
+  "call": {
+    "call_id": "string",
+    "direction": "inbound",
+    "started_at": "ISO-8601 string",
+    "ended_at": "ISO-8601 string",
+    "duration_seconds": 0,
+    "language": {
+      "detected": "en|es|unknown",
+      "confirmed": "en|es|unknown",
+      "confidence": 0.0
+    },
+    "caller": {
+      "phone_e164": "string",
+      "name": "string",
+      "callback_phone_e164": "string"
+    },
+    "routing": {
+      "business_hours": true,
+      "after_hours": false,
+      "clinic_hours_source": "config",
+      "handoff_attempted": false,
+      "handoff_target": "staff|on_call|voicemail|none",
+      "handoff_result": "connected|no_answer|failed|not_applicable"
+    },
+    "intent": {
+      "primary": "scheduling|new_pregnancy_inquiry|existing_patient_message|non_pregnant_inquiry|faq|other",
+      "secondary": "string",
+      "category": "consultation|gynecology|postpartum|prenatal|classes|unknown"
+    },
+    "urgency": {
+      "level": "normal|priority_callback|on_call|emergency_redirect",
+      "trigger_phrases": ["string"],
+      "presented_911_directive": false
+    },
+    "intake": {
+      "pregnancy_related": false,
+      "estimated_due_date": "ISO-8601 date string or null",
+      "gestational_weeks": "number or null",
+      "care_interest": "home_birth|hospital_birth|not_sure|not_applicable",
+      "preferred_contact_method": "call|text|email|unknown",
+      "preferred_callback_windows": [
+        {
+          "day": "mon|tue|wed|thu|fri|sat|sun",
+          "start_local": "HH:MM",
+          "end_local": "HH:MM"
+        }
+      ],
+      "notes": "string"
+    },
+    "actions": {
+      "quiz_link_offered": false,
+      "quiz_link_sent": false,
+      "scheduling_requested": false,
+      "appointment_booked": false,
+      "appointment_details": {
+        "platform": "acuity|other|unknown",
+        "service_name": "string",
+        "start_at": "ISO-8601 string or null"
+      },
+      "message_taken": false
+    },
+    "artifacts": {
+      "transcript_available": false,
+      "call_summary": "string",
+      "redactions_applied": false
+    }
+  }
+}
