@@ -436,21 +436,26 @@ export default function IntakePage() {
                 </div>
                 <div className={styles.chipRow}>
                   {[
-                    { key: 'ai_support', label: 'AI Support System' },
-                    { key: 'ai_content', label: 'AI Content System' },
-                    { key: 'ai_data_bi', label: 'AI Data & BI' },
-                    { key: 'ai_workflow', label: 'AI Workflow Automation' },
                     { key: 'ai_voice', label: 'AI Voice Reception' },
+                    { key: 'ai_support', label: 'AI Support System (Coming Soon)' },
+                    { key: 'ai_content', label: 'AI Content System (Coming Soon)' },
+                    { key: 'ai_data_bi', label: 'AI Data & BI (Coming Soon)' },
+                    { key: 'ai_workflow', label: 'AI Workflow Automation (Coming Soon)' },
                   ].map((sys) => {
                     const active = form.systems.includes(sys.key as SystemInterest);
+                    const isComingSoon = sys.label.includes('(Coming Soon)');
                     return (
                       <button
                         key={sys.key}
                         type="button"
-                        onClick={() => toggleSystemInterest(sys.key as SystemInterest)}
+                        disabled={isComingSoon}
+                        onClick={() =>
+                          !isComingSoon && toggleSystemInterest(sys.key as SystemInterest)
+                        }
                         className={[styles.chip, active ? styles.chipActive : '']
                           .filter(Boolean)
                           .join(' ')}
+                        style={isComingSoon ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
                         {sys.label}
                       </button>
