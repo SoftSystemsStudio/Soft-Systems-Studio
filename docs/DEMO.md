@@ -83,7 +83,7 @@ docker compose -f infra/docker-compose.yml ps
 
 Expected output:
 
-```
+```text
 NAME                IMAGE                    STATUS
 infra-db-1          postgres:15-alpine       Up
 infra-redis-1       redis:7-alpine           Up
