@@ -7,30 +7,105 @@ import { buildPayload } from '../logic/payload';
 import { config } from '../config';
 import OpenAI from 'openai';
 
+/**
+ * Production notes (operational improvements baked in):
+ * - Natural call flow: shorter greeting, delayed acknowledgements only when needed
+ * - Anti-talkover: interrupt cancels in-flight turn via turnId + interrupted flag
+ * - Escalation transparency: caller is told when escalation is triggered
+ * - Language normalization: forces 'en-US'/'es-US'
+ * - Safer webhook handling: non-blocking escalation send, guarded intake sends
+ */
+
+type Lang = 'en-US' | 'es-US';
+
 interface SessionState {
   callSid: string;
   streamSid: string;
   from: string;
-  language: 'en-US' | 'es-US';
+  language: Lang;
   history: OpenAI.Chat.Completions.ChatCompletionMessageParam[];
   context: any;
   startTime: Date;
   urgency: UrgencyLevel;
+
+  // Turn-control
+  interrupted: boolean;
+  turnId: number;
 }
 
+// -----------------------------
+// Phrasebook (phone-native copy)
+// -----------------------------
+function pick(arr: string[], seed?: number) {
+  return arr[(seed ?? Math.floor(Math.random() * arr.length)) % arr.length];
+}
+
+function normalizeLang(input: any): Lang {
+  const v = (input || '').toString().toLowerCase();
+  return v.startsWith('es') ? 'es-US' : 'en-US';
+}
+
+function getDisplayName() {
+  const rawName = config.BUSINESS_NAME || 'Our Office';
+  return rawName.replace(/,?\s*LLC\.?$/i, '').trim();
+}
+
+function greeting(displayName: string, lang: Lang) {
+  if (lang === 'es-US') {
+    return `Hola, gracias por llamar a ${displayName}. ¿En qué puedo ayudarle hoy?`;
+  }
+  return `Hi, thanks for calling ${displayName}. How can I help today?`;
+}
+
+function ack(lang: Lang) {
+  if (lang === 'es-US') {
+    return pick(['Perfecto.', 'Entiendo.', 'De acuerdo.', 'Claro — un momento.']);
+  }
+  return pick(['Got it.', 'Okay.', 'Understood.', 'Sure — one moment.']);
+}
+
+function escalationNotice(lang: Lang) {
+  if (lang === 'es-US') {
+    return 'Gracias — esto parece urgente. Voy a avisar a alguien ahora. ¿Puede decirme brevemente qué pasó y cuál es el mejor número para devolverle la llamada?';
+  }
+  return 'Thanks — this sounds urgent. I’m alerting someone now. Can you briefly tell me what happened and the best callback number?';
+}
+
+function technicalFallback(lang: Lang) {
+  if (lang === 'es-US') {
+    return 'Lo siento — estoy teniendo un problema técnico. Si gusta, puedo tomar un mensaje y pedir que le devuelvan la llamada.';
+  }
+  return 'Sorry — I’m running into a technical issue. If you’d like, I can take a message and have someone call you back.';
+}
+
+function tightenForPhone(s: string) {
+  return (s || '')
+    .replace(/\s+/g, ' ')
+    .replace(/^Sure[,—]\s*/i, '')
+    .trim();
+}
+
+// -------------------------------------
+// Routes
+// -------------------------------------
 export default async function crRoutes(fastify: FastifyInstance) {
   fastify.get('/ws', { websocket: true }, (connection, req) => {
-    // ... (signature validation)
+    // Signature validation: keep your existing logic; placeholder here.
+    // Example:
+    // const isValid = validateTwilioSignature(req, config.TWILIO_AUTH_TOKEN);
+    // if (!isValid) { connection.socket.close(); return; }
 
     const state: SessionState = {
       callSid: '',
       streamSid: '',
       from: '',
-      language: 'en-US', // Default
+      language: 'en-US',
       history: [],
       context: {},
       startTime: new Date(),
       urgency: 'normal',
+      interrupted: false,
+      turnId: 0,
     };
 
     connection.socket.on('message', async (message: Buffer) => {
@@ -48,7 +123,7 @@ export default async function crRoutes(fastify: FastifyInstance) {
             handleInterrupt(msg, state);
             break;
           case 'dtmf':
-            // Handle DTMF if needed
+            // Optional: implement DTMF-based routing if you need it.
             break;
           default:
             console.log('Unknown message type:', msg.type);
@@ -59,106 +134,131 @@ export default async function crRoutes(fastify: FastifyInstance) {
     });
 
     connection.socket.on('close', () => {
-      handleClose(state);
+      handleClose(state).catch((e) => console.error('handleClose error:', e));
     });
   });
 }
 
 function handleSetup(msg: any, state: SessionState, socket?: WebSocket) {
   console.log('Setup:', msg);
-  state.callSid = msg.callSid;
+
+  state.callSid = msg.callSid || '';
+  state.streamSid = msg.streamSid || '';
   state.from = msg.from || '';
-  // Send a friendly greeting immediately when the call is set up.
+
+  // Determine language as early as possible
+  state.language = normalizeLang(msg.lang || msg.language || state.language);
+
+  // Send greeting as a complete turn (no filler)
   try {
-    const rawName = config.BUSINESS_NAME || 'Our Office';
-    const displayName = rawName.replace(/,?\s*LLC\.?$/i, '').trim();
-    // Determine language preference from the setup message or session state
-    const preferredLang = (msg.lang || msg.language || state.language || 'en-US').toString();
-    let greeting: string;
-    if (preferredLang.toLowerCase().startsWith('es')) {
-      greeting = `Hola, gracias por llamar a ${displayName}. Soy la recepcionista virtual — ¿en qué puedo ayudarle hoy?`;
-    } else {
-      greeting = `Hi — thanks for calling ${displayName}. I'm the virtual receptionist. How can I help you today?`;
-    }
-    if (socket && typeof socket.send === 'function') {
-      socket.send(
-        JSON.stringify({ type: 'text', token: greeting, last: false, lang: preferredLang }),
-      );
-    }
+    const displayName = getDisplayName();
+    const text = greeting(displayName, state.language);
+    socket?.send(JSON.stringify({ type: 'text', token: text, last: true, lang: state.language }));
   } catch (e) {
     console.error('Failed to send greeting:', e);
   }
 }
 
 async function handlePrompt(msg: any, state: SessionState, socket: WebSocket) {
-  const userText = msg.voicePrompt; // Check CR docs for exact field. Usually 'voicePrompt' or 'input'
-  // CR docs: type: 'prompt', voicePrompt: 'text', lang: 'en-US'
-
+  // Twilio CR docs: type: 'prompt', voicePrompt: 'text', lang: 'en-US'
+  const userText = msg.voicePrompt || msg.input || msg.text;
   if (!userText) return;
+
+  // Start a new "turn"
+  state.turnId += 1;
+  const myTurn = state.turnId;
+  state.interrupted = false;
+
+  // Language switch
+  if (msg.lang) state.language = normalizeLang(msg.lang);
 
   console.log(`User (${state.language}): ${userText}`);
 
-  // 1. Detect Language Switch (Basic heuristic or rely on CR lang detection if enabled)
-  if (msg.lang && msg.lang !== state.language) {
-    state.language = msg.lang;
-  }
-
-  // 2. Urgency Detection
+  // Urgency detection + escalation (transparent to caller)
   const urgency = detectUrgency(userText);
   if (urgency !== 'normal') {
     state.urgency = urgency;
-    // Trigger Escalation Webhook immediately
-    await sendWebhook(config.N8N_ESCALATION_WEBHOOK_URL, state, userText);
+
+    // Tell caller immediately
+    try {
+      socket.send(
+        JSON.stringify({
+          type: 'text',
+          token: escalationNotice(state.language),
+          last: true,
+          lang: state.language,
+        }),
+      );
+    } catch (e) {
+      console.warn('Failed to send escalation notice:', e);
+    }
+
+    // Fire escalation webhook in background (do not block the call)
+    sendWebhook(config.N8N_ESCALATION_WEBHOOK_URL, state, userText).catch((e) =>
+      console.error('Escalation webhook failed:', e),
+    );
   }
 
-  // 3. Add to history
+  // Add to conversation history
   state.history.push({ role: 'user', content: userText });
 
-  // Send a quick acknowledgement immediately to reduce perceived latency
-  try {
-    const ack = state.language.startsWith('es')
-      ? 'Un momento por favor, estoy verificando.'
-      : 'One moment please, I am checking that for you.';
-    const ackMsg = { type: 'text', token: ack, last: false, lang: state.language };
-    socket.send(JSON.stringify(ackMsg));
-  } catch (e) {
-    console.warn('Failed to send ack message:', e);
-  }
+  // Delayed acknowledgement: only send if the model takes noticeable time
+  let ackSent = false;
+  const ackTimer = setTimeout(() => {
+    // If we’re still on the same turn and not interrupted, send a short ack
+    if (state.turnId !== myTurn || state.interrupted) return;
+    try {
+      socket.send(
+        JSON.stringify({
+          type: 'text',
+          token: ack(state.language),
+          last: true,
+          lang: state.language,
+        }),
+      );
+      ackSent = true;
+    } catch (e) {
+      console.warn('Failed to send ack:', e);
+    }
+  }, 550);
 
-  // 4. LLM Generation (with fallback on error)
+  // LLM generation
   let text: string | undefined;
   let functionCall: any | undefined;
+
   try {
     const res = await generateResponse(state.history, state.language);
-    text = res.text;
-    functionCall = res.functionCall;
+    text = res?.text;
+    functionCall = res?.functionCall;
   } catch (err) {
-    console.error('Error generating LLM response, sending fallback:', err);
-    text = state.language.startsWith('es')
-      ? 'Lo siento, tengo problemas técnicos en este momento. Por favor, manténgase en la línea.'
-      : "I'm sorry, I'm having technical difficulties right now. Please hold on the line.";
+    console.error('Error generating LLM response:', err);
+    text = technicalFallback(state.language);
+  } finally {
+    clearTimeout(ackTimer);
   }
 
-  // 5. Update Context if function called
-  if (functionCall && functionCall.name === 'update_context') {
-    const args = JSON.parse(functionCall.arguments);
-    state.context = { ...state.context, ...args };
-    // Optionally send a silent confirmation or continue
+  // If caller interrupted (or a new prompt came in), drop this response
+  if (state.turnId !== myTurn || state.interrupted) return;
+
+  // Context updates via tool call
+  if (functionCall?.name === 'update_context') {
+    try {
+      const args = JSON.parse(functionCall.arguments || '{}');
+      state.context = { ...state.context, ...args };
+    } catch (e) {
+      console.warn('Failed to parse update_context args:', e);
+    }
   }
 
-  // 6. Send Response
+  // Send response
   if (text) {
-    state.history.push({ role: 'assistant', content: text });
+    const finalText = ackSent ? tightenForPhone(text) : (text || '').trim();
 
-    // Send text token
-    const responseMsg = {
-      type: 'text',
-      token: text,
-      last: true,
-      lang: state.language,
-    };
-    // Log outgoing messages for troubleshooting
+    state.history.push({ role: 'assistant', content: finalText });
+
+    const responseMsg = { type: 'text', token: finalText, last: true, lang: state.language };
     console.log('Sending response to Twilio CR websocket:', responseMsg);
+
     try {
       socket.send(JSON.stringify(responseMsg));
     } catch (sendErr) {
@@ -169,15 +269,19 @@ async function handlePrompt(msg: any, state: SessionState, socket: WebSocket) {
 
 function handleInterrupt(msg: any, state: SessionState) {
   console.log('Interrupted');
-  // Clear any pending generation or queue if we were streaming
+
+  // Mark interrupted and invalidate any in-flight generation for the current turn
+  state.interrupted = true;
+  state.turnId += 1;
 }
 
 async function handleClose(state: SessionState) {
   console.log('Call ended');
+
   const endTime = new Date();
   const businessHours = isBusinessHours(state.startTime);
 
-  // Build Payload
+  // Build payload
   const payload = buildPayload(
     state.callSid,
     state.from,
@@ -190,18 +294,22 @@ async function handleClose(state: SessionState) {
     state.history.map((m) => `${m.role}: ${m.content}`).join('\n'),
   );
 
-  // Send Intake Webhook
+  // Send intake webhook
   await sendWebhook(config.N8N_INTAKE_WEBHOOK_URL, payload);
 
-  // Send Scheduling Webhook if requested
-  if (state.context.scheduling_requested) {
+  // Send scheduling webhook if requested
+  if (state.context?.scheduling_requested) {
     await sendWebhook(config.N8N_SCHEDULING_WEBHOOK_URL, payload);
   }
 }
 
 async function sendWebhook(url: string, payload: any, triggerText?: string) {
+  if (!url) {
+    console.warn('Webhook URL missing; skipping send.');
+    return;
+  }
+
   try {
-    // If it's an escalation, we might want to wrap the payload or send specific data
     const body = triggerText ? { ...payload, trigger_text: triggerText } : payload;
 
     await fetch(url, {
