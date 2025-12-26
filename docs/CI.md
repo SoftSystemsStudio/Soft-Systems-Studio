@@ -43,17 +43,18 @@ The canonical workflow runs on all PRs to `main` and `staging`:
 
 The following test suites are **gated behind `CI_STABLE=true`** and do not run in default CI:
 
-| Suite | Reason | Approx. Time | Dependency |
-|-------|--------|--------------|------------|
-| `request-context.test.ts` | Heavy middleware/bootstrap verification | ~5s | Full app instantiation |
-| `bootstrap-layering.test.ts` | Full app startup + architecture compliance | ~10s | Database + migrations |
-| `chat-route.test.ts` | Full route integration + LLM service mocking | ~5s | App + middleware + auth context |
-| `dlq.test.ts` | Redis + BullMQ queue tests | ~2s | Redis service |
-| Security scans (gitleaks, snyk) | High noise-to-signal ratio | ~30s | External APIs |
-| Integration demo provisioning | Requires 3+ services + seed data | ~2m | Postgres, Redis, Qdrant |
-| Placeholder/secret scans | Can run nightly instead | ~5s | — |
+| Suite                           | Reason                                       | Approx. Time | Dependency                      |
+| ------------------------------- | -------------------------------------------- | ------------ | ------------------------------- |
+| `request-context.test.ts`       | Heavy middleware/bootstrap verification      | ~5s          | Full app instantiation          |
+| `bootstrap-layering.test.ts`    | Full app startup + architecture compliance   | ~10s         | Database + migrations           |
+| `chat-route.test.ts`            | Full route integration + LLM service mocking | ~5s          | App + middleware + auth context |
+| `dlq.test.ts`                   | Redis + BullMQ queue tests                   | ~2s          | Redis service                   |
+| Security scans (gitleaks, snyk) | High noise-to-signal ratio                   | ~30s         | External APIs                   |
+| Integration demo provisioning   | Requires 3+ services + seed data             | ~2m          | Postgres, Redis, Qdrant         |
+| Placeholder/secret scans        | Can run nightly instead                      | ~5s          | —                               |
 
 **Why these are deferred:**
+
 - They require multiple external services (Redis, Postgres, Qdrant)
 - They test full app bootstrap, not individual pieces
 - They are valid tests but are **incorrectly placed in the default CI lane**
@@ -66,11 +67,13 @@ The following test suites are **gated behind `CI_STABLE=true`** and do not run i
 ### Default CI (No Flags)
 
 Tests **run normally** with these patterns:
+
 - Unit tests (e.g., `vault.test.ts`, `controller.test.ts`)
 - Auth integration (skipped if `POSTGRES_URL` missing)
 - Metrics security tests
 
 Tests **skip** with these patterns:
+
 - Any `describe` block using `describeSkipIfNotStable` when `CI_STABLE` is not set
 - Example in `chat-route.test.ts`:
   ```typescript
@@ -154,7 +157,7 @@ on:
   workflow_dispatch: # Manual trigger
   schedule:
     - cron: '0 2 * * *' # Nightly
-  
+
 jobs:
   full-tests:
     # Run with CI_STABLE=true + all external services
@@ -178,6 +181,7 @@ Once refactored and cheap, integrate back into default CI.
 ### Problem
 
 In tests, if `REDIS_URL` is not set, the following happened:
+
 - Module-level imports tried to create `IORedis` connections
 - QueueEvents and Workers were instantiated at import time
 - Tests got `ECONNREFUSED` errors and hung waiting for Redis
@@ -259,18 +263,19 @@ These workflows are **temporarily disabled** (`if: false`) and should remain off
 
 ## Key Metrics
 
-| Metric | Before Phase 1 | After Phase 1 | Target (Phase 2+) |
-|--------|----------------|---------------|-------------------|
-| Default CI runtime | ~2m+ | ~3s | <10s |
-| Test pass rate | ~40% | 100% (60 pass, 6 skip) | 100% (120+ pass) |
-| Redis ECONNREFUSED failures | Yes | No | No |
-| Env validation hangs | Yes | No | No |
+| Metric                      | Before Phase 1 | After Phase 1          | Target (Phase 2+) |
+| --------------------------- | -------------- | ---------------------- | ----------------- |
+| Default CI runtime          | ~2m+           | ~3s                    | <10s              |
+| Test pass rate              | ~40%           | 100% (60 pass, 6 skip) | 100% (120+ pass)  |
+| Redis ECONNREFUSED failures | Yes            | No                     | No                |
+| Env validation hangs        | Yes            | No                     | No                |
 
 ---
 
 ## Summary
 
 **Phase 1 Recovery establishes:**
+
 - ✅ One canonical CI workflow (`ci-cd.yml`)
 - ✅ Fast, deterministic feedback (~3 seconds)
 - ✅ No external service dependencies
