@@ -147,6 +147,32 @@ function validateEnv(): Env {
 // Type export for use in other modules
 export type Env = z.infer<typeof envSchema>;
 
-export const env: Env = validateEnv();
+// Lazy environment validation: only validate on first access
+// This allows modules to be imported without environment variables being set
+// Critical for Lane A testing where we don't have DATABASE_URL, JWT_SECRET, etc.
+let cachedEnv: Env | null = null;
+
+export function getEnv(): Env {
+  if (!cachedEnv) {
+    cachedEnv = validateEnv();
+  }
+  return cachedEnv;
+}
+
+// For backwards compatibility: validate eagerly when imported at runtime
+// Tests can override this behavior by calling getEnv() directly
+export const env: Env = (() => {
+  // If NODE_ENV is 'test', don't validate eagerly - allow lazy validation
+  if (process.env.NODE_ENV === 'test') {
+    // Return a proxy that validates on first property access
+    return new Proxy({} as Env, {
+      get: (_target, prop) => {
+        return getEnv()[prop as keyof Env];
+      },
+    });
+  }
+  // In production/development, validate eagerly
+  return getEnv();
+})();
 
 export default env;
