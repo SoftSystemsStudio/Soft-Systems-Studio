@@ -40,7 +40,13 @@ router.get(
     try {
       const start = Date.now();
       // short timeout (250-500ms) so health doesn't block
-      qdrantHealthy = await pingQdrant(Number((env as any).QDRANT_HEALTH_TIMEOUT_MS ?? 500));
+      const parseNumber = (v: unknown, fallback: number) => {
+        const n = Number(v ?? fallback);
+        return Number.isFinite(n) && n > 0 ? n : fallback;
+      };
+
+      const qdrantTimeout = parseNumber((env as unknown as Record<string, unknown>).QDRANT_HEALTH_TIMEOUT_MS, 500);
+      qdrantHealthy = await pingQdrant(qdrantTimeout);
       qdrantLatency = Date.now() - start;
     } catch (e) {
       console.error('[health] qdrant check failed', e);
