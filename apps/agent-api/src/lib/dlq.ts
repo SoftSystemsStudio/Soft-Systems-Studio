@@ -35,12 +35,14 @@ export async function getDLQStats() {
   const counts = await ingestDLQ.getJobCounts();
   const jobs = await getDLQJobs(1000);
 
-  // Count failures by reason
-  const failuresByReason: Record<string, number> = {};
-  jobs.forEach((job) => {
+  // Count failures by reason using a Map to avoid dynamic object property assignment
+  const failuresMap = new Map<string, number>();
+  for (const job of jobs) {
     const reason = job.failedReason || 'unknown';
-    failuresByReason[reason] = (failuresByReason[reason] || 0) + 1;
-  });
+    const prev = failuresMap.get(reason) ?? 0;
+    failuresMap.set(reason, prev + 1);
+  }
+  const failuresByReason = Object.fromEntries(failuresMap);
 
   return {
     total: jobs.length,
@@ -63,20 +65,27 @@ export async function retryDLQJob(jobId: string): Promise<{ success: boolean; ne
     return { success: false };
   }
 
-  try {
-    // Extract original job data (without DLQ metadata)
-    const { metadata, ...originalData } = job.data;
-    const cleanData: IngestJobData = {
-      ...originalData,
-      metadata: metadata
-        ? Object.fromEntries(
-            Object.entries(metadata).filter(
-              ([key]) =>
-                !['originalJobId', 'failedReason', 'attemptsMade', 'failedAt'].includes(key),
-            ),
-          )
-        : undefined,
-    };
+    try {
+      // Extract original job data (without DLQ metadata)
+      const { metadata, ...originalData } = job.data;
+
+      const blacklist = new Set(['originalJobId', 'failedReason', 'attemptsMade', 'failedAt']);
+      const sanitizedMetadata: Record<string, unknown> = {};
+      if (metadata && typeof metadata === 'object' && metadata !== null) {
+        const keyRegex = /^[a-zA-Z0-9_-]+$/;
+        for (const [k, v] of Object.entries(metadata)) {
+          if (!keyRegex.test(k)) continue;
+          if (blacklist.has(k)) continue;
+          // `k` validated above; allow assignment but keep focused eslint-disable
+          // eslint-disable-next-line security/detect-object-injection
+          sanitizedMetadata[k] = v;
+        }
+      }
+
+      const cleanData: IngestJobData = {
+        ...originalData,
+        metadata: Object.keys(sanitizedMetadata).length ? sanitizedMetadata : undefined,
+      };
 
     // Re-queue to main ingest queue
     const newJob = await ingestQueue.add('retry', cleanData, {
