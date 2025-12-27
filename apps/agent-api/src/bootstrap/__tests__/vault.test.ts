@@ -12,16 +12,19 @@ import { captureWarnings, captureWarningsAsync } from '../../test/utils';
 
 class FakeVaultClient implements VaultClient {
   calls: string[] = [];
-  constructor(private readonly data: Record<string, Record<string, unknown>>) {}
+  private readonly store: Map<string, Record<string, unknown>>;
 
-  // eslint-disable-next-line security/detect-object-injection
+  constructor(private readonly data: Record<string, Record<string, unknown>>) {
+    this.store = new Map(Object.entries(data));
+  }
+
   read(path: string): Promise<Record<string, unknown>> {
     this.calls.push(path);
-    const value = this.data[path];
-    if (!value) {
+    if (!this.store.has(path)) {
       // Mirror real client behavior for "not found"
       throw new Error(`not found: ${path}`);
     }
+    const value = this.store.get(path)!;
     return Promise.resolve(value);
   }
 }
