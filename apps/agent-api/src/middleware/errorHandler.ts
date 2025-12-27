@@ -97,8 +97,16 @@ export function errorHandler(
   _next: NextFunction,
 ): void {
   // Use request context if available (preferred), fallback to extracting from request
-  const context = (req as any).context || {
-    requestId: (req as { id?: string }).id || 'unknown',
+  type ReqWithCtx = Request & {
+    context?: Record<string, unknown> & { requestId?: string };
+    id?: string;
+    log?: typeof logger;
+  };
+
+  const r = req as ReqWithCtx;
+
+  const context = r.context || {
+    requestId: r.id || 'unknown',
     method: req.method,
     path: req.url,
   };
@@ -121,7 +129,7 @@ export function errorHandler(
 
   // Log error with structured logging using request logger if available
   if (env.NODE_ENV !== 'test') {
-    const log = (req as any).log || logger;
+    const log = (r.log as typeof logger) || logger;
 
     if (err instanceof AppError && err.statusCode < 500) {
       log.warn({ err, ...errorContext }, 'Client error');
