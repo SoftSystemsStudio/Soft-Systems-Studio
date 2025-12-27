@@ -18,9 +18,8 @@ describeIf('runController integration (DB persistence)', () => {
   const app = express();
   app.use(bodyParser.json());
   // attach minimal authPrincipal
-  app.use((req, _res, next) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (req as any).authPrincipal = { userId: 'integration-user' };
+  app.use((req: express.Request & { authPrincipal?: { userId: string } }, _res, next) => {
+    req.authPrincipal = { userId: 'integration-user' };
     next();
   });
   app.post('/api/run', rateLimitRun, validateBody(runRequestSchema), runController);
@@ -29,17 +28,17 @@ describeIf('runController integration (DB persistence)', () => {
 
   beforeAll(async () => {
     // create a workspace for the integration test
-    const ws = await prisma.workspace.create({ data: { name: 'Integration Test WS' } as any });
-    workspaceId = ws.id as unknown as string;
+    const ws = await prisma.workspace.create({ data: { name: 'Integration Test WS' } });
+    workspaceId = ws.id;
   });
 
   afterAll(async () => {
     if (workspaceId) {
       // cleanup conversations and workspace
       await prisma.message
-        .deleteMany({ where: { conversation: { workspaceId } as any } as any })
+        .deleteMany({ where: { conversation: { workspaceId } } })
         .catch(() => {});
-      await prisma.conversation.deleteMany({ where: { workspaceId } as any }).catch(() => {});
+      await prisma.conversation.deleteMany({ where: { workspaceId } }).catch(() => {});
       await prisma.workspace.deleteMany({ where: { id: workspaceId } }).catch(() => {});
     }
     await prisma.$disconnect();
@@ -59,7 +58,7 @@ describeIf('runController integration (DB persistence)', () => {
     const runId = res.body.runId as string;
 
     // assert persistence: conversation exists
-    const conv = await prisma.conversation.findUnique({ where: { id: runId as any } as any });
+    const conv = await prisma.conversation.findUnique({ where: { id: runId } });
     expect(conv).toBeTruthy();
     expect(conv?.workspaceId).toBe(workspaceId);
   }, 20000);
