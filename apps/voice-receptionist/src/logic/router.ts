@@ -40,6 +40,12 @@ export function isBusinessHours(date: Date = new Date()): boolean {
   const time = format(zonedDate, 'HH:mm', { timeZone });
 
   const hours = getBusinessHours();
+  const allowedDays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  if (!allowedDays.includes(day)) {
+    return false;
+  }
+  // `day` is validated against `allowedDays` above, so dynamic access is safe.
+  // eslint-disable-next-line security/detect-object-injection
   const todayHours = hours[day];
 
   if (!todayHours) {

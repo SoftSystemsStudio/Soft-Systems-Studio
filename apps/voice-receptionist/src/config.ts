@@ -14,6 +14,7 @@ const candidateEnvPaths = [
 
 for (const p of candidateEnvPaths) {
   try {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     if (fs.existsSync(p)) {
       dotenv.config({ path: p });
       break;
