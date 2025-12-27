@@ -1,4 +1,4 @@
-import IORedis, { Redis } from 'ioredis';
+import IORedis, { Redis, RedisOptions } from 'ioredis';
 import env from '../env';
 import logger from '../logger';
 
@@ -29,7 +29,7 @@ export function getRedisClient(): Redis {
       // Minimal stub implementing methods used by the app tests
       // Minimal typed stub implementing a small Redis surface used in tests
       const stubObj = {
-        on: (_event: string, _cb?: any) => stubObj as unknown as Redis,
+        on: (_event: string, _cb?: (...args: unknown[]) => void) => stubObj as unknown as Redis,
         ping: async () => 'PONG',
         get: async () => null,
         set: async () => 'OK',
@@ -44,7 +44,7 @@ export function getRedisClient(): Redis {
     }
 
     const redisUrl = env.REDIS_URL;
-    const options: any = {
+    const options: RedisOptions = {
       maxRetriesPerRequest: null, // Required for BullMQ
       enableReadyCheck: true,
       lazyConnect: true,
