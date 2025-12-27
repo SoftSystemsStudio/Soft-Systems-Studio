@@ -66,13 +66,29 @@ export interface CallPayload {
   };
 }
 
+export type IntentLike = Partial<{
+  name: string;
+  callback_phone: string;
+  primary: string;
+  secondary: string;
+  category: string;
+  pregnancy_related: boolean;
+  estimated_due_date: string | null;
+  gestational_weeks: number | null;
+  care_interest: string;
+  preferred_contact_method: string;
+  preferred_callback_windows: unknown[];
+  notes: string;
+  scheduling_requested: boolean;
+}>;
+
 export function buildPayload(
   callId: string,
   callerPhone: string,
   startTime: Date,
   endTime: Date,
   language: string,
-  intent: any,
+  intent: IntentLike,
   urgency: UrgencyLevel,
   isBusinessHours: boolean,
   summary: string,

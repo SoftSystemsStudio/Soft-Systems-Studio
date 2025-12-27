@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { config } from '../config';
 
-export default async function voiceRoutes(fastify: FastifyInstance) {
-  fastify.post('/voice', async (request, reply) => {
-    reply.type('text/xml');
+export default function voiceRoutes(fastify: FastifyInstance) {
+  fastify.post('/voice', (request, reply) => {
+    void reply.type('text/xml');
     // Prefer explicit process.env override (useful when restarting in Codespaces)
     // Otherwise derive websocket URL from PUBLIC_BASE_URL so TwiML always returns
     // a wss:// URL that matches the public host.
@@ -46,7 +46,7 @@ export default async function voiceRoutes(fastify: FastifyInstance) {
     return twiml;
   });
 
-  fastify.get('/health', async () => {
+  fastify.get('/health', () => {
     return { status: 'ok' };
   });
 }

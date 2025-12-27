@@ -9,11 +9,11 @@ const fastify = Fastify({
   logger: true,
 });
 
-fastify.register(formbody);
-fastify.register(websocket);
+void fastify.register(formbody);
+void fastify.register(websocket);
 
-fastify.register(voiceRoutes);
-fastify.register(crRoutes);
+void fastify.register(voiceRoutes);
+void fastify.register(crRoutes);
 
 const start = async () => {
   try {
@@ -25,4 +25,4 @@ const start = async () => {
   }
 };
 
-start();
+void start();

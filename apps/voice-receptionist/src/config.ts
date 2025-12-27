@@ -3,6 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import { z } from 'zod';
 
+const businessHoursSchema = z.record(z.array(z.tuple([z.string(), z.string()])));
+
 // Load .env from likely locations to avoid cwd issues in Codespaces / persisted terminals
 const candidateEnvPaths = [
   path.resolve(process.cwd(), 'apps/voice-receptionist/.env'),
@@ -33,7 +35,8 @@ const envSchema = z.object({
   MIDWIFERY_TIMEZONE: z.string().default('America/Chicago'),
   MIDWIFERY_HOURS_JSON: z.string().transform((str) => {
     try {
-      return JSON.parse(str);
+      const parsed = JSON.parse(str) as unknown;
+      return businessHoursSchema.parse(parsed);
     } catch (e) {
       throw new Error('Invalid JSON for MIDWIFERY_HOURS_JSON');
     }
@@ -56,5 +59,5 @@ export const config = parsedEnv.data;
 export type BusinessHours = Record<string, [string, string][]>;
 
 export const getBusinessHours = (): BusinessHours => {
-  return config.MIDWIFERY_HOURS_JSON as BusinessHours;
+  return config.MIDWIFERY_HOURS_JSON;
 };
