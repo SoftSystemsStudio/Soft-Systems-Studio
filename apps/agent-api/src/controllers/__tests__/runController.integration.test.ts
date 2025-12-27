@@ -35,9 +35,7 @@ describeIf('runController integration (DB persistence)', () => {
   afterAll(async () => {
     if (workspaceId) {
       // cleanup conversations and workspace
-      await prisma.message
-        .deleteMany({ where: { conversation: { workspaceId } } })
-        .catch(() => {});
+      await prisma.message.deleteMany({ where: { conversation: { workspaceId } } }).catch(() => {});
       await prisma.conversation.deleteMany({ where: { workspaceId } }).catch(() => {});
       await prisma.workspace.deleteMany({ where: { id: workspaceId } }).catch(() => {});
     }

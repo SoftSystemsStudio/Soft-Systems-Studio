@@ -65,27 +65,27 @@ export async function retryDLQJob(jobId: string): Promise<{ success: boolean; ne
     return { success: false };
   }
 
-    try {
-      // Extract original job data (without DLQ metadata)
-      const { metadata, ...originalData } = job.data;
+  try {
+    // Extract original job data (without DLQ metadata)
+    const { metadata, ...originalData } = job.data;
 
-      const blacklist = new Set(['originalJobId', 'failedReason', 'attemptsMade', 'failedAt']);
-      const sanitizedMetadata: Record<string, unknown> = {};
-      if (metadata && typeof metadata === 'object' && metadata !== null) {
-        const keyRegex = /^[a-zA-Z0-9_-]+$/;
-        for (const [k, v] of Object.entries(metadata)) {
-          if (!keyRegex.test(k)) continue;
-          if (blacklist.has(k)) continue;
-          // `k` validated above; allow assignment but keep focused eslint-disable
-          // eslint-disable-next-line security/detect-object-injection
-          sanitizedMetadata[k] = v;
-        }
+    const blacklist = new Set(['originalJobId', 'failedReason', 'attemptsMade', 'failedAt']);
+    const sanitizedMetadata: Record<string, unknown> = {};
+    if (metadata && typeof metadata === 'object' && metadata !== null) {
+      const keyRegex = /^[a-zA-Z0-9_-]+$/;
+      for (const [k, v] of Object.entries(metadata)) {
+        if (!keyRegex.test(k)) continue;
+        if (blacklist.has(k)) continue;
+        // `k` validated above; allow assignment but keep focused eslint-disable
+        // eslint-disable-next-line security/detect-object-injection
+        sanitizedMetadata[k] = v;
       }
+    }
 
-      const cleanData: IngestJobData = {
-        ...originalData,
-        metadata: Object.keys(sanitizedMetadata).length ? sanitizedMetadata : undefined,
-      };
+    const cleanData: IngestJobData = {
+      ...originalData,
+      metadata: Object.keys(sanitizedMetadata).length ? sanitizedMetadata : undefined,
+    };
 
     // Re-queue to main ingest queue
     const newJob = await ingestQueue.add('retry', cleanData, {

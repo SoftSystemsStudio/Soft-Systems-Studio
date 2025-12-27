@@ -45,7 +45,10 @@ router.get(
         return Number.isFinite(n) && n > 0 ? n : fallback;
       };
 
-      const qdrantTimeout = parseNumber((env as unknown as Record<string, unknown>).QDRANT_HEALTH_TIMEOUT_MS, 500);
+      const qdrantTimeout = parseNumber(
+        (env as unknown as Record<string, unknown>).QDRANT_HEALTH_TIMEOUT_MS,
+        500,
+      );
       qdrantHealthy = await pingQdrant(qdrantTimeout);
       qdrantLatency = Date.now() - start;
     } catch (e) {
