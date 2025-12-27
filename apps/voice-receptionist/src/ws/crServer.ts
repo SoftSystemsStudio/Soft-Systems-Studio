@@ -24,7 +24,7 @@ interface SessionContext {
 }
 
 interface ChatMessage {
-  role: 'user' | 'assistant' | 'system' | string;
+  role: 'user' | 'assistant' | 'system';
   content: unknown;
 }
 
@@ -53,8 +53,10 @@ function pick(arr: string[], seed?: number) {
 }
 
 function normalizeLang(input: unknown): Lang {
-  const v = (input ?? '').toString().toLowerCase();
-  return v.startsWith('es') ? 'es-US' : 'en-US';
+  if (typeof input === 'string') {
+    return input.toLowerCase().startsWith('es') ? 'es-US' : 'en-US';
+  }
+  return 'en-US';
 }
 
 function getDisplayName() {
@@ -103,12 +105,20 @@ function tightenForPhone(s: string) {
 export default function crRoutes(fastify: FastifyInstance) {
   fastify.get('/ws', { websocket: true }, (connection, req: FastifyRequest) => {
     // Validate signature: best-effort using existing helper which expects (url, params, signature)
-    const rawUrl = (req.raw && (req.raw as any).url) || (req as any).url || '';
-    const host = String(((req.headers as Record<string, unknown>)['host'] as string) || '');
-    const fullUrl = host ? `https://${host}${rawUrl}` : String(rawUrl);
-    const signatureHeader = String(((req.headers as Record<string, unknown>)['x-twilio-signature'] as string) || '');
-    const params = (req.query as Record<string, unknown>) || {};
-    const sigOk = validateTwilioSignature(fullUrl, params as Record<string, any>, signatureHeader);
+    const rawUrl =
+      typeof (req as { url?: unknown }).url === 'string'
+        ? String((req as { url: string }).url)
+        : '';
+    const headers = (req.headers as Record<string, string | string[] | undefined>) || {};
+    const host = typeof headers.host === 'string' ? headers.host : '';
+    const fullUrl = host ? `https://${host}${rawUrl}` : rawUrl;
+    const signatureHeader =
+      typeof headers['x-twilio-signature'] === 'string' ? headers['x-twilio-signature'] : '';
+    const params: Record<string, unknown> =
+      typeof req.query === 'object' && req.query !== null
+        ? (req.query as Record<string, unknown>)
+        : {};
+    const sigOk = validateTwilioSignature(fullUrl, params, signatureHeader);
     if (!sigOk) {
       connection.socket.close();
       return;
@@ -129,13 +139,12 @@ export default function crRoutes(fastify: FastifyInstance) {
 
     // non-async message handler to satisfy no-misused-promises; delegate to async worker
     connection.socket.on('message', (message: Buffer) => {
-      const parsed: unknown = (() => {
-        try {
-          return JSON.parse(message.toString());
-        } catch {
-          return undefined;
-        }
-      })();
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(message.toString());
+      } catch {
+        parsed = undefined;
+      }
 
       void handleSocketMessage(parsed, state, connection.socket).catch((e) =>
         console.error('handleSocketMessage error:', e),
@@ -177,7 +186,7 @@ interface DTMFMessage {
   digits?: string;
 }
 
-type TwilioCRMessage = SetupMessage | PromptMessage | InterruptMessage | DTMFMessage | { type?: string; [k: string]: unknown };
+// TwilioCRMessage type not used elsewhere
 
 function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null;
@@ -313,18 +322,21 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
 
   // LLM generation
   let text: string | undefined;
-  let functionCall: any | undefined;
+  let functionCall: unknown;
 
-    try {
-      const openaiHistory: OAChatMsg[] = state.history.map((m) => ({
-        role: m.role as any,
-        content: typeof m.content === 'string' ? m.content : contentToString(m.content),
-      }));
+  try {
+    const openaiHistory: OAChatMsg[] = state.history.map((m) => ({
+      role: m.role,
+      content: typeof m.content === 'string' ? m.content : contentToString(m.content),
+    }));
 
-      const res = await generateResponse(openaiHistory as any, state.language);
-      text = res?.text;
-      functionCall = res?.functionCall;
-    } catch (err) {
+    const res = await generateResponse(
+      openaiHistory as unknown as Parameters<typeof generateResponse>[0],
+      state.language,
+    );
+    text = res?.text;
+    functionCall = res?.functionCall;
+  } catch (err) {
     console.error('Error generating LLM response:', err);
     text = technicalFallback(state.language);
   } finally {
@@ -335,17 +347,21 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
   if (state.turnId !== myTurn || state.interrupted) return;
 
   // Context updates via tool call
-  if (functionCall?.name === 'update_context') {
-    try {
-      const rawArgs = functionCall.arguments ? String(functionCall.arguments) : '{}';
-      const parsedArgs: unknown = JSON.parse(rawArgs);
-      if (isObject(parsedArgs)) {
-        state.context = { ...state.context, ...parsedArgs };
-      } else {
-        console.warn('update_context args not an object:', parsedArgs);
+  if (isObject(functionCall)) {
+    const fc = functionCall as { name?: unknown; arguments?: unknown };
+    if (typeof fc.name === 'string' && fc.name === 'update_context') {
+      try {
+        const rawArgs =
+          typeof fc.arguments === 'string' ? fc.arguments : JSON.stringify(fc.arguments ?? {});
+        const parsedArgs: unknown = JSON.parse(rawArgs);
+        if (isObject(parsedArgs)) {
+          state.context = { ...state.context, ...parsedArgs };
+        } else {
+          console.warn('update_context args not an object:', parsedArgs);
+        }
+      } catch (e) {
+        console.warn('Failed to parse update_context args:', e);
       }
-    } catch (e) {
-      console.warn('Failed to parse update_context args:', e);
     }
   }
 
