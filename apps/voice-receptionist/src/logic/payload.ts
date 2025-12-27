@@ -47,7 +47,7 @@ export interface CallPayload {
       gestational_weeks: number | null;
       care_interest: string;
       preferred_contact_method: string;
-      preferred_callback_windows: any[];
+      preferred_callback_windows: unknown[];
       notes: string;
     };
     actions: {
@@ -55,7 +55,7 @@ export interface CallPayload {
       quiz_link_sent: boolean;
       scheduling_requested: boolean;
       appointment_booked: boolean;
-      appointment_details: any;
+      appointment_details: Record<string, unknown>;
       message_taken: boolean;
     };
     artifacts: {
