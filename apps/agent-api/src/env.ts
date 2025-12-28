@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- env module needs direct process.env access */
 import { z } from 'zod';
 
 /**
@@ -83,6 +84,79 @@ const envSchema = z.object({
     .default('false')
     .transform((val) => val === 'true'),
 
+  // Qdrant health probe timeout (milliseconds) - used by /health quick checks
+  // Accepts a string in env (e.g. "500") and coerces to number. Must be positive.
+  QDRANT_HEALTH_TIMEOUT_MS: z
+    .string()
+    .default('500')
+    .refine(
+      (val) => /^\d+$/.test(val),
+      'QDRANT_HEALTH_TIMEOUT_MS must be a positive integer (milliseconds)',
+    )
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(1)),
+
+  // General Qdrant network timeout for requests (milliseconds)
+  QDRANT_TIMEOUT_MS: z
+    .string()
+    .default('30000')
+    .refine(
+      (val) => /^\d+$/.test(val),
+      'QDRANT_TIMEOUT_MS must be a positive integer (milliseconds)',
+    )
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(1)),
+
+  // Optional connect timeout (not currently used directly)
+  QDRANT_CONNECT_TIMEOUT_MS: z
+    .string()
+    .default('5000')
+    .refine(
+      (val) => /^\d+$/.test(val),
+      'QDRANT_CONNECT_TIMEOUT_MS must be a positive integer (milliseconds)',
+    )
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(0)),
+
+  // Retry/backoff configuration for Qdrant client
+  QDRANT_RETRY_MAX: z
+    .string()
+    .default('3')
+    .refine((val) => /^\d+$/.test(val), 'QDRANT_RETRY_MAX must be a non-negative integer')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(0)),
+
+  QDRANT_RETRY_BASE_MS: z
+    .string()
+    .default('250')
+    .refine(
+      (val) => /^\d+$/.test(val),
+      'QDRANT_RETRY_BASE_MS must be a non-negative integer (milliseconds)',
+    )
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(0)),
+
+  QDRANT_RETRY_JITTER_MS: z
+    .string()
+    .default('100')
+    .refine(
+      (val) => /^\d+$/.test(val),
+      'QDRANT_RETRY_JITTER_MS must be a non-negative integer (milliseconds)',
+    )
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(0)),
+
+  // Timeout for collection existence checks and similar quick probes
+  QDRANT_COLLECTION_CHECK_TIMEOUT_MS: z
+    .string()
+    .default('5000')
+    .refine(
+      (val) => /^\d+$/.test(val),
+      'QDRANT_COLLECTION_CHECK_TIMEOUT_MS must be a positive integer (milliseconds)',
+    )
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().min(1)),
+
   // Optional: Logging
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   LOG_ENABLED: z
@@ -100,6 +174,12 @@ const envSchema = z.object({
   // Optional: Sentry
   SENTRY_DSN: z.string().url().optional(),
   SENTRY_ENVIRONMENT: z.string().optional(),
+  // Optional: Git commit SHA (CI/CD may set this)
+  GIT_COMMIT_SHA: z.string().optional(),
+  COMMIT_SHA: z.string().optional(),
+
+  // Optional: npm package version (set by npm during lifecycle scripts)
+  npm_package_version: z.string().optional(),
 
   // Optional: Stripe payments
   STRIPE_SECRET_KEY: z.string().optional(),
@@ -147,6 +227,32 @@ function validateEnv(): Env {
 // Type export for use in other modules
 export type Env = z.infer<typeof envSchema>;
 
-export const env: Env = validateEnv();
+// Lazy environment validation: only validate on first access
+// This allows modules to be imported without environment variables being set
+// Critical for Lane A testing where we don't have DATABASE_URL, JWT_SECRET, etc.
+let cachedEnv: Env | null = null;
+
+export function getEnv(): Env {
+  if (!cachedEnv) {
+    cachedEnv = validateEnv();
+  }
+  return cachedEnv;
+}
+
+// For backwards compatibility: validate eagerly when imported at runtime
+// Tests can override this behavior by calling getEnv() directly
+export const env: Env = (() => {
+  // If NODE_ENV is 'test', don't validate eagerly - allow lazy validation
+  if (process.env.NODE_ENV === 'test') {
+    // Return a proxy that validates on first property access
+    return new Proxy({} as Env, {
+      get: (_target, prop) => {
+        return getEnv()[prop as keyof Env];
+      },
+    });
+  }
+  // In production/development, validate eagerly
+  return getEnv();
+})();
 
 export default env;

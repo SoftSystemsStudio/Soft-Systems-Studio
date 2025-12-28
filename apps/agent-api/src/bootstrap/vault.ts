@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- vault bootstrap manipulates process.env for secret hydration */
 import fetch from 'node-fetch';
 import type { VaultKVv2Secret } from './vault.types';
 
@@ -119,9 +120,23 @@ export async function hydrateEnvFromVault(
   mappings: MappingEntry[],
   cacheTtlMs = CACHE_TTL_DEFAULT,
 ): Promise<void> {
-  // group by path
+  // For backward compatibility this function delegates to the centralized
+  // secret hydration wrapper which enforces idempotency and logging.
+  await hydrateSecretsIntoProcessEnv(client, mappings, { cacheTtlMs, overwrite: false });
+}
+
+/**
+ * Read secrets from Vault without mutating process.env.
+ * Returns a mapping of envName -> string value when present.
+ */
+export async function readSecretsFromVault(
+  client: VaultClient,
+  mappings: MappingEntry[],
+  cacheTtlMs = CACHE_TTL_DEFAULT,
+): Promise<Record<string, string>> {
   const now = Date.now();
   const cache = new Map<string, { ts: number; value?: Record<string, unknown> | null }>();
+  const result: Record<string, string> = {};
 
   const groups = new Map<string, MappingEntry[]>();
   for (const m of mappings) {
@@ -144,36 +159,55 @@ export async function hydrateEnvFromVault(
 
       for (const e of entries) {
         try {
-          // eslint-disable-next-line security/detect-object-injection -- accessing process.env by dynamic key is intentional
-          if (process.env[e.envName]) continue; // do not overwrite existing env
-          // Guard access to avoid object-injection issues
           let v: unknown = undefined;
           if (data && Object.prototype.hasOwnProperty.call(data, e.key)) {
             // eslint-disable-next-line security/detect-object-injection
             v = data[e.key];
           }
-          if (v === undefined) {
-            // eslint-disable-next-line no-console
-            console.warn(
-              `Warning: Vault secret for env ${e.envName} missing key ${e.key} at path ${path}`,
-            );
-            continue;
-          }
-          // eslint-disable-next-line security/detect-object-injection -- setting process.env by dynamic key is intentional
-          process.env[e.envName] = String(v);
-          // eslint-disable-next-line no-console
-          console.info(`Vault: populated env ${e.envName} from ${path}#${e.key}`);
+          if (v === undefined) continue;
+          result[e.envName] = String(v);
         } catch (innerErr) {
           // eslint-disable-next-line no-console
-          console.warn(`Warning: failed to process mapping for ${e.envName} at ${path}:`, innerErr);
+          console.warn(`Warning: failed to read mapping for ${e.envName} at ${path}:`, innerErr);
         }
       }
     } catch (err) {
-      // read error non-fatal for now
       // eslint-disable-next-line no-console
       console.warn(`Warning: failed to read Vault path ${path}:`, err);
-      // continue to other paths
     }
+  }
+
+  return result;
+}
+
+export type HydrateOptions = {
+  overwrite?: boolean; // whether to overwrite existing process.env values
+  allowlist?: string[] | undefined; // if provided, only these env names will be written
+  cacheTtlMs?: number;
+};
+
+/**
+ * Centralized mutation choke-point: hydrateSecretsIntoProcessEnv
+ * - Reads secrets from Vault and writes them into process.env
+ * - By default does not overwrite existing env values (idempotent)
+ * - Supports an allowlist to limit which keys are set
+ */
+export async function hydrateSecretsIntoProcessEnv(
+  client: VaultClient,
+  mappings: MappingEntry[],
+  opts: HydrateOptions = {},
+): Promise<void> {
+  const { overwrite = false, allowlist, cacheTtlMs = CACHE_TTL_DEFAULT } = opts;
+  const secrets = await readSecretsFromVault(client, mappings, cacheTtlMs);
+
+  for (const [k, v] of Object.entries(secrets)) {
+    if (allowlist && !allowlist.includes(k)) continue;
+    // eslint-disable-next-line security/detect-object-injection -- intentional
+    if (!overwrite && process.env[k]) continue;
+    // eslint-disable-next-line security/detect-object-injection -- intentional
+    process.env[k] = v;
+    // eslint-disable-next-line no-console
+    console.info(`Vault: populated env ${k}`);
   }
 }
 
@@ -220,11 +254,10 @@ export async function bootstrapVault(): Promise<void> {
   const mappings = parseVaultMapping(raw, { mount, prefix });
 
   if (mappings.length > 0) {
-    await hydrateEnvFromVault(
-      client,
-      mappings,
-      Number(process.env.VAULT_CACHE_TTL ?? CACHE_TTL_DEFAULT),
-    );
+    await hydrateSecretsIntoProcessEnv(client, mappings, {
+      overwrite: false,
+      cacheTtlMs: Number(process.env.VAULT_CACHE_TTL ?? CACHE_TTL_DEFAULT),
+    });
   } else {
     // legacy behavior: populate well-known keys
     const wellKnown = [
@@ -254,11 +287,10 @@ export async function bootstrapVault(): Promise<void> {
       const path = `${mount}/${rel}`;
       return { envName: k, path, key: k };
     });
-    await hydrateEnvFromVault(
-      client,
-      legacyMappings,
-      Number(process.env.VAULT_CACHE_TTL ?? CACHE_TTL_DEFAULT),
-    );
+    await hydrateSecretsIntoProcessEnv(client, legacyMappings, {
+      overwrite: false,
+      cacheTtlMs: Number(process.env.VAULT_CACHE_TTL ?? CACHE_TTL_DEFAULT),
+    });
   }
 
   // Enforcement of required env vars if configured
