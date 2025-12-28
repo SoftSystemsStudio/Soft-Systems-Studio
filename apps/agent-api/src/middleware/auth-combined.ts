@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import env from '../env';
+import { getEnv } from '../env';
 import * as jwt from 'jsonwebtoken';
 import '../types/auth'; // Import to register global types
 import type { AuthInfo } from '../types/auth';
@@ -28,10 +28,14 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = (req.headers['authorization'] as string) || '';
   const apiKeyHeader = (req.headers['x-api-key'] as string) || (req.query?.api_key as string) || '';
 
+  // Defer environment validation until middleware is actually called
+  // This allows router imports to succeed in test environments without env vars
+  const environment = getEnv();
+
   // Try JWT first if present
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.replace('Bearer ', '').trim();
-    const secret = env.JWT_SECRET;
+    const secret = environment.JWT_SECRET;
 
     if (!secret) {
       logger.error('JWT secret not configured');
@@ -42,7 +46,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
     try {
       const decoded = jwt.verify(token, secret, {
-        algorithms: [env.JWT_ALGORITHM as jwt.Algorithm],
+        algorithms: [environment.JWT_ALGORITHM as jwt.Algorithm],
       });
 
       // Validate it's an access token (not a refresh token which shouldn't be used as Bearer)
@@ -82,7 +86,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
 
   // Fallback to API key if configured
-  const configuredApiKey = env.API_KEY || '';
+  const configuredApiKey = environment.API_KEY || '';
   if (configuredApiKey && apiKeyHeader) {
     if (apiKeyHeader !== configuredApiKey) {
       logger.warn({ ip: req.ip }, 'Invalid API key attempt');
@@ -111,7 +115,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
   // Check if anonymous access is explicitly enabled for local development
   // SECURITY: Both conditions must be true - explicit env var AND development mode
-  if (env.NODE_ENV === 'development' && env.ALLOW_ANONYMOUS_DEV === true) {
+  if (environment.NODE_ENV === 'development' && environment.ALLOW_ANONYMOUS_DEV === true) {
     logger.warn('Anonymous access allowed (ALLOW_ANONYMOUS_DEV=true in development)');
     req.auth = { anonymous: true };
     refreshRequestContext(req);
@@ -142,11 +146,12 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 export function optionalAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = (req.headers['authorization'] as string) || '';
   const apiKeyHeader = (req.headers['x-api-key'] as string) || (req.query?.api_key as string) || '';
+  const environment = getEnv();
 
   // No auth provided
   if (!authHeader && !apiKeyHeader) {
     // Only allow anonymous if explicitly enabled in development
-    if (env.NODE_ENV === 'development' && env.ALLOW_ANONYMOUS_DEV === true) {
+    if (environment.NODE_ENV === 'development' && environment.ALLOW_ANONYMOUS_DEV === true) {
       req.auth = { anonymous: true };
       refreshRequestContext(req);
       return next();
