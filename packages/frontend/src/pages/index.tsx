@@ -52,27 +52,27 @@ const NAV_ITEMS = [
 
 const FEATURES = [
   {
-    title: 'AI Support Systems',
-    description: 'Web chat, email, SMS and social triage with context-preserving handoffs.',
-  },
-  {
-    title: 'AI Content Systems',
-    description: 'A content engine that produces on-brand drafts for campaigns and posts.',
-  },
-  {
-    title: 'AI Data & BI',
-    description: 'Query billing, CRM and ad data in plain language for fast insights.',
-  },
-  {
-    title: 'AI Workflow Systems',
-    description: 'Automate qualification, reminders, and hand-offs with transparent flows.',
-  },
-  {
     title: 'AI Voice Reception',
     description: 'Capture and qualify calls, book meetings, or route to humans.',
   },
   {
-    title: 'Integrations',
+    title: 'AI Support Systems (Coming Soon)',
+    description: 'Web chat, email, SMS and social triage with context-preserving handoffs.',
+  },
+  {
+    title: 'AI Content Systems (Coming Soon)',
+    description: 'A content engine that produces on-brand drafts for campaigns and posts.',
+  },
+  {
+    title: 'AI Data & BI (Coming Soon)',
+    description: 'Query billing, CRM and ad data in plain language for fast insights.',
+  },
+  {
+    title: 'AI Workflow Systems (Coming Soon)',
+    description: 'Automate qualification, reminders, and hand-offs with transparent flows.',
+  },
+  {
+    title: 'Integrations (Coming Soon)',
     description: 'Connect Stripe, HubSpot, Slack, Calendly, Notion and more.',
   },
 ];
@@ -169,8 +169,8 @@ export default function Home() {
               </h1>
 
               <p className="text-lg md:text-xl leading-relaxed text-brand-light/80 max-w-2xl mx-auto mb-10">
-                Design, deploy, and run AI systems for support, content, data, workflows, and voice.
-                One intake, a clear systems blueprint, and a phased rollout.
+                Design, deploy, and run AI Voice Reception systems. One intake, a clear systems
+                blueprint, and a phased rollout.
               </p>
 
               {/* Scanning line effect */}
