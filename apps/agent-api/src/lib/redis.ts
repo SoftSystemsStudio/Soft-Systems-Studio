@@ -1,4 +1,4 @@
-import IORedis, { Redis, RedisOptions } from 'ioredis';
+import IORedis, { type Redis, type RedisOptions } from 'ioredis';
 import env from '../env';
 import logger from '../logger';
 
@@ -126,7 +126,8 @@ export const cache = {
     const value = await client.get(key);
     if (!value) return null;
     try {
-      return JSON.parse(value) as T;
+      const parsed = JSON.parse(value) as unknown;
+      return parsed as T;
     } catch {
       return value as unknown as T;
     }
