@@ -3,6 +3,7 @@
  * Limits requests by IP address to prevent abuse
  */
 import rateLimit from 'express-rate-limit';
+import env from '../env';
 
 /**
  * Public chat rate limiter
@@ -27,7 +28,7 @@ export const rateLimitPublicChat = rateLimit({
   skip: (req) => {
     const isLocal =
       req.hostname === 'localhost' || req.hostname === '127.0.0.1' || req.hostname === '::1';
-    return process.env.NODE_ENV === 'development' && isLocal;
+    return env.NODE_ENV === 'development' && isLocal;
   },
   handler: (_req, res) => {
     res.status(429).json({

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- vault bootstrap manipulates process.env for secret hydration */
 import fetch from 'node-fetch';
 import type { VaultKVv2Secret } from './vault.types';
 

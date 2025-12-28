@@ -5,21 +5,22 @@
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 import type { LoggerOptions } from 'pino';
+import env from './env';
 
-const isProduction = process.env.NODE_ENV === 'production';
-const isTest = process.env.NODE_ENV === 'test';
+const isProduction = env.NODE_ENV === 'production';
+const isTest = env.NODE_ENV === 'test';
 
 /**
  * Base logger configuration
  */
 const baseOptions: LoggerOptions = {
-  level: process.env.LOG_LEVEL || (isProduction ? 'info' : 'debug'),
+  level: env.LOG_LEVEL || (isProduction ? 'info' : 'debug'),
   // Disable logging in test environment unless explicitly enabled
-  enabled: !isTest || process.env.LOG_ENABLED === 'true',
+  enabled: !isTest || env.LOG_ENABLED === true,
   // Add standard fields
   base: {
     service: 'agent-api',
-    env: process.env.NODE_ENV || 'development',
+    env: env.NODE_ENV || 'development',
   },
   // Redact sensitive fields from logs
   redact: {
