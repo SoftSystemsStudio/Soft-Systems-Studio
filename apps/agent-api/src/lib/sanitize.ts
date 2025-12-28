@@ -50,10 +50,16 @@ export function sanitizeObject<T extends Record<string, unknown>>(obj: T): T {
       continue;
     }
 
+    // key validated above; reading dynamic property is intentional
+    // eslint-disable-next-line security/detect-object-injection
     const value = obj[key];
     if (typeof value === 'object' && value !== null) {
+      // key validated above; assignment is safe
+      // eslint-disable-next-line security/detect-object-injection
       sanitized[key] = sanitizeObject(value as Record<string, unknown>);
     } else {
+      // key validated above; assignment is safe
+      // eslint-disable-next-line security/detect-object-injection
       sanitized[key] = value;
     }
   }
@@ -92,12 +98,17 @@ export function isValidIdentifier(
     return false;
   }
 
-  let pattern = '^[a-zA-Z0-9';
-  if (allowDashes) pattern += '\\-';
-  if (allowUnderscores) pattern += '_';
-  pattern += ']+$';
-
-  return new RegExp(pattern).test(input);
+  // Use prebuilt regexes to avoid non-literal RegExp constructor
+  if (allowDashes && allowUnderscores) {
+    return /^[A-Za-z0-9_-]+$/.test(input);
+  }
+  if (allowDashes && !allowUnderscores) {
+    return /^[A-Za-z0-9-]+$/.test(input);
+  }
+  if (!allowDashes && allowUnderscores) {
+    return /^[A-Za-z0-9_]+$/.test(input);
+  }
+  return /^[A-Za-z0-9]+$/.test(input);
 }
 
 /**

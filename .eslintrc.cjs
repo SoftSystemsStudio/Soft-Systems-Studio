@@ -50,4 +50,36 @@ module.exports = {
     },
   },
   ignorePatterns: ['dist/', 'node_modules/', '.next/', 'coverage/'],
+  overrides: [
+    {
+      files: ['**/env.ts', '**/env/**/*.ts', '**/config/env*.ts'],
+      rules: {
+        'no-restricted-syntax': 'off',
+      },
+    },
+    {
+      files: ['**/*.d.ts'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+  ],
+  // Apply env/process.env guardrails to source files only to allow scripts/tests to continue
+  // This keeps the rollout low-risk while protecting application code paths.
+  // Files matched here will error on direct `process.env` access and warn on `as any`.
+  overrides: [
+    {
+      files: ['apps/**/src/**/*.{ts,tsx}', 'packages/**/src/**/*.{ts,tsx}'],
+      rules: {
+        'no-restricted-syntax': [
+          'error',
+          {
+            selector: "MemberExpression[object.name='process'][property.name='env']",
+            message:
+              'Do not access process.env directly. Use the typed env module (env.ts) instead.',
+          },
+        ],
+      },
+    },
+  ],
 };

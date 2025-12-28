@@ -1,5 +1,5 @@
 import { Queue, QueueEvents } from 'bullmq';
-import { getRedisClient } from './lib/redis';
+import { getRedisClient, hasRedis } from './lib/redis';
 import {
   queueWaitingGauge,
   queueActiveGauge,
@@ -127,64 +127,65 @@ function getEmailEvents() {
   return _emailEvents;
 }
 
-const ingestEvents = getIngestEvents();
-const emailEvents = getEmailEvents();
+const ingestEvents = hasRedis() ? getIngestEvents() : null;
+const emailEvents = hasRedis() ? getEmailEvents() : null;
 
-ingestEvents.on('completed', ({ jobId }) => {
-  logger.debug({ jobId, queue: 'ingest' }, 'Job completed');
-});
+if (ingestEvents) {
+  ingestEvents.on('completed', ({ jobId }) => {
+    logger.debug({ jobId, queue: 'ingest' }, 'Job completed');
+  });
 
-ingestEvents.on('failed', async ({ jobId, failedReason }) => {
-  logger.error({ jobId, queue: 'ingest', reason: failedReason }, 'Job failed');
+  ingestEvents.on('failed', async ({ jobId, failedReason }) => {
+    logger.error({ jobId, queue: 'ingest', reason: failedReason }, 'Job failed');
 
-  // Increment failure counter
-  const job = await ingestQueue.getJob(jobId);
-  if (job) {
-    const attemptsMade = job.attemptsMade || 0;
-    const maxAttempts = job.opts?.attempts || 5;
-    const isFinal = attemptsMade >= maxAttempts;
+    // Increment failure counter
+    const job = await ingestQueue.getJob(jobId);
+    if (job) {
+      const attemptsMade = job.attemptsMade || 0;
+      const maxAttempts = job.opts?.attempts || 5;
+      const isFinal = attemptsMade >= maxAttempts;
 
-    // Extract failure reason category
-    const reason = extractFailureReason(failedReason);
-    jobFailureCounter.inc({ queue: 'ingest', reason, final: isFinal ? 'true' : 'false' });
+      // Extract failure reason category
+      const reason = extractFailureReason(failedReason);
+      jobFailureCounter.inc({ queue: 'ingest', reason, final: isFinal ? 'true' : 'false' });
 
-    // Move to DLQ if all retries exhausted
-    if (isFinal) {
-      logger.warn(
-        {
-          jobId,
-          workspaceId: job.data.workspaceId,
-          ingestionId: job.data.ingestionId,
-          attempts: attemptsMade,
-          reason: failedReason,
-        },
-        'Job exhausted all retries, moving to DLQ',
-      );
-
-      try {
-        await ingestDLQ.add('dlq-entry', {
-          ...job.data,
-          metadata: {
-            ...job.data.metadata,
-            originalJobId: jobId,
-            failedReason,
-            attemptsMade,
-            failedAt: new Date().toISOString(),
+      // Move to DLQ if all retries exhausted
+      if (isFinal) {
+        logger.warn(
+          {
+            jobId,
+            workspaceId: job.data.workspaceId,
+            ingestionId: job.data.ingestionId,
+            attempts: attemptsMade,
+            reason: failedReason,
           },
-        });
-        logger.info({ jobId, dlqJobId: jobId }, 'Job moved to DLQ');
-      } catch (dlqError) {
-        logger.error({ jobId, error: dlqError }, 'Failed to move job to DLQ');
+          'Job exhausted all retries, moving to DLQ',
+        );
+
+        try {
+          await ingestDLQ.add('dlq-entry', {
+            ...job.data,
+            metadata: {
+              ...job.data.metadata,
+              originalJobId: jobId,
+              failedReason,
+              attemptsMade,
+              failedAt: new Date().toISOString(),
+            },
+          });
+          logger.info({ jobId, dlqJobId: jobId }, 'Job moved to DLQ');
+        } catch (dlqError) {
+          logger.error({ jobId, error: dlqError }, 'Failed to move job to DLQ');
+        }
       }
     }
-  }
-});
+  });
 
-// Track retry attempts
-ingestEvents.on('retries-exhausted', ({ jobId }) => {
-  logger.error({ jobId, queue: 'ingest' }, 'Job retries exhausted');
-});
-
+  // Track retry attempts
+  ingestEvents.on('retries-exhausted', ({ jobId }) => {
+    logger.error({ jobId, queue: 'ingest' }, 'Job retries exhausted');
+  });
+}
 /**
  * Extract categorized failure reason from error message
  */
@@ -201,13 +202,15 @@ function extractFailureReason(errorMessage: string): string {
   return 'unknown';
 }
 
-emailEvents.on('completed', ({ jobId }) => {
-  logger.debug({ jobId, queue: 'email' }, 'Email job completed');
-});
+if (emailEvents) {
+  emailEvents.on('completed', ({ jobId }) => {
+    logger.debug({ jobId, queue: 'email' }, 'Email job completed');
+  });
 
-emailEvents.on('failed', ({ jobId, failedReason }) => {
-  logger.error({ jobId, queue: 'email', reason: failedReason }, 'Email job failed');
-});
+  emailEvents.on('failed', ({ jobId, failedReason }) => {
+    logger.error({ jobId, queue: 'email', reason: failedReason }, 'Email job failed');
+  });
+}
 
 // Helper functions to add jobs
 export async function addIngestJob(
@@ -348,8 +351,9 @@ export async function closeQueues(): Promise<void> {
     ingestQueue.close(),
     ingestDLQ.close(),
     emailQueue.close(),
-    ingestEvents.close(),
-    emailEvents.close(),
+    // only close events if they were created
+    ingestEvents ? ingestEvents.close() : Promise.resolve(),
+    emailEvents ? emailEvents.close() : Promise.resolve(),
   ]);
   logger.info('Queues closed');
 }

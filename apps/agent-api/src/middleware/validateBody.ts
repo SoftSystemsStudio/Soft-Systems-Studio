@@ -1,6 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { ZodSchema } from 'zod';
 
+type RequestWithValidated<T> = Request & { validatedBody?: T };
+
 export function validateBody<T>(schema: ZodSchema<T>) {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req.body);
@@ -20,8 +22,7 @@ export function validateBody<T>(schema: ZodSchema<T>) {
     }
 
     // Attach parsed, typed body to request for downstream consumers
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (req as any).validatedBody = result.data;
+    (req as RequestWithValidated<T>).validatedBody = result.data;
     return next();
   };
 }

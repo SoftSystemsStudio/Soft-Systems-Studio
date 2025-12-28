@@ -26,7 +26,7 @@ export function initSentry(): void {
     return;
   }
 
-  const dsn = process.env.SENTRY_DSN;
+  const dsn = env.SENTRY_DSN;
 
   // Skip initialization if no DSN or in development/test
   if (!dsn) {
@@ -45,7 +45,7 @@ export function initSentry(): void {
     Sentry.init({
       dsn,
       environment: env.NODE_ENV,
-      release: process.env.GIT_COMMIT_SHA || process.env.COMMIT_SHA || 'unknown',
+      release: env.GIT_COMMIT_SHA || env.COMMIT_SHA || 'unknown',
 
       // Performance monitoring
       tracesSampleRate: env.NODE_ENV === 'production' ? 0.1 : 1.0, // 10% in prod, 100% in staging

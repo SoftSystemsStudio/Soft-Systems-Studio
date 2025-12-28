@@ -1,4 +1,4 @@
-import IORedis, { Redis } from 'ioredis';
+import IORedis, { type Redis, type RedisOptions } from 'ioredis';
 import env from '../env';
 import logger from '../logger';
 
@@ -29,7 +29,7 @@ export function getRedisClient(): Redis {
       // Minimal stub implementing methods used by the app tests
       // Minimal typed stub implementing a small Redis surface used in tests
       const stubObj = {
-        on: (_event: string, _cb?: any) => stubObj as unknown as Redis,
+        on: (_event: string, _cb?: (...args: unknown[]) => void) => stubObj as unknown as Redis,
         ping: async () => 'PONG',
         get: async () => null,
         set: async () => 'OK',
@@ -44,7 +44,7 @@ export function getRedisClient(): Redis {
     }
 
     const redisUrl = env.REDIS_URL;
-    const options: any = {
+    const options: RedisOptions = {
       maxRetriesPerRequest: null, // Required for BullMQ
       enableReadyCheck: true,
       lazyConnect: true,
@@ -55,7 +55,9 @@ export function getRedisClient(): Redis {
       },
     };
 
-    redisClient = new IORedis(redisUrl, options);
+    // `redisUrl` is present here because we return early with a stub when
+    // running tests without REDIS_URL. Cast to string for the IORedis overload.
+    redisClient = new IORedis(redisUrl as string, options);
 
     redisClient.on('connect', () => {
       logger.info('Redis connected');
@@ -71,6 +73,21 @@ export function getRedisClient(): Redis {
   }
 
   return redisClient as Redis;
+}
+
+/**
+ * Return true when Redis is configured (used to gate BullMQ / QueueEvents creation)
+ */
+export function hasRedis(): boolean {
+  return Boolean(process.env.REDIS_URL || env.REDIS_URL);
+}
+
+/**
+ * Create or return a Redis connection suitable for BullMQ/Bull usage.
+ * In test environments this will return the stubbed client when REDIS_URL is not provided.
+ */
+export function createRedisConnection(): Redis {
+  return getRedisClient();
 }
 
 /**
@@ -109,7 +126,8 @@ export const cache = {
     const value = await client.get(key);
     if (!value) return null;
     try {
-      return JSON.parse(value) as T;
+      const parsed = JSON.parse(value) as unknown;
+      return parsed as T;
     } catch {
       return value as unknown as T;
     }

@@ -14,9 +14,9 @@ type Key = string;
 const buckets = new Map<Key, { windowStart: number; count: number }>();
 
 function getClientKey(req: Request): string {
-  // Prefer admin API key ID if available
-  const auth = (req as any).auth;
-  if (auth?.apiKeyId) return `admin:${auth.apiKeyId}`;
+  // Prefer admin API key ID if available (narrowing from unknown)
+  const auth = (req as unknown as { auth?: { apiKeyId?: string } }).auth;
+  if (auth && typeof auth.apiKeyId === 'string' && auth.apiKeyId) return `admin:${auth.apiKeyId}`;
 
   // Fallback to IP address for unauthenticated requests (will be rejected anyway)
   return `ip:${req.ip}`;

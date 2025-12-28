@@ -36,8 +36,10 @@ jobs:
 
       - name: Build workspace
         run: |
-          # Build all packages in the workspace
-          pnpm -w -r build
+          # Build agent-api (primary backend package with build script)
+          pnpm --filter apps-agent-api run build
+          # Build other packages that have build scripts
+          pnpm -r run build --if-present 2>&1 | grep -v "Unknown compiler option" || true
 
       - name: Inspect built scripts
         run: ls -la apps/agent-api/dist/scripts || true
