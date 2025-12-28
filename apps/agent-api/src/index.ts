@@ -43,10 +43,10 @@ app.use(
     origin:
       env.NODE_ENV === 'production'
         ? [
-            'https://softsystems.studio',
-            'https://www.softsystems.studio',
-            /^https:\/\/.*\.vercel\.app$/,
-          ]
+          'https://softsystems.studio',
+          'https://www.softsystems.studio',
+          /^https:\/\/.*\.vercel\.app$/,
+        ]
         : true, // Allow all origins in development
     credentials: true,
   }),
@@ -84,6 +84,7 @@ app.use(httpLogger);
 app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Request context propagation (after httpLogger, before authentication)

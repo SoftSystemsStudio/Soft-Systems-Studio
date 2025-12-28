@@ -33,10 +33,43 @@ export async function runChat(input: ChatInput): Promise<ChatResult> {
 
   // Step 1: Retrieve relevant context from vector store (tenant-isolated)
   type SimilarItem = { id: string; score: number; payload?: { text?: string } };
-  const contexts = (await querySimilar(workspaceId, message, 4)) as SimilarItem[];
-  const contextText = contexts
+  let contexts: SimilarItem[] = [];
+  try {
+    contexts = (await querySimilar(workspaceId, message, 4)) as SimilarItem[];
+  } catch (err) {
+    logger.warn({ err, workspaceId }, 'Failed to query vector store, proceeding without context');
+  }
+
+  // Fallback context if Qdrant is down or returns nothing
+  // IMPORTED FROM apps/voice-receptionist/src/llm/prompts.ts
+  const FALLBACK_CONTEXT = `
+SYSTEM IDENTITY:
+You are a helpful, bilingual (English/Spanish) AI receptionist for Prattville Midwifery, LLC.
+Your goal is to assist callers with scheduling, inquiries, and messages.
+
+CORE RULES:
+1. NO MEDICAL ADVICE. If a caller asks for medical advice, state that you cannot provide it and direct them to a medical professional or 911 for emergencies.
+2. ALWAYS confirm the callback number.
+3. NEVER promise actions not implemented (e.g., "I will call you back in 5 minutes"). Instead say "I will pass this message to the staff".
+4. MATCH the caller's language (English or Spanish).
+5. Keep responses SHORT and conversational (phone-friendly).
+
+INTENTS TO HANDLE:
+- scheduling: New or existing patient wanting an appointment.
+- new_pregnancy_inquiry: Questions about services for a new pregnancy.
+- existing_patient_message: Messages for the midwife or staff.
+- non_pregnant_inquiry: GYN or other services.
+- faq: General questions (location, insurance, etc.).
+  `;
+
+  let contextText = contexts
     .map((c, idx) => `Context ${idx + 1}: ${c.payload?.text || ''}`)
     .join('\n\n');
+
+  if (!contextText.trim()) {
+    logger.warn({ workspaceId }, 'Using fallback Prattville Midwifery context (Vector DB unavailable)');
+    contextText = FALLBACK_CONTEXT;
+  }
 
   logger.debug({ workspaceId, contextCount: contexts.length }, 'Retrieved context');
 
@@ -125,7 +158,13 @@ export async function runChatSimple(input: {
 
   // Retrieve context
   type SimilarItem = { id: string; score: number; payload?: { text?: string } };
-  const contexts = (await querySimilar(workspaceId, message, 4)) as SimilarItem[];
+  let contexts: SimilarItem[] = [];
+  try {
+    contexts = (await querySimilar(workspaceId, message, 4)) as SimilarItem[];
+  } catch (err) {
+    logger.warn({ err, workspaceId }, 'Failed to query vector store (simple), proceeding without context');
+  }
+
   const contextText = contexts
     .map((c, idx) => `Context ${idx + 1}: ${c.payload?.text || ''}`)
     .join('\n\n');
