@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- test helpers intentionally manipulate process.env */
 export function withEnv<T>(overrides: NodeJS.ProcessEnv, fn: () => T): T {
   const originalEnv = process.env;
   process.env = { ...process.env, ...overrides };

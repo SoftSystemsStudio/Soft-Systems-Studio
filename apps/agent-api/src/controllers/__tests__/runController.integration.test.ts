@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- integration tests may gate on env vars */
 import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';

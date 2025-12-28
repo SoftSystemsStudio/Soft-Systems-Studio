@@ -8,6 +8,7 @@ import {
   enforceRequiredEnv,
 } from '../vault';
 
+/* eslint-disable no-restricted-syntax -- tests intentionally manipulate process.env */
 import { captureWarnings, captureWarningsAsync } from '../../test/utils';
 
 class FakeVaultClient implements VaultClient {
