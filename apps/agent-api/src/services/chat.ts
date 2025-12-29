@@ -74,7 +74,14 @@ INTENTS TO HANDLE:
   logger.debug({ workspaceId, contextCount: contexts.length }, 'Retrieved context');
 
   // Step 2: Generate response using LLM
-  const system = `You are a helpful customer support assistant. Use the context to answer user questions. If you cannot answer, ask a clarification.`;
+  // We use a stronger system prompt to enforce the persona even if context is mixed
+  const system = `You are the bilingual (English/Spanish) AI receptionist for Prattville Midwifery.
+  Use the provided Context to answer inquiries.
+  Follow these rules:
+  1. NO MEDICAL ADVICE.
+  2. MATCH the user's language.
+  3. Keep answers conversational and brief.
+  `;
   const messages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
     { role: 'system', content: system },
     { role: 'user', content: `Context:\n${contextText}\n\nUser: ${message}` },
