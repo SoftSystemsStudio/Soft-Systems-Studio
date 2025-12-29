@@ -22,7 +22,7 @@ export async function publicVoiceController(req: Request, res: Response) {
     );
 
     const twiml = new VoiceResponse();
-    let aiReply = "Hello! I'm the AI receptionist for Soft Systems Studio. How can I help you today?";
+    let aiReply = "Hello! This is the automated receptionist for Prattville Midwifery. How can I help you today?";
 
     try {
         // If the user spoke, get a real AI response
@@ -48,11 +48,14 @@ export async function publicVoiceController(req: Request, res: Response) {
             language: 'en-US',
         });
 
-        gather.say({ voice: 'alice' }, aiReply);
+        // Use new TTS endpoint for ElevenLabs audio
+        const ttsUrl = `${req.protocol}://${req.get('host')}/api/v1/public/tts?text=${encodeURIComponent(aiReply)}`;
+        gather.play(ttsUrl);
 
         // If the user doesn't say anything, ask again or end call?
         // Usually good to loop once or twice.
-        twiml.say({ voice: 'alice' }, "I didn't hear anything. Please stay on the line.");
+        const loopUrl = `${req.protocol}://${req.get('host')}/api/v1/public/tts?text=${encodeURIComponent("I didn't hear anything. Please stay on the line.")}`;
+        twiml.play(loopUrl);
 
     } catch (error) {
         logger.error({ error, CallSid }, 'Voice controller failed');
