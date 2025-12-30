@@ -66,11 +66,11 @@ const nextConfig = {
           // HSTS - only in production
           ...(process.env.NODE_ENV === 'production'
             ? [
-                {
-                  key: 'Strict-Transport-Security',
-                  value: 'max-age=31536000; includeSubDomains; preload',
-                },
-              ]
+              {
+                key: 'Strict-Transport-Security',
+                value: 'max-age=31536000; includeSubDomains; preload',
+              },
+            ]
             : []),
           // CSP - customize based on your needs
           {
@@ -81,7 +81,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https: wss:",
+              "connect-src 'self' https: wss: http://localhost:* ws://localhost:*",
               "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
               "worker-src 'self' blob:",
               "frame-ancestors 'self'",
@@ -137,13 +137,13 @@ const nextConfig = {
   async redirects() {
     return process.env.VERCEL_ENV === 'production'
       ? [
-          {
-            source: '/:path*',
-            has: [{ type: 'host', value: 'www.softsystems.studio' }],
-            destination: 'https://softsystems.studio/:path*',
-            permanent: true,
-          },
-        ]
+        {
+          source: '/:path*',
+          has: [{ type: 'host', value: 'www.softsystems.studio' }],
+          destination: 'https://softsystems.studio/:path*',
+          permanent: true,
+        },
+      ]
       : [];
   },
 };
