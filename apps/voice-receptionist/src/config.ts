@@ -10,6 +10,7 @@ const candidateEnvPaths = [
   path.resolve(process.cwd(), 'apps/voice-receptionist/.env'),
   path.resolve(__dirname, '..', '.env'),
   path.resolve(__dirname, '..', '..', '.env'),
+  path.resolve(__dirname, '..', '..', '..', '.env'),
 ];
 
 for (const p of candidateEnvPaths) {

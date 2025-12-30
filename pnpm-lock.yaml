@@ -68,6 +68,9 @@ importers:
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
 
   apps/agent-api:
     dependencies:
@@ -130,7 +133,7 @@ importers:
         version: 2.7.0
       openai:
         specifier: ^6.10.0
-        version: 6.10.0(zod@3.25.76)
+        version: 6.10.0(ws@8.18.3)(zod@3.25.76)
       pg:
         specifier: ^8.11.3
         version: 8.16.3
@@ -233,7 +236,7 @@ importers:
         version: 4.29.1
       openai:
         specifier: ^4.28.0
-        version: 4.104.0(zod@3.25.76)
+        version: 4.104.0(ws@8.18.3)(zod@3.25.76)
       twilio:
         specifier: ^4.23.0
         version: 4.23.0
@@ -8036,7 +8039,7 @@ packages:
       mimic-fn: 4.0.0
     dev: true
 
-  /openai@4.104.0(zod@3.25.76):
+  /openai@4.104.0(ws@8.18.3)(zod@3.25.76):
     resolution: {integrity: sha512-p99EFNsA/yX6UhVO93f5kJsDRLAg+CTA2RBqdHK4RtK8u5IJw32Hyb2dTGKbnnFmnuoBv5r7Z2CURI9sGZpSuA==}
     hasBin: true
     peerDependencies:
@@ -8055,12 +8058,13 @@ packages:
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
       node-fetch: 2.7.0
+      ws: 8.18.3
       zod: 3.25.76
     transitivePeerDependencies:
       - encoding
     dev: false
 
-  /openai@6.10.0(zod@3.25.76):
+  /openai@6.10.0(ws@8.18.3)(zod@3.25.76):
     resolution: {integrity: sha512-ITxOGo7rO3XRMiKA5l7tQ43iNNu+iXGFAcf2t+aWVzzqRaS0i7m1K2BhxNdaveB+5eENhO0VY1FkiZzhBk4v3A==}
     hasBin: true
     peerDependencies:
@@ -8072,6 +8076,7 @@ packages:
       zod:
         optional: true
     dependencies:
+      ws: 8.18.3
       zod: 3.25.76
     dev: false
 
@@ -10584,7 +10589,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: false
 
   /xmlbuilder@13.0.2:
     resolution: {integrity: sha512-Eux0i2QdDYKbdbA6AM6xE4m6ZTZr4G4xF9kahI2ukSEMCzwce2eX9WlTI5J3s+NU7hpasFsr8hWIONae7LluAQ==}

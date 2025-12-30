@@ -99,6 +99,79 @@ function tightenForPhone(s: string) {
     .trim();
 }
 
+
+// -----------------------------
+// Hardening Utilities
+// -----------------------------
+
+/**
+ * Enhanced Logger that includes session context
+ */
+function log(level: 'info' | 'warn' | 'error' | 'debug', msg: string, state?: SessionState, data?: unknown) {
+  const meta = {
+    callSid: state?.callSid || 'unknown',
+    streamSid: state?.streamSid || 'unknown',
+    timestamp: new Date().toISOString(),
+  };
+
+  const payload = data ? { ...meta, data } : meta;
+
+  // In a real logger (like Pino used in agent-api), we would pass the object directly.
+  // For console, we format it slightly for readability.
+  const prefix = `[${level.toUpperCase()}] [${meta.callSid}]`;
+
+  if (level === 'error') console.error(prefix, msg, payload);
+  else if (level === 'warn') console.warn(prefix, msg, payload);
+  // else if (level === 'debug') console.debug(prefix, msg, payload); // Too verbose for prod
+  else console.log(prefix, msg, payload);
+}
+
+/**
+ * Retry utility for critical side-effects like webhooks
+ */
+async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 1000): Promise<T> {
+  let lastError: unknown;
+
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      lastError = e;
+      if (i < retries - 1) {
+        await new Promise(r => setTimeout(r, delayMs * Math.pow(2, i))); // Exponential backoff
+      }
+    }
+  }
+  throw lastError;
+}
+
+async function sendWebhook(url: string, payload: unknown, triggerText?: string, state?: SessionState) {
+  if (!url) {
+    log('warn', 'Webhook URL missing; skipping send.', state);
+    return;
+  }
+
+  const body: unknown = triggerText
+    ? isObject(payload)
+      ? { ...payload, trigger_text: triggerText }
+      : { payload, trigger_text: triggerText }
+    : payload;
+
+  try {
+    await withRetry(async () => {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    });
+    log('info', `Webhook sent to ${url}`, state);
+  } catch (err) {
+    log('error', `Failed to send webhook to ${url} after retries`, state, err);
+  }
+}
+
 // -------------------------------------
 // Routes
 // -------------------------------------
@@ -119,9 +192,13 @@ export default function crRoutes(fastify: FastifyInstance) {
         ? (req.query as Record<string, unknown>)
         : {};
     const sigOk = validateTwilioSignature(fullUrl, params, signatureHeader);
-    if (!sigOk) {
+
+    // DEV BYPASS
+    if (!sigOk && process.env.NODE_ENV !== 'development') {
       connection.socket.close();
       return;
+    } else if (!sigOk) {
+      log('warn', 'Twilio Signature validation failed but proceeding in DEV mode', undefined);
     }
 
     const state: SessionState = {
@@ -137,6 +214,13 @@ export default function crRoutes(fastify: FastifyInstance) {
       turnId: 0,
     };
 
+    // Heartbeat: Keep connection alive
+    const pingInterval = setInterval(() => {
+      if (connection.socket.readyState === WebSocket.OPEN) {
+        connection.socket.ping();
+      }
+    }, 30000);
+
     // non-async message handler to satisfy no-misused-promises; delegate to async worker
     connection.socket.on('message', (message: Buffer) => {
       let parsed: unknown;
@@ -147,12 +231,18 @@ export default function crRoutes(fastify: FastifyInstance) {
       }
 
       void handleSocketMessage(parsed, state, connection.socket).catch((e) =>
-        console.error('handleSocketMessage error:', e),
+        log('error', 'handleSocketMessage error', state, e)
       );
     });
 
     connection.socket.on('close', () => {
-      void handleClose(state).catch((e) => console.error('handleClose error:', e));
+      clearInterval(pingInterval);
+      void handleClose(state).catch((e) => log('error', 'handleClose error', state, e));
+    });
+
+    connection.socket.on('error', (err) => {
+      log('error', 'Socket error', state, err);
+      clearInterval(pingInterval);
     });
   });
 }
@@ -210,7 +300,7 @@ function isDTMFMessage(m: unknown): m is DTMFMessage {
 
 async function handleSocketMessage(msg: unknown, state: SessionState, socket: WebSocket) {
   if (!msg) {
-    console.warn('Received invalid JSON message');
+    log('warn', 'Received invalid JSON message', state);
     return;
   }
 
@@ -230,15 +320,15 @@ async function handleSocketMessage(msg: unknown, state: SessionState, socket: We
   }
 
   if (isDTMFMessage(msg)) {
-    console.debug('Received dtmf:', msg.digits);
+    log('info', `Received DTMF: ${msg.digits}`, state);
     return;
   }
 
-  console.log('Unknown message type:', (isObject(msg) && String(msg.type)) || typeof msg);
+  log('warn', `Unknown message type: ${(isObject(msg) && String(msg.type)) || typeof msg}`, state);
 }
 
 function handleSetup(msg: SetupMessage, state: SessionState, socket?: WebSocket) {
-  console.log('Setup:', msg);
+  log('info', 'Call Setup', state, msg);
 
   state.callSid = msg.callSid ?? '';
   state.streamSid = msg.streamSid ?? '';
@@ -253,7 +343,7 @@ function handleSetup(msg: SetupMessage, state: SessionState, socket?: WebSocket)
     const text = greeting(displayName, state.language);
     socket?.send(JSON.stringify({ type: 'text', token: text, last: true, lang: state.language }));
   } catch (e) {
-    console.error('Failed to send greeting:', e);
+    log('error', 'Failed to send greeting', state, e);
   }
 }
 
@@ -270,12 +360,13 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
   // Language switch
   if (msg.lang) state.language = normalizeLang(msg.lang);
 
-  console.log(`User (${state.language}): ${userText}`);
+  log('info', `User Prompt: ${userText}`, state);
 
   // Urgency detection + escalation (transparent to caller)
   const urgency = detectUrgency(userText);
   if (urgency !== 'normal') {
     state.urgency = urgency;
+    log('info', `Urgency Detected: ${urgency}`, state);
 
     // Tell caller immediately
     try {
@@ -288,12 +379,13 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
         }),
       );
     } catch (e) {
-      console.warn('Failed to send escalation notice:', e);
+      log('warn', 'Failed to send escalation notice', state, e);
     }
 
     // Fire escalation webhook in background (do not block the call)
-    sendWebhook(config.N8N_ESCALATION_WEBHOOK_URL, state, userText).catch((e) =>
-      console.error('Escalation webhook failed:', e),
+    // Pass state to use new retry logic
+    sendWebhook(config.N8N_ESCALATION_WEBHOOK_URL, state, userText, state).catch((e) =>
+      log('error', 'Escalation webhook failed', state, e)
     );
   }
 
@@ -316,7 +408,7 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
       );
       ackSent = true;
     } catch (e) {
-      console.warn('Failed to send ack:', e);
+      log('warn', 'Failed to send ack', state, e);
     }
   }, 550);
 
@@ -337,7 +429,7 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
     text = res?.text;
     functionCall = res?.functionCall;
   } catch (err) {
-    console.error('Error generating LLM response:', err);
+    log('error', 'Error generating LLM response', state, err);
     text = technicalFallback(state.language);
   } finally {
     clearTimeout(ackTimer);
@@ -356,11 +448,12 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
         const parsedArgs: unknown = JSON.parse(rawArgs);
         if (isObject(parsedArgs)) {
           state.context = { ...state.context, ...parsedArgs };
+          log('info', 'Context Updated', state, parsedArgs);
         } else {
-          console.warn('update_context args not an object:', parsedArgs);
+          log('warn', 'update_context args not an object', state, parsedArgs);
         }
       } catch (e) {
-        console.warn('Failed to parse update_context args:', e);
+        log('warn', 'Failed to parse update_context args', state, e);
       }
     }
   }
@@ -372,18 +465,18 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
     state.history.push({ role: 'assistant', content: finalText });
 
     const responseMsg = { type: 'text', token: finalText, last: true, lang: state.language };
-    console.log('Sending response to Twilio CR websocket:', responseMsg);
+    log('info', 'Sending Output', state, { token: finalText });
 
     try {
       socket.send(JSON.stringify(responseMsg));
     } catch (sendErr) {
-      console.error('Failed to send response over websocket:', sendErr);
+      log('error', 'Failed to send response over websocket', state, sendErr);
     }
   }
 }
 
 function handleInterrupt(msg: InterruptMessage, state: SessionState) {
-  console.log('Interrupted');
+  log('info', 'Interrupted', state);
 
   // Mark interrupted and invalidate any in-flight generation for the current turn
   state.interrupted = true;
@@ -391,7 +484,7 @@ function handleInterrupt(msg: InterruptMessage, state: SessionState) {
 }
 
 async function handleClose(state: SessionState) {
-  console.log('Call ended');
+  log('info', 'Call Ended', state);
 
   const endTime = new Date();
   const businessHours = isBusinessHours(state.startTime);
@@ -410,11 +503,11 @@ async function handleClose(state: SessionState) {
   );
 
   // Send intake webhook
-  await sendWebhook(config.N8N_INTAKE_WEBHOOK_URL, payload);
+  await sendWebhook(config.N8N_INTAKE_WEBHOOK_URL, payload, undefined, state);
 
   // Send scheduling webhook if requested
   if (state.context?.scheduling_requested) {
-    await sendWebhook(config.N8N_SCHEDULING_WEBHOOK_URL, payload);
+    await sendWebhook(config.N8N_SCHEDULING_WEBHOOK_URL, payload, undefined, state);
   }
 }
 
@@ -430,28 +523,4 @@ function contentToString(content: unknown): string {
     }
   }
   return String(content ?? '');
-}
-
-async function sendWebhook(url: string, payload: unknown, triggerText?: string) {
-  if (!url) {
-    console.warn('Webhook URL missing; skipping send.');
-    return;
-  }
-
-  try {
-    const body: unknown = triggerText
-      ? isObject(payload)
-        ? { ...payload, trigger_text: triggerText }
-        : { payload, trigger_text: triggerText }
-      : payload;
-
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    console.log(`Webhook sent to ${url}`);
-  } catch (err) {
-    console.error(`Failed to send webhook to ${url}`, err);
-  }
 }
