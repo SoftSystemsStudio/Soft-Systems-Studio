@@ -180,8 +180,8 @@ export default function Home() {
                 <Button as="link" href="/intake" variant="primary" size="lg">
                   Start the intake
                 </Button>
-                <Button as="link" href="#features" variant="outline" size="lg">
-                  Explore features
+                <Button as="link" href="/demo" variant="outline" size="lg" className="border-brand-lime/50 text-brand-lime hover:bg-brand-lime/10">
+                  Live Neural Demo
                 </Button>
               </div>
             </FadeIn>
@@ -324,6 +324,7 @@ export default function Home() {
       {/* Chat Widget */}
       <ChatWidget
         apiUrl={
+          // eslint-disable-next-line no-restricted-syntax
           (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + '/api/v1/public/chat'
         }
         title="Ask about Soft Systems Studio"
