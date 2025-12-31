@@ -8,6 +8,7 @@
     "apps/*"
   ],
   "scripts": {
+    "postinstall": "pnpm -r --if-present prisma:generate",
     "setup": "pnpm -w install && pnpm -r build",
     "dev": "pnpm --parallel --filter apps-agent-api --filter frontend dev",
     "build": "pnpm -r build",

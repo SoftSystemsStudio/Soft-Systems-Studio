@@ -3,9 +3,10 @@
  * @see https://stripe.com/docs/stripe-js
  */
 import { loadStripe, type Stripe } from '@stripe/stripe-js';
+import env from './env';
 
 // Environment variable for publishable key
-const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+const STRIPE_PUBLISHABLE_KEY = env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 // Singleton promise to avoid loading Stripe multiple times
 let stripePromise: Promise<Stripe | null> | null = null;

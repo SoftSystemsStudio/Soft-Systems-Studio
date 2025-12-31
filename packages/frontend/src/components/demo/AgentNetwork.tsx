@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Html, Stars } from '@react-three/drei';
+import { OrbitControls, Html, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 
 const AgentNode = ({
@@ -14,7 +14,7 @@ const AgentNode = ({
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
 
-  useFrame((state) => {
+  useFrame(() => {
     if (meshRef.current) {
       meshRef.current.rotation.x += 0.01;
       meshRef.current.rotation.y += 0.01;

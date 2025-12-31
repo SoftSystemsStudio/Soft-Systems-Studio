@@ -61,5 +61,5 @@ export const config = parsedEnv.data;
 export type BusinessHours = Record<string, [string, string][]>;
 
 export const getBusinessHours = (): BusinessHours => {
-  return config.MIDWIFERY_HOURS_JSON;
+  return config.MIDWIFERY_HOURS_JSON as BusinessHours;
 };
