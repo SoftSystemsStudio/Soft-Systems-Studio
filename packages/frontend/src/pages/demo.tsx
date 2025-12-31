@@ -38,7 +38,8 @@ export default function DemoPage() {
         setLoading(true);
 
         try {
-            const res = await fetch('http://localhost:4000/api/v1/public/chat', {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+            const res = await fetch(`${apiUrl}/api/v1/public/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

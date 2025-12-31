@@ -325,7 +325,7 @@ export default function Home() {
       <ChatWidget
         apiUrl={
           // eslint-disable-next-line no-restricted-syntax
-          (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + '/api/v1/public/chat'
+          (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'
         }
         title="Ask about Soft Systems Studio"
         greeting="Hi! I'm an AI assistant. Ask me anything about our platform, features, pricing, or how to get started!"
