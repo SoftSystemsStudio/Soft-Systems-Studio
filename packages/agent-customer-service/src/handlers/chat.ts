@@ -7,6 +7,7 @@ import {
   CostAccountingService,
   ExecutionController,
 } from '@softsystems/agent-orchestrator';
+import logger from '../logger';
 
 export async function handleChat(body: unknown) {
   const parse = ChatRequest.safeParse(body);
@@ -55,15 +56,14 @@ export async function handleChat(body: unknown) {
   const response = ChatResponse.parse({ reply: result.reply, needsHuman });
 
   // TODO: persist to conversation store (Postgres) and log structured metadata
-  console.log(
-    '[handleChat] workspace',
-    workspaceId,
-    'user',
-    userId,
-    'replyLength',
-    result.reply.length,
-    'tokensIn',
-    result.tokensIn,
+  logger.info(
+    {
+      workspaceId,
+      userId,
+      replyLength: result.reply.length,
+      tokensIn: result.tokensIn,
+    },
+    'Chat request processed',
   );
 
   return { status: 200, body: response };
