@@ -81,7 +81,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https: wss: http://localhost:* ws://localhost:*",
+              "connect-src 'self' https: wss: http://localhost:* ws://localhost:* https://api.softsystemsstudiollc.com",
               "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
               "worker-src 'self' blob:",
               "frame-ancestors 'self'",

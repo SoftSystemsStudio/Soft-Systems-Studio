@@ -45,6 +45,8 @@ app.use(
         ? [
           'https://softsystems.studio',
           'https://www.softsystems.studio',
+          'https://softsystemsstudiollc.com',
+          'https://www.softsystemsstudiollc.com',
           /^https:\/\/.*\.vercel\.app$/,
         ]
         : true, // Allow all origins in development
