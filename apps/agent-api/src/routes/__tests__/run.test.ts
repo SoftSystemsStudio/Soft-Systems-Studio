@@ -1,3 +1,11 @@
+/* eslint-disable no-restricted-syntax -- test setup requires env manipulation */
+// Set up minimal environment variables before any imports
+process.env.NODE_ENV = 'test';
+process.env.POSTGRES_URL = 'postgresql://test:test@localhost:5432/test';
+process.env.REDIS_URL = 'redis://localhost:6379';
+process.env.OPENAI_API_KEY = 'sk-test-key';
+process.env.JWT_SECRET = 'test-secret-must-be-at-least-32-chars-long';
+
 import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';

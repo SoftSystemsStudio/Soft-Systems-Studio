@@ -164,7 +164,11 @@ export async function readSecretsFromVault(
             // eslint-disable-next-line security/detect-object-injection
             v = data[e.key];
           }
-          if (v === undefined) continue;
+          if (v === undefined) {
+            // eslint-disable-next-line no-console
+            console.warn(`Warning: key "${e.key}" not found in Vault path ${path} for env var ${e.envName}`);
+            continue;
+          }
           result[e.envName] = String(v);
         } catch (innerErr) {
           // eslint-disable-next-line no-console
