@@ -249,61 +249,30 @@ Required checks:
 
 _This section auto-populates with recent commit context to help Claude maintain continuity._
 
-**Last updated**: 2025-12-31T19:49:43.004Z
+**Last updated**: 2025-12-31T20:40:45.709Z
 
 **Current staged changes summary**:
   root/: 4 modified
-  apps/: 10 modified
-  docs/: 2 modified
-  packages/: 11 modified
-  scripts/: 4 modified
 
 **Recent git commits**:
 ```
-109e808 - feat: implement CLAUDE.md Operating System for AI collaboration (10 minutes ago)
-96d865c - fix: resolve all test failures across agent-orchestrator and agent-api (46 minutes ago)
-59de231 - Merge chore/unsafe-burn/redis-middleware: Redis middleware cleanup (64 minutes ago)
-f947434 - fix: resolve all TypeScript and ESLint errors across monorepo (69 minutes ago)
-a19360a - Merge pull request #5 from SoftSystemsStudio/claude/find-fix-bug-mjtmpn210t7iqida-vaGvg (13 hours ago)
+3c4ea45 - feat: add canonical tags and remove conflicting app-level redirects (51 minutes ago)
+109e808 - feat: implement CLAUDE.md Operating System for AI collaboration (61 minutes ago)
+96d865c - fix: resolve all test failures across agent-orchestrator and agent-api (2 hours ago)
+59de231 - Merge chore/unsafe-burn/redis-middleware: Redis middleware cleanup (2 hours ago)
+f947434 - fix: resolve all TypeScript and ESLint errors across monorepo (2 hours ago)
 ```
 
 **Recent commits**: (rolling window of last 10)
 
-### Commit 1: 2025-12-31T19:49:43.004Z
+### Commit 1: 2025-12-31T20:40:45.709Z
 
 **Staged files**:
 ```
+M	.dockerignore
 M	CLAUDE.md
-M	apps/agent-api/package.json
-M	apps/agent-api/src/bootstrap/vault.ts
-M	apps/agent-api/src/controllers/publicTtsController.ts
-M	apps/agent-api/src/controllers/publicVoiceController.ts
-M	apps/agent-api/src/index.ts
-M	apps/agent-api/src/services/chat.ts
-M	apps/agent-api/src/services/tts.ts
-M	apps/voice-receptionist/package.json
-M	apps/voice-receptionist/src/ws/crServer.ts
-M	apps/voice-receptionist/tsconfig.json
-M	docs/agent-api-architecture-security-review.md
-M	docs/env.production.md
-M	gitleaks-report-fresh.json
-M	packages/core-llm/src/index.d.ts
-M	packages/core-llm/src/index.js
-M	packages/frontend/next-env.d.ts
-M	packages/frontend/next.config.mjs
-M	packages/frontend/src/pages/demo.tsx
-M	packages/frontend/src/pages/index.tsx
-M	packages/frontend/src/pages/intake.tsx
-M	packages/frontend/src/pages/sign-in/[[...index]].tsx
-M	packages/frontend/src/pages/sign-up/[[...index]].tsx
-M	packages/frontend/src/pages/test-email.tsx
-M	packages/frontend/vercel.json
-M	scripts/debug-env.js
-M	scripts/fix-env.js
-M	scripts/migrate-env-to-vault.js
-M	scripts/test-voice-simulation.js
-M	tmp-eslint-apps-agent-api.json
-M	vercel.json
+M	Dockerfile
+M	railway.json
 ```
 
 
