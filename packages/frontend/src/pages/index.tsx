@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import type { ComponentType } from 'react';
 import {
@@ -129,6 +130,22 @@ const PRICING_PLANS = [
 export default function Home() {
   return (
     <div className="antialiased min-h-screen bg-black text-brand-light">
+      <Head>
+        <title>Soft Systems Studio - AI Automation Agency</title>
+        <meta
+          name="description"
+          content="Design, deploy, and run AI Voice Reception systems. Automate smarter. Grow faster."
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href="https://softsystemsstudiollc.com/" />
+        <meta property="og:title" content="Soft Systems Studio - AI Automation Agency" />
+        <meta
+          property="og:description"
+          content="Design, deploy, and run AI Voice Reception systems. Automate smarter. Grow faster."
+        />
+        <meta property="og:url" content="https://softsystemsstudiollc.com/" />
+        <meta property="og:type" content="website" />
+      </Head>
       {/* Skip link for accessibility */}
       <a href="#main-content" className="skip-link">
         Skip to main content

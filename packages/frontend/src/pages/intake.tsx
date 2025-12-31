@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import Layout from '../components/Layout';
 import styles from '../styles/Intake.module.css';
 
@@ -179,6 +180,14 @@ export default function IntakePage() {
 
   return (
     <Layout>
+      <Head>
+        <title>AI Systems Intake - Soft Systems Studio</title>
+        <meta
+          name="description"
+          content="Tell us about your goals and systems. Get a concrete blueprint for AI automation."
+        />
+        <link rel="canonical" href="https://softsystemsstudiollc.com/intake" />
+      </Head>
       <main className={styles.page}>
         {/* Hero framing */}
         <header className={styles.hero}>

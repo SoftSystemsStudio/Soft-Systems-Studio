@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useState } from 'react';
 
 export default function TestEmailPage() {
@@ -39,55 +40,61 @@ export default function TestEmailPage() {
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>🧪 Resend Email Test</h1>
-      <p style={styles.subtitle}>Send a test email to verify Resend is working correctly.</p>
+    <>
+      <Head>
+        <title>Email Test - Soft Systems Studio</title>
+        <link rel="canonical" href="https://softsystemsstudiollc.com/test-email" />
+      </Head>
+      <div style={styles.container}>
+        <h1 style={styles.title}>🧪 Resend Email Test</h1>
+        <p style={styles.subtitle}>Send a test email to verify Resend is working correctly.</p>
 
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <label style={styles.label}>
-          Email Address:
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            required
-            style={styles.input}
-          />
-        </label>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <label style={styles.label}>
+            Email Address:
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              required
+              style={styles.input}
+            />
+          </label>
 
-        <button
-          type="submit"
-          disabled={status === 'loading'}
-          style={{
-            ...styles.button,
-            opacity: status === 'loading' ? 0.7 : 1,
-          }}
-        >
-          {status === 'loading' ? 'Sending...' : 'Send Test Email'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            style={{
+              ...styles.button,
+              opacity: status === 'loading' ? 0.7 : 1,
+            }}
+          >
+            {status === 'loading' ? 'Sending...' : 'Send Test Email'}
+          </button>
+        </form>
 
-      {message && (
-        <div
-          style={{
-            ...styles.message,
-            backgroundColor: status === 'success' ? '#1a3d1a' : '#3d1a1a',
-            borderColor: status === 'success' ? '#c0ff6b' : '#ff6b6b',
-          }}
-        >
-          {message}
+        {message && (
+          <div
+            style={{
+              ...styles.message,
+              backgroundColor: status === 'success' ? '#1a3d1a' : '#3d1a1a',
+              borderColor: status === 'success' ? '#c0ff6b' : '#ff6b6b',
+            }}
+          >
+            {message}
+          </div>
+        )}
+
+        <div style={styles.info}>
+          <h3>Note:</h3>
+          <p>
+            On Resend free tier, emails can only be sent to the email associated with your Resend
+            account.
+          </p>
         </div>
-      )}
-
-      <div style={styles.info}>
-        <h3>Note:</h3>
-        <p>
-          On Resend free tier, emails can only be sent to the email associated with your Resend
-          account.
-        </p>
       </div>
-    </div>
+    </>
   );
 }
 

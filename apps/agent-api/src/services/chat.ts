@@ -71,7 +71,10 @@ ANTI-PATTERNS (DO NOT DO):
     .join('\n\n');
 
   if (!contextText.trim()) {
-    logger.warn({ workspaceId }, 'Using fallback Prattville Midwifery context (Vector DB unavailable)');
+    logger.warn(
+      { workspaceId },
+      'Using fallback Prattville Midwifery context (Vector DB unavailable)',
+    );
     contextText = FALLBACK_CONTEXT;
   }
 
@@ -174,7 +177,10 @@ export async function runChatSimple(input: {
   try {
     contexts = (await querySimilar(workspaceId, message, 4)) as SimilarItem[];
   } catch (err) {
-    logger.warn({ err, workspaceId }, 'Failed to query vector store (simple), proceeding without context');
+    logger.warn(
+      { err, workspaceId },
+      'Failed to query vector store (simple), proceeding without context',
+    );
   }
 
   const contextText = contexts

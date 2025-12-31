@@ -1,4 +1,3 @@
-
 import type { Request, Response } from 'express';
 import { generateSpeech } from '../services/tts';
 import { logger } from '../logger';
@@ -9,24 +8,24 @@ import { logger } from '../logger';
  * Returns audio/mpeg
  */
 export async function publicTtsController(req: Request, res: Response) {
-    const text = req.query.text as string;
+  const text = req.query.text as string;
 
-    if (!text) {
-        res.status(400).send('Missing text parameter');
-        return;
-    }
+  if (!text) {
+    res.status(400).send('Missing text parameter');
+    return;
+  }
 
-    try {
-        const audioBuffer = await generateSpeech(text);
+  try {
+    const audioBuffer = await generateSpeech(text);
 
-        res.set({
-            'Content-Type': 'audio/mpeg',
-            'Content-Length': audioBuffer.length,
-        });
+    res.set({
+      'Content-Type': 'audio/mpeg',
+      'Content-Length': audioBuffer.length,
+    });
 
-        res.send(audioBuffer);
-    } catch (error: any) {
-        logger.error({ error, text }, 'TTS Controller failed');
-        res.status(500).send(`TTS Generation Failed: ${error.message}`);
-    }
+    res.send(audioBuffer);
+  } catch (error: any) {
+    logger.error({ error, text }, 'TTS Controller failed');
+    res.status(500).send(`TTS Generation Failed: ${error.message}`);
+  }
 }

@@ -86,7 +86,12 @@ export default function DemoPage() {
     <>
       <Head>
         <title>Soft Systems Studio | Neural Demo</title>
+        <meta
+          name="description"
+          content="Experience our AI system in action. Interactive demo of Soft Systems Studio."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href="https://softsystemsstudiollc.com/demo" />
       </Head>
       <main className="relative w-screen h-screen overflow-hidden bg-black text-white font-mono">
         {/* 3D Background Layer */}

@@ -43,12 +43,12 @@ app.use(
     origin:
       env.NODE_ENV === 'production'
         ? [
-          'https://softsystems.studio',
-          'https://www.softsystems.studio',
-          'https://softsystemsstudiollc.com',
-          'https://www.softsystemsstudiollc.com',
-          /^https:\/\/.*\.vercel\.app$/,
-        ]
+            'https://softsystems.studio',
+            'https://www.softsystems.studio',
+            'https://softsystemsstudiollc.com',
+            'https://www.softsystemsstudiollc.com',
+            /^https:\/\/.*\.vercel\.app$/,
+          ]
         : true, // Allow all origins in development
     credentials: true,
   }),
