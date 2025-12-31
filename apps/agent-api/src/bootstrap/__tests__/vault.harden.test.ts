@@ -6,7 +6,7 @@ class FakeVaultClient {
   read(path: string) {
     const v = this.data[path];
     if (!v) throw new Error('not found');
-    return Promise.resolve(v as Record<string, unknown>);
+    return Promise.resolve(v);
   }
 }
 
