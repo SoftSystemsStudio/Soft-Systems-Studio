@@ -1,14 +1,83 @@
+# Dependencies (will be installed in Docker)
 node_modules
+**/node_modules
+
+# Build outputs (will be generated in Docker)
 dist
+**/dist
 .next
+**/.next
 build
+**/build
+
+# Environment files (use Railway env vars)
 .env
-.env.local
-.env._
+.env.*
 !.env.example
-Dockerfile
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Git and CI/CD
 .git
 .github
-_.log
-\*.md
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs
+
+# Testing
+coverage
+*.test.ts.snap
+.nyc_output
+
+# Documentation (keep only essential)
+*.md
 !README.md
+docs
+
+# Temporary files
+tmp
+temp
+*.tmp
+.cache
+
+# Docker files (no need to copy into image)
+Dockerfile
+Dockerfile.*
+.dockerignore
+docker-compose*.yml
+
+# CI/CD configs
+.husky
+.secretlintignore
+.prettierignore
+.eslintignore
+
+# Scripts not needed in container
+scripts
+!scripts/boot-test.ts
+
+# Claude AI files
+.claude
+CLAUDE.md
+
+# Large files
+ai-automation-agency-os
+gitleaks-report*.json
+softsystems-screenshot.png
