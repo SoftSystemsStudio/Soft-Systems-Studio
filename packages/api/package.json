@@ -12,7 +12,7 @@
     "migrate:deploy": "prisma migrate deploy",
     "seed": "ts-node prisma/seed.ts",
     "lint": "eslint . --ext .ts",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",

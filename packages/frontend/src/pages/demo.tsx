@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { useState, useRef, useEffect } from 'react';
+import env from '../lib/env';
 
 // Dynamic import for the 3D component to avoid SSR issues with Canvas
 const AgentNetwork = dynamic(() => import('../components/demo/AgentNetwork'), { ssr: false });
@@ -40,7 +41,7 @@ export default function DemoPage() {
       setLoading(true);
 
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+        const apiUrl = env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
         const res = await fetch(`${apiUrl}/api/v1/public/chat`, {
           method: 'POST',
           headers: {
@@ -56,15 +57,15 @@ export default function DemoPage() {
           throw new Error('Network response was not ok');
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const data = await res.json();
+        const data: unknown = await res.json();
         // Adjust based on actual API response shape. Assuming { reply: string } or similar.
         // If the backend returns { reply: "..." }
         const reply =
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          (data.reply as string) ||
-          (data.message as string) ||
-          'I received your message but could not parse the response.';
+          typeof data === 'object' && data !== null && 'reply' in data
+            ? (data as { reply: string }).reply
+            : typeof data === 'object' && data !== null && 'message' in data
+              ? (data as { message: string }).message
+              : 'I received your message but could not parse the response.';
 
         setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
       } catch (error) {

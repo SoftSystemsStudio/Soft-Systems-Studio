@@ -1,7 +1,8 @@
 import { Resend, CreateEmailOptions } from 'resend';
+import env from './env';
 
 // Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 export type SendEmailParams = {
   to: string | string[];
@@ -24,10 +25,10 @@ export async function sendEmail({
   subject,
   html,
   text,
-  from = process.env.RESEND_FROM_EMAIL || 'Soft Systems Studio <noreply@softsystems.studio>',
+  from = env.RESEND_FROM_EMAIL || 'Soft Systems Studio <noreply@softsystems.studio>',
   replyTo,
 }: SendEmailParams): Promise<SendEmailResult> {
-  if (!process.env.RESEND_API_KEY) {
+  if (!env.RESEND_API_KEY) {
     console.error('RESEND_API_KEY is not configured');
     throw new Error('Email service not configured');
   }
@@ -92,7 +93,7 @@ export async function sendIntakeNotification(
           <li><strong>Email:</strong> ${clientData.email}</li>
           ${clientData.website ? `<li><strong>Website:</strong> ${clientData.website}</li>` : ''}
         </ul>
-        <p><a href="${process.env.NEXT_PUBLIC_APP_URL || ''}/admin/clients" style="color: #c0ff6b;">View in Dashboard →</a></p>
+        <p><a href="${env.NEXT_PUBLIC_APP_URL || ''}/admin/clients" style="color: #c0ff6b;">View in Dashboard →</a></p>
       </div>
     `,
   });

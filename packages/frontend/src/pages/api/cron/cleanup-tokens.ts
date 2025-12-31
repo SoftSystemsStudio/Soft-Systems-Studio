@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import env from '../../../lib/env';
 
 /**
  * Cron endpoint for cleaning up expired refresh tokens
@@ -23,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Verify the request is from Vercel Cron
   const authHeader = req.headers.authorization;
-  const cronSecret = process.env.CRON_SECRET;
+  const cronSecret = env.CRON_SECRET;
 
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -31,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Call the backend API to cleanup tokens
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    const apiUrl = env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
     const response = await fetch(`${apiUrl}/api/v1/admin/cleanup-tokens`, {
       method: 'POST',
       headers: {

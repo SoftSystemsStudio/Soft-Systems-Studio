@@ -6,9 +6,10 @@
  *
  * @see https://developers.google.com/analytics/devguides/collection/ga4
  */
+import env from './env';
 
 // Your GA4 Measurement ID (starts with G-)
-export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
+export const GA_MEASUREMENT_ID = env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
 
 // Check if GA is configured
 export const isGAEnabled = (): boolean => {

@@ -114,9 +114,7 @@ export function errorHandler(
   // Prepare error context for logging with bound fields from request context
   const errorContext = {
     message: err.message,
-    url: req.url,
-    method: req.method,
-    ...context, // Includes requestId, userId, workspaceId, role, apiKeyId
+    ...context, // Includes requestId, method, path, userId, workspaceId, role, apiKeyId
   };
 
   // Capture error with Sentry for 5xx errors

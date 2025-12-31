@@ -15,7 +15,7 @@ class FakeVaultClient implements VaultClient {
   calls: string[] = [];
   private readonly store: Map<string, Record<string, unknown>>;
 
-  constructor(private readonly data: Record<string, Record<string, unknown>>) {
+  constructor(data: Record<string, Record<string, unknown>>) {
     this.store = new Map(Object.entries(data));
   }
 
