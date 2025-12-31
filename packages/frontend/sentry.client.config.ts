@@ -111,7 +111,13 @@ Sentry.init({
     }),
     Sentry.browserTracingIntegration({
       // Trace requests to our API
-      tracePropagationTargets: ['localhost', /^\//, /softsystems\.studio/, /softsystemsstudiollc\.com/, /vercel\.app/],
+      tracePropagationTargets: [
+        'localhost',
+        /^\//,
+        /softsystems\.studio/,
+        /softsystemsstudiollc\.com/,
+        /vercel\.app/,
+      ],
     }),
   ],
 });
