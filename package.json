@@ -28,7 +28,11 @@
     "security-audit": "bash scripts/security-audit.sh",
     "audit": "pnpm audit && bash scripts/security-audit.sh",
     "prepare": "husky install",
-    "ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "ci": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "claude:briefing": "node scripts/claude-briefing.js",
+    "claude:clear": "node scripts/claude-clear-helper.js",
+    "claude:compact-guard": "node scripts/claude-compact-guard.js",
+    "claude:update-context": "node scripts/update-claude-context.js"
   },
   "devDependencies": {
     "@secretlint/secretlint-rule-preset-recommend": "8.2.0",
