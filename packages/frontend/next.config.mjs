@@ -66,11 +66,11 @@ const nextConfig = {
           // HSTS - only in production
           ...(process.env.NODE_ENV === 'production'
             ? [
-              {
-                key: 'Strict-Transport-Security',
-                value: 'max-age=31536000; includeSubDomains; preload',
-              },
-            ]
+                {
+                  key: 'Strict-Transport-Security',
+                  value: 'max-age=31536000; includeSubDomains; preload',
+                },
+              ]
             : []),
           // CSP - customize based on your needs
           {
@@ -133,18 +133,11 @@ const nextConfig = {
     ];
   },
 
-  // Redirect www to non-www (or vice versa) for SEO
+  // Redirect rules disabled: Vercel domain-level redirects handle canonicalization
+  // (one-way: apex → www for LLC domain)
+  // Keeping old softsystems.studio → softsystemsstudiollc.com migration at Vercel level
   async redirects() {
-    return process.env.VERCEL_ENV === 'production'
-      ? [
-        {
-          source: '/:path*',
-          has: [{ type: 'host', value: 'www.softsystems.studio' }],
-          destination: 'https://softsystems.studio/:path*',
-          permanent: true,
-        },
-      ]
-      : [];
+    return [];
   },
 };
 

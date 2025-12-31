@@ -99,7 +99,6 @@ function tightenForPhone(s: string) {
     .trim();
 }
 
-
 // -----------------------------
 // Hardening Utilities
 // -----------------------------
@@ -107,7 +106,12 @@ function tightenForPhone(s: string) {
 /**
  * Enhanced Logger that includes session context
  */
-function log(level: 'info' | 'warn' | 'error' | 'debug', msg: string, state?: SessionState, data?: unknown) {
+function log(
+  level: 'info' | 'warn' | 'error' | 'debug',
+  msg: string,
+  state?: SessionState,
+  data?: unknown,
+) {
   const meta = {
     callSid: state?.callSid || 'unknown',
     streamSid: state?.streamSid || 'unknown',
@@ -138,14 +142,19 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 1000): 
     } catch (e) {
       lastError = e;
       if (i < retries - 1) {
-        await new Promise(r => setTimeout(r, delayMs * Math.pow(2, i))); // Exponential backoff
+        await new Promise((r) => setTimeout(r, delayMs * Math.pow(2, i))); // Exponential backoff
       }
     }
   }
   throw lastError;
 }
 
-async function sendWebhook(url: string, payload: unknown, triggerText?: string, state?: SessionState) {
+async function sendWebhook(
+  url: string,
+  payload: unknown,
+  triggerText?: string,
+  state?: SessionState,
+) {
   if (!url) {
     log('warn', 'Webhook URL missing; skipping send.', state);
     return;
@@ -231,7 +240,7 @@ export default function crRoutes(fastify: FastifyInstance) {
       }
 
       void handleSocketMessage(parsed, state, connection.socket).catch((e) =>
-        log('error', 'handleSocketMessage error', state, e)
+        log('error', 'handleSocketMessage error', state, e),
       );
     });
 
@@ -385,7 +394,7 @@ async function handlePrompt(msg: PromptMessage, state: SessionState, socket: Web
     // Fire escalation webhook in background (do not block the call)
     // Pass state to use new retry logic
     sendWebhook(config.N8N_ESCALATION_WEBHOOK_URL, state, userText, state).catch((e) =>
-      log('error', 'Escalation webhook failed', state, e)
+      log('error', 'Escalation webhook failed', state, e),
     );
   }
 

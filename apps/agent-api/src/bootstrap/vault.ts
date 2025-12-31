@@ -166,7 +166,9 @@ export async function readSecretsFromVault(
           }
           if (v === undefined) {
             // eslint-disable-next-line no-console
-            console.warn(`Warning: key "${e.key}" not found in Vault path ${path} for env var ${e.envName}`);
+            console.warn(
+              `Warning: key "${e.key}" not found in Vault path ${path} for env var ${e.envName}`,
+            );
             continue;
           }
           result[e.envName] = String(v);

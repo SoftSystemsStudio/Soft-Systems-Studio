@@ -86,7 +86,7 @@ Date: 2025-12-09
 
 1. Add schema validation and rate limiting to `/run` chat endpoint
 
-- Severity: High | Area: Security/Reliability  
+- Severity: High | Area: Security/Reliability
 
 What: Validate and throttle chat requests to prevent malformed input and abuse.
 
@@ -98,7 +98,7 @@ How:
 
 1. Refactor chat route to dedicated router and service layer
 
-- Severity: High | Area: Architecture/Maintainability  
+- Severity: High | Area: Architecture/Maintainability
 
 What: Remove monolithic handler from `index.ts`; isolate business logic.
 
@@ -110,7 +110,7 @@ How:
 
 1. Add resiliency around external LLM provider calls
 
-- Severity: High | Area: Reliability  
+- Severity: High | Area: Reliability
 
 What: Prevent stalled or failing AI calls from hanging requests.
 
@@ -122,7 +122,7 @@ How:
 
 1. Standardize request correlation and error envelope
 
-- Severity: Medium | Area: Observability  
+- Severity: Medium | Area: Observability
 
 What: Ensure every log and error response includes request/workspace/user context.
 
@@ -134,7 +134,7 @@ How:
 
 1. Enforce consistent middleware ordering and configuration
 
-- Severity: Medium | Area: Operations  
+- Severity: Medium | Area: Operations
 
 What: Codify middleware stack to avoid regressions when adding new routes.
 
@@ -146,7 +146,7 @@ How:
 
 1. Document operational modes and server roles
 
-- Severity: Low | Area: DX/Deployment  
+- Severity: Low | Area: DX/Deployment
 
 What: Clarify how `SERVER_ROLE` influences queue metrics/startup.
 

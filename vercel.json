@@ -5,7 +5,5 @@
   "buildCommand": "pnpm --filter frontend build",
   "outputDirectory": "packages/frontend/.next",
   "installCommand": "pnpm install",
-  "regions": [
-    "iad1"
-  ]
+  "regions": ["iad1"]
 }
