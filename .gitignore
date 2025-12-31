@@ -44,3 +44,7 @@ temp/
 *.tmp
 .vercel
 .env*.local
+
+# Claude Code session state (local only)
+.claude/session_state.json
+.claude/*.log

@@ -2,6 +2,8 @@
 
 Deep dive into the Soft Systems Studio system architecture.
 
+> **For AI collaboration guidelines**: See [CLAUDE.md](/CLAUDE.md) for the operating runbook on how work is planned, executed, and validated when working with Claude Code.
+
 ---
 
 ## Table of Contents

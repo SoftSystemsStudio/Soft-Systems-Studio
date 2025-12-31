@@ -28,7 +28,10 @@ function isExample(file) {
     /(^|\/)\.env\.example$/.test(file) ||
     /(^|\/)\.example/.test(file) ||
     file.startsWith('docs/') ||
-    file.includes('README')
+    file.includes('README') ||
+    /\/__tests?__\//.test(file) || // Skip test directories
+    /\.test\.[jt]sx?$/.test(file) || // Skip test files
+    /\.spec\.[jt]sx?$/.test(file) // Skip spec files
   );
 }
 

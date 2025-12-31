@@ -1,10 +1,49 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-echo "Running pre-commit checks: check-env-committed, scan-placeholders"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "PRE-COMMIT CHECKS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# 1. Update CLAUDE.md context (informational, doesn't fail)
+echo "\n📝 Updating CLAUDE.md commit context..."
+node scripts/update-claude-context.js || echo "⚠️  Warning: Could not update CLAUDE.md (continuing anyway)"
+
+# 2. Security checks (fail fast)
+echo "\n🔒 Running security checks..."
+echo "  → Checking for secrets..."
+pnpm run secretlint || exit 1
+
+echo "  → Checking for committed .env files..."
 pnpm run check-env-committed || exit 1
+
+echo "  → Scanning for placeholder values..."
 pnpm run scan-placeholders || exit 1
 
-echo "Pre-commit checks passed."
+echo "✅ Security checks passed"
 
-pnpm run secretlint || exit 1
+# 3. Code quality checks
+echo "\n🎨 Running code quality checks..."
+echo "  → Checking code formatting..."
+pnpm run format:check || {
+  echo "❌ Formatting check failed. Run 'pnpm format' to fix."
+  exit 1
+}
+
+echo "  → Running linter..."
+pnpm run lint || {
+  echo "❌ Linting failed. Run 'pnpm lint:fix' to auto-fix."
+  exit 1
+}
+
+echo "  → Running type check..."
+pnpm run typecheck || {
+  echo "❌ Type check failed. Fix TypeScript errors before committing."
+  exit 1
+}
+
+echo "✅ Code quality checks passed"
+
+echo "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✅ ALL PRE-COMMIT CHECKS PASSED"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
