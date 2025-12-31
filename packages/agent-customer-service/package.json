@@ -12,6 +12,7 @@
   "dependencies": {
     "@softsystems/agent-orchestrator": "workspace:*",
     "@softsystems/core-llm": "workspace:*",
+    "pino": "^8.16.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
