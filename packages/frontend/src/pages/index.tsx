@@ -180,7 +180,13 @@ export default function Home() {
                 <Button as="link" href="/intake" variant="primary" size="lg">
                   Start the intake
                 </Button>
-                <Button as="link" href="/demo" variant="outline" size="lg" className="border-brand-lime/50 text-brand-lime hover:bg-brand-lime/10">
+                <Button
+                  as="link"
+                  href="/demo"
+                  variant="outline"
+                  size="lg"
+                  className="border-brand-lime/50 text-brand-lime hover:bg-brand-lime/10"
+                >
                   Live Neural Demo
                 </Button>
               </div>

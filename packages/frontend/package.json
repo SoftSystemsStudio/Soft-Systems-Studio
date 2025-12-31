@@ -17,7 +17,7 @@
     "@softsystems/ui-components": "workspace:^",
     "@stripe/stripe-js": "^8.5.3",
     "framer-motion": "^12.23.25",
-    "next": "^14.2.33",
+    "next": "^16.1.1",
     "react": "18.3.0",
     "react-dom": "18.3.0",
     "resend": "^6.5.2",
