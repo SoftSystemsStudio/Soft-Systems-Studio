@@ -249,30 +249,32 @@ Required checks:
 
 _This section auto-populates with recent commit context to help Claude maintain continuity._
 
-**Last updated**: 2025-12-31T20:40:45.709Z
+**Last updated**: 2025-12-31T20:45:10.822Z
 
 **Current staged changes summary**:
-  root/: 4 modified
+  .devcontainer/: 1 modified
+  root/: 1 added, 1 modified
+  docs/: 1 added
 
 **Recent git commits**:
 ```
-3c4ea45 - feat: add canonical tags and remove conflicting app-level redirects (51 minutes ago)
-109e808 - feat: implement CLAUDE.md Operating System for AI collaboration (61 minutes ago)
+841d2b8 - fix: resolve Railway deployment hanging on postinstall hook (3 minutes ago)
+3c4ea45 - feat: add canonical tags and remove conflicting app-level redirects (55 minutes ago)
+109e808 - feat: implement CLAUDE.md Operating System for AI collaboration (65 minutes ago)
 96d865c - fix: resolve all test failures across agent-orchestrator and agent-api (2 hours ago)
 59de231 - Merge chore/unsafe-burn/redis-middleware: Redis middleware cleanup (2 hours ago)
-f947434 - fix: resolve all TypeScript and ESLint errors across monorepo (2 hours ago)
 ```
 
 **Recent commits**: (rolling window of last 10)
 
-### Commit 1: 2025-12-31T20:40:45.709Z
+### Commit 1: 2025-12-31T20:45:10.822Z
 
 **Staged files**:
 ```
-M	.dockerignore
+M	.devcontainer/devcontainer.json
 M	CLAUDE.md
-M	Dockerfile
-M	railway.json
+A	docs/PLAYWRIGHT_MCP.md
+A	softsystems-screenshot.png
 ```
 
 

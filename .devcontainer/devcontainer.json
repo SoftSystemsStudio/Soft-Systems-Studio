@@ -6,10 +6,18 @@
       "version": "22"
     }
   },
-  "postCreateCommand": "corepack enable && corepack prepare pnpm@8.11.0 --activate && pnpm install",
+  "postCreateCommand": "corepack enable && corepack prepare pnpm@8.11.0 --activate && pnpm install && npm install -g @playwright/mcp",
   "customizations": {
     "vscode": {
-      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"],
+      "settings": {
+        "modelContextProtocol.servers": {
+          "playwright": {
+            "command": "sh",
+            "args": ["-c", "npx @playwright/mcp"]
+          }
+        }
+      }
     }
   },
   "forwardPorts": [3000, 5173, 8080],
