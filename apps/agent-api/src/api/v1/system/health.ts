@@ -49,7 +49,11 @@ router.get(
     }
 
     // Consider Qdrant a critical dependency: health must include it.
-    const allHealthy = db && redis && qdrantHealthy;
+    const requireRedis = env.REQUIRE_REDIS_HEALTH !== false;
+    const requireQdrant = env.REQUIRE_QDRANT_HEALTH !== false;
+
+    const allHealthy =
+      db && (requireRedis ? redis : true) && (requireQdrant ? qdrantHealthy : true);
 
     res.status(allHealthy ? 200 : 503).json({
       status: allHealthy ? 'ok' : 'degraded',
@@ -65,6 +69,8 @@ router.get(
       env: {
         nodeEnv: env.NODE_ENV,
         openaiKeyPresent: Boolean(env.OPENAI_API_KEY),
+        requireRedisHealth: requireRedis,
+        requireQdrantHealth: requireQdrant,
       },
     });
   }),

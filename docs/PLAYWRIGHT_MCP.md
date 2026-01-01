@@ -7,8 +7,8 @@ This repository includes **Playwright MCP**, an official Microsoft integration t
 ✅ **@playwright/mcp** (v0.0.54) is installed and configured in the dev container.
 
 - **Global Installation:** `npm install -g @playwright/mcp`
-- **GitHub:** https://github.com/microsoft/playwright-mcp
-- **NPM:** https://www.npmjs.com/package/@playwright/mcp
+- **GitHub:** [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp)
+- **NPM:** [@playwright/mcp on npm](https://www.npmjs.com/package/@playwright/mcp)
 
 ## Configuration
 
@@ -76,13 +76,13 @@ Once connected, Claude and other AI assistants can:
 
 Simply ask Claude to:
 
-```
+```text
 "Use Playwright to open softsystemsstudiollc.com and take a screenshot"
 ```
 
 Or:
 
-```
+```text
 "Automate a login flow to my application at localhost:3000"
 ```
 
@@ -130,10 +130,10 @@ playwright install chromium firefox webkit
 
 ## Documentation & Resources
 
-- **Playwright Docs:** https://playwright.dev
-- **MCP Specification:** https://modelcontextprotocol.io
-- **GitHub Repository:** https://github.com/microsoft/playwright-mcp
-- **NPM Package:** https://www.npmjs.com/package/@playwright/mcp
+- **Playwright Docs:** [https://playwright.dev](https://playwright.dev)
+- **MCP Specification:** [https://modelcontextprotocol.io](https://modelcontextprotocol.io)
+- **GitHub Repository:** [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp)
+- **NPM Package:** [@playwright/mcp on npm](https://www.npmjs.com/package/@playwright/mcp)
 
 ## Next Steps
 

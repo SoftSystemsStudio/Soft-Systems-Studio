@@ -249,32 +249,32 @@ Required checks:
 
 _This section auto-populates with recent commit context to help Claude maintain continuity._
 
-**Last updated**: 2025-12-31T20:45:10.822Z
+**Last updated**: 2026-01-01T21:28:04.253Z
 
 **Current staged changes summary**:
-  .devcontainer/: 1 modified
-  root/: 1 added, 1 modified
-  docs/: 1 added
+  root/: 1 modified
+  apps/: 2 modified
+  docs/: 1 modified
 
 **Recent git commits**:
 ```
-841d2b8 - fix: resolve Railway deployment hanging on postinstall hook (3 minutes ago)
-3c4ea45 - feat: add canonical tags and remove conflicting app-level redirects (55 minutes ago)
-109e808 - feat: implement CLAUDE.md Operating System for AI collaboration (65 minutes ago)
-96d865c - fix: resolve all test failures across agent-orchestrator and agent-api (2 hours ago)
-59de231 - Merge chore/unsafe-burn/redis-middleware: Redis middleware cleanup (2 hours ago)
+606a0ef - feat: add Playwright MCP integration and website screenshot (25 hours ago)
+841d2b8 - fix: resolve Railway deployment hanging on postinstall hook (25 hours ago)
+3c4ea45 - feat: add canonical tags and remove conflicting app-level redirects (26 hours ago)
+109e808 - feat: implement CLAUDE.md Operating System for AI collaboration (26 hours ago)
+96d865c - fix: resolve all test failures across agent-orchestrator and agent-api (26 hours ago)
 ```
 
 **Recent commits**: (rolling window of last 10)
 
-### Commit 1: 2025-12-31T20:45:10.822Z
+### Commit 1: 2026-01-01T21:28:04.253Z
 
 **Staged files**:
 ```
-M	.devcontainer/devcontainer.json
-M	CLAUDE.md
-A	docs/PLAYWRIGHT_MCP.md
-A	softsystems-screenshot.png
+M	Dockerfile
+M	apps/agent-api/src/api/v1/system/health.ts
+M	apps/agent-api/src/env.ts
+M	docs/PLAYWRIGHT_MCP.md
 ```
 
 
