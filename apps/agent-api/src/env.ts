@@ -84,6 +84,20 @@ const envSchema = z.object({
     .default('false')
     .transform((val) => val === 'true'),
 
+  // Optional consolidated URL (e.g. https://abc.qdrant.io:6333)
+  // If provided, we derive host/port/use_https from this value after validation.
+  QDRANT_URL: z.string().url().optional(),
+
+  // Health requirements (allow making dependencies optional in some environments)
+  REQUIRE_QDRANT_HEALTH: z
+    .string()
+    .default('true')
+    .transform((val) => val === 'true'),
+  REQUIRE_REDIS_HEALTH: z
+    .string()
+    .default('true')
+    .transform((val) => val === 'true'),
+
   // Qdrant health probe timeout (milliseconds) - used by /health quick checks
   // Accepts a string in env (e.g. "500") and coerces to number. Must be positive.
   QDRANT_HEALTH_TIMEOUT_MS: z
@@ -206,7 +220,26 @@ const envSchema = z.object({
 // Parse and validate environment variables
 function validateEnv(): Env {
   try {
-    return envSchema.parse(process.env);
+    const parsed = envSchema.parse(process.env);
+
+    // Derive Qdrant connection settings from QDRANT_URL when provided
+    if (parsed.QDRANT_URL) {
+      try {
+        const url = new URL(parsed.QDRANT_URL);
+        parsed.QDRANT_HOST = url.hostname;
+        parsed.QDRANT_PORT = url.port || (url.protocol === 'https:' ? '443' : '80');
+        parsed.QDRANT_USE_HTTPS = url.protocol === 'https:';
+      } catch (err) {
+        const message = `Invalid QDRANT_URL: ${String(err?.message ?? err)}`;
+        if (process.env.NODE_ENV === 'test') {
+          throw new Error(message);
+        }
+        console.error(message);
+        process.exit(1);
+      }
+    }
+
+    return parsed;
   } catch (error) {
     if (error instanceof z.ZodError) {
       const formatted = error.errors
