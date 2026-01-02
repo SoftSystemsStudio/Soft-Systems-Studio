@@ -229,8 +229,8 @@ function validateEnv(): Env {
         parsed.QDRANT_HOST = url.hostname;
         parsed.QDRANT_PORT = url.port || (url.protocol === 'https:' ? '443' : '80');
         parsed.QDRANT_USE_HTTPS = url.protocol === 'https:';
-      } catch (err) {
-        const message = `Invalid QDRANT_URL: ${String(err?.message ?? err)}`;
+      } catch (err: unknown) {
+        const message = `Invalid QDRANT_URL: ${err instanceof Error ? err.message : String(err)}`;
         if (process.env.NODE_ENV === 'test') {
           throw new Error(message);
         }
