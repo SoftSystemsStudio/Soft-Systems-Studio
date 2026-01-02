@@ -48,3 +48,10 @@ temp/
 # Claude Code session state (local only)
 .claude/session_state.json
 .claude/*.log
+
+# Deployment configuration files with secrets (DO NOT COMMIT)
+RAILWAY_CONFIG.md
+RAILWAY_TROUBLESHOOTING.md
+.env.test-production
+.env.railway
+test-prod-connections.js
