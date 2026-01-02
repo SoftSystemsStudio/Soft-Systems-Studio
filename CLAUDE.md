@@ -249,36 +249,30 @@ Required checks:
 
 _This section auto-populates with recent commit context to help Claude maintain continuity._
 
-**Last updated**: 2026-01-02T17:23:37.011Z
+**Last updated**: 2026-01-02T17:27:21.504Z
 
 **Current staged changes summary**:
-  root/: 3 added, 3 modified
-  apps/: 1 modified
+scripts/: 1 modified
 
 **Recent git commits**:
+
 ```
+0234366 - fix: resolve TypeScript error in env.ts blocking Railway deployment (2 minutes ago)
 6c23bbc - chore: improve health check robustness and environment configuration (20 hours ago)
 606a0ef - feat: add Playwright MCP integration and website screenshot (2 days ago)
 841d2b8 - fix: resolve Railway deployment hanging on postinstall hook (2 days ago)
 3c4ea45 - feat: add canonical tags and remove conflicting app-level redirects (2 days ago)
-109e808 - feat: implement CLAUDE.md Operating System for AI collaboration (2 days ago)
 ```
 
 **Recent commits**: (rolling window of last 10)
 
-### Commit 1: 2026-01-02T17:23:37.011Z
+### Commit 1: 2026-01-02T17:27:21.504Z
 
 **Staged files**:
-```
-M	.gitignore
-M	.secretlintignore
-M	CLAUDE.md
-A	DEPLOYMENT_QUICKSTART.md
-A	NEXT_STEPS.md
-A	VERCEL_CONFIG.md
-M	apps/agent-api/src/env.ts
-```
 
+```
+M	scripts/update-claude-context.js
+```
 
 ## Session Checkpoints
 
