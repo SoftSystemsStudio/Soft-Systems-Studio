@@ -186,6 +186,9 @@ async function updateClaudeMd() {
     // Write back to file
     fs.writeFileSync(CLAUDE_MD_PATH, newContent, 'utf8');
 
+    // Format CLAUDE.md with Prettier before staging
+    await execAsync('npx prettier --write CLAUDE.md');
+
     // Stage the updated CLAUDE.md
     await execAsync('git add CLAUDE.md');
 
