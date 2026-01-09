@@ -15,6 +15,7 @@ import {
 } from '../components/ui';
 import { FadeIn, StaggerContainer } from '../components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
+import { ProjectEstimator } from '../components/estimator';
 import env from '../lib/env';
 
 // Dynamic import types
@@ -167,6 +168,79 @@ const PRICING_PLANS = [
   },
 ];
 
+const STATS = [
+  { label: 'Projects Delivered', value: '50+' },
+  { label: 'Client Satisfaction', value: '95%' },
+  { label: 'Response Time', value: '24hr' },
+  { label: 'Years Experience', value: '5+' },
+];
+
+const WHY_CHOOSE_US = [
+  {
+    title: 'Full-Stack Expertise',
+    description:
+      'From AI systems to beautiful frontends, we handle every layer of your technology.',
+  },
+  {
+    title: 'Modern Tech Stack',
+    description: 'Built with Next.js, TypeScript, and latest AI models for performance and scale.',
+  },
+  {
+    title: 'Transparent Process',
+    description: 'Clear timelines, honest pricing, and regular updates throughout the project.',
+  },
+  {
+    title: 'Ongoing Partnership',
+    description: "We don't disappear after launch. Continuous support and improvements included.",
+  },
+];
+
+const TECH_STACK = [
+  { name: 'Next.js', category: 'Frontend' },
+  { name: 'React', category: 'Frontend' },
+  { name: 'TypeScript', category: 'Language' },
+  { name: 'Tailwind CSS', category: 'Styling' },
+  { name: 'Node.js', category: 'Backend' },
+  { name: 'PostgreSQL', category: 'Database' },
+  { name: 'OpenAI', category: 'AI' },
+  { name: 'Anthropic Claude', category: 'AI' },
+  { name: 'Vercel', category: 'Hosting' },
+  { name: 'Stripe', category: 'Payments' },
+];
+
+const FAQS = [
+  {
+    question: 'How long does a typical project take?',
+    answer:
+      'Website projects typically take 3-6 weeks, while AI automation projects range from 4-8 weeks depending on complexity. We provide a detailed timeline in your custom proposal.',
+  },
+  {
+    question: 'Do you work with small businesses or just enterprises?',
+    answer:
+      'We work with businesses of all sizes! Our packages are designed to be accessible to small businesses while still meeting enterprise needs. If you have a genuine need for technology, we can help.',
+  },
+  {
+    question: 'What if I need changes after launch?',
+    answer:
+      'All projects include a 30-day warranty period for bug fixes. Beyond that, we offer ongoing maintenance packages or can handle changes on an hourly basis. Many clients choose our partnership plan for continuous improvements.',
+  },
+  {
+    question: 'How do AI automations integrate with my existing systems?',
+    answer:
+      'We build custom integrations with your existing tools (CRM, calendar, email, etc.) using APIs and webhooks. During discovery, we audit your tech stack and design a seamless integration plan.',
+  },
+  {
+    question: "What's included in ongoing support?",
+    answer:
+      'Our support includes bug fixes, security updates, performance monitoring, and priority response times. Partnership plans also include monthly strategy calls and new feature development.',
+  },
+  {
+    question: 'Can you help us decide between a website and AI automation?',
+    answer:
+      "Absolutely! Many clients aren't sure what they need most. Book a free discovery call and we'll assess your business, identify opportunities, and recommend the best starting point.",
+  },
+];
+
 export default function Home() {
   return (
     <div className="antialiased min-h-screen bg-black text-brand-light">
@@ -255,6 +329,20 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-[2]" />
         </section>
 
+        {/* Stats Bar */}
+        <Section className="py-16 border-y border-brand-lime/10">
+          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {STATS.map((stat) => (
+              <FadeIn key={stat.label} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold text-brand-lime mb-2">
+                  {stat.value}
+                </div>
+                <div className="text-sm text-brand-gray uppercase tracking-wide">{stat.label}</div>
+              </FadeIn>
+            ))}
+          </StaggerContainer>
+        </Section>
+
         {/* Services Section */}
         <Section id="services" className="py-28">
           <FadeIn>
@@ -289,6 +377,78 @@ export default function Home() {
               </HoloCard>
             ))}
           </StaggerContainer>
+        </Section>
+
+        {/* Why Choose Us Section */}
+        <Section className="py-24 bg-gradient-to-b from-black to-brand-dark">
+          <FadeIn>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
+              Why Choose Us
+            </h2>
+            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+              What makes Soft Systems Studio different
+            </p>
+          </FadeIn>
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {WHY_CHOOSE_US.map((item) => (
+              <HoloCard key={item.title} className="p-6" glowColor="lime">
+                <h3 className="font-semibold text-white mb-2 text-lg">{item.title}</h3>
+                <p className="text-brand-gray text-sm leading-relaxed">{item.description}</p>
+              </HoloCard>
+            ))}
+          </StaggerContainer>
+        </Section>
+
+        {/* Technology Stack Section */}
+        <Section className="py-24">
+          <FadeIn>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
+              Built with Best-in-Class Tools
+            </h2>
+            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+              We use modern, proven technologies to build fast, secure, and scalable solutions
+            </p>
+          </FadeIn>
+
+          <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+            {TECH_STACK.map((tech) => (
+              <div
+                key={tech.name}
+                className="px-6 py-3 rounded-lg border border-brand-lime/20 bg-brand-lime/5 hover:border-brand-lime/40 hover:bg-brand-lime/10 transition-all duration-300"
+              >
+                <span className="text-brand-light font-medium">{tech.name}</span>
+                <span className="text-brand-gray text-xs ml-2">· {tech.category}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* AI Project Estimator Section */}
+        <Section id="estimator" gradient="dark" className="py-28">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-cyan-400/30 bg-cyan-400/5">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse-slow" />
+                <span className="text-xs font-mono uppercase tracking-widest text-cyan-400">
+                  AI-Powered Estimator
+                </span>
+              </div>
+              <GlowText
+                as="h2"
+                color="cyan"
+                className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
+              >
+                Get Your Custom Estimate
+              </GlowText>
+              <p className="text-brand-gray max-w-2xl mx-auto leading-relaxed">
+                Answer a few quick questions and receive an instant, personalized project estimate
+                powered by AI
+              </p>
+            </div>
+          </FadeIn>
+
+          <ProjectEstimator />
         </Section>
 
         {/* How We Work Section */}
@@ -361,6 +521,34 @@ export default function Home() {
               />
             ))}
           </StaggerContainer>
+        </Section>
+
+        {/* FAQ Section */}
+        <Section id="faq" className="py-24">
+          <FadeIn>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+              Everything you need to know about working with us
+            </p>
+          </FadeIn>
+
+          <div className="max-w-3xl mx-auto space-y-4">
+            {FAQS.map((faq, index) => (
+              <HoloCard key={index} className="p-6" glowColor="cyan">
+                <h3 className="font-semibold text-white mb-3 text-lg">{faq.question}</h3>
+                <p className="text-brand-gray leading-relaxed">{faq.answer}</p>
+              </HoloCard>
+            ))}
+          </div>
+
+          <FadeIn className="text-center mt-12">
+            <p className="text-brand-gray mb-4">Still have questions?</p>
+            <Button as="link" href="/intake" variant="outline" size="lg">
+              Schedule a Free Discovery Call
+            </Button>
+          </FadeIn>
         </Section>
 
         {/* Final CTA Section */}
