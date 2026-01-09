@@ -146,3 +146,43 @@ model RefreshToken {
   @@index([token])
   @@index([expiresAt])
 }
+
+// ============================================
+// Marketing & Lead Generation
+// ============================================
+
+model EstimateRequest {
+  id           String    @id @default(cuid())
+  email        String
+  projectType  String    // 'website' | 'ai-automation' | 'both'
+  timeline     String?   // 'urgent' | 'normal' | 'flexible'
+  features     String[]  // Array of selected features
+  budget       String?   // 'under-5k' | '5k-10k' | '10k-20k' | 'over-20k'
+
+  // Generated estimate
+  estimatedMin Int       // Minimum price in dollars
+  estimatedMax Int       // Maximum price in dollars
+  estimatedWeeks String  // e.g., "3-6"
+
+  // AI-generated content
+  aiRecommendations String? @db.Text // Claude's personalized recommendations
+  aiAnalysis        String? @db.Text // Claude's analysis of the request
+
+  // Metadata
+  ipAddress     String?
+  userAgent     String?
+  referrer      String?
+
+  // Status tracking
+  status        String    @default("new") // 'new' | 'contacted' | 'converted' | 'declined'
+  contactedAt   DateTime?
+  convertedAt   DateTime?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([email])
+  @@index([projectType])
+  @@index([status])
+  @@index([createdAt])
+}

@@ -205,6 +205,17 @@ const envSchema = z.object({
   // Optional: Admin API key for service-to-service admin calls
   ADMIN_API_KEY: z.string().min(32).optional(),
 
+  // Email service (Resend)
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().email().optional(),
+  ADMIN_EMAIL: z.string().email().optional(),
+
+  // Anthropic API (Claude)
+  ANTHROPIC_API_KEY: z.string().optional(),
+
+  // App URLs
+  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+
   // Server role: 'api' (default), 'worker', or 'all'
   // Used to gate background processes like queue metrics
   SERVER_ROLE: z.enum(['api', 'worker', 'all']).default('api'),

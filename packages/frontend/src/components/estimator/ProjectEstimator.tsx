@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, HoloCard, ScanLine } from '../ui';
 import { FadeIn } from '../motion';
+import env from '../../lib/env';
 
 interface FormData {
   projectType: 'website' | 'ai-automation' | 'both' | '';
@@ -8,6 +9,17 @@ interface FormData {
   features: string[];
   budget: 'under-5k' | '5k-10k' | '10k-20k' | 'over-20k' | '';
   email: string;
+}
+
+interface EstimateApiResponse {
+  success: boolean;
+  estimate: {
+    min: number;
+    max: number;
+    weeks: string;
+    recommendations?: string;
+    analysis?: string;
+  };
 }
 
 interface EstimateResult {
@@ -46,42 +58,87 @@ export function ProjectEstimator() {
   const generateEstimate = async () => {
     setLoading(true);
 
-    // Simulate AI processing (in real implementation, call your API with Claude)
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Call the real API endpoint
+      const apiUrl = env.NEXT_PUBLIC_API_URL || 'https://agent-api-production.up.railway.app';
+      const response = await fetch(`${apiUrl}/api/v1/public/estimate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          projectType: formData.projectType,
+          timeline: formData.timeline,
+          features: formData.features,
+          budget: formData.budget,
+        }),
+      });
 
-    // Generate estimate based on selections
-    const baseEstimate = {
-      website: { min: 3500, max: 8000, weeks: '3-6' },
-      'ai-automation': { min: 5000, max: 12000, weeks: '4-8' },
-      both: { min: 8000, max: 18000, weeks: '6-10' },
-    }[formData.projectType || 'website'];
+      if (!response.ok) {
+        throw new Error('Failed to generate estimate');
+      }
 
-    const featureMultiplier = 1 + formData.features.length * 0.1;
-    const estimatedMin = Math.round(baseEstimate.min * featureMultiplier);
-    const estimatedMax = Math.round(baseEstimate.max * featureMultiplier);
+      const data = (await response.json()) as EstimateApiResponse;
 
-    setEstimate({
-      projectType:
-        formData.projectType === 'both'
-          ? 'Website + AI Automation'
-          : formData.projectType === 'ai-automation'
-            ? 'AI Automation'
-            : 'Website Design',
-      estimatedCost: `$${estimatedMin.toLocaleString()} - $${estimatedMax.toLocaleString()}`,
-      timeline: baseEstimate.weeks + ' weeks',
-      keyFeatures:
-        formData.features.length > 0
-          ? formData.features
-          : ['Custom design', 'Mobile responsive', 'SEO optimized'],
-      nextSteps: [
-        'Schedule a free discovery call',
-        'Receive detailed proposal with timeline',
-        'Begin development within 1 week',
-      ],
-    });
+      setEstimate({
+        projectType:
+          formData.projectType === 'both'
+            ? 'Website + AI Automation'
+            : formData.projectType === 'ai-automation'
+              ? 'AI Automation'
+              : 'Website Design',
+        estimatedCost: `$${data.estimate.min.toLocaleString()} - $${data.estimate.max.toLocaleString()}`,
+        timeline: data.estimate.weeks + ' weeks',
+        keyFeatures:
+          formData.features.length > 0
+            ? formData.features
+            : ['Custom design', 'Mobile responsive', 'SEO optimized'],
+        nextSteps: [
+          'Schedule a free discovery call',
+          'Receive detailed proposal with timeline',
+          'Begin development within 1 week',
+        ],
+      });
 
-    setLoading(false);
-    setStep(5);
+      setLoading(false);
+      setStep(6);
+    } catch (error) {
+      console.error('Error generating estimate:', error);
+      // Fallback to client-side calculation if API fails
+      const baseEstimate = {
+        website: { min: 3500, max: 8000, weeks: '3-6' },
+        'ai-automation': { min: 5000, max: 12000, weeks: '4-8' },
+        both: { min: 8000, max: 18000, weeks: '6-10' },
+      }[formData.projectType || 'website'];
+
+      const featureMultiplier = 1 + formData.features.length * 0.1;
+      const estimatedMin = Math.round(baseEstimate.min * featureMultiplier);
+      const estimatedMax = Math.round(baseEstimate.max * featureMultiplier);
+
+      setEstimate({
+        projectType:
+          formData.projectType === 'both'
+            ? 'Website + AI Automation'
+            : formData.projectType === 'ai-automation'
+              ? 'AI Automation'
+              : 'Website Design',
+        estimatedCost: `$${estimatedMin.toLocaleString()} - $${estimatedMax.toLocaleString()}`,
+        timeline: baseEstimate.weeks + ' weeks',
+        keyFeatures:
+          formData.features.length > 0
+            ? formData.features
+            : ['Custom design', 'Mobile responsive', 'SEO optimized'],
+        nextSteps: [
+          'Schedule a free discovery call',
+          'Receive detailed proposal with timeline',
+          'Begin development within 1 week',
+        ],
+      });
+
+      setLoading(false);
+      setStep(6);
+    }
   };
 
   const resetEstimator = () => {
@@ -99,18 +156,18 @@ export function ProjectEstimator() {
   return (
     <div className="max-w-4xl mx-auto">
       <HoloCard className="p-8" glowColor="lime" showScanLine>
-        {step < 5 && (
+        {step < 6 && (
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-white">Step {step} of 4</h3>
+              <h3 className="text-xl font-bold text-white">Step {step} of 5</h3>
               <span className="text-brand-gray text-sm">
-                {Math.round((step / 4) * 100)}% complete
+                {Math.round((step / 5) * 100)}% complete
               </span>
             </div>
             <div className="h-2 bg-brand-dark rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-brand-lime to-cyan-400 transition-all duration-500"
-                style={{ width: `${(step / 4) * 100}%` }}
+                style={{ width: `${(step / 5) * 100}%` }}
               />
             </div>
           </div>
@@ -192,8 +249,53 @@ export function ProjectEstimator() {
           </FadeIn>
         )}
 
-        {/* Step 3: Features */}
+        {/* Step 3: Budget */}
         {step === 3 && (
+          <FadeIn>
+            <h3 className="text-2xl font-bold text-white mb-4">What's your budget range?</h3>
+            <p className="text-brand-gray mb-6">Help us tailor the right solution for you</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {(
+                [
+                  { value: 'under-5k', label: 'Under $5,000', desc: 'Essential features' },
+                  { value: '5k-10k', label: '$5,000 - $10,000', desc: 'Professional package' },
+                  { value: '10k-20k', label: '$10,000 - $20,000', desc: 'Premium solution' },
+                  { value: 'over-20k', label: 'Over $20,000', desc: 'Enterprise level' },
+                ] as const
+              ).map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    updateFormData('budget', option.value);
+                    setStep(4);
+                  }}
+                  className={`p-6 rounded-lg border-2 transition-all text-left ${
+                    formData.budget === option.value
+                      ? 'border-brand-lime bg-brand-lime/10'
+                      : 'border-brand-lime/20 hover:border-brand-lime/40 hover:bg-brand-lime/5'
+                  }`}
+                >
+                  <div className="text-white font-semibold mb-2">{option.label}</div>
+                  <div className="text-brand-gray text-sm">{option.desc}</div>
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-4 mt-6">
+              <button
+                onClick={() => setStep(2)}
+                className="text-brand-gray hover:text-brand-lime transition-colors"
+              >
+                ← Back
+              </button>
+              <Button variant="outline" onClick={() => setStep(4)}>
+                Skip →
+              </Button>
+            </div>
+          </FadeIn>
+        )}
+
+        {/* Step 4: Features */}
+        {step === 4 && (
           <FadeIn>
             <h3 className="text-2xl font-bold text-white mb-4">What features do you need?</h3>
             <p className="text-brand-gray mb-6">Select all that apply (optional)</p>
@@ -252,20 +354,20 @@ export function ProjectEstimator() {
             </div>
             <div className="flex gap-4 mt-6">
               <button
-                onClick={() => setStep(2)}
+                onClick={() => setStep(3)}
                 className="text-brand-gray hover:text-brand-lime transition-colors"
               >
                 ← Back
               </button>
-              <Button variant="primary" onClick={() => setStep(4)}>
+              <Button variant="primary" onClick={() => setStep(5)}>
                 Continue
               </Button>
             </div>
           </FadeIn>
         )}
 
-        {/* Step 4: Contact Info */}
-        {step === 4 && (
+        {/* Step 5: Contact Info */}
+        {step === 5 && (
           <FadeIn>
             <h3 className="text-2xl font-bold text-white mb-4">Get your custom estimate</h3>
             <p className="text-brand-gray mb-6">Where should we send your estimate?</p>
@@ -278,7 +380,7 @@ export function ProjectEstimator() {
             />
             <div className="flex gap-4">
               <button
-                onClick={() => setStep(3)}
+                onClick={() => setStep(4)}
                 className="text-brand-gray hover:text-brand-lime transition-colors"
               >
                 ← Back
@@ -294,8 +396,8 @@ export function ProjectEstimator() {
           </FadeIn>
         )}
 
-        {/* Step 5: Results */}
-        {step === 5 && estimate && (
+        {/* Step 6: Results */}
+        {step === 6 && estimate && (
           <FadeIn>
             <div className="text-center mb-8">
               <div className="inline-block p-3 rounded-full bg-brand-lime/10 border border-brand-lime/30 mb-4">

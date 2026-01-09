@@ -6,6 +6,7 @@ import { Router } from 'express';
 import { publicChatController } from '../../controllers/publicChatController';
 import { publicVoiceController } from '../../controllers/publicVoiceController';
 import { publicTtsController } from '../../controllers/publicTtsController';
+import { estimateController } from '../../controllers/estimateController';
 
 const router = Router();
 
@@ -17,6 +18,15 @@ const router = Router();
  * Rate limited by IP (10 req/min)
  */
 router.post('/chat', publicChatController);
+
+/**
+ * Project estimate endpoint
+ * POST /api/v1/public/estimate
+ *
+ * No authentication required
+ * Generates AI-powered project estimates and sends email
+ */
+router.post('/estimate', estimateController);
 
 /**
  * Public voice endpoint for Twilio
