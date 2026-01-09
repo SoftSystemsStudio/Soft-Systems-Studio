@@ -249,29 +249,33 @@ Required checks:
 
 _This section auto-populates with recent commit context to help Claude maintain continuity._
 
-**Last updated**: 2026-01-02T17:27:21.504Z
+**Last updated**: 2026-01-09T04:23:41.377Z
 
 **Current staged changes summary**:
-scripts/: 1 modified
+root/: 1 modified
+packages/: 3 modified
 
 **Recent git commits**:
 
 ```
-0234366 - fix: resolve TypeScript error in env.ts blocking Railway deployment (2 minutes ago)
-6c23bbc - chore: improve health check robustness and environment configuration (20 hours ago)
-606a0ef - feat: add Playwright MCP integration and website screenshot (2 days ago)
-841d2b8 - fix: resolve Railway deployment hanging on postinstall hook (2 days ago)
-3c4ea45 - feat: add canonical tags and remove conflicting app-level redirects (2 days ago)
+065d4a6 - fix: resolve pre-commit hook circular issue and disable GPG signing (6 days ago)
+0234366 - fix: resolve TypeScript error in env.ts blocking Railway deployment (6 days ago)
+6c23bbc - chore: improve health check robustness and environment configuration (7 days ago)
+606a0ef - feat: add Playwright MCP integration and website screenshot (8 days ago)
+841d2b8 - fix: resolve Railway deployment hanging on postinstall hook (8 days ago)
 ```
 
 **Recent commits**: (rolling window of last 10)
 
-### Commit 1: 2026-01-02T17:27:21.504Z
+### Commit 1: 2026-01-09T04:23:41.377Z
 
 **Staged files**:
 
 ```
-M	scripts/update-claude-context.js
+M	CLAUDE.md
+M	packages/frontend/next-env.d.ts
+M	packages/frontend/src/pages/index.tsx
+M	packages/frontend/tsconfig.tsbuildinfo
 ```
 
 ## Session Checkpoints

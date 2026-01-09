@@ -46,84 +46,124 @@ const NeuralSphere = dynamic<NeuralSphereProps>(
 );
 
 const NAV_ITEMS = [
-  { label: 'Features', href: '#features' },
-  { label: 'Use cases', href: '#use-cases' },
+  { label: 'Services', href: '#services' },
+  { label: 'How We Work', href: '#how-we-work' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'FAQ', href: '#faq' },
 ];
 
-const FEATURES = [
+const SERVICES = [
   {
     title: 'AI Voice Reception',
-    description: 'Capture and qualify calls, book meetings, or route to humans.',
+    description:
+      'Intelligent phone systems that capture leads, book meetings, and route calls seamlessly.',
+    category: 'AI Automation',
   },
   {
-    title: 'AI Support Systems (Coming Soon)',
-    description: 'Web chat, email, SMS and social triage with context-preserving handoffs.',
+    title: 'AI Support & Chat Systems',
+    description:
+      'Automated support across web chat, email, and SMS with smart handoffs to your team.',
+    category: 'AI Automation',
   },
   {
-    title: 'AI Content Systems (Coming Soon)',
-    description: 'A content engine that produces on-brand drafts for campaigns and posts.',
+    title: 'Workflow Automation',
+    description:
+      'Streamline repetitive tasks with custom AI workflows that save time and reduce errors.',
+    category: 'AI Automation',
   },
   {
-    title: 'AI Data & BI (Coming Soon)',
-    description: 'Query billing, CRM and ad data in plain language for fast insights.',
+    title: 'Modern Website Design',
+    description:
+      'Beautiful, responsive websites built with the latest technologies to showcase your brand.',
+    category: 'Web Design',
   },
   {
-    title: 'AI Workflow Systems (Coming Soon)',
-    description: 'Automate qualification, reminders, and hand-offs with transparent flows.',
+    title: 'E-Commerce Solutions',
+    description:
+      'Full-featured online stores with seamless checkout, inventory management, and analytics.',
+    category: 'Web Design',
   },
   {
-    title: 'Integrations (Coming Soon)',
-    description: 'Connect Stripe, HubSpot, Slack, Calendly, Notion and more.',
+    title: 'Custom Web Applications',
+    description: 'Tailored web apps that solve your unique business challenges and scale with you.',
+    category: 'Web Design',
   },
 ];
 
 const STEPS = [
-  { step: '01', title: 'Intake & discovery', desc: 'Share your goals and current systems' },
-  { step: '02', title: 'Systems blueprint', desc: 'Receive a detailed architecture plan' },
-  { step: '03', title: 'Deploy & scale', desc: 'Launch, tune, and grow with AI' },
+  {
+    step: '01',
+    title: 'Discovery Call',
+    desc: 'We learn about your business, goals, and challenges',
+  },
+  {
+    step: '02',
+    title: 'Custom Proposal',
+    desc: 'Receive a tailored plan with timeline and transparent pricing',
+  },
+  {
+    step: '03',
+    title: 'Build & Launch',
+    desc: 'We build your solution and support you every step of the way',
+  },
 ];
 
 const TESTIMONIALS = [
-  { quote: 'We cut support load by 40%', author: 'Customer A', role: 'CEO' },
-  { quote: 'Content output tripled in a month', author: 'Customer B', role: 'Marketing Lead' },
-  { quote: 'Reporting became actionable', author: 'Customer C', role: 'Operations Manager' },
+  {
+    quote: 'Our new website looks amazing and the AI receptionist saves us hours every week',
+    author: 'Sarah M.',
+    role: 'Small Business Owner',
+  },
+  {
+    quote: 'Professional team that really listens. They delivered exactly what we needed',
+    author: 'James K.',
+    role: 'Marketing Director',
+  },
+  {
+    quote: 'Best investment we made this year. Their automation cut our support tickets in half',
+    author: 'Michelle R.',
+    role: 'Operations Manager',
+  },
 ];
 
 const PRICING_PLANS = [
   {
-    name: 'Starter',
-    price: '$2,500',
-    description: 'Blueprint only',
-    features: ['Systems audit', 'Architecture diagram', 'Implementation roadmap'],
+    name: 'Website Package',
+    price: 'Starting at $3,500',
+    description: 'Professional web presence',
+    features: [
+      'Custom design & development',
+      'Mobile responsive',
+      'SEO optimized',
+      'Content management system',
+    ],
+    ctaText: 'Learn more',
+  },
+  {
+    name: 'AI Automation',
+    price: 'Starting at $5,000',
+    description: 'Intelligent business automation',
+    features: [
+      'AI voice reception or chat support',
+      'Custom workflow automation',
+      'System integrations',
+      'Training & ongoing support',
+    ],
+    highlighted: true,
+    badge: 'Popular',
     ctaText: 'Get started',
   },
   {
-    name: 'Implementation Sprint',
-    price: '$10,000',
-    description: 'Full build & handoff',
+    name: 'Complete Solution',
+    price: 'Custom Quote',
+    description: 'Website + AI automation',
     features: [
-      'Everything in Starter',
-      '4-week implementation',
-      'Custom integrations',
-      'Training & documentation',
+      'Everything combined',
+      'Integrated experience',
+      'Priority development',
+      'Dedicated partnership',
     ],
-    highlighted: true,
-    badge: 'Recommended',
-    ctaText: 'Start sprint',
-  },
-  {
-    name: 'Ongoing Partner',
-    price: 'Custom',
-    description: 'Retainer & optimization',
-    features: [
-      'Continuous improvement',
-      'Priority support',
-      'Monthly strategy calls',
-      'New system builds',
-    ],
-    ctaText: 'Contact us',
+    ctaText: "Let's talk",
   },
 ];
 
@@ -131,17 +171,17 @@ export default function Home() {
   return (
     <div className="antialiased min-h-screen bg-black text-brand-light">
       <Head>
-        <title>Soft Systems Studio - AI Automation Agency</title>
+        <title>Soft Systems Studio - AI Automation & Web Design</title>
         <meta
           name="description"
-          content="Design, deploy, and run AI Voice Reception systems. Automate smarter. Grow faster."
+          content="Your technology partner for AI automation and modern web design. We build intelligent systems and beautiful websites that help your business grow."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="canonical" href="https://softsystemsstudiollc.com/" />
-        <meta property="og:title" content="Soft Systems Studio - AI Automation Agency" />
+        <meta property="og:title" content="Soft Systems Studio - AI Automation & Web Design" />
         <meta
           property="og:description"
-          content="Design, deploy, and run AI Voice Reception systems. Automate smarter. Grow faster."
+          content="Your technology partner for AI automation and modern web design. We build intelligent systems and beautiful websites that help your business grow."
         />
         <meta property="og:url" content="https://softsystemsstudiollc.com/" />
         <meta property="og:type" content="website" />
@@ -170,25 +210,25 @@ export default function Home() {
           {/* Hero Content */}
           <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
             <FadeIn>
-              {/* AI Status Badge */}
+              {/* Tech Partner Badge */}
               <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-brand-lime/30 bg-brand-lime/5">
                 <span className="w-2 h-2 rounded-full bg-brand-lime animate-pulse-slow" />
                 <span className="text-xs font-mono uppercase tracking-widest text-brand-lime">
-                  AI Systems Online
+                  Your Technology Partner
                 </span>
               </div>
 
               <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
-                Automate Smarter.
+                Smart Technology.
                 <br className="hidden sm:block" />
                 <GlowText as="span" color="lime">
-                  Grow Faster.
+                  Real Results.
                 </GlowText>
               </h1>
 
               <p className="text-lg md:text-xl leading-relaxed text-brand-light/80 max-w-2xl mx-auto mb-10">
-                Design, deploy, and run AI Voice Reception systems. One intake, a clear systems
-                blueprint, and a phased rollout.
+                We build AI automations and modern websites that help businesses work smarter and
+                grow faster. Your vision, our expertise.
               </p>
 
               {/* Scanning line effect */}
@@ -196,7 +236,7 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button as="link" href="/intake" variant="primary" size="lg">
-                  Start the intake
+                  Get Started
                 </Button>
                 <Button
                   as="link"
@@ -205,7 +245,7 @@ export default function Home() {
                   size="lg"
                   className="border-brand-lime/50 text-brand-lime hover:bg-brand-lime/10"
                 >
-                  Live Neural Demo
+                  See Our Work
                 </Button>
               </div>
             </FadeIn>
@@ -215,41 +255,50 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-[2]" />
         </section>
 
-        {/* Features Section */}
-        <Section id="features" className="py-28">
+        {/* Services Section */}
+        <Section id="services" className="py-28">
           <FadeIn>
             <GlowText
               as="h2"
               color="lime"
               className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
             >
-              Core Systems We Deploy
+              What We Build
             </GlowText>
             <p className="text-brand-gray max-w-2xl mb-12 leading-relaxed">
-              Agency on the front, configurable platform on the back.
+              Two core service areas designed to transform your business: AI automations that save
+              time and websites that convert visitors.
             </p>
           </FadeIn>
 
           <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURES.map((feature) => (
-              <HoloCard key={feature.title} className="p-6" glowColor="lime" showScanLine>
+            {SERVICES.map((service) => (
+              <HoloCard
+                key={service.title}
+                className="p-6"
+                glowColor={service.category === 'AI Automation' ? 'lime' : 'cyan'}
+                showScanLine
+              >
+                <div className="inline-block px-3 py-1 mb-3 text-xs font-mono uppercase tracking-widest rounded-full border border-brand-lime/30 bg-brand-lime/5 text-brand-lime">
+                  {service.category}
+                </div>
                 <h3 className="font-semibold text-white mb-2 group-hover:text-brand-lime transition-colors">
-                  {feature.title}
+                  {service.title}
                 </h3>
-                <p className="text-brand-gray text-sm leading-relaxed">{feature.description}</p>
+                <p className="text-brand-gray text-sm leading-relaxed">{service.description}</p>
               </HoloCard>
             ))}
           </StaggerContainer>
         </Section>
 
-        {/* How It Works Section */}
-        <Section id="use-cases" gradient="subtle" className="py-24">
+        {/* How We Work Section */}
+        <Section id="how-we-work" gradient="subtle" className="py-24">
           <FadeIn>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
-              How it works
+              How We Work
             </h2>
-            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed font-mono text-sm">
-              INTAKE → BLUEPRINT → DEPLOY → ITERATE
+            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed">
+              A simple, transparent process from first conversation to successful launch.
             </p>
           </FadeIn>
 
@@ -270,7 +319,7 @@ export default function Home() {
         <Section id="testimonials" className="py-24">
           <FadeIn>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-8 text-brand-light">
-              Trusted by teams
+              What Our Clients Say
             </h2>
           </FadeIn>
 
@@ -290,10 +339,10 @@ export default function Home() {
         <Section id="pricing" gradient="dark" className="py-24">
           <FadeIn>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
-              Pricing
+              Transparent Pricing
             </h2>
             <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed">
-              Simple plans to get started. Scale when you have real usage.
+              Clear packages tailored to your needs. No hidden fees, no surprises.
             </p>
           </FadeIn>
 
@@ -321,10 +370,10 @@ export default function Home() {
 
           <FadeIn className="text-center relative z-10">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
-              Ready to level up your workflow?
+              Ready to Transform Your Business?
             </h2>
             <p className="text-brand-gray mb-8 leading-relaxed max-w-xl mx-auto">
-              Share a bit about your team and goals — we&apos;ll return a concrete blueprint.
+              Let&apos;s talk about your goals and build something amazing together.
             </p>
 
             <ScanLine color="lime" className="max-w-xs mx-auto mb-8" />
@@ -336,7 +385,7 @@ export default function Home() {
               size="lg"
               className="animate-glow-pulse"
             >
-              Start the intake
+              Get Started Today
             </Button>
           </FadeIn>
         </Section>
@@ -348,8 +397,8 @@ export default function Home() {
       {/* Chat Widget */}
       <ChatWidget
         apiUrl={(env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'}
-        title="Ask about Soft Systems Studio"
-        greeting="Hi! I'm an AI assistant. Ask me anything about our platform, features, pricing, or how to get started!"
+        title="Chat With Us"
+        greeting="Hi! I'm here to help. Ask me about our AI automation services, website design, pricing, or anything else!"
         primaryColor="#a3e635"
         position="bottom-right"
       />
