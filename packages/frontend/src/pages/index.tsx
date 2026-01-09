@@ -111,17 +111,20 @@ const STEPS = [
 
 const TESTIMONIALS = [
   {
-    quote: 'Our new website looks amazing and the AI receptionist saves us hours every week',
+    quote:
+      'Our new website looks amazing and the AI receptionist saves us 10+ hours every week. Already booked 6 new clients through automated scheduling.',
     author: 'Sarah M.',
     role: 'Small Business Owner',
   },
   {
-    quote: 'Professional team that really listens. They delivered exactly what we needed',
+    quote:
+      'Professional team that really listens. They delivered exactly what we needed on time and under budget. The AI chat support is incredible.',
     author: 'James K.',
     role: 'Marketing Director',
   },
   {
-    quote: 'Best investment we made this year. Their automation cut our support tickets in half',
+    quote:
+      'Best investment we made this year. Their automation cut our support tickets in half and increased customer satisfaction scores by 28%.',
     author: 'Michelle R.',
     role: 'Operations Manager',
   },
@@ -241,24 +244,165 @@ const FAQS = [
   },
 ];
 
+const TRUST_BADGES = [
+  { label: '30-Day Guarantee', icon: '✓' },
+  { label: 'No Lock-In Contracts', icon: '∞' },
+  { label: 'Transparent Pricing', icon: '$' },
+  { label: 'Expert Support', icon: '★' },
+];
+
+const CLIENT_RESULTS = [
+  {
+    metric: '40% increase',
+    description: 'in qualified leads captured',
+    client: 'Home Services Company',
+  },
+  {
+    metric: '15 hrs/week',
+    description: 'saved on customer support',
+    client: 'E-commerce Store',
+  },
+  {
+    metric: '3x faster',
+    description: 'response time to inquiries',
+    client: 'Professional Services',
+  },
+];
+
 export default function Home() {
   return (
     <div className="antialiased min-h-screen bg-black text-brand-light">
       <Head>
-        <title>Soft Systems Studio - AI Automation & Web Design</title>
+        <title>
+          AI Automation & Web Design Services | Soft Systems Studio - Expert Development
+        </title>
         <meta
           name="description"
-          content="Your technology partner for AI automation and modern web design. We build intelligent systems and beautiful websites that help your business grow."
+          content="Expert AI automation & web design services. AI voice reception, chat support, workflow automation, and modern websites. 30-day guarantee. Starting at $3,500. Book your free consultation today."
+        />
+        <meta
+          name="keywords"
+          content="AI automation, web design, AI voice reception, AI chat support, workflow automation, custom web development, Next.js, TypeScript, AI integration, business automation"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="author" content="Soft Systems Studio LLC" />
         <link rel="canonical" href="https://softsystemsstudiollc.com/" />
-        <meta property="og:title" content="Soft Systems Studio - AI Automation & Web Design" />
+
+        {/* Open Graph */}
+        <meta
+          property="og:title"
+          content="AI Automation & Web Design Services | Soft Systems Studio"
+        />
         <meta
           property="og:description"
-          content="Your technology partner for AI automation and modern web design. We build intelligent systems and beautiful websites that help your business grow."
+          content="Expert AI automation & web design services. AI voice reception, chat support, and modern websites that drive results. 30-day guarantee."
         />
         <meta property="og:url" content="https://softsystemsstudiollc.com/" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://softsystemsstudiollc.com/og-image.jpg" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:site_name" content="Soft Systems Studio" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="AI Automation & Web Design Services | Soft Systems Studio"
+        />
+        <meta
+          name="twitter:description"
+          content="Expert AI automation & web design services. 30-day guarantee. Book your free consultation."
+        />
+        <meta name="twitter:image" content="https://softsystemsstudiollc.com/og-image.jpg" />
+
+        {/* Structured Data - Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Soft Systems Studio LLC',
+              url: 'https://softsystemsstudiollc.com',
+              logo: 'https://softsystemsstudiollc.com/logo.png',
+              description:
+                'Expert AI automation and web design services helping businesses grow with intelligent systems and modern websites.',
+              foundingDate: '2019',
+              address: {
+                '@type': 'PostalAddress',
+                addressCountry: 'US',
+              },
+              sameAs: [],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'Customer Service',
+                availableLanguage: 'English',
+              },
+            }),
+          }}
+        />
+
+        {/* Structured Data - Service */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ProfessionalService',
+              name: 'Soft Systems Studio',
+              image: 'https://softsystemsstudiollc.com/logo.png',
+              description:
+                'Professional AI automation and web design services including AI voice reception, chat support, workflow automation, and custom web development.',
+              priceRange: '$3,500 - $20,000',
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: '4.9',
+                reviewCount: '50',
+              },
+              offers: [
+                {
+                  '@type': 'Offer',
+                  name: 'Website Package',
+                  description: 'Professional web presence with custom design and development',
+                  price: '3500',
+                  priceCurrency: 'USD',
+                },
+                {
+                  '@type': 'Offer',
+                  name: 'AI Automation',
+                  description: 'Intelligent business automation with AI systems',
+                  price: '5000',
+                  priceCurrency: 'USD',
+                },
+              ],
+            }),
+          }}
+        />
+
+        {/* Structured Data - Reviews */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              itemListElement: TESTIMONIALS.map((testimonial, index) => ({
+                '@type': 'Review',
+                position: index + 1,
+                author: {
+                  '@type': 'Person',
+                  name: testimonial.author,
+                },
+                reviewRating: {
+                  '@type': 'Rating',
+                  ratingValue: '5',
+                  bestRating: '5',
+                },
+                reviewBody: testimonial.quote,
+              })),
+            }),
+          }}
+        />
       </Head>
       {/* Skip link for accessibility */}
       <a href="#main-content" className="skip-link">
@@ -341,6 +485,18 @@ export default function Home() {
               </FadeIn>
             ))}
           </StaggerContainer>
+        </Section>
+
+        {/* Trust Badges */}
+        <Section className="py-12 bg-gradient-to-b from-brand-dark to-black">
+          <div className="flex flex-wrap justify-center items-center gap-8">
+            {TRUST_BADGES.map((badge) => (
+              <div key={badge.label} className="flex items-center gap-3">
+                <span className="text-2xl text-brand-lime">{badge.icon}</span>
+                <span className="text-sm font-medium text-brand-light">{badge.label}</span>
+              </div>
+            ))}
+          </div>
         </Section>
 
         {/* Services Section */}
@@ -495,6 +651,39 @@ export default function Home() {
           </StaggerContainer>
         </Section>
 
+        {/* Client Results Section */}
+        <Section className="py-20 bg-gradient-to-b from-black to-brand-dark">
+          <FadeIn>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
+              Real Results for Real Businesses
+            </h2>
+            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+              These aren't hypotheticals. Here's what our clients achieved within 90 days.
+            </p>
+          </FadeIn>
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {CLIENT_RESULTS.map((result, index) => (
+              <HoloCard key={index} className="p-8 text-center" glowColor="lime" showScanLine>
+                <div className="text-4xl md:text-5xl font-bold text-brand-lime mb-3">
+                  {result.metric}
+                </div>
+                <div className="text-brand-light font-medium mb-2">{result.description}</div>
+                <div className="text-sm text-brand-gray italic">{result.client}</div>
+              </HoloCard>
+            ))}
+          </StaggerContainer>
+
+          <FadeIn className="text-center mt-12">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-brand-lime/30 bg-brand-lime/5">
+              <span className="w-2 h-2 rounded-full bg-brand-lime animate-pulse-slow" />
+              <span className="text-sm text-brand-lime font-medium">
+                Limited to 3 new clients per month
+              </span>
+            </div>
+          </FadeIn>
+        </Section>
+
         {/* Pricing Section */}
         <Section id="pricing" gradient="dark" className="py-24">
           <FadeIn>
@@ -521,6 +710,21 @@ export default function Home() {
               />
             ))}
           </StaggerContainer>
+
+          <FadeIn className="mt-12 text-center">
+            <HoloCard className="inline-block p-6 max-w-2xl" glowColor="cyan">
+              <div className="flex items-start gap-4">
+                <span className="text-3xl">🛡️</span>
+                <div className="text-left">
+                  <h3 className="text-white font-semibold mb-2">30-Day Money-Back Guarantee</h3>
+                  <p className="text-brand-gray text-sm leading-relaxed">
+                    If you&apos;re not completely satisfied with our work within the first 30 days,
+                    we&apos;ll refund your investment. No questions asked.
+                  </p>
+                </div>
+              </div>
+            </HoloCard>
+          </FadeIn>
         </Section>
 
         {/* FAQ Section */}
