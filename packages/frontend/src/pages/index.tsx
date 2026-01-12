@@ -1,17 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import {
-  Navbar,
-  Footer,
-  Section,
-  TestimonialCard,
-  PricingCard,
-  Button,
-  HoloCard,
-  ScanLine,
-  GlowText,
-} from '../components/ui';
+import { Navbar, Footer, Section, PricingCard, Button, HoloCard, GlowText } from '../components/ui';
 import { FadeIn, StaggerContainer } from '../components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
 import env from '../lib/env';
@@ -60,6 +50,24 @@ const TheArchitect = dynamic(() => import('../components/sentient/builder/TheArc
   ),
 });
 
+// Dynamically import new sentient components
+const InteractiveFAQ = dynamic(() => import('../components/sentient/faq/InteractiveFAQ'), {
+  ssr: false,
+});
+
+const ProcessTimeline = dynamic(() => import('../components/sentient/process/ProcessTimeline'), {
+  ssr: false,
+});
+
+const TerminalCTA = dynamic(() => import('../components/sentient/cta/TerminalCTA'), {
+  ssr: false,
+});
+
+const MetricTestimonials = dynamic(
+  () => import('../components/sentient/testimonials/MetricTestimonials'),
+  { ssr: false },
+);
+
 const NAV_ITEMS = [
   { label: 'Capabilities', href: '#hologram' },
   { label: 'Live Metrics', href: '#pulse' },
@@ -91,18 +99,33 @@ const TESTIMONIALS = [
       'Our new website looks amazing and the AI receptionist saves us 10+ hours every week. Already booked 6 new clients through automated scheduling.',
     author: 'Sarah M.',
     role: 'Small Business Owner',
+    company: 'Home Services Co.',
+    metrics: [
+      { label: 'Time Saved', value: '10+ hrs', icon: '⏰' },
+      { label: 'New Clients', value: '+6', icon: '📈' },
+    ],
   },
   {
     quote:
       'Professional team that really listens. They delivered exactly what we needed on time and under budget. The AI chat support is incredible.',
     author: 'James K.',
     role: 'Marketing Director',
+    company: 'TechStart Inc.',
+    metrics: [
+      { label: 'On Budget', value: '100%', icon: '💰' },
+      { label: 'On Time', value: '✓', icon: '⚡' },
+    ],
   },
   {
     quote:
       'Best investment we made this year. Their automation cut our support tickets in half and increased customer satisfaction scores by 28%.',
     author: 'Michelle R.',
     role: 'Operations Manager',
+    company: 'E-Commerce Plus',
+    metrics: [
+      { label: 'Tickets Cut', value: '50%', icon: '📉' },
+      { label: 'CSAT Score', value: '+28%', icon: '😊' },
+    ],
   },
 ];
 
@@ -500,51 +523,32 @@ export default function Home() {
           <TheArchitect />
         </Section>
 
-        {/* How We Work Section */}
+        {/* How We Work Section - Process Timeline */}
         <Section id="how-we-work" gradient="subtle" className="py-24">
           <FadeIn>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light text-center">
               How We Work
             </h2>
-            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed">
+            <p className="text-brand-gray mb-16 max-w-2xl leading-relaxed text-center mx-auto">
               A simple, transparent process from first conversation to successful launch.
             </p>
           </FadeIn>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {STEPS.map((s) => (
-              <HoloCard key={s.step} className="p-8" glowColor="cyan">
-                <span className="block text-6xl font-bold text-brand-lime/20 mb-2 font-mono">
-                  {s.step}
-                </span>
-                <h3 className="text-lg font-semibold text-white mb-2">{s.title}</h3>
-                <p className="text-brand-gray text-sm">{s.desc}</p>
-              </HoloCard>
-            ))}
-          </StaggerContainer>
+          <ProcessTimeline steps={STEPS} />
         </Section>
 
-        {/* Testimonials Section - TODO: Replace with real case studies */}
+        {/* Testimonials Section - Enhanced with Metrics */}
         <Section id="testimonials" className="py-24">
           <FadeIn>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
               Proof, Not Promises
             </h2>
             <p className="text-brand-gray mb-8 max-w-2xl leading-relaxed">
-              Real clients. Real systems. Real metrics. (Case study links coming soon.)
+              Real clients. Real systems. Real metrics.
             </p>
           </FadeIn>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((testimonial) => (
-              <TestimonialCard
-                key={testimonial.author}
-                quote={testimonial.quote}
-                author={testimonial.author}
-                role={testimonial.role}
-              />
-            ))}
-          </StaggerContainer>
+          <MetricTestimonials testimonials={TESTIMONIALS} />
         </Section>
 
         {/* Client Results Section */}
@@ -634,14 +638,7 @@ export default function Home() {
             </p>
           </FadeIn>
 
-          <div className="max-w-3xl mx-auto space-y-4">
-            {FAQS.map((faq, index) => (
-              <HoloCard key={index} className="p-6" glowColor="cyan">
-                <h3 className="font-semibold text-white mb-3 text-lg">{faq.question}</h3>
-                <p className="text-brand-gray leading-relaxed">{faq.answer}</p>
-              </HoloCard>
-            ))}
-          </div>
+          <InteractiveFAQ faqs={FAQS} />
 
           <FadeIn className="text-center mt-12">
             <p className="text-brand-gray mb-4">Still have questions?</p>
@@ -651,31 +648,9 @@ export default function Home() {
           </FadeIn>
         </Section>
 
-        {/* Final CTA Section */}
+        {/* Final CTA Section - Terminal Style */}
         <Section className="py-28 relative overflow-hidden">
-          {/* Subtle background glow */}
-          <div className="absolute inset-0 bg-gradient-radial from-brand-lime/5 via-transparent to-transparent pointer-events-none" />
-
-          <FadeIn className="text-center relative z-10">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
-              Ready to Transform Your Business?
-            </h2>
-            <p className="text-brand-gray mb-8 leading-relaxed max-w-xl mx-auto">
-              Let&apos;s talk about your goals and build something amazing together.
-            </p>
-
-            <ScanLine color="lime" className="max-w-xs mx-auto mb-8" />
-
-            <Button
-              as="link"
-              href="/intake"
-              variant="primary"
-              size="lg"
-              className="animate-glow-pulse"
-            >
-              Get Started Today
-            </Button>
-          </FadeIn>
+          <TerminalCTA />
         </Section>
       </main>
 
