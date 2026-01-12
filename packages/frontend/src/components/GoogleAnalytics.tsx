@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Google Analytics 4 Script Component
  *
@@ -7,7 +9,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import Script from 'next/script';
-import { useRouter } from 'next/router';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { GA_MEASUREMENT_ID, pageview, isGAEnabled } from '@/lib/gtag';
 
@@ -30,22 +32,16 @@ function sanitizeGaMeasurementId(id: unknown): string | null {
  * Google Analytics component that handles script loading and page view tracking
  */
 export function GoogleAnalytics() {
-  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!isGAEnabled() || !router.events) return;
+    if (!isGAEnabled()) return;
 
     // Track page views on route changes
-    const handleRouteChange = (url: string) => {
-      pageview(url);
-    };
-
-    router.events.on('routeChangeComplete', handleRouteChange);
-
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
+    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
+    pageview(url);
+  }, [pathname, searchParams]);
 
   // Sanitize the measurement ID to prevent XSS
   const safeGaId = sanitizeGaMeasurementId(GA_MEASUREMENT_ID);
