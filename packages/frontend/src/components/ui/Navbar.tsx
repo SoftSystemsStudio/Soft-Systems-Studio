@@ -19,9 +19,9 @@ interface NavbarProps {
 
 export default function Navbar({
   logo = '/images/S Logo - Black Blackground.png',
-  brand = 'Soft Systems Studio',
+  brand = 'SOFT SYSTEMS',
   items = [],
-  ctaLabel = 'Get Started',
+  ctaLabel = 'INITIALIZE',
   ctaHref = '/intake',
   className = '',
 }: NavbarProps) {
@@ -31,7 +31,7 @@ export default function Navbar({
 
   return (
     <header
-      className={`sticky top-0 z-50 backdrop-blur-md bg-black/70 border-b border-[#2a2a2a] ${className}`}
+      className={`sticky top-0 z-50 backdrop-blur-sm bg-blueprint-bg/95 border-b-2 border-blueprint-black ${className}`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Brand with Logo */}
@@ -39,7 +39,7 @@ export default function Navbar({
           {logo && (
             <Image src={logo} alt={brand} width={36} height={36} className="h-9 w-9" priority />
           )}
-          <span className="font-bold text-xl tracking-tight text-[#d5d5d5] hidden sm:block">
+          <span className="font-bold text-xl tracking-tight text-blueprint-black font-mono hidden sm:block">
             {brand}
           </span>
         </Link>
@@ -50,7 +50,7 @@ export default function Navbar({
             <a
               key={item.href}
               href={item.href}
-              className="text-sm text-[#656565] hover:text-[#c0ff6b] transition focus:outline-none focus:ring-2 focus:ring-[#c0ff6b] rounded"
+              className="text-sm font-mono text-blueprint-dark hover:text-terminal-green transition focus:outline-none focus:ring-2 focus:ring-terminal-green"
             >
               {item.label}
             </a>

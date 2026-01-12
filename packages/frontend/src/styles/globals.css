@@ -1,18 +1,24 @@
 /* packages/frontend/src/styles/globals.css */
 
+/* Import Technical Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 /* Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens (still available if you want to use them in custom CSS) */
+/* Design tokens - Technical Brutalist */
 :root {
-  --color-bg: #02040a;
-  --color-text: #e5e7eb;
-  --color-muted: #9ca3af;
-  --color-border: #1f2933;
-  --color-surface: #050816;
-  --color-accent: #c0ff6b;
+  --color-bg: #F0F0F0;
+  --color-text: #000000;
+  --color-muted: #656565;
+  --color-border: #000000;
+  --color-surface: #FAFAFA;
+  --color-accent: #00FF00;
+  --color-grid: #D0D0D0;
+  --color-terminal-green: #00FF00;
+  --color-terminal-orange: #FF6B00;
 }
 
 /* Global reset */
@@ -27,21 +33,19 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   min-height: 100%;
 }
 
-/* Dark, tech-forward, slightly “hyped” background */
+/* Technical Brutalist background with visible grid */
 body {
   color: var(--color-text);
-  background:
-    radial-gradient(circle at 0% 0%, #1f2937 0, #020617 45%),
-    radial-gradient(circle at 100% 100%, #111827 0, #02040a 50%);
+  background-color: var(--color-bg);
+  background-image:
+    linear-gradient(var(--color-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: -1px -1px;
 }
 
 /* Optional: base link / button defaults to feel consistent */
@@ -97,8 +101,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Selection color for dark theme */
+/* Selection color for brutalist theme */
 ::selection {
-  background-color: #6366f1; /* indigo-500 */
-  color: white;
+  background-color: #00FF00;
+  color: #000000;
+}
+
+/* Monospace for code elements */
+code,
+pre,
+kbd,
+samp {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+/* Technical grid utility classes */
+.blueprint-border {
+  border: 1px solid var(--color-border);
+}
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(var(--color-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
