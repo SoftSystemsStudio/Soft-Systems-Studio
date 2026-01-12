@@ -14,3 +14,16 @@ export { default as Modal } from './Modal';
 export { default as HoloCard } from './HoloCard';
 export { default as ScanLine } from './ScanLine';
 export { default as GlowText } from './GlowText';
+
+// God Tier components
+export { default as MagneticWrapper, useMagnetic } from './MagneticWrapper';
+export { SoundManagerProvider, useSounds } from './SoundManager';
+export { default as DynamicTypography, useDynamicTypography } from './DynamicTypography';
+export {
+  ViewTransitionsProvider,
+  useViewTransition,
+  TransitionLink,
+  MorphingElement,
+  useAnimatedMount,
+  viewTransitionStyles,
+} from './ViewTransitions';
