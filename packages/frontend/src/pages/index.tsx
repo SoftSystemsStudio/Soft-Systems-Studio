@@ -14,7 +14,6 @@ import {
 } from '../components/ui';
 import { FadeIn, StaggerContainer } from '../components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
-import { ProjectEstimator } from '../components/estimator';
 import env from '../lib/env';
 
 // Dynamically import FluidHero (client-side only)
@@ -47,6 +46,16 @@ const LivePulse = dynamic(() => import('../components/sentient/pulse/LivePulse')
   loading: () => (
     <div className="py-16 bg-black flex items-center justify-center">
       <div className="text-brand-lime font-mono animate-pulse">Connecting to live metrics...</div>
+    </div>
+  ),
+});
+
+// Dynamically import TheArchitect (drag-drop builder)
+const TheArchitect = dynamic(() => import('../components/sentient/builder/TheArchitect'), {
+  ssr: false,
+  loading: () => (
+    <div className="py-16 bg-black flex items-center justify-center">
+      <div className="text-brand-lime font-mono animate-pulse">Loading Architect...</div>
     </div>
   ),
 });
@@ -487,8 +496,8 @@ export default function Home() {
             </div>
           </FadeIn>
 
-          {/* TODO: Replace with drag-drop builder */}
-          <ProjectEstimator />
+          {/* The Architect - Drag & Drop Builder */}
+          <TheArchitect />
         </Section>
 
         {/* How We Work Section */}
