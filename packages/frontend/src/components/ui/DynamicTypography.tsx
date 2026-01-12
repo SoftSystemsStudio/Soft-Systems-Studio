@@ -1,8 +1,6 @@
 'use client';
 
-import { useRef, useMemo, useEffect, useState, useCallback } from 'react';
-import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 /**
  * DynamicTypography - Variable font that responds to scroll/mouse
