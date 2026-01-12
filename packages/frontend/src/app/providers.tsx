@@ -1,6 +1,5 @@
 'use client';
 
-import { ClerkProvider } from '@clerk/nextjs';
 import {
   SoundManagerProvider,
   ViewTransitionsProvider,
@@ -9,14 +8,12 @@ import {
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
-      <SoundManagerProvider>
-        <ViewTransitionsProvider>
-          {/* Inject view transition CSS */}
-          <style dangerouslySetInnerHTML={{ __html: viewTransitionStyles }} />
-          {children}
-        </ViewTransitionsProvider>
-      </SoundManagerProvider>
-    </ClerkProvider>
+    <SoundManagerProvider>
+      <ViewTransitionsProvider>
+        {/* Inject view transition CSS */}
+        <style dangerouslySetInnerHTML={{ __html: viewTransitionStyles }} />
+        {children}
+      </ViewTransitionsProvider>
+    </SoundManagerProvider>
   );
 }
