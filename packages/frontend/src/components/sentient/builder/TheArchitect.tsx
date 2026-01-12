@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HoloCard } from '@/components/ui';
 
@@ -82,9 +82,20 @@ export default function TheArchitect() {
   const [draggedModule, setDraggedModule] = useState<Module | null>(null);
   const [email, setEmail] = useState('');
   const [showQuote, setShowQuote] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const totalPrice = placedModules.reduce((sum, mod) => sum + mod.price, 0);
+
+  // Detect mobile on mount
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Play snap sound
   const playSnapSound = useCallback(() => {
@@ -111,6 +122,42 @@ export default function TheArchitect() {
 
   const handleDragStart = (module: Module) => {
     setDraggedModule(module);
+  };
+
+  // Mobile: tap to add module to canvas
+  const handleModuleTap = (module: Module) => {
+    if (!isMobile) return;
+
+    // Check if module already placed
+    if (placedModules.find((m) => m.id === module.id)) {
+      return;
+    }
+
+    // Find next available position in a grid pattern
+    const startX = 40;
+    const startY = 40;
+    const spacing = 200;
+
+    // Simple grid placement: place modules in rows
+    const index = placedModules.length;
+    const columns = 3;
+    const row = Math.floor(index / columns);
+    const col = index % columns;
+
+    const x = startX + col * spacing;
+    const y = startY + row * spacing;
+
+    setPlacedModules((prev) => [
+      ...prev,
+      {
+        ...module,
+        x,
+        y,
+        placedAt: Date.now(),
+      },
+    ]);
+
+    playSnapSound();
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -194,10 +241,12 @@ export default function TheArchitect() {
               return (
                 <motion.div
                   key={module.id}
-                  draggable={!isPlaced}
+                  draggable={!isPlaced && !isMobile}
                   onDragStart={() => handleDragStart(module)}
-                  className={`cursor-move ${isPlaced ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onClick={() => handleModuleTap(module)}
+                  className={`${isMobile ? 'cursor-pointer' : 'cursor-move'} ${isPlaced ? 'opacity-50 cursor-not-allowed' : ''}`}
                   whileHover={!isPlaced ? { scale: 1.05 } : {}}
+                  whileTap={!isPlaced && isMobile ? { scale: 0.95 } : {}}
                 >
                   <HoloCard className="p-4" glowColor={module.category === 'ai' ? 'cyan' : 'lime'}>
                     <div className="flex items-start gap-3">
@@ -219,7 +268,9 @@ export default function TheArchitect() {
           <div className="mt-6 p-4 bg-gray-900/50 border border-gray-800 rounded-lg">
             <div className="text-xs text-gray-400 font-mono mb-2">💡 HINT</div>
             <div className="text-xs text-gray-500">
-              Drag modules onto the canvas to build your custom stack. Modules snap to grid.
+              {isMobile
+                ? "Tap modules to add them to your stack. They'll arrange automatically."
+                : 'Drag modules onto the canvas to build your custom stack. Modules snap to grid.'}
             </div>
           </div>
         </div>
@@ -243,10 +294,12 @@ export default function TheArchitect() {
             {/* Drop Zone Hint */}
             {placedModules.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
+                <div className="text-center px-4">
                   <div className="text-4xl mb-4">🎯</div>
                   <div className="text-gray-500 font-mono text-sm">
-                    Drop modules here to start building
+                    {isMobile
+                      ? 'Tap modules on the left to start building'
+                      : 'Drop modules here to start building'}
                   </div>
                 </div>
               </div>
