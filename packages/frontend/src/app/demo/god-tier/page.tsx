@@ -12,16 +12,36 @@
  * - Real-time metrics
  */
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MagneticWrapper, SoundManagerProvider, DynamicTypography, Button } from '@/components/ui';
-import {
-  LazyFluidBackground,
-  LazyNodeEditor,
-  LazyROICalculator,
-  LazyAIConcierge,
-  LazyRealTimePulse,
-} from '@/lib/performance';
+import dynamic from 'next/dynamic';
+import { MagneticWrapper, DynamicTypography, Button } from '@/components/ui';
+
+// Lazy load heavy components with error boundaries
+const LazyFluidBackground = dynamic(
+  () => import('@/components/three/FluidBackground').catch(() => () => null),
+  { ssr: false }
+);
+
+const LazyNodeEditor = dynamic(
+  () => import('@/components/sentient/builder/NodeEditor').catch(() => () => <div>Node Editor unavailable</div>),
+  { ssr: false }
+);
+
+const LazyROICalculator = dynamic(
+  () => import('@/components/estimator/ROICalculator').catch(() => () => <div>Calculator unavailable</div>),
+  { ssr: false }
+);
+
+const LazyAIConcierge = dynamic(
+  () => import('@/components/sentient/concierge/AIConcierge').catch(() => () => <div>Concierge unavailable</div>),
+  { ssr: false }
+);
+
+const LazyRealTimePulse = dynamic(
+  () => import('@/components/sentient/pulse/RealTimePulse').catch(() => () => <div>Metrics unavailable</div>),
+  { ssr: false }
+);
 
 export default function GodTierDemo() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -36,10 +56,11 @@ export default function GodTierDemo() {
   ];
 
   return (
-    <SoundManagerProvider>
-      <div className="min-h-screen bg-black text-white relative">
-        {/* Fluid Background */}
+    <div className="min-h-screen bg-black text-white relative">
+      {/* Fluid Background */}
+      <Suspense fallback={<div className="fixed inset-0 bg-gradient-to-b from-gray-900 to-black" />}>
         <LazyFluidBackground quality="high" enablePostProcessing={true} />
+      </Suspense>
 
         {/* Content Layer */}
         <div className="relative z-10">
@@ -195,7 +216,9 @@ export default function GodTierDemo() {
                     Your workflow JSON is sent when you submit.
                   </p>
 
-                  <LazyNodeEditor />
+                  <Suspense fallback={<div className="h-[600px] flex items-center justify-center"><span className="text-brand-lime animate-pulse">Loading Node Editor...</span></div>}>
+                    <LazyNodeEditor />
+                  </Suspense>
                 </div>
               </motion.section>
             )}
@@ -210,7 +233,9 @@ export default function GodTierDemo() {
                 exit={{ opacity: 0 }}
                 className="py-20 px-6"
               >
+              <Suspense fallback={<div className="h-[500px] flex items-center justify-center"><span className="text-brand-lime animate-pulse">Loading Calculator...</span></div>}>
                 <LazyROICalculator setupCost={8000} monthlyCost={200} efficiencyMultiplier={10} />
+              </Suspense>
               </motion.section>
             )}
           </AnimatePresence>
@@ -224,11 +249,13 @@ export default function GodTierDemo() {
                 exit={{ opacity: 0 }}
                 className="py-20 px-6"
               >
+              <Suspense fallback={<div className="h-[400px] flex items-center justify-center"><span className="text-brand-lime animate-pulse">Loading Metrics...</span></div>}>
                 <LazyRealTimePulse
                   metricsEndpoint="/api/v1/metrics/live"
                   showCommits
                   githubRepo="SoftSystemsStudio/Soft-Systems-Studio"
                 />
+              </Suspense>
               </motion.section>
             )}
           </AnimatePresence>
@@ -236,7 +263,9 @@ export default function GodTierDemo() {
           {/* Footer */}
           <footer className="py-12 px-6 border-t border-gray-800">
             <div className="max-w-7xl mx-auto">
-              <LazyRealTimePulse compact />
+              <Suspense fallback={<div className="text-center text-gray-500">Loading...</div>}>
+                <LazyRealTimePulse compact />
+              </Suspense>
             </div>
           </footer>
         </div>
@@ -250,21 +279,22 @@ export default function GodTierDemo() {
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm"
             >
-              <LazyAIConcierge
-                fullScreen
-                enableVoice
-                onClose={() => setShowConcierge(false)}
-                greeting="Hello! I noticed you're exploring our God Tier demo. What would you like to know about our capabilities?"
-                context={{
-                  pagesVisited: ['demo', 'god-tier'],
-                  timeOnSite: 120,
-                  lastSection: activeSection || 'hero',
-                }}
-              />
+              <Suspense fallback={<div className="flex items-center justify-center h-full"><span className="text-brand-lime animate-pulse">Loading AI...</span></div>}>
+                <LazyAIConcierge
+                  fullScreen
+                  enableVoice
+                  onClose={() => setShowConcierge(false)}
+                  greeting="Hello! I noticed you're exploring our God Tier demo. What would you like to know about our capabilities?"
+                  context={{
+                    pagesVisited: ['demo', 'god-tier'],
+                    timeOnSite: 120,
+                    lastSection: activeSection || 'hero',
+                  }}
+                />
+              </Suspense>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </SoundManagerProvider>
   );
 }
