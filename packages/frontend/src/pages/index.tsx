@@ -67,6 +67,7 @@ const NAV_ITEMS = [
   { label: 'Live Metrics', href: '#pulse' },
   { label: 'Architect', href: '#builder' },
   { label: 'FAQ', href: '#faq' },
+  { label: '✨ God Tier Demo', href: '/demo/god-tier' },
 ];
 
 const STEPS = [
@@ -400,6 +401,14 @@ export default function Home() {
       {/* Skip link for accessibility */}
       <a href="#main-content" className="skip-link">
         Skip to main content
+      </a>
+
+      {/* God Tier Demo Banner */}
+      <a 
+        href="/demo/god-tier" 
+        className="block w-full bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white text-center py-3 font-mono text-sm hover:opacity-90 transition-opacity"
+      >
+        ✨ NEW: Check out the God Tier Demo → WebGL • AI Concierge • Real-time Metrics
       </a>
 
       {/* Navbar */}
