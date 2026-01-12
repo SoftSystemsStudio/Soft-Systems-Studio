@@ -20,6 +20,7 @@ module.exports = {
         border: '#2a2a2a',
         surface: '#0a0a0a',
         accent: '#c0ff6b',
+        'primary-accent': '#c0ff6b', // Alias for sentient components
         // Futuristic accent colors
         glow: {
           cyan: '#22d3ee',
