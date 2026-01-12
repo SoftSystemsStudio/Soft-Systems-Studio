@@ -35,7 +35,7 @@ function LoadingFallback({ height = 400 }: { height?: number }) {
  */
 export const LazyFluidBackground = dynamic(() => import('@/components/three/FluidBackground'), {
   ssr: false,
-  loading: () => <LoadingFallback height={window?.innerHeight ?? 800} />,
+  loading: () => <LoadingFallback height={800} />,
 });
 
 export const LazyNodeEditor = dynamic(() => import('@/components/sentient/builder/NodeEditor'), {
