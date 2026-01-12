@@ -6,17 +6,7 @@ import { FadeIn, StaggerContainer } from '../components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
 import env from '../lib/env';
 
-// Dynamically import FluidHero (client-side only)
-const FluidHero = dynamic(() => import('../components/sentient/hero/FluidHero'), {
-  ssr: false,
-  loading: () => (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="text-brand-lime font-mono animate-pulse">
-        Initializing Neural Interface...
-      </div>
-    </div>
-  ),
-});
+// Note: FluidHero replaced with SystemStatus for Technical Brutalist redesign
 
 // Dynamically import HolographicModel (client-side only)
 const HolographicModel = dynamic(() => import('../components/sentient/hologram/HolographicModel'), {
@@ -67,6 +57,10 @@ const MetricTestimonials = dynamic(
   () => import('../components/sentient/testimonials/MetricTestimonials'),
   { ssr: false },
 );
+
+const SystemStatus = dynamic(() => import('../components/sentient/hero/SystemStatus'), {
+  ssr: false,
+});
 
 const NAV_ITEMS = [
   { label: 'Capabilities', href: '#hologram' },
@@ -270,7 +264,7 @@ const CLIENT_RESULTS = [
 
 export default function Home() {
   return (
-    <div className="antialiased min-h-screen bg-black text-brand-light">
+    <div className="antialiased min-h-screen bg-blueprint-bg text-blueprint-black">
       <Head>
         <title>
           AI Automation & Web Design Services | Soft Systems Studio - Expert Development
@@ -412,8 +406,10 @@ export default function Home() {
       <Navbar items={NAV_ITEMS} ctaLabel="Get Started" ctaHref="/intake" />
 
       <main id="main-content">
-        {/* Hero Section - Sentient Terminal */}
-        <FluidHero />
+        {/* Hero Section - System Status */}
+        <Section className="py-16">
+          <SystemStatus />
+        </Section>
 
         {/* Stats Bar */}
         <Section className="py-16 border-y border-brand-lime/10">

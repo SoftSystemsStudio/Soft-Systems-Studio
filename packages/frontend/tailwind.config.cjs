@@ -5,26 +5,38 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Brand colors
+        // Technical Brutalist Palette
+        blueprint: {
+          bg: '#F0F0F0', // Off-white background
+          paper: '#FAFAFA', // Slightly lighter
+          grid: '#D0D0D0', // Grid lines
+          dark: '#1A1A1A', // Almost black
+          black: '#000000', // Pure black
+        },
+        terminal: {
+          green: '#00FF00', // Classic terminal green
+          orange: '#FF6B00', // Safety orange
+          red: '#FF0000', // Alert red
+          yellow: '#FFFF00', // Warning yellow
+        },
+        // Legacy colors (for gradual migration)
         brand: {
-          lime: '#c0ff6b',
-          'lime-dark': '#9fdd4a',
-          light: '#d5d5d5',
+          lime: '#00FF00',
+          'lime-dark': '#00DD00',
+          light: '#1A1A1A',
           gray: '#656565',
           black: '#000000',
         },
-        // Semantic colors
-        bg: '#000000',
-        text: '#d5d5d5',
+        bg: '#F0F0F0',
+        text: '#000000',
         muted: '#656565',
-        border: '#2a2a2a',
-        surface: '#0a0a0a',
-        accent: '#c0ff6b',
-        'primary-accent': '#c0ff6b', // Alias for sentient components
-        // Futuristic accent colors
+        border: '#000000',
+        surface: '#FAFAFA',
+        accent: '#00FF00',
+        'primary-accent': '#00FF00',
         glow: {
           cyan: '#22d3ee',
-          lime: '#c0ff6b',
+          lime: '#00FF00',
           fuchsia: '#d946ef',
         },
       },
@@ -72,7 +84,14 @@ module.exports = {
         'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
       },
       fontFamily: {
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'IBM Plex Mono', 'Courier New', 'monospace'],
+        display: ['Space Grotesk', 'Inter', 'sans-serif'],
+      },
+      fontSize: {
+        'xs': ['0.75rem', { lineHeight: '1.5', letterSpacing: '0.05em' }],
+        'sm': ['0.875rem', { lineHeight: '1.5', letterSpacing: '0.025em' }],
+        'base': ['1rem', { lineHeight: '1.6', letterSpacing: '0' }],
       },
     },
   },
