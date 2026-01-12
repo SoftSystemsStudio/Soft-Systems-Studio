@@ -139,6 +139,25 @@ const nextConfig = {
   async redirects() {
     return [];
   },
+
+  // Webpack configuration for GLSL shaders and optimizations
+  webpack: (config, { isServer }) => {
+    // Add GLSL shader loader
+    config.module.rules.push({
+      test: /\.(glsl|vs|fs|vert|frag)$/,
+      type: 'asset/source',
+    });
+
+    // Optimize Three.js bundle
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        three: 'three',
+      };
+    }
+
+    return config;
+  },
 };
 
 // Sentry configuration for error monitoring and source maps
