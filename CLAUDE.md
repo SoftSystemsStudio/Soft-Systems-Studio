@@ -249,41 +249,31 @@ Required checks:
 
 _This section auto-populates with recent commit context to help Claude maintain continuity._
 
-**Last updated**: 2026-01-12T04:14:34.438Z
+**Last updated**: 2026-01-12T04:29:42.390Z
 
 **Current staged changes summary**:
-root/: 2 modified
-packages/: 7 added, 3 modified
+packages/: 2 added, 1 modified
 
 **Recent git commits**:
 
 ```
+8d5da80 - feat(sentient-terminal): implement WebGL fluid simulation hero (Phase 1-2) (15 minutes ago)
 8af9292 - chore: trigger railway redeploy [skip ci] (2 days ago)
 8e120cf - docs: add complete Railway setup guide for beginners (2 days ago)
 3a48952 - docs: add VS Code-specific multi-window Claude Code workflow guide (3 days ago)
 3d76598 - feat: add multi-session orchestration system (3 days ago)
-18d6f1e - feat: add elite Claude Code workflow system (top 0.1% usage) (3 days ago)
 ```
 
 **Recent commits**: (rolling window of last 10)
 
-### Commit 1: 2026-01-12T04:14:34.438Z
+### Commit 1: 2026-01-12T04:29:42.390Z
 
 **Staged files**:
 
 ```
-M	CLAUDE.md
-M	packages/frontend/next.config.mjs
-M	packages/frontend/package.json
-A	packages/frontend/src/components/sentient/hero/FluidCanvas.tsx
-A	packages/frontend/src/components/sentient/hero/FluidHero.tsx
-A	packages/frontend/src/components/sentient/hero/shaders/fluidFragment.glsl
-A	packages/frontend/src/components/sentient/hero/shaders/fluidVertex.glsl
-A	packages/frontend/src/lib/webgl-detector.ts
-A	packages/frontend/src/pages/terminal-test.tsx
-A	packages/frontend/src/types/glsl.d.ts
+A	packages/frontend/src/components/sentient/hologram/HolographicModel.tsx
+A	packages/frontend/src/pages/hologram-test.tsx
 M	packages/frontend/tsconfig.tsbuildinfo
-M	pnpm-lock.yaml
 ```
 
 ## Session Checkpoints
