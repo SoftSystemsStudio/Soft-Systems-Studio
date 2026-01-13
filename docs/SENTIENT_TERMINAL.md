@@ -54,6 +54,7 @@ packages/frontend/src/
 ## Section 1: Fluid Hero (Phase 1-2)
 
 ### Features
+
 - **WebGL Particle System**: 30,000 particles on desktop, 2,000 on mobile
 - **Text Formation**: Particles form letters based on typed input
 - **Conversational Interface**: Terminal-style input with command parsing
@@ -63,11 +64,13 @@ packages/frontend/src/
 ### Technical Implementation
 
 **Key Files**:
+
 - `packages/frontend/src/components/sentient/hero/FluidHero.tsx` (240 lines)
 - `packages/frontend/src/components/sentient/hero/FluidCanvas.tsx` (420 lines)
 - `packages/frontend/src/lib/webgl-detector.ts` (60 lines)
 
 **GLSL Shaders** (inlined in FluidCanvas.tsx):
+
 ```glsl
 // Vertex Shader - Particle positioning
 attribute vec3 position;
@@ -91,6 +94,7 @@ void main() {
 ```
 
 **Performance Optimizations**:
+
 ```typescript
 // Adaptive particle count based on FPS
 if (currentFPS < 30 && particleCount > 5000) {
@@ -106,6 +110,7 @@ const capabilities = detectCapabilities();
 ```
 
 ### Test Page
+
 `/terminal-test` - Isolated fluid hero testing
 
 ---
@@ -113,6 +118,7 @@ const capabilities = detectCapabilities();
 ## Section 2: Holographic Model (Phase 3)
 
 ### Features
+
 - **3D Wireframe Building**: 5 floors representing services
 - **Scroll-Synchronized Camera**: Orbits 360° while moving vertically
 - **Interactive Zones**: Hover cards with service details
@@ -122,9 +128,11 @@ const capabilities = detectCapabilities();
 ### Technical Implementation
 
 **Key File**:
+
 - `packages/frontend/src/components/sentient/hologram/HolographicModel.tsx` (418 lines)
 
 **5 Service Floors**:
+
 1. **Voice AI** (Level 0) - Cyan (#22d3ee)
 2. **Chat Automation** (Level 1) - Purple (#a78bfa)
 3. **Workflow Automation** (Level 2) - Green (#c0ff6b)
@@ -132,6 +140,7 @@ const capabilities = detectCapabilities();
 5. **Custom Apps** (Level 4) - Pink (#f472b6)
 
 **Scroll-Based Camera**:
+
 ```typescript
 function CameraController({ scrollProgress }: { scrollProgress: number }) {
   const { camera } = useThree();
@@ -139,7 +148,7 @@ function CameraController({ scrollProgress }: { scrollProgress: number }) {
   useFrame(() => {
     const radius = 15;
     const angle = scrollProgress * Math.PI * 2; // 360° rotation
-    const height = -5 + scrollProgress * 15;     // Bottom to top
+    const height = -5 + scrollProgress * 15; // Bottom to top
 
     camera.position.x = Math.sin(angle) * radius;
     camera.position.z = Math.cos(angle) * radius;
@@ -153,6 +162,7 @@ function CameraController({ scrollProgress }: { scrollProgress: number }) {
 ```
 
 **Floor Geometry**:
+
 ```typescript
 // Each floor has:
 // - Platform (box geometry with wireframe)
@@ -175,6 +185,7 @@ function CameraController({ scrollProgress }: { scrollProgress: number }) {
 ```
 
 ### Test Page
+
 `/hologram-test` - Scroll to test camera movement and interactions
 
 ---
@@ -182,6 +193,7 @@ function CameraController({ scrollProgress }: { scrollProgress: number }) {
 ## Section 3: The Pulse Dashboard (Phase 4)
 
 ### Features
+
 - **Live Metrics**: 5 metric cards updating every 5 seconds
 - **Animated Counters**: Smooth counter transitions with ease-out cubic easing
 - **Sparkline Graphs**: Last 20 data points visualized per metric
@@ -192,11 +204,13 @@ function CameraController({ scrollProgress }: { scrollProgress: number }) {
 ### Technical Implementation
 
 **Key Files**:
+
 - `packages/frontend/src/components/sentient/pulse/PulseDashboard.tsx` (193 lines)
 - `packages/frontend/src/components/sentient/pulse/MetricCard.tsx` (169 lines)
 - `packages/frontend/src/hooks/useMetrics.ts` (166 lines)
 
 **5 Dashboard Metrics**:
+
 1. **Lines Shipped** - Mock: 14,203 (+12%)
 2. **AI Tokens Used** - Mock: 2,847,293 (+8%)
 3. **Active Projects** - Mock: 7 (stable)
@@ -204,6 +218,7 @@ function CameraController({ scrollProgress }: { scrollProgress: number }) {
 5. **Success Rate** - Mock: 98% (+2%)
 
 **Animated Counter Implementation**:
+
 ```typescript
 useEffect(() => {
   const startValue = previousValueRef.current;
@@ -231,6 +246,7 @@ useEffect(() => {
 ```
 
 **WebSocket Hook** (currently mock):
+
 ```typescript
 // In production, replace with real WebSocket
 useEffect(() => {
@@ -245,6 +261,7 @@ useEffect(() => {
 ```
 
 ### Test Page
+
 `/pulse-test` - Live metric updates every 5 seconds
 
 ---
@@ -252,6 +269,7 @@ useEffect(() => {
 ## Section 4: The Architect (Phase 5)
 
 ### Features
+
 - **Drag-Drop Canvas**: Physics-based module placement
 - **Magnetic Grid Snapping**: 40px grid with spring animations
 - **4 Module Types**: Voice AI, Chat, E-Commerce, Custom Apps
@@ -262,22 +280,27 @@ useEffect(() => {
 ### Technical Implementation
 
 **Key File**:
+
 - `packages/frontend/src/components/sentient/builder/ModuleBuilder.tsx` (517 lines)
 
 **4 Draggable Modules**:
+
 1. **Voice AI** - $5,000 base (🎙️ cyan)
 2. **Chat Support** - $3,000 base (💬 purple)
 3. **E-Commerce** - $8,000 base (🛒 green)
 4. **Custom Web App** - $12,000 base (🚀 orange)
 
 **Bundle Discount Logic**:
+
 ```typescript
 const calculateTotal = (): number => {
   const subtotal = placedModules.reduce((sum, mod) => sum + mod.basePrice, 0);
 
   let discount = 0;
-  if (placedModules.length >= 4) discount = 0.15;      // 15% off
-  else if (placedModules.length === 3) discount = 0.1; // 10% off
+  if (placedModules.length >= 4)
+    discount = 0.15; // 15% off
+  else if (placedModules.length === 3)
+    discount = 0.1; // 10% off
   else if (placedModules.length === 2) discount = 0.05; // 5% off
 
   return Math.round(subtotal * (1 - discount));
@@ -285,6 +308,7 @@ const calculateTotal = (): number => {
 ```
 
 **Drag-Drop Physics**:
+
 ```typescript
 const [springs, api] = useSprings(placedModules.length, (i) => ({
   x: placedModules[i].x,
@@ -296,28 +320,37 @@ const [springs, api] = useSprings(placedModules.length, (i) => ({
 const bind = useDrag(({ args: [index], down, movement: [mx, my] }) => {
   if (down) {
     // While dragging - immediate updates
-    api.start((i) => i === index ? {
-      x: placedModules[index].x + mx,
-      y: placedModules[index].y + my,
-      scale: 1.1,
-      immediate: true
-    } : {});
+    api.start((i) =>
+      i === index
+        ? {
+            x: placedModules[index].x + mx,
+            y: placedModules[index].y + my,
+            scale: 1.1,
+            immediate: true,
+          }
+        : {},
+    );
   } else {
     // On release - snap to grid
     const snappedX = snapToGrid(placedModules[index].x + mx);
     const snappedY = snapToGrid(placedModules[index].y + my);
 
-    api.start((i) => i === index ? {
-      x: snappedX,
-      y: snappedY,
-      scale: 1,
-      immediate: false
-    } : {});
+    api.start((i) =>
+      i === index
+        ? {
+            x: snappedX,
+            y: snappedY,
+            scale: 1,
+            immediate: false,
+          }
+        : {},
+    );
   }
 });
 ```
 
 **PDF Export**:
+
 ```typescript
 const handleExportBlueprint = () => {
   const doc = new jsPDF();
@@ -347,6 +380,7 @@ const handleExportBlueprint = () => {
 ```
 
 ### Test Page
+
 `/architect-test` - Drag modules, test pricing, export PDF
 
 ---
@@ -354,6 +388,7 @@ const handleExportBlueprint = () => {
 ## Section 5: Integration (Phase 6)
 
 ### Features
+
 - **Seamless Scrolling**: All sections flow naturally
 - **Quick Navigation**: Fixed menu for section jumping
 - **Dynamic Loading**: Code-split sections load on demand
@@ -364,9 +399,11 @@ const handleExportBlueprint = () => {
 ### Technical Implementation
 
 **Key File**:
+
 - `packages/frontend/src/pages/terminal.tsx` (238 lines)
 
 **Page Structure**:
+
 ```tsx
 <div className="min-h-screen bg-black">
   {/* Quick Navigation - Fixed bottom-right */}
@@ -408,6 +445,7 @@ const handleExportBlueprint = () => {
 ```
 
 **Dynamic Imports for Performance**:
+
 ```typescript
 const FluidHero = dynamic(() => import('@/components/sentient/hero/FluidHero'), {
   ssr: false,
@@ -423,6 +461,7 @@ const HolographicModel = dynamic(() => import('@/components/sentient/hologram/Ho
 ```
 
 **Smooth Scroll Setup**:
+
 ```typescript
 useEffect(() => {
   document.documentElement.style.scrollBehavior = 'smooth';
@@ -443,6 +482,7 @@ const scrollToSection = (id: string) => {
 ### Bundle Size Analysis
 
 **Estimated Sizes** (gzipped):
+
 - FluidHero: ~45KB (WebGL + shaders)
 - HolographicModel: ~90KB (Three.js + fiber)
 - PulseDashboard: ~25KB (Framer Motion + charts)
@@ -510,6 +550,7 @@ experimental: {
 #### Desktop (Chrome/Firefox/Safari)
 
 **Fluid Hero**:
+
 - [ ] Page loads without errors
 - [ ] Particle system renders (30k particles)
 - [ ] Text input cursor blinks
@@ -518,6 +559,7 @@ experimental: {
 - [ ] FPS stays above 60
 
 **Holographic Model**:
+
 - [ ] Scrolling moves camera smoothly
 - [ ] Camera orbits 360° around building
 - [ ] 5 floors visible with distinct colors
@@ -526,6 +568,7 @@ experimental: {
 - [ ] No visual glitches during scroll
 
 **Pulse Dashboard**:
+
 - [ ] All 5 metric cards display
 - [ ] System status card shows 4 health bars
 - [ ] Connection indicator shows "CONNECTED"
@@ -535,6 +578,7 @@ experimental: {
 - [ ] Leave tab open 10 mins - no memory leaks
 
 **The Architect**:
+
 - [ ] Click module adds it to canvas
 - [ ] Drag module with mouse works
 - [ ] Module snaps to 40px grid on release
@@ -546,6 +590,7 @@ experimental: {
 - [ ] PDF contains all modules and pricing
 
 **Integration**:
+
 - [ ] Quick nav menu fixed bottom-right
 - [ ] Clicking nav buttons scrolls smoothly
 - [ ] All sections flow without gaps
@@ -556,23 +601,27 @@ experimental: {
 #### Mobile (iOS Safari / Chrome Android)
 
 **Fluid Hero**:
+
 - [ ] Loads with reduced particles (2k)
 - [ ] Touch keyboard works
 - [ ] Text input responsive
 - [ ] FPS stays above 30
 
 **Holographic Model**:
+
 - [ ] Scroll works with touch
 - [ ] Camera movement smooth
 - [ ] Floor hover works with tap
 - [ ] Detail cards readable
 
 **Pulse Dashboard**:
+
 - [ ] Metrics stack vertically
 - [ ] All cards visible
 - [ ] Updates work
 
 **The Architect**:
+
 - [ ] Touch drag works
 - [ ] Modules snap to grid
 - [ ] Price calculation works
@@ -581,6 +630,7 @@ experimental: {
 ### Automated Testing
 
 **Lighthouse Audit** (Run in Chrome DevTools):
+
 ```bash
 # Target Scores:
 # Performance: >85
@@ -590,6 +640,7 @@ experimental: {
 ```
 
 **Bundle Size Check**:
+
 ```bash
 cd packages/frontend
 npm run build
@@ -597,6 +648,7 @@ npm run analyze # If analyzer plugin enabled
 ```
 
 **TypeScript Check**:
+
 ```bash
 npx tsc --noEmit
 ```
@@ -604,6 +656,7 @@ npx tsc --noEmit
 ### Performance Monitoring
 
 **FPS Monitoring** (add to FluidCanvas.tsx for dev):
+
 ```typescript
 import Stats from 'stats.js';
 
@@ -618,6 +671,7 @@ useFrame(() => {
 ```
 
 **Memory Profiling**:
+
 1. Open Chrome DevTools → Performance
 2. Start recording
 3. Scroll through all sections
@@ -631,16 +685,19 @@ useFrame(() => {
 ### Current Implementation
 
 **Keyboard Navigation**:
+
 - All buttons focusable
 - Tab order logical
 - Enter/Space activate buttons
 
 **Screen Reader Support**:
+
 - Semantic HTML throughout
 - ARIA labels where needed
 - Alt text for icons
 
 **Motion Preferences**:
+
 ```typescript
 // Respect prefers-reduced-motion
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -667,6 +724,7 @@ if (prefersReducedMotion) {
 ### Environment Variables
 
 **Required**:
+
 ```bash
 # Not needed for Phase 1-6 (all client-side)
 # Will be needed for Phase 4 production:
@@ -677,6 +735,7 @@ NEXT_PUBLIC_WS_URL=wss://api.softsystems.studio
 ### Build Commands
 
 **Development**:
+
 ```bash
 cd packages/frontend
 pnpm dev
@@ -684,6 +743,7 @@ pnpm dev
 ```
 
 **Production Build**:
+
 ```bash
 pnpm build
 pnpm start
@@ -692,6 +752,7 @@ pnpm start
 ### Deployment Strategy (Phase 8)
 
 **Week 1 - 10% Traffic**:
+
 ```typescript
 // Vercel Edge Config or feature flag
 if (featureFlags.sentientTerminal && Math.random() < 0.1) {
@@ -706,6 +767,7 @@ if (featureFlags.sentientTerminal && Math.random() < 0.1) {
 **Week 4 - 100% Traffic**: Full rollout
 
 **Rollback Plan**:
+
 ```typescript
 // Emergency disable
 if (env.DISABLE_TERMINAL === 'true') {
@@ -720,6 +782,7 @@ if (env.DISABLE_TERMINAL === 'true') {
 ### Analytics Events
 
 **Track These Custom Events**:
+
 ```typescript
 // Fluid Hero
 gtag('event', 'terminal_interaction', {
@@ -749,6 +812,7 @@ gtag('event', 'blueprint_export', {
 ### Success Metrics
 
 **Phase 8 Goals**:
+
 - Time on page: +50% vs old homepage
 - Bounce rate: -20%
 - Estimate requests: +30%
@@ -762,27 +826,32 @@ gtag('event', 'blueprint_export', {
 ### Common Issues
 
 **WebGL not working**:
+
 - Check browser supports WebGL2
 - Check GPU not blacklisted
 - Provide fallback message
 
 **Three.js errors**:
+
 - Ensure dynamic import with `ssr: false`
 - Check Three.js version compatibility
 - Clear `.next` cache: `rm -rf .next`
 
 **Poor performance**:
+
 - Check particle count (should reduce on low FPS)
 - Profile with Chrome DevTools
 - Ensure production build is optimized
 - Check device tier detection
 
 **PDF export fails**:
+
 - Check jsPDF version compatibility
 - Ensure modules array not empty
 - Check browser allows downloads
 
 **Scroll not smooth**:
+
 - Check `scroll-behavior: smooth` in CSS
 - Ensure no conflicts with other scroll libraries
 - Test on different browsers
@@ -852,10 +921,12 @@ gtag('event', 'blueprint_export', {
 ## Support
 
 **Questions?** Contact the development team:
+
 - Email: hello@softsystems.studio
 - GitHub: [Soft Systems Studio](https://github.com/softsystems)
 
 **Report Issues**:
+
 - Include browser/device info
 - Provide steps to reproduce
 - Check console for errors

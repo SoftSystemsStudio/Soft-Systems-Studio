@@ -123,7 +123,7 @@ export default function ModuleBuilder() {
     },
     {
       filterTaps: true,
-    }
+    },
   );
 
   const handleAddModule = (module: Module) => {
@@ -207,13 +207,12 @@ export default function ModuleBuilder() {
 
     if (placedModules.length >= 2) {
       yPos += 7;
-      const discount =
-        placedModules.length >= 4 ? 0.15 : placedModules.length === 3 ? 0.1 : 0.05;
+      const discount = placedModules.length >= 4 ? 0.15 : placedModules.length === 3 ? 0.1 : 0.05;
       const discountAmount = subtotal * discount;
       doc.text(
         `Bundle Discount (${discount * 100}%): -$${Math.round(discountAmount).toLocaleString()}`,
         25,
-        yPos
+        yPos,
       );
     }
 
@@ -255,9 +254,7 @@ export default function ModuleBuilder() {
           <h2 className="text-4xl md:text-5xl font-bold text-primary-accent font-mono mb-4">
             THE ARCHITECT
           </h2>
-          <p className="text-gray-400 font-mono text-sm mb-2">
-            DRAG. DROP. BUILD YOUR SOLUTION.
-          </p>
+          <p className="text-gray-400 font-mono text-sm mb-2">DRAG. DROP. BUILD YOUR SOLUTION.</p>
           <p className="text-gray-500 font-mono text-xs">
             Magnetic grid snapping • Bundle discounts • Instant pricing
           </p>

@@ -250,6 +250,7 @@ NEXT_PUBLIC_SENTIENT_ROLLOUT_PERCENTAGE=50
 ### Launch Day Checklist
 
 **Morning of Launch**:
+
 - [ ] Team standup at 9am
 - [ ] All monitoring dashboards open
 - [ ] Sentry alerts configured
@@ -257,6 +258,7 @@ NEXT_PUBLIC_SENTIENT_ROLLOUT_PERCENTAGE=50
 - [ ] Support team ready
 
 **Launch (12pm ET)**:
+
 ```bash
 # Set to 100%
 NEXT_PUBLIC_SENTIENT_ROLLOUT_PERCENTAGE=100
@@ -271,12 +273,14 @@ git push origin main
 - [ ] Traffic flowing normally
 
 **First Hour**:
+
 - [ ] Check errors every 15 minutes
 - [ ] Monitor performance
 - [ ] Review user feedback
 - [ ] Support ticket volume
 
 **First 24 Hours**:
+
 - [ ] Hourly error checks
 - [ ] Performance stable
 - [ ] Conversion tracking

@@ -3,7 +3,8 @@ import Button from './Button';
 
 interface PricingCardProps {
   name: string;
-  price: string;
+  scope: string;
+  complexity: string;
   description: string;
   features?: string[];
   ctaText?: string;
@@ -11,11 +12,14 @@ interface PricingCardProps {
   highlighted?: boolean;
   badge?: string;
   className?: string;
+  // Legacy support
+  price?: string;
 }
 
 export default function PricingCard({
   name,
-  price,
+  scope,
+  complexity,
   description,
   features = [],
   ctaText = 'Get started',
@@ -23,6 +27,7 @@ export default function PricingCard({
   highlighted = false,
   badge,
   className = '',
+  price, // Legacy support
 }: PricingCardProps) {
   const baseClasses =
     'relative flex flex-col p-8 rounded-2xl shadow-lg transition-all duration-300';
@@ -44,7 +49,14 @@ export default function PricingCard({
       <p className="text-[#656565] text-sm mb-6">{description}</p>
 
       <div className="mb-6">
-        <span className="text-4xl font-bold text-[#d5d5d5]">{price}</span>
+        {price ? (
+          <span className="text-4xl font-bold text-[#d5d5d5]">{price}</span>
+        ) : (
+          <>
+            <div className="text-sm font-mono text-zinc-400 uppercase tracking-wide">{scope}</div>
+            <div className="text-xs text-zinc-500 mt-1">{complexity}</div>
+          </>
+        )}
       </div>
 
       {features.length > 0 && (

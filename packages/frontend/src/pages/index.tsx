@@ -13,8 +13,10 @@ const HolographicModel = dynamic(() => import('../components/sentient/hologram/H
   ssr: false,
   loading: () => (
     <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="text-brand-lime font-mono animate-pulse">
-        Loading Holographic System Architecture...
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="aspect-video bg-zinc-900 border border-zinc-700 rounded flex items-center justify-center">
+          <span className="text-zinc-500 font-mono text-sm">SYSTEM ARCHITECTURE SCHEMATIC</span>
+        </div>
       </div>
     </div>
   ),
@@ -24,8 +26,14 @@ const HolographicModel = dynamic(() => import('../components/sentient/hologram/H
 const LivePulse = dynamic(() => import('../components/sentient/pulse/LivePulse'), {
   ssr: false,
   loading: () => (
-    <div className="py-16 bg-black flex items-center justify-center">
-      <div className="text-brand-lime font-mono animate-pulse">Connecting to live metrics...</div>
+    <div className="py-16 bg-black">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 opacity-30">
+          <div className="bg-zinc-900 h-32 border border-zinc-800 rounded" />
+          <div className="bg-zinc-900 h-32 border border-zinc-800 rounded" />
+          <div className="bg-zinc-900 h-32 border border-zinc-800 rounded" />
+        </div>
+      </div>
     </div>
   ),
 });
@@ -34,8 +42,15 @@ const LivePulse = dynamic(() => import('../components/sentient/pulse/LivePulse')
 const TheArchitect = dynamic(() => import('../components/sentient/builder/TheArchitect'), {
   ssr: false,
   loading: () => (
-    <div className="py-16 bg-black flex items-center justify-center">
-      <div className="text-brand-lime font-mono animate-pulse">Loading Architect...</div>
+    <div className="py-16 bg-black">
+      <div className="container mx-auto px-4 text-center">
+        <div className="text-zinc-500 font-mono text-sm mb-8">DRAG-DROP MODULE BUILDER</div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 opacity-20 max-w-4xl mx-auto">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div key={i} className="bg-zinc-900 h-40 border border-zinc-800 rounded" />
+          ))}
+        </div>
+      </div>
     </div>
   ),
 });
@@ -67,7 +82,7 @@ const NAV_ITEMS = [
   { label: 'Live Metrics', href: '#pulse' },
   { label: 'Architect', href: '#builder' },
   { label: 'FAQ', href: '#faq' },
-  { label: '✨ God Tier Demo', href: '/demo/god-tier' },
+  { label: 'SYSTEM PREVIEW', href: '/demo/god-tier' },
 ];
 
 const STEPS = [
@@ -127,7 +142,8 @@ const TESTIMONIALS = [
 const PRICING_PLANS = [
   {
     name: 'Website Package',
-    price: 'Starting at $3,500',
+    scope: 'SMALL SYSTEM',
+    complexity: 'Foundation Level',
     description: 'Professional web presence',
     features: [
       'Custom design & development',
@@ -135,11 +151,12 @@ const PRICING_PLANS = [
       'SEO optimized',
       'Content management system',
     ],
-    ctaText: 'Learn more',
+    ctaText: 'REQUEST SCOPE ANALYSIS',
   },
   {
     name: 'AI Automation',
-    price: 'Starting at $5,000',
+    scope: 'INTELLIGENT INFRASTRUCTURE',
+    complexity: 'Advanced Integration',
     description: 'Intelligent business automation',
     features: [
       'AI voice reception or chat support',
@@ -149,11 +166,12 @@ const PRICING_PLANS = [
     ],
     highlighted: true,
     badge: 'Popular',
-    ctaText: 'Get started',
+    ctaText: 'INITIALIZE CONSULTATION',
   },
   {
     name: 'Complete Solution',
-    price: 'Custom Quote',
+    scope: 'ENTERPRISE ARCHITECTURE',
+    complexity: 'Full-Stack Orchestration',
     description: 'Website + AI automation',
     features: [
       'Everything combined',
@@ -161,7 +179,7 @@ const PRICING_PLANS = [
       'Priority development',
       'Dedicated partnership',
     ],
-    ctaText: "Let's talk",
+    ctaText: 'REQUEST ARCHITECTURE REVIEW',
   },
 ];
 
@@ -403,12 +421,13 @@ export default function Home() {
         Skip to main content
       </a>
 
-      {/* God Tier Demo Banner */}
+      {/* System Preview Banner */}
       <a
         href="/demo/god-tier"
-        className="block w-full bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white text-center py-3 font-mono text-sm hover:opacity-90 transition-opacity"
+        className="block w-full bg-black text-white text-center py-3 font-mono text-sm border-b border-zinc-800 hover:bg-zinc-900 transition-colors"
       >
-        ✨ NEW: Check out the God Tier Demo → WebGL • AI Concierge • Real-time Metrics
+        <span className="text-[#00FF00]">◆</span> SYSTEM V1.0 PREVIEW → Interactive Architecture •
+        Live Metrics • Module Builder
       </a>
 
       {/* Navbar */}
@@ -605,7 +624,8 @@ export default function Home() {
               <PricingCard
                 key={plan.name}
                 name={plan.name}
-                price={plan.price}
+                scope={plan.scope}
+                complexity={plan.complexity}
                 description={plan.description}
                 features={plan.features}
                 ctaText={plan.ctaText}

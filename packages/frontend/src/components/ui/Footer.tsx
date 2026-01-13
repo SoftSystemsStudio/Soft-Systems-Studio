@@ -15,7 +15,7 @@ interface FooterProps {
 }
 
 export default function Footer({
-  logo = '/images/S Logo - Black Blackground.png',
+  logo = '/images/soft-systems-logo.png',
   brand = 'Soft Systems Studio',
   links = [
     { label: 'Privacy', href: '/privacy' },

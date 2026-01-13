@@ -32,9 +32,7 @@ export default function ArchitectTestPage() {
       {/* Footer */}
       <div className="h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-primary-accent font-mono mb-4">
-            END OF BUILDER
-          </h2>
+          <h2 className="text-2xl font-bold text-primary-accent font-mono mb-4">END OF BUILDER</h2>
           <p className="text-gray-400 font-mono">Scroll up to review</p>
         </div>
       </div>
