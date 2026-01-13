@@ -109,10 +109,12 @@ body {
   color: #000000;
 }
 
-/* Headers use monospace for technical authority */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 600;
+/* Headers use monospace for technical authority - using @layer base for proper specificity */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display) !important;
+    font-weight: 600 !important;
+  }
 }
 
 /* Monospace for code elements */
