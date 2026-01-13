@@ -69,31 +69,46 @@ export default function SentientTerminal() {
 
   return (
     <div className="min-h-screen bg-black overflow-x-hidden">
+      {/* Skip to content link for accessibility */}
+      <a
+        href="#hero"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[200] focus:bg-primary-accent focus:text-black focus:px-4 focus:py-2 focus:rounded focus:font-mono focus:text-sm"
+      >
+        Skip to main content
+      </a>
+
       {/* Quick Navigation - Fixed bottom right */}
       {isLoaded && (
-        <nav className="fixed bottom-8 right-8 z-50 bg-black/80 border-2 border-primary-accent rounded-lg p-4 backdrop-blur-sm">
+        <nav
+          aria-label="Quick navigation"
+          className="fixed bottom-8 right-8 z-50 bg-black/80 border-2 border-primary-accent rounded-lg p-4 backdrop-blur-sm"
+        >
           <div className="flex flex-col gap-2 text-xs font-mono">
             <button
               onClick={() => scrollToSection('hero')}
-              className="text-gray-400 hover:text-primary-accent transition-colors text-left"
+              className="text-gray-400 hover:text-primary-accent focus:text-primary-accent focus:outline-none focus:ring-2 focus:ring-primary-accent focus:ring-offset-2 focus:ring-offset-black transition-colors text-left px-2 py-1 rounded"
+              aria-label="Navigate to terminal section"
             >
               → TERMINAL
             </button>
             <button
               onClick={() => scrollToSection('hologram')}
-              className="text-gray-400 hover:text-primary-accent transition-colors text-left"
+              className="text-gray-400 hover:text-primary-accent focus:text-primary-accent focus:outline-none focus:ring-2 focus:ring-primary-accent focus:ring-offset-2 focus:ring-offset-black transition-colors text-left px-2 py-1 rounded"
+              aria-label="Navigate to architecture section"
             >
               → ARCHITECTURE
             </button>
             <button
               onClick={() => scrollToSection('pulse')}
-              className="text-gray-400 hover:text-primary-accent transition-colors text-left"
+              className="text-gray-400 hover:text-primary-accent focus:text-primary-accent focus:outline-none focus:ring-2 focus:ring-primary-accent focus:ring-offset-2 focus:ring-offset-black transition-colors text-left px-2 py-1 rounded"
+              aria-label="Navigate to pulse dashboard section"
             >
               → THE PULSE
             </button>
             <button
               onClick={() => scrollToSection('architect')}
-              className="text-gray-400 hover:text-primary-accent transition-colors text-left"
+              className="text-gray-400 hover:text-primary-accent focus:text-primary-accent focus:outline-none focus:ring-2 focus:ring-primary-accent focus:ring-offset-2 focus:ring-offset-black transition-colors text-left px-2 py-1 rounded"
+              aria-label="Navigate to module builder section"
             >
               → THE ARCHITECT
             </button>
@@ -102,24 +117,28 @@ export default function SentientTerminal() {
       )}
 
       {/* Section 1: Fluid Hero - Full screen conversational terminal */}
-      <section id="hero" className="relative h-screen">
+      <section id="hero" aria-label="Interactive terminal" className="relative h-screen">
         <FluidHero />
       </section>
 
       {/* Section 2: Holographic Model - 2x viewport for scroll effect */}
-      <section id="hologram-wrapper" className="relative h-[200vh]">
+      <section
+        id="hologram-wrapper"
+        aria-label="System architecture visualization"
+        className="relative h-[200vh]"
+      >
         <div className="sticky top-0 h-screen">
           <HolographicModel />
         </div>
       </section>
 
       {/* Section 3: The Pulse Dashboard - Live metrics */}
-      <section id="pulse-wrapper" className="relative">
+      <section id="pulse-wrapper" aria-label="Live system metrics" className="relative">
         <PulseDashboard />
       </section>
 
       {/* Section 4: The Architect - Module Builder */}
-      <section id="architect-wrapper" className="relative">
+      <section id="architect-wrapper" aria-label="Solution module builder" className="relative">
         <ModuleBuilder />
       </section>
 
