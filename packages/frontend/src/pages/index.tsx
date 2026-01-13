@@ -404,8 +404,8 @@ export default function Home() {
       </a>
 
       {/* God Tier Demo Banner */}
-      <a 
-        href="/demo/god-tier" 
+      <a
+        href="/demo/god-tier"
         className="block w-full bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 text-white text-center py-3 font-mono text-sm hover:opacity-90 transition-opacity"
       >
         ✨ NEW: Check out the God Tier Demo → WebGL • AI Concierge • Real-time Metrics
