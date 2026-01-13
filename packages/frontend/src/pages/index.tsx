@@ -14,8 +14,43 @@ const HolographicModel = dynamic(() => import('../components/sentient/hologram/H
   loading: () => (
     <div className="min-h-screen bg-black flex items-center justify-center">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="aspect-video bg-zinc-900 border border-zinc-700 rounded flex items-center justify-center">
-          <span className="text-zinc-500 font-mono text-sm">SYSTEM ARCHITECTURE SCHEMATIC</span>
+        <div className="aspect-video bg-zinc-900 border border-zinc-700 rounded flex items-center justify-center p-8">
+          <svg viewBox="0 0 800 450" className="w-full h-full opacity-30">
+            {/* Grid background */}
+            <defs>
+              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgb(63,63,70)" strokeWidth="0.5" />
+              </pattern>
+            </defs>
+            <rect width="800" height="450" fill="url(#grid)" />
+
+            {/* Building wireframe outline */}
+            <g stroke="rgb(113,113,122)" strokeWidth="1" fill="none">
+              {/* Foundation */}
+              <rect x="300" y="350" width="200" height="80" />
+              {/* Floor 1 */}
+              <rect x="280" y="290" width="240" height="60" />
+              {/* Floor 2 */}
+              <rect x="260" y="230" width="280" height="60" />
+              {/* Floor 3 */}
+              <rect x="240" y="170" width="320" height="60" />
+              {/* Top floor */}
+              <rect x="220" y="110" width="360" height="60" />
+              {/* Connecting lines */}
+              <line x1="300" y1="350" x2="220" y2="170" />
+              <line x1="500" y1="350" x2="580" y2="170" />
+            </g>
+
+            {/* Pulsing dot indicator */}
+            <circle cx="400" cy="200" r="3" fill="#c0ff6b" opacity="0.6">
+              <animate
+                attributeName="opacity"
+                values="0.3;1;0.3"
+                dur="2s"
+                repeatCount="indefinite"
+              />
+            </circle>
+          </svg>
         </div>
       </div>
     </div>
@@ -44,10 +79,18 @@ const TheArchitect = dynamic(() => import('../components/sentient/builder/TheArc
   loading: () => (
     <div className="py-16 bg-black">
       <div className="container mx-auto px-4 text-center">
-        <div className="text-zinc-500 font-mono text-sm mb-8">DRAG-DROP MODULE BUILDER</div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 opacity-20 max-w-4xl mx-auto">
-          {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="bg-zinc-900 h-40 border border-zinc-800 rounded" />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          {['M1', 'M2', 'M3', 'M4', 'M5', 'M6'].map((label, i) => (
+            <div
+              key={i}
+              className="bg-zinc-900 h-40 border border-zinc-700 rounded p-4 flex flex-col items-center justify-center opacity-20"
+            >
+              <div className="w-12 h-12 border-2 border-zinc-600 rounded mb-2 flex items-center justify-center">
+                <span className="text-zinc-600 font-mono text-xs">{label}</span>
+              </div>
+              <div className="h-2 bg-zinc-800 rounded w-3/4 mb-1"></div>
+              <div className="h-2 bg-zinc-800 rounded w-1/2"></div>
+            </div>
           ))}
         </div>
       </div>
@@ -82,7 +125,7 @@ const NAV_ITEMS = [
   { label: 'Live Metrics', href: '#pulse' },
   { label: 'Architect', href: '#builder' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'SYSTEM PREVIEW', href: '/demo/god-tier' },
+  { label: 'SYSTEM PREVIEW', href: '/demo/system-v1' },
 ];
 
 const STEPS = [
@@ -143,7 +186,7 @@ const PRICING_PLANS = [
   {
     name: 'Website Package',
     scope: 'SMALL SYSTEM',
-    complexity: 'Foundation Level',
+    complexity: 'NODE: FOUNDATION',
     description: 'Professional web presence',
     features: [
       'Custom design & development',
@@ -156,7 +199,7 @@ const PRICING_PLANS = [
   {
     name: 'AI Automation',
     scope: 'INTELLIGENT INFRASTRUCTURE',
-    complexity: 'Advanced Integration',
+    complexity: 'CORE: INTEGRATION',
     description: 'Intelligent business automation',
     features: [
       'AI voice reception or chat support',
@@ -171,7 +214,7 @@ const PRICING_PLANS = [
   {
     name: 'Complete Solution',
     scope: 'ENTERPRISE ARCHITECTURE',
-    complexity: 'Full-Stack Orchestration',
+    complexity: 'NEXUS: ORCHESTRATION',
     description: 'Website + AI automation',
     features: [
       'Everything combined',
@@ -423,7 +466,7 @@ export default function Home() {
 
       {/* System Preview Banner */}
       <a
-        href="/demo/god-tier"
+        href="/demo/system-v1"
         className="block w-full bg-black text-white text-center py-3 font-mono text-sm border-b border-zinc-800 hover:bg-zinc-900 transition-colors"
       >
         <span className="text-[#00FF00]">◆</span> SYSTEM V1.0 PREVIEW → Interactive Architecture •
@@ -507,16 +550,22 @@ export default function Home() {
             </p>
           </FadeIn>
 
-          <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-            {TECH_STACK.map((tech) => (
-              <div
-                key={tech.name}
-                className="px-6 py-3 rounded-lg border border-brand-lime/20 bg-brand-lime/5 hover:border-brand-lime/40 hover:bg-brand-lime/10 transition-all duration-300"
-              >
-                <span className="text-brand-light font-medium">{tech.name}</span>
-                <span className="text-brand-gray text-xs ml-2">· {tech.category}</span>
-              </div>
-            ))}
+          <div className="max-w-4xl mx-auto bg-black border border-zinc-800 rounded-lg p-6 font-mono text-sm">
+            <div className="flex items-center gap-2 mb-4 text-zinc-500">
+              <span className="text-[#c0ff6b]">◆</span>
+              <span>SYSTEM DEPENDENCIES</span>
+              <span className="ml-auto text-xs">[v1.0.0]</span>
+            </div>
+            <div className="space-y-1">
+              {TECH_STACK.map((tech) => (
+                <div key={tech.name} className="flex items-center gap-3 text-zinc-400">
+                  <span className="text-[#c0ff6b]">&gt;</span>
+                  <span className="text-zinc-500 text-xs w-24">{tech.category.toUpperCase()}</span>
+                  <span className="text-white">{tech.name}</span>
+                  <span className="ml-auto text-[#c0ff6b] text-xs">[STABLE]</span>
+                </div>
+              ))}
+            </div>
           </div>
         </Section>
 
@@ -582,7 +631,7 @@ export default function Home() {
               Real Results for Real Businesses
             </h2>
             <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              These aren't hypotheticals. Here's what our clients achieved within 90 days.
+              SYSTEM PERFORMANCE METRICS — Client data within 90-day observation period.
             </p>
           </FadeIn>
 

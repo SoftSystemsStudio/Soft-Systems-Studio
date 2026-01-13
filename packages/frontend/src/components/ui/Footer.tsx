@@ -28,8 +28,9 @@ export default function Footer({
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-sm text-[#656565]">
           {logo && <Image src={logo} alt={brand} width={28} height={28} className="h-7 w-7" />}
-          <span>
+          <span className="flex items-center gap-1">
             &copy; {new Date().getFullYear()} {brand}
+            <span className="inline-block w-2 h-4 bg-[#c0ff6b] ml-1 animate-pulse"></span>
           </span>
         </div>
         <div className="flex gap-6">
