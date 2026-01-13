@@ -154,9 +154,29 @@ const nextConfig = {
         ...config.resolve.alias,
         three: 'three',
       };
+
+      // Bundle size optimizations for production
+      if (process.env.NODE_ENV === 'production') {
+        // Tree shaking and code splitting
+        config.optimization = {
+          ...config.optimization,
+          usedExports: true,
+          sideEffects: true,
+        };
+      }
     }
 
     return config;
+  },
+
+  // Experimental features for better performance
+  experimental: {
+    // Optimize CSS loading
+    optimizeCss: true,
+    // Enable React Server Components optimizations
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
 };
 
