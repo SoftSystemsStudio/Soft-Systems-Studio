@@ -20,7 +20,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({
-  logo = '/images/S Logo - Black Blackground.png',
+  logo = '/images/soft-systems-logo.png',
   brand = 'SOFT SYSTEMS',
   items = [],
   ctaLabel = 'INITIALIZE',

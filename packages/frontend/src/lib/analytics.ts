@@ -8,7 +8,7 @@ declare global {
     gtag?: (
       command: 'event' | 'config' | 'set',
       targetId: string,
-      config?: Record<string, unknown>
+      config?: Record<string, unknown>,
     ) => void;
   }
 }
@@ -133,11 +133,7 @@ export function trackPerformance(metric: {
 /**
  * Track errors
  */
-export function trackError(error: {
-  message: string;
-  section?: string;
-  stack?: string;
-}): void {
+export function trackError(error: { message: string; section?: string; stack?: string }): void {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'error', {
       error_message: error.message,

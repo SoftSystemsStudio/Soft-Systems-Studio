@@ -148,9 +148,7 @@ export default function SentientTerminal() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {/* Company */}
             <div>
-              <h3 className="text-primary-accent font-mono font-bold mb-4">
-                SENTIENT TERMINAL
-              </h3>
+              <h3 className="text-primary-accent font-mono font-bold mb-4">SENTIENT TERMINAL</h3>
               <p className="text-gray-500 font-mono text-xs">
                 Radical transparency.
                 <br />

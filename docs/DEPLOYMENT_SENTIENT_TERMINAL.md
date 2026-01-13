@@ -79,6 +79,7 @@ This guide covers the production deployment and gradual rollout of the Sentient 
 **None required for Phase 1-7** (all client-side rendering)
 
 **Optional for Phase 8+**:
+
 ```bash
 # Feature flag for gradual rollout
 NEXT_PUBLIC_ENABLE_SENTIENT_TERMINAL=true
@@ -126,6 +127,7 @@ SENTRY_PROJECT=<your-project>
 **Steps**:
 
 1. **Deploy to Vercel Preview**:
+
 ```bash
 # Push to feature branch
 git push origin main
@@ -144,6 +146,7 @@ git push origin main
    - Run Lighthouse audit
 
 3. **Verify Metrics**:
+
 ```bash
 # Check bundle size
 pnpm build
@@ -158,6 +161,7 @@ pnpm build
    - Sentry catching errors correctly
 
 **Exit Criteria**:
+
 - ✅ All sections render without errors
 - ✅ Lighthouse Performance >85
 - ✅ Mobile works smoothly
@@ -175,6 +179,7 @@ pnpm build
 **Option A - Vercel Edge Config** (Recommended):
 
 1. **Set up Edge Config**:
+
 ```bash
 # In Vercel dashboard
 # Create Edge Config store
@@ -183,12 +188,13 @@ pnpm build
 ```
 
 2. **Add middleware** (`packages/frontend/src/middleware.ts`):
+
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
 import { get } from '@vercel/edge-config';
 
 export async function middleware(request: NextRequest) {
-  const percentage = await get<number>('sentient_terminal_percentage') || 0;
+  const percentage = (await get<number>('sentient_terminal_percentage')) || 0;
 
   // Only apply to homepage
   if (request.nextUrl.pathname === '/') {
@@ -213,9 +219,7 @@ export const config = {
 
 ```typescript
 useEffect(() => {
-  const rolloutPercentage = parseInt(
-    process.env.NEXT_PUBLIC_SENTIENT_ROLLOUT_PERCENTAGE || '0'
-  );
+  const rolloutPercentage = parseInt(process.env.NEXT_PUBLIC_SENTIENT_ROLLOUT_PERCENTAGE || '0');
 
   if (rolloutPercentage > 0 && Math.random() * 100 < rolloutPercentage) {
     router.push('/terminal');
@@ -234,6 +238,7 @@ gtag('event', 'page_version', {
 ```
 
 **Success Metrics** (Monitor for 7 days):
+
 - Time on page (target: +30% vs legacy)
 - Bounce rate (target: <60%)
 - Errors in Sentry (target: <5 per day)
@@ -241,6 +246,7 @@ gtag('event', 'page_version', {
 - User feedback (collect via form)
 
 **Exit Criteria**:
+
 - ✅ No critical bugs reported
 - ✅ Error rate <1%
 - ✅ Positive user feedback
@@ -260,6 +266,7 @@ gtag('event', 'page_version', {
    - Or ENV var: `NEXT_PUBLIC_SENTIENT_ROLLOUT_PERCENTAGE=25`
 
 2. **Deploy**:
+
 ```bash
 git push origin main
 # Vercel auto-deploys to production
@@ -273,6 +280,7 @@ git push origin main
    - Review user session recordings (if enabled)
 
 **Success Metrics**:
+
 - Page load time <3s (75th percentile)
 - Interaction to Next Paint <200ms
 - Cumulative Layout Shift <0.1
@@ -280,6 +288,7 @@ git push origin main
 - Conversion rate stable or improving
 
 **Exit Criteria**:
+
 - ✅ All Stage 2 metrics maintained
 - ✅ No performance degradation
 - ✅ Increased traffic handled smoothly
@@ -309,11 +318,13 @@ git push origin main
    - Test edge cases
 
 **Key Decisions**:
+
 - Should we proceed to 100%?
 - Any final tweaks needed?
 - User feedback incorporated?
 
 **Exit Criteria**:
+
 - ✅ Metrics significantly better than legacy
 - ✅ User feedback overwhelmingly positive
 - ✅ No blocking issues
@@ -344,6 +355,7 @@ git push origin main
    - Team celebration! 🎉
 
 **Post-Launch Monitoring** (First 48 hours):
+
 - Hourly error rate checks
 - Performance monitoring
 - User feedback collection
@@ -351,6 +363,7 @@ git push origin main
 - Conversion tracking
 
 **Success Metrics** (First Week):
+
 - Zero critical bugs
 - Engagement +50% (target)
 - Bounce rate -20% (target)
@@ -613,18 +626,19 @@ lighthouse https://staging-url.vercel.app/terminal \
 
 **Cross-Browser Testing**:
 
-| Browser | Version | Status |
-|---------|---------|--------|
-| Chrome  | 120+    | ✅     |
-| Firefox | 115+    | ✅     |
-| Safari  | 17+     | ⏳     |
-| Edge    | 120+    | ✅     |
-| iOS Safari | 16+ | ⏳     |
-| Chrome Android | 12+ | ⏳ |
+| Browser        | Version | Status |
+| -------------- | ------- | ------ |
+| Chrome         | 120+    | ✅     |
+| Firefox        | 115+    | ✅     |
+| Safari         | 17+     | ⏳     |
+| Edge           | 120+    | ✅     |
+| iOS Safari     | 16+     | ⏳     |
+| Chrome Android | 12+     | ⏳     |
 
 ### Post-Production Monitoring
 
 **Daily Checks** (First Week):
+
 - [ ] Check Sentry for new errors
 - [ ] Review GA conversion rates
 - [ ] Check bundle size hasn't increased
@@ -633,6 +647,7 @@ lighthouse https://staging-url.vercel.app/terminal \
 - [ ] Check performance metrics
 
 **Weekly Checks** (First Month):
+
 - [ ] Analyze A/B test results
 - [ ] Review engagement trends
 - [ ] Check conversion funnel
@@ -714,24 +729,28 @@ lighthouse https://staging-url.vercel.app/terminal \
 ### Issue Severity Levels
 
 **P0 - Critical** (Fix immediately):
+
 - Site down/unreachable
 - Major security vulnerability
 - Data loss
 - Complete feature failure
 
 **P1 - High** (Fix within 4 hours):
+
 - Partial feature failure
 - Performance degradation >50%
 - Affecting >25% of users
 - Workaround available
 
 **P2 - Medium** (Fix within 24 hours):
+
 - Minor feature issues
 - Affects small user segment
 - Visual/cosmetic bugs
 - Non-blocking errors
 
 **P3 - Low** (Fix next sprint):
+
 - Nice-to-have improvements
 - Enhancement requests
 - Minor polish items
@@ -740,15 +759,18 @@ lighthouse https://staging-url.vercel.app/terminal \
 ### Contact List
 
 **Engineering**:
+
 - Lead Developer: [Your Name]
 - Frontend: [Team Member]
 - Backend: [Team Member]
 
 **On-Call Rotation**:
+
 - Week 1: [Name]
 - Week 2: [Name]
 
 **Escalation Path**:
+
 1. Engineering Team (Slack)
 2. Tech Lead
 3. CTO
@@ -761,18 +783,21 @@ lighthouse https://staging-url.vercel.app/terminal \
 ### Phase 9 - Future Enhancements
 
 **Month 1-2**:
+
 - [ ] Connect real WebSocket for Pulse Dashboard
 - [ ] Add sound effects to interactions
 - [ ] Implement saved blueprints (user accounts)
 - [ ] A/B test variations of sections
 
 **Month 3-4**:
+
 - [ ] Advanced physics in module builder
 - [ ] Connection lines between modules
 - [ ] Email blueprint functionality
 - [ ] Integration with CRM for leads
 
 **Month 5-6**:
+
 - [ ] Personalization based on user behavior
 - [ ] Interactive onboarding tutorial
 - [ ] Gamification elements
