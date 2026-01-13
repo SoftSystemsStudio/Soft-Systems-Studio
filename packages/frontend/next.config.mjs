@@ -171,8 +171,8 @@ const nextConfig = {
 
   // Experimental features for better performance
   experimental: {
-    // Optimize CSS loading
-    optimizeCss: true,
+    // Disable CSS optimization - causes media="print" bug with critters
+    // optimizeCss: true,
     // Enable React Server Components optimizations
     serverActions: {
       bodySizeLimit: '2mb',
