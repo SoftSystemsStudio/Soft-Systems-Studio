@@ -137,7 +137,13 @@ const nextConfig = {
   // (one-way: apex → www for LLC domain)
   // Keeping old softsystems.studio → softsystemsstudiollc.com migration at Vercel level
   async redirects() {
-    return [];
+    return [
+      {
+        source: '/demo/god-tier',
+        destination: '/demo/system-v1',
+        permanent: true,
+      },
+    ];
   },
 
   // Webpack configuration for GLSL shaders and optimizations

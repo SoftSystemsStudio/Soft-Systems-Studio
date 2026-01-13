@@ -54,7 +54,7 @@ export default function PricingCard({
         ) : (
           <>
             <div className="text-sm font-mono text-zinc-400 uppercase tracking-wide">{scope}</div>
-            <div className="text-xs text-zinc-500 mt-1">{complexity}</div>
+            <div className="text-xs font-mono text-zinc-500 mt-1">{complexity}</div>
           </>
         )}
       </div>
