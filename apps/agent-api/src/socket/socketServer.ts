@@ -111,13 +111,13 @@ function handleConnection(socket: Socket): void {
   });
 
   // Handle disconnect
-  socket.on('disconnect', (reason) => {
+  socket.on('disconnect', (reason: string) => {
     connectedClients.delete(clientId);
     logger.info({ clientId, reason }, 'Client disconnected');
   });
 
   // Handle errors
-  socket.on('error', (error) => {
+  socket.on('error', (error: Error) => {
     logger.error({ clientId, error }, 'Socket error');
   });
 }

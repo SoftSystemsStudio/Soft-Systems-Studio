@@ -63,13 +63,13 @@ export async function collectMetrics(): Promise<MetricSnapshot> {
 
     // Parse queue depth from Prometheus format
     const queueMatch = metricsText.match(/queue_depth\{[^}]*\}\s+(\d+)/);
-    if (queueMatch) {
+    if (queueMatch?.[1]) {
       queueDepth = parseInt(queueMatch[1], 10);
     }
 
     // Parse error rate
     const errorMatch = metricsText.match(/http_request_errors_total\s+(\d+)/);
-    if (errorMatch) {
+    if (errorMatch?.[1]) {
       errorRate = parseInt(errorMatch[1], 10);
     }
   } catch (e) {

@@ -109,7 +109,8 @@ router.post('/record', (req: Request, res: Response) => {
         }
         break;
       default:
-        return res.status(400).json({ error: 'Invalid metric type' });
+        res.status(400).json({ error: 'Invalid metric type' });
+        return;
     }
 
     res.json({ success: true });

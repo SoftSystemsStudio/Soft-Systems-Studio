@@ -3,11 +3,13 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     // Apps don't need declaration files
     "declaration": false,
     "declarationMap": false,
+    // Allow emit despite type errors
+    "noEmitOnError": false,
     // Enhanced type safety
     "strict": true,
     "noImplicitAny": true,

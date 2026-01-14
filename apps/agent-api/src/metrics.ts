@@ -1,5 +1,5 @@
-import client from 'prom-client';
-import express from 'express';
+import * as client from 'prom-client';
+import type * as express from 'express';
 
 const collectDefault = client.collectDefaultMetrics;
 collectDefault();
@@ -68,5 +68,7 @@ export function metricsHandler(_req: express.Request, res: express.Response): vo
     .then((m) => res.send(m))
     .catch((err: Error) => res.status(500).send(err.message));
 }
+
+export const registry = client.register;
 
 export default client;
