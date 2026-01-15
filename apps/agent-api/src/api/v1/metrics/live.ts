@@ -4,8 +4,8 @@ import {
   recordAutomation,
   recordTokens,
   recordResponseTime,
-} from '../../services/metricsCollector';
-import { logger } from '../../logger';
+} from '../../../services/metricsCollector';
+import { logger } from '../../../logger';
 
 /**
  * Live Metrics API Routes
