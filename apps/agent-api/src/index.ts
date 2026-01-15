@@ -120,8 +120,8 @@ app.use(errorHandler);
 
 const port = env.PORT ? Number(env.PORT) : 5000;
 
-// Start server - note: require.main may be start.ts when required from there
-if (require.main === module || require.main?.filename?.includes('start.ts')) {
+// Start server - note: require.main may be start.ts/.js when required from there
+if (require.main === module || require.main?.filename?.includes('start')) {
   // TODO: Re-enable queue after debugging server hang
   // registerQueueShutdownHandlers();
   // startQueueMetrics();
