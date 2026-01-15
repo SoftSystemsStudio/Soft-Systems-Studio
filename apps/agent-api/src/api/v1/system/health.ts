@@ -31,6 +31,36 @@ router.get(
   '/',
   asyncHandler(async (_req, res) => {
     const inGracePeriod = isInStartupGracePeriod();
+
+    // During startup grace period, immediately return 200 without checking services
+    // This ensures Railway health checks pass while services are still connecting
+    if (inGracePeriod) {
+      const uptimeSeconds = Math.floor((Date.now() - serverStartTime) / 1000);
+      const graceRemaining = Math.ceil((STARTUP_GRACE_PERIOD_MS - (Date.now() - serverStartTime)) / 1000);
+
+      logger.info(
+        { uptimeSeconds, graceRemaining },
+        '[health] In startup grace period, returning 200 immediately',
+      );
+
+      res.status(200).json({
+        status: 'starting',
+        startupGracePeriod: true,
+        uptimeSeconds,
+        graceRemainingSeconds: graceRemaining,
+        services: {
+          database: 'connecting',
+          redis: 'connecting',
+          qdrant: 'connecting',
+        },
+        env: {
+          nodeEnv: env.NODE_ENV,
+        },
+      });
+      return;
+    }
+
+    // After grace period, check all services
     let db = false;
     let redis = false;
     let qdrantHealthy = false;
@@ -61,38 +91,6 @@ router.get(
       logger.warn({ err: e }, '[health] qdrant check failed');
       qdrantHealthy = false;
       qdrantLatency = null;
-    }
-
-    // During startup grace period, always return 200 to pass health checks
-    // This allows all services (DB, Redis, Qdrant) time to establish connections
-    if (inGracePeriod) {
-      const uptimeSeconds = Math.floor((Date.now() - serverStartTime) / 1000);
-      logger.info(
-        { db, redis, qdrantHealthy, uptimeSeconds },
-        '[health] In startup grace period, returning 200 to allow services to connect',
-      );
-
-      // Always return 200 during grace period - Railway needs this to pass health checks
-      res.status(200).json({
-        status: 'starting',
-        startupGracePeriod: true,
-        uptimeSeconds,
-        graceRemainingSeconds: Math.ceil((STARTUP_GRACE_PERIOD_MS - (Date.now() - serverStartTime)) / 1000),
-        services: {
-          database: db ? 'healthy' : 'connecting',
-          redis: redis ? 'healthy' : 'connecting',
-          qdrant: qdrantHealthy ? 'healthy' : 'connecting',
-        },
-        qdrant: {
-          healthy: qdrantHealthy,
-          latencyMs: qdrantLatency,
-        },
-        env: {
-          nodeEnv: env.NODE_ENV,
-          openaiKeyPresent: Boolean(env.OPENAI_API_KEY),
-        },
-      });
-      return;
     }
 
     // After grace period, apply normal health requirements
