@@ -1,148 +1,151 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 export default function SystemStatus() {
-  const [time, setTime] = useState(new Date());
-  const [location, setLocation] = useState('UNKNOWN');
-  const [latency, setLatency] = useState(0);
-  const [bootSequence, setBootSequence] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Update time every second
-    const timeInterval = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-
-    // Get user location
-    fetch('https://ipapi.co/json/')
-      .then((res) => res.json())
-      .then((data: { city?: string; region?: string }) => {
-        if (data.city && data.region) {
-          setLocation(`${data.city}, ${data.region}`);
-        } else {
-          setLocation('EARTH');
-        }
-      })
-      .catch(() => {
-        setLocation('EARTH');
-      });
-
-    // Measure latency
-    const start = performance.now();
-    fetch('/api/health')
-      .then(() => {
-        const end = performance.now();
-        setLatency(Math.round(end - start));
-      })
-      .catch(() => {
-        setLatency(Math.round(Math.random() * 20 + 15)); // Fallback
-      });
-
-    // Boot sequence animation
-    const bootInterval = setInterval(() => {
-      setBootSequence((prev) => {
-        if (prev >= 100) {
-          clearInterval(bootInterval);
-          return 100;
-        }
-        return prev + Math.random() * 25;
-      });
-    }, 100);
-
-    return () => {
-      clearInterval(timeInterval);
-      clearInterval(bootInterval);
-    };
+    // Trigger entrance animation after mount
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
   }, []);
 
-  const isBooted = bootSequence >= 100;
-
   return (
-    <div className="blueprint-border bg-blueprint-paper p-8 font-mono text-sm">
-      {/* Boot Sequence */}
-      {!isBooted && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-terminal-green animate-pulse" />
-            <span className="text-blueprint-dark">INITIALIZING SYSTEM...</span>
-          </div>
+    <div className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+      {/* Ambient Glow Orbs */}
+      <div className="hero-glow animate-pulse-glow" />
+      <div
+        className="absolute w-[400px] h-[400px] rounded-full opacity-10 animate-float"
+        style={{
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+          top: '20%',
+          right: '10%',
+        }}
+      />
+      <div
+        className="absolute w-[300px] h-[300px] rounded-full opacity-10"
+        style={{
+          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+          bottom: '10%',
+          left: '15%',
+        }}
+      />
+
+      {/* Abstract Background Pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, rgba(168, 85, 247, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.3) 0%, transparent 50%)
+          `,
+        }}
+      />
+
+      {/* Main Content */}
+      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
+        {/* Status Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full glass-card"
+        >
+          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          <span className="text-sm font-mono text-gray-400">SYSTEM ONLINE</span>
+        </motion.div>
+
+        {/* Main Headline - Massive & Bold */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-white mb-6 leading-[0.95]"
+        >
+          We Build{' '}
+          <span className="text-gradient-purple">Intelligent</span>
+          <br />
+          Digital Systems
+        </motion.h1>
+
+        {/* Subheadline */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+        >
+          AI-powered automation, modern websites, and custom software
+          that transforms how your business operates.
+        </motion.p>
+
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <a
+            href="/intake"
+            className="px-8 py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105"
+          >
+            Start Your Project
+          </a>
+          <a
+            href="#pulse"
+            className="px-8 py-4 glass-card text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
+          >
+            See Our Work
+          </a>
+        </motion.div>
+
+        {/* Trust Indicators */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isLoaded ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-16 flex flex-wrap items-center justify-center gap-8 text-gray-500"
+        >
           <div className="flex items-center gap-2">
-            <div className="flex-1 bg-blueprint-grid h-2 relative overflow-hidden">
-              <div
-                className="absolute inset-y-0 left-0 bg-terminal-green transition-all duration-200"
-                style={{ width: `${bootSequence}%` }}
-              />
-            </div>
-            <span className="text-blueprint-dark w-12 text-right">{Math.round(bootSequence)}%</span>
+            <span className="text-2xl font-bold text-white">50+</span>
+            <span className="text-sm">Projects<br />Delivered</span>
           </div>
+          <div className="w-px h-8 bg-gray-800" />
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold text-white">95%</span>
+            <span className="text-sm">Client<br />Satisfaction</span>
+          </div>
+          <div className="w-px h-8 bg-gray-800" />
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold text-white">24hr</span>
+            <span className="text-sm">Response<br />Time</span>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isLoaded ? { opacity: 1 } : {}}
+        transition={{ duration: 0.6, delay: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <div className="flex flex-col items-center gap-2 text-gray-500">
+          <span className="text-xs font-mono">SCROLL</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="w-5 h-8 rounded-full border border-gray-700 flex items-start justify-center p-1"
+          >
+            <div className="w-1 h-2 bg-gray-500 rounded-full" />
+          </motion.div>
         </div>
-      )}
-
-      {/* System Status */}
-      {isBooted && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-3 pb-3 border-b border-blueprint-grid">
-            <div className="w-3 h-3 bg-terminal-green" />
-            <span className="font-bold">SOFT SYSTEMS STUDIO</span>
-            <span className="ml-auto text-xs text-muted">v2.0.0</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <div className="text-xs text-muted mb-1">STATUS</div>
-              <div className="text-terminal-green font-bold">● ONLINE</div>
-            </div>
-
-            <div>
-              <div className="text-xs text-muted mb-1">LOCAL TIME</div>
-              <div className="font-bold">{time.toLocaleTimeString()}</div>
-            </div>
-
-            <div>
-              <div className="text-xs text-muted mb-1">VISITOR ORIGIN</div>
-              <div className="font-bold">{location}</div>
-            </div>
-
-            <div>
-              <div className="text-xs text-muted mb-1">RESPONSE TIME</div>
-              <div className="font-bold">{latency}ms</div>
-            </div>
-
-            <div className="col-span-1 md:col-span-2">
-              <div className="text-xs text-muted mb-1">UPTIME</div>
-              <div className="font-bold">99.9% (365 DAYS)</div>
-            </div>
-          </div>
-
-          {/* ASCII Network Diagram */}
-          <div className="pt-3 border-t border-blueprint-grid">
-            <pre className="text-center" style={{ fontFamily: 'monospace', fontSize: '12px', color: 'black' }}>
-{`      [ NETWORK_STATUS: ONLINE ]
-
-          ( INTERNET )
-               |
-        [ FIREWALL_V2 ]
-               |
-     +---------+---------+
-     |                   |
-[ AI_CORE ]         [ WEB_UI ]
-     |                   |
-( DATA_LAKE )       ( CLIENT )`}
-            </pre>
-          </div>
-
-          <div className="pt-3 border-t border-blueprint-grid flex items-center justify-between">
-            <span className="text-xs text-muted">Ready to initialize project</span>
-            <a
-              href="/intake"
-              className="px-4 py-2 bg-blueprint-black text-blueprint-bg font-bold hover:bg-terminal-green hover:text-blueprint-black transition-colors border border-blueprint-black"
-            >
-              → START SESSION
-            </a>
-          </div>
-        </div>
-      )}
+      </motion.div>
     </div>
   );
 }

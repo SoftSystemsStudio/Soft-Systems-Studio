@@ -3,35 +3,38 @@ import React from 'react';
 interface HoloCardProps {
   children: React.ReactNode;
   className?: string;
-  glowColor?: 'lime' | 'cyan' | 'fuchsia';
+  glowColor?: 'purple' | 'blue' | 'cyan';
   showScanLine?: boolean;
 }
 
 const glowColors = {
-  lime: {
-    border: 'border-brand-lime/30',
-    shadow: 'shadow-brand-lime/20',
-    scanBg: 'bg-brand-lime',
-    scanGlow: 'via-brand-lime/80',
+  purple: {
+    border: 'border-purple-500/20',
+    shadow: 'shadow-purple-500/10',
+    scanBg: 'bg-purple-500',
+    scanGlow: 'via-purple-500/80',
+    hoverBorder: 'hover:border-purple-500/40',
+  },
+  blue: {
+    border: 'border-blue-500/20',
+    shadow: 'shadow-blue-500/10',
+    scanBg: 'bg-blue-500',
+    scanGlow: 'via-blue-500/80',
+    hoverBorder: 'hover:border-blue-500/40',
   },
   cyan: {
-    border: 'border-glow-cyan/30',
-    shadow: 'shadow-glow-cyan/20',
-    scanBg: 'bg-glow-cyan',
-    scanGlow: 'via-glow-cyan/80',
-  },
-  fuchsia: {
-    border: 'border-glow-fuchsia/30',
-    shadow: 'shadow-glow-fuchsia/20',
-    scanBg: 'bg-glow-fuchsia',
-    scanGlow: 'via-glow-fuchsia/80',
+    border: 'border-cyan-500/20',
+    shadow: 'shadow-cyan-500/10',
+    scanBg: 'bg-cyan-500',
+    scanGlow: 'via-cyan-500/80',
+    hoverBorder: 'hover:border-cyan-500/40',
   },
 };
 
 export default function HoloCard({
   children,
   className = '',
-  glowColor = 'lime',
+  glowColor = 'purple',
   showScanLine = false,
 }: HoloCardProps) {
   const colors = glowColors[glowColor];
@@ -40,15 +43,16 @@ export default function HoloCard({
     <div
       className={`
         relative overflow-hidden
-        backdrop-blur-md bg-white/5
-        border-t border-l ${colors.border}
-        rounded-xl
+        backdrop-blur-sm bg-white/5
+        border ${colors.border} ${colors.hoverBorder}
+        rounded-2xl
         shadow-lg ${colors.shadow}
+        transition-all duration-300
         ${className}
       `}
     >
-      {/* Holographic gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
+      {/* Subtle gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent pointer-events-none" />
 
       {/* Optional scanning line animation */}
       {showScanLine && (

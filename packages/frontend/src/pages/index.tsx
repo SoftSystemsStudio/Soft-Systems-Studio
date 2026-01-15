@@ -326,7 +326,7 @@ const CLIENT_RESULTS = [
 
 export default function Home() {
   return (
-    <div className="antialiased min-h-screen bg-blueprint-bg text-blueprint-black">
+    <div className="antialiased min-h-screen bg-[#0A0A0A] text-white">
       <Head>
         <title>
           AI Automation & Web Design Services | Soft Systems Studio - Expert Development
@@ -467,9 +467,9 @@ export default function Home() {
       {/* System Preview Banner */}
       <a
         href="/demo/system-v1"
-        className="block w-full bg-black text-white text-center py-3 font-mono text-sm border-b border-zinc-800 hover:bg-zinc-900 transition-colors"
+        className="block w-full bg-purple-500/10 text-white text-center py-3 font-mono text-sm border-b border-white/5 hover:bg-purple-500/20 transition-colors"
       >
-        <span className="text-[#00FF00]">◆</span> SYSTEM V1.0 PREVIEW → Interactive Architecture •
+        <span className="text-purple-400">◆</span> SYSTEM V1.0 PREVIEW → Interactive Architecture •
         Live Metrics • Module Builder
       </a>
 
@@ -478,31 +478,19 @@ export default function Home() {
 
       <main id="main-content">
         {/* Hero Section - System Status */}
-        <Section className="py-16 section-border">
+        <Section className="pt-8 pb-0">
           <SystemStatus />
         </Section>
 
-        {/* Stats Bar */}
-        <Section className="py-16 border-y border-brand-lime/10">
-          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {STATS.map((stat) => (
-              <FadeIn key={stat.label} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-brand-lime mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-brand-gray uppercase tracking-wide">{stat.label}</div>
-              </FadeIn>
-            ))}
-          </StaggerContainer>
-        </Section>
+        {/* Stats Bar - Removed, now integrated into hero */}
 
         {/* Trust Badges */}
-        <Section className="py-12 bg-gradient-to-b from-brand-dark to-black">
+        <Section className="py-12 border-y border-white/5">
           <div className="flex flex-wrap justify-center items-center gap-8">
             {TRUST_BADGES.map((badge) => (
               <div key={badge.label} className="flex items-center gap-3">
-                <span className="text-2xl text-brand-lime">{badge.icon}</span>
-                <span className="text-sm font-medium text-brand-light">{badge.label}</span>
+                <span className="text-2xl text-purple-400">{badge.icon}</span>
+                <span className="text-sm font-medium text-gray-300">{badge.label}</span>
               </div>
             ))}
           </div>
@@ -512,12 +500,14 @@ export default function Home() {
         <HolographicModel />
 
         {/* The Pulse - Live Metrics Dashboard */}
-        <Section id="pulse" className="py-24 bg-gradient-to-b from-black to-brand-dark section-border">
+        <Section id="pulse" className="py-24">
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
-              We Don't Build Websites. We Construct Digital Nervous Systems.
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-white text-center">
+              We Don&apos;t Build Websites.
+              <br />
+              <span className="text-gradient-purple">We Construct Digital Nervous Systems.</span>
             </h2>
-            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
               Every system we engineer is adaptive, observable, and yours to control. Watch us work
               in real-time.
             </p>
@@ -531,53 +521,49 @@ export default function Home() {
           {/* Why Choose Us Cards */}
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
             {WHY_CHOOSE_US.map((item) => (
-              <HoloCard key={item.title} className="p-6" glowColor="lime">
+              <HoloCard key={item.title} className="p-6" glowColor="purple">
                 <h3 className="font-semibold text-white mb-2 text-lg">{item.title}</h3>
-                <p className="text-brand-gray text-sm leading-relaxed">{item.description}</p>
+                <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
               </HoloCard>
             ))}
           </StaggerContainer>
         </Section>
 
         {/* Technology Stack Section */}
-        <Section className="py-24">
+        <Section className="py-24 section-elevated">
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               Built with Best-in-Class Tools
             </h2>
-            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
               We use modern, proven technologies to build fast, secure, and scalable solutions
             </p>
           </FadeIn>
 
           <div className="terminal-deps max-w-4xl mx-auto">
-            <div className="space-y-1">
-              <div>&gt; LOADING CORE: NEXT.JS...........[OK]</div>
-              <div>&gt; LOADING UI: TAILWIND............[OK]</div>
-              <div>&gt; LOADING DB: SUPABASE............[OK]</div>
-              <div>&gt; LOADING AI: OPENAI-4o...........[OK]</div>
+            <div className="space-y-2 font-mono text-sm">
+              <div><span className="text-purple-400">&gt;</span> LOADING CORE: <span className="text-white">NEXT.JS</span>...........<span className="text-green-400">[OK]</span></div>
+              <div><span className="text-purple-400">&gt;</span> LOADING UI: <span className="text-white">TAILWIND</span>............<span className="text-green-400">[OK]</span></div>
+              <div><span className="text-purple-400">&gt;</span> LOADING DB: <span className="text-white">POSTGRESQL</span>..........<span className="text-green-400">[OK]</span></div>
+              <div><span className="text-purple-400">&gt;</span> LOADING AI: <span className="text-white">OPENAI-4o</span>...........<span className="text-green-400">[OK]</span></div>
             </div>
           </div>
         </Section>
 
         {/* The Architect - Project Builder Section */}
-        <Section id="builder" gradient="dark" className="py-28">
+        <Section id="builder" className="py-28">
           <FadeIn>
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-cyan-400/30 bg-cyan-400/5">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse-slow" />
-                <span className="text-xs font-mono uppercase tracking-widest text-cyan-400">
+              <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full glass-card">
+                <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+                <span className="text-xs font-mono uppercase tracking-widest text-purple-400">
                   The Architect
                 </span>
               </div>
-              <GlowText
-                as="h2"
-                color="cyan"
-                className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-              >
-                Build Your Stack
-              </GlowText>
-              <p className="text-brand-gray max-w-2xl mx-auto leading-relaxed">
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-white">
+                Build Your <span className="text-gradient-purple">Stack</span>
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
                 Drag modules. Watch the price ticker. Get instant quotes. No sales calls required.
               </p>
             </div>
@@ -588,12 +574,12 @@ export default function Home() {
         </Section>
 
         {/* How We Work Section - Process Timeline */}
-        <Section id="how-we-work" gradient="subtle" className="py-24">
+        <Section id="how-we-work" className="py-24 section-elevated">
           <FadeIn>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light text-center">
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               How We Work
             </h2>
-            <p className="text-brand-gray mb-16 max-w-2xl leading-relaxed text-center mx-auto">
+            <p className="text-gray-400 mb-16 max-w-2xl leading-relaxed text-center mx-auto">
               A simple, transparent process from first conversation to successful launch.
             </p>
           </FadeIn>
@@ -604,10 +590,10 @@ export default function Home() {
         {/* Testimonials Section - Enhanced with Metrics */}
         <Section id="testimonials" className="py-24">
           <FadeIn>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               Proof, Not Promises
             </h2>
-            <p className="text-brand-gray mb-8 max-w-2xl leading-relaxed">
+            <p className="text-gray-400 mb-8 max-w-2xl leading-relaxed text-center mx-auto">
               Real clients. Real systems. Real metrics.
             </p>
           </FadeIn>
@@ -616,32 +602,32 @@ export default function Home() {
         </Section>
 
         {/* Client Results Section */}
-        <Section className="py-20 bg-gradient-to-b from-black to-brand-dark">
+        <Section className="py-20">
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               Real Results for Real Businesses
             </h2>
-            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              SYSTEM PERFORMANCE METRICS — Client data within 90-day observation period.
+            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+              System performance metrics — Client data within 90-day observation period.
             </p>
           </FadeIn>
 
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {CLIENT_RESULTS.map((result, index) => (
-              <HoloCard key={index} className="p-8 text-center" glowColor="lime" showScanLine>
-                <div className="text-4xl md:text-5xl font-bold text-brand-lime mb-3">
+              <HoloCard key={index} className="p-8 text-center" glowColor="purple" showScanLine>
+                <div className="text-4xl md:text-5xl font-bold text-gradient-purple mb-3">
                   {result.metric}
                 </div>
-                <div className="text-brand-light font-medium mb-2">{result.description}</div>
-                <div className="text-sm text-brand-gray italic">{result.client}</div>
+                <div className="text-white font-medium mb-2">{result.description}</div>
+                <div className="text-sm text-gray-400 italic">{result.client}</div>
               </HoloCard>
             ))}
           </StaggerContainer>
 
           <FadeIn className="text-center mt-12">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-brand-lime/30 bg-brand-lime/5">
-              <span className="w-2 h-2 rounded-full bg-brand-lime animate-pulse-slow" />
-              <span className="text-sm text-brand-lime font-medium">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full glass-card">
+              <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+              <span className="text-sm text-purple-400 font-medium">
                 Limited to 3 new clients per month
               </span>
             </div>
@@ -649,12 +635,12 @@ export default function Home() {
         </Section>
 
         {/* Pricing Section */}
-        <Section id="pricing" gradient="dark" className="py-24 section-border">
+        <Section id="pricing" className="py-24 section-elevated">
           <FadeIn>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               Transparent Pricing
             </h2>
-            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed">
+            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
               Clear packages tailored to your needs. No hidden fees, no surprises.
             </p>
           </FadeIn>
@@ -677,12 +663,12 @@ export default function Home() {
           </StaggerContainer>
 
           <FadeIn className="mt-12 text-center">
-            <HoloCard className="inline-block p-6 max-w-2xl" glowColor="cyan">
+            <HoloCard className="inline-block p-6 max-w-2xl" glowColor="blue">
               <div className="flex items-start gap-4">
                 <span className="text-3xl">🛡️</span>
                 <div className="text-left">
                   <h3 className="text-white font-semibold mb-2">30-Day Money-Back Guarantee</h3>
-                  <p className="text-brand-gray text-sm leading-relaxed">
+                  <p className="text-gray-400 text-sm leading-relaxed">
                     If you&apos;re not completely satisfied with our work within the first 30 days,
                     we&apos;ll refund your investment. No questions asked.
                   </p>
@@ -695,10 +681,10 @@ export default function Home() {
         {/* FAQ Section */}
         <Section id="faq" className="py-24">
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               Frequently Asked Questions
             </h2>
-            <p className="text-brand-gray mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
               Everything you need to know about working with us
             </p>
           </FadeIn>
@@ -706,8 +692,8 @@ export default function Home() {
           <InteractiveFAQ faqs={FAQS} />
 
           <FadeIn className="text-center mt-12">
-            <p className="text-brand-gray mb-4">Still have questions?</p>
-            <Button as="link" href="/intake" variant="outline" size="lg">
+            <p className="text-gray-400 mb-4">Still have questions?</p>
+            <Button as="link" href="/intake" variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10">
               Schedule a Free Discovery Call
             </Button>
           </FadeIn>

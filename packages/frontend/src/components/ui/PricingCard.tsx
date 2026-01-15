@@ -30,31 +30,32 @@ export default function PricingCard({
   price, // Legacy support
 }: PricingCardProps) {
   const baseClasses =
-    'relative flex flex-col p-8 rounded-2xl shadow-lg transition-all duration-300';
+    'relative flex flex-col p-8 rounded-2xl transition-all duration-300';
   const normalClasses =
-    'border border-[#2a2a2a] bg-[#0a0a0a] shadow-black/20 hover:border-[#656565]';
-  const highlightedClasses = 'border-2 border-[#c0ff6b] bg-[#0a0a0a] shadow-xl shadow-[#c0ff6b]/20';
+    'bg-white/5 border border-white/10 backdrop-blur-sm hover:border-white/20 hover:bg-white/[0.08]';
+  const highlightedClasses =
+    'bg-white/[0.08] border-2 border-purple-500/50 backdrop-blur-sm shadow-lg shadow-purple-500/10 hover:border-purple-500/70';
 
   return (
     <div
       className={`${baseClasses} ${highlighted ? highlightedClasses : normalClasses} ${className}`}
     >
       {badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-black text-white text-xs font-semibold px-3 py-1 rounded-full font-mono">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full">
           {badge}
         </span>
       )}
 
-      <h3 className="text-xl font-semibold text-[#d5d5d5] mb-2">{name}</h3>
-      <p className="text-[#656565] text-sm mb-6">{description}</p>
+      <h3 className="text-xl font-bold text-white mb-2">{name}</h3>
+      <p className="text-gray-400 text-sm mb-6">{description}</p>
 
       <div className="mb-6">
         {price ? (
-          <span className="text-4xl font-bold text-[#d5d5d5]">{price}</span>
+          <span className="text-4xl font-bold text-white">{price}</span>
         ) : (
           <>
-            <div className="text-sm font-mono text-zinc-400 uppercase tracking-wide">{scope}</div>
-            <div className="text-xs font-mono text-zinc-500 mt-1">{complexity}</div>
+            <div className="text-sm font-mono text-purple-400 uppercase tracking-wide">{scope}</div>
+            <div className="text-xs font-mono text-gray-500 mt-1">{complexity}</div>
           </>
         )}
       </div>
@@ -62,9 +63,9 @@ export default function PricingCard({
       {features.length > 0 && (
         <ul className="space-y-3 mb-8 flex-grow">
           {features.map((feature, idx) => (
-            <li key={idx} className="flex items-start gap-2 text-sm text-[#d5d5d5]">
+            <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
               <svg
-                className="w-5 h-5 text-[#c0ff6b] flex-shrink-0 mt-0.5"
+                className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -88,7 +89,7 @@ export default function PricingCard({
           href={ctaHref}
           variant={highlighted ? 'primary' : 'ghost'}
           size="md"
-          className="w-full justify-center"
+          className={`w-full justify-center ${highlighted ? 'bg-purple-500 hover:bg-purple-400 text-white' : 'text-white hover:bg-white/10'}`}
         >
           {ctaText}
         </Button>
