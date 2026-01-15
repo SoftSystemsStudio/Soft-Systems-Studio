@@ -23,7 +23,7 @@ export default function Navbar({
   logo = '/images/soft-systems-logo.png',
   brand = 'SOFT SYSTEMS',
   items = [],
-  ctaLabel = 'INITIALIZE',
+  ctaLabel = 'Get Started',
   ctaHref = '/intake',
   className = '',
 }: NavbarProps) {
@@ -33,7 +33,7 @@ export default function Navbar({
 
   return (
     <header
-      className={`sticky top-0 z-50 backdrop-blur-sm bg-blueprint-bg/95 border-b-2 border-blueprint-black ${className}`}
+      className={`sticky top-0 z-50 backdrop-blur-md bg-[#0A0A0A]/90 border-b border-white/5 ${className}`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Brand with Logo */}
@@ -41,7 +41,7 @@ export default function Navbar({
           {logo && (
             <Image src={logo} alt={brand} width={36} height={36} className="h-9 w-9" priority />
           )}
-          <span className="font-bold text-xl tracking-tight text-blueprint-black font-mono hidden sm:block">
+          <span className="font-bold text-xl tracking-tight text-white hidden sm:block">
             {brand}
           </span>
         </Link>
@@ -52,12 +52,12 @@ export default function Navbar({
             <a
               key={item.href}
               href={item.href}
-              className="text-sm font-mono text-blueprint-dark hover:text-terminal-green transition focus:outline-none focus:ring-2 focus:ring-terminal-green"
+              className="text-sm text-gray-400 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
             >
               {item.label}
             </a>
           ))}
-          <Button as="link" href={ctaHref} variant="primary" size="sm" className="ml-2">
+          <Button as="link" href={ctaHref} variant="primary" size="sm" className="ml-2 bg-white text-black hover:bg-gray-100">
             {ctaLabel}
           </Button>
         </nav>
@@ -67,7 +67,7 @@ export default function Navbar({
           type="button"
           aria-label="Toggle navigation menu"
           aria-expanded={mobileOpen}
-          className="md:hidden p-2 text-[#656565] hover:text-[#d5d5d5] focus:outline-none focus:ring-2 focus:ring-[#c0ff6b] rounded"
+          className="md:hidden p-2 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
           onClick={toggleMobile}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,12 +92,12 @@ export default function Navbar({
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <nav className="md:hidden bg-black border-t border-[#2a2a2a] px-6 py-4 space-y-4">
+        <nav className="md:hidden bg-[#0A0A0A] border-t border-white/5 px-6 py-4 space-y-4">
           {items.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="block text-[#656565] hover:text-[#c0ff6b] transition"
+              className="block text-gray-400 hover:text-white transition"
               onClick={() => setMobileOpen(false)}
             >
               {item.label}
@@ -108,7 +108,7 @@ export default function Navbar({
             href={ctaHref}
             variant="primary"
             size="md"
-            className="w-full justify-center"
+            className="w-full justify-center bg-white text-black hover:bg-gray-100"
           >
             {ctaLabel}
           </Button>

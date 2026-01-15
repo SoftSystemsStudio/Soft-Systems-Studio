@@ -1,26 +1,27 @@
 /* packages/frontend/src/styles/globals.css */
 
-/* Import Technical Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+/* Import Premium Fonts - Inter for elegance, JetBrains Mono for labels */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens - Technical Brutalist */
+/* Design tokens - Luxury Dark Mode */
 :root {
-  --color-bg: #F0F0F0;
-  --color-text: #000000;
-  --color-muted: #656565;
-  --color-border: #000000;
-  --color-surface: #FAFAFA;
-  --color-accent: #00FF00;
-  --color-grid: #C5C5C5;
-  --color-terminal-green: #00FF00;
-  --color-terminal-orange: #FF6B00;
-  --font-display: 'JetBrains Mono', monospace;
-  --font-body: 'Space Grotesk', sans-serif;
+  --color-bg: #0A0A0A;
+  --color-bg-elevated: #111111;
+  --color-text: #FFFFFF;
+  --color-text-secondary: #9CA3AF;
+  --color-muted: #6B7280;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-surface: rgba(255, 255, 255, 0.05);
+  --color-accent: #A855F7;
+  --color-accent-blue: #3B82F6;
+  --color-glow: #8B5CF6;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 /* Global reset */
@@ -35,16 +36,14 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   min-height: 100%;
 }
 
-/* Technical Brutalist background with visible grid - Graph Paper Engineering Look */
+/* Deep Space Dark Background - Luxury AI Aesthetic */
 body {
   color: var(--color-text);
-  background-color: #f4f4f5;
-  background-image: linear-gradient(#e5e5e5 1px, transparent 1px), linear-gradient(90deg, #e5e5e5 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-color: #0A0A0A;
 }
 
 /* Optional: base link / button defaults to feel consistent */
@@ -100,55 +99,136 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Selection color for brutalist theme */
+/* Selection color for luxury theme */
 ::selection {
-  background-color: #00FF00;
-  color: #000000;
+  background-color: #A855F7;
+  color: #FFFFFF;
 }
 
-/* Headers use monospace for technical authority - using @layer base for proper specificity */
+/* Headers use Inter with tight tracking for elegance */
 @layer base {
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display) !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-weight: 800 !important;
+    letter-spacing: -0.03em;
   }
 }
 
-/* Monospace for code elements */
+/* Monospace only for code/labels */
 code,
 pre,
 kbd,
-samp {
-  font-family: 'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace;
+samp,
+.font-mono {
+  font-family: var(--font-mono);
 }
 
-/* Technical grid utility classes */
-.blueprint-border {
-  border: 1px solid var(--color-border);
+/* ============================================
+   Glassmorphism Cards - Bento Grid Style
+   ============================================ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.blueprint-grid {
-  background-image:
-    linear-gradient(var(--color-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
-  background-size: 20px 20px;
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-/* Hard-line section borders - no soft shadows */
-.section-border {
-  border: 1px solid black;
+/* ============================================
+   Ambient Glow Effects
+   ============================================ */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.2;
+  pointer-events: none;
 }
 
-/* Terminal-style dependencies container */
+.glow-purple {
+  background: linear-gradient(135deg, #A855F7 0%, #6366F1 100%);
+}
+
+.glow-blue {
+  background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%);
+}
+
+/* Hero glow behind text */
+.hero-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.1) 50%, transparent 70%);
+  filter: blur(80px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   Text Utilities
+   ============================================ */
+.text-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #9CA3AF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #A855F7 0%, #6366F1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   Section Styles
+   ============================================ */
+.section-dark {
+  background-color: #0A0A0A;
+}
+
+.section-elevated {
+  background-color: #111111;
+}
+
+/* Subtle section divider */
+.section-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================
+   Tech Stack / Terminal Styling
+   ============================================ */
 .terminal-deps {
-  background-color: #0d0d0d;
-  color: #00ff41;
-  font-family: 'JetBrains Mono', monospace;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #9CA3AF;
+  font-family: var(--font-mono);
   padding: 24px;
-  border-radius: 4px;
+  border-radius: 12px;
 }
 
-/* Blinking cursor animation for footer */
+.terminal-deps .highlight {
+  color: #A855F7;
+}
+
+/* ============================================
+   Animation Utilities
+   ============================================ */
 @keyframes blink {
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
@@ -156,4 +236,22 @@ samp {
 
 .blink-cursor {
   animation: blink 1s step-end infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }

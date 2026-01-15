@@ -23,55 +23,55 @@ interface PlacedModule extends Module {
 const MODULES: Module[] = [
   {
     id: 'voice-ai',
-    name: '[ VOICE_AGENT ]',
+    name: 'Voice Agent',
     price: 5000,
-    color: '#22d3ee',
+    color: '#A855F7',
     icon: '🎙️',
     description: 'AI-powered phone system with natural conversation',
     category: 'ai',
   },
   {
     id: 'chatbot',
-    name: '[ CRM_SYNC ]',
+    name: 'CRM Sync',
     price: 3000,
-    color: '#a78bfa',
+    color: '#8B5CF6',
     icon: '💬',
     description: 'Seamless CRM integration and sync',
     category: 'ai',
   },
   {
     id: 'workflow',
-    name: '[ CHAT_BOT ]',
+    name: 'Chat Bot',
     price: 4000,
-    color: '#c0ff6b',
+    color: '#6366F1',
     icon: '⚡',
     description: '24/7 intelligent chat support',
     category: 'ai',
   },
   {
     id: 'website',
-    name: '[ PAYMENTS ]',
+    name: 'Payments',
     price: 3500,
-    color: '#fb923c',
-    icon: '🎨',
+    color: '#3B82F6',
+    icon: '💳',
     description: 'Payment processing and billing',
     category: 'web',
   },
   {
     id: 'ecommerce',
-    name: '[ ANALYTICS ]',
+    name: 'Analytics',
     price: 8000,
-    color: '#f472b6',
-    icon: '🛒',
+    color: '#06B6D4',
+    icon: '📊',
     description: 'Business intelligence and reporting',
     category: 'web',
   },
   {
     id: 'custom-app',
-    name: '[ EMAIL_AUTO ]',
+    name: 'Email Auto',
     price: 12000,
-    color: '#10b981',
-    icon: '🚀',
+    color: '#10B981',
+    icon: '📧',
     description: 'Email automation and campaigns',
     category: 'custom',
   },
@@ -215,13 +215,13 @@ export default function TheArchitect() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="fixed top-20 right-8 z-50 bg-black/90 border-2 border-cyan-400 rounded-lg px-6 py-4 backdrop-blur-sm"
+        className="fixed top-20 right-8 z-50 glass-card px-6 py-4"
       >
         <div className="text-xs text-gray-400 font-mono mb-1">TOTAL ESTIMATE</div>
         <motion.div
           key={totalPrice}
-          initial={{ scale: 1.2, color: '#22d3ee' }}
-          animate={{ scale: 1, color: '#c0ff6b' }}
+          initial={{ scale: 1.2, color: '#A855F7' }}
+          animate={{ scale: 1, color: '#FFFFFF' }}
           className="text-3xl font-bold font-mono"
         >
           ${totalPrice.toLocaleString()}
@@ -248,7 +248,7 @@ export default function TheArchitect() {
                   whileHover={!isPlaced ? { scale: 1.05 } : {}}
                   whileTap={!isPlaced && isMobile ? { scale: 0.95 } : {}}
                 >
-                  <HoloCard className="p-4" glowColor={module.category === 'ai' ? 'cyan' : 'lime'}>
+                  <HoloCard className="p-4" glowColor={module.category === 'ai' ? 'purple' : 'blue'}>
                     <div className="flex items-start gap-3">
                       <span className="text-2xl">{module.icon}</span>
                       <div className="flex-1 min-w-0">
@@ -265,8 +265,8 @@ export default function TheArchitect() {
             })}
           </div>
 
-          <div className="mt-6 p-4 bg-gray-900/50 border border-gray-800 rounded-lg">
-            <div className="text-xs text-gray-400 font-mono mb-2">💡 HINT</div>
+          <div className="mt-6 p-4 glass-card">
+            <div className="text-xs text-purple-400 font-mono mb-2">💡 HINT</div>
             <div className="text-xs text-gray-500">
               {isMobile
                 ? "Tap modules to add them to your stack. They'll arrange automatically."
@@ -282,11 +282,11 @@ export default function TheArchitect() {
             ref={canvasRef}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            className="relative w-full h-[600px] bg-black border-2 border-cyan-400/30 rounded-lg overflow-hidden"
+            className="relative w-full h-[600px] glass-card overflow-hidden"
             style={{
               backgroundImage: `
-                linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px)
+                linear-gradient(to right, rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(168, 85, 247, 0.05) 1px, transparent 1px)
               `,
               backgroundSize: '20px 20px',
             }}
@@ -321,8 +321,8 @@ export default function TheArchitect() {
                   className="group"
                 >
                   <div
-                    className="relative bg-black border-2 rounded-lg p-4 min-w-[180px] shadow-lg"
-                    style={{ borderColor: module.color }}
+                    className="relative glass-card p-4 min-w-[180px] shadow-lg"
+                    style={{ borderColor: module.color, borderWidth: '1px' }}
                   >
                     {/* Remove Button */}
                     <button
@@ -342,7 +342,7 @@ export default function TheArchitect() {
 
                     {/* Connection Lines (visual only) */}
                     <div
-                      className="absolute bottom-0 left-1/2 w-px h-4 bg-cyan-400/30"
+                      className="absolute bottom-0 left-1/2 w-px h-4 bg-purple-500/30"
                       style={{ transform: 'translateX(-50%)' }}
                     />
                   </div>
@@ -364,13 +364,13 @@ export default function TheArchitect() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="flex-1 px-4 py-3 bg-black border-2 border-cyan-400/30 text-white font-mono placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-colors rounded-lg"
+                  className="flex-1 px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors rounded-xl"
                 />
                 <button
                   onClick={handleGetQuote}
-                  className="px-8 py-3 bg-cyan-400 text-black font-bold font-mono rounded-lg hover:bg-cyan-300 transition-colors"
+                  className="px-8 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 transition-colors"
                 >
-                  GET QUOTE
+                  Get Quote
                 </button>
               </motion.div>
             )}
@@ -378,7 +378,7 @@ export default function TheArchitect() {
             {placedModules.length > 0 && (
               <button
                 onClick={() => setPlacedModules([])}
-                className="text-xs text-gray-500 hover:text-white font-mono transition-colors"
+                className="text-xs text-gray-500 hover:text-white transition-colors"
               >
                 ← Clear Canvas
               </button>
@@ -394,20 +394,20 @@ export default function TheArchitect() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
             onClick={() => setShowQuote(false)}
           >
             <motion.div
               initial={{ scale: 0.8, y: 50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.8, y: 50 }}
-              className="bg-black border-2 border-cyan-400 rounded-lg p-8 max-w-2xl w-full"
+              className="glass-card p-8 max-w-2xl w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-2xl font-bold text-cyan-400 mb-4 font-mono">YOUR CUSTOM QUOTE</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">Your Custom Quote</h3>
 
               <div className="space-y-4 mb-6">
-                <div className="p-4 bg-gray-900/50 border border-gray-800 rounded-lg">
+                <div className="p-4 glass-card">
                   <div className="text-sm text-gray-400 mb-2">Selected Modules:</div>
                   {placedModules.map((module) => (
                     <div key={module.id} className="flex justify-between items-center mb-2">
@@ -421,30 +421,30 @@ export default function TheArchitect() {
                   ))}
                 </div>
 
-                <div className="p-4 bg-cyan-400/10 border border-cyan-400 rounded-lg">
+                <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-bold text-white">Total Estimate:</span>
-                    <span className="text-3xl font-bold text-cyan-400 font-mono">
+                    <span className="text-3xl font-bold text-gradient-purple font-mono">
                       ${totalPrice.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
                 <div className="text-xs text-gray-400">
-                  ✉️ Quote sent to: <span className="text-white">{email}</span>
+                  Quote sent to: <span className="text-white">{email}</span>
                 </div>
               </div>
 
               <div className="flex gap-4">
                 <button
                   onClick={() => setShowQuote(false)}
-                  className="flex-1 px-6 py-3 bg-gray-800 text-white font-mono rounded-lg hover:bg-gray-700 transition-colors"
+                  className="flex-1 px-6 py-3 glass-card text-white rounded-xl hover:bg-white/10 transition-colors"
                 >
                   Build More
                 </button>
                 <button
                   onClick={() => (window.location.href = '/intake')}
-                  className="flex-1 px-6 py-3 bg-cyan-400 text-black font-bold font-mono rounded-lg hover:bg-cyan-300 transition-colors"
+                  className="flex-1 px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 transition-colors"
                 >
                   Schedule Call →
                 </button>

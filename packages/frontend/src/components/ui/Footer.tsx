@@ -24,12 +24,12 @@ export default function Footer({
   className = '',
 }: FooterProps) {
   return (
-    <footer className={`border-t border-[#2a2a2a] py-10 bg-black ${className}`}>
+    <footer className={`border-t border-white/5 py-10 bg-[#0A0A0A] ${className}`}>
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-sm text-[#656565] font-mono">
-          {logo && <Image src={logo} alt={brand} width={28} height={28} className="h-7 w-7" />}
+        <div className="flex items-center gap-3 text-sm text-gray-500 font-mono">
+          {logo && <Image src={logo} alt={brand} width={28} height={28} className="h-7 w-7 opacity-60" />}
           <span>
-            &copy; {new Date().getFullYear()} SOFT SYSTEMS STUDIO<span className="blink-cursor">_</span>
+            &copy; {new Date().getFullYear()} Soft Systems Studio<span className="blink-cursor text-purple-400">_</span>
           </span>
         </div>
         <div className="flex gap-6">
@@ -37,7 +37,7 @@ export default function Footer({
             <Link
               key={link.href}
               href={link.href}
-              className="text-[#656565] hover:text-[#c0ff6b] text-sm transition focus:outline-none focus:ring-2 focus:ring-[#c0ff6b] rounded"
+              className="text-gray-500 hover:text-white text-sm transition focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
             >
               {link.label}
             </Link>
