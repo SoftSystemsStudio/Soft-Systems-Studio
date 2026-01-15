@@ -80,7 +80,7 @@ const TheArchitect = dynamic(() => import('../components/sentient/builder/TheArc
     <div className="py-16 bg-black">
       <div className="container mx-auto px-4 text-center">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {['M1', 'M2', 'M3', 'M4', 'M5', 'M6'].map((label, i) => (
+          {['[ VOICE_AGENT ]', '[ CRM_SYNC ]', '[ CHAT_BOT ]', '[ PAYMENTS ]', '[ ANALYTICS ]', '[ EMAIL_AUTO ]'].map((label, i) => (
             <div
               key={i}
               className="bg-zinc-900 h-40 border border-zinc-700 rounded p-4 flex flex-col items-center justify-center opacity-20"
@@ -131,17 +131,17 @@ const NAV_ITEMS = [
 const STEPS = [
   {
     step: '01',
-    title: 'Discovery Call',
+    title: '[ 01 ] DATA INGESTION',
     desc: 'We learn about your business, goals, and challenges',
   },
   {
     step: '02',
-    title: 'Custom Proposal',
+    title: '[ 02 ] ARCHITECTURAL MAPPING',
     desc: 'Receive a tailored plan with timeline and transparent pricing',
   },
   {
     step: '03',
-    title: 'Build & Launch',
+    title: '[ 03 ] SYSTEM DEPLOYMENT',
     desc: 'We build your solution and support you every step of the way',
   },
 ];
@@ -208,7 +208,7 @@ const PRICING_PLANS = [
       'Training & ongoing support',
     ],
     highlighted: true,
-    badge: 'Popular',
+    badge: '[ HIGH_THROUGHPUT ]',
     ctaText: 'INITIALIZE CONSULTATION',
   },
   {
@@ -478,7 +478,7 @@ export default function Home() {
 
       <main id="main-content">
         {/* Hero Section - System Status */}
-        <Section className="py-16">
+        <Section className="py-16 section-border">
           <SystemStatus />
         </Section>
 
@@ -512,7 +512,7 @@ export default function Home() {
         <HolographicModel />
 
         {/* The Pulse - Live Metrics Dashboard */}
-        <Section id="pulse" className="py-24 bg-gradient-to-b from-black to-brand-dark">
+        <Section id="pulse" className="py-24 bg-gradient-to-b from-black to-brand-dark section-border">
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-brand-light text-center">
               We Don't Build Websites. We Construct Digital Nervous Systems.
@@ -550,21 +550,12 @@ export default function Home() {
             </p>
           </FadeIn>
 
-          <div className="max-w-4xl mx-auto bg-black border border-zinc-800 rounded-lg p-6 font-mono text-sm">
-            <div className="flex items-center gap-2 mb-4 text-zinc-500">
-              <span className="text-[#c0ff6b]">◆</span>
-              <span>SYSTEM DEPENDENCIES</span>
-              <span className="ml-auto text-xs">[v1.0.0]</span>
-            </div>
+          <div className="terminal-deps max-w-4xl mx-auto">
             <div className="space-y-1">
-              {TECH_STACK.map((tech) => (
-                <div key={tech.name} className="flex items-center gap-3 text-zinc-400">
-                  <span className="text-[#c0ff6b]">&gt;</span>
-                  <span className="text-zinc-500 text-xs w-24">{tech.category.toUpperCase()}</span>
-                  <span className="text-white">{tech.name}</span>
-                  <span className="ml-auto text-[#c0ff6b] text-xs">[STABLE]</span>
-                </div>
-              ))}
+              <div>&gt; LOADING CORE: NEXT.JS...........[OK]</div>
+              <div>&gt; LOADING UI: TAILWIND............[OK]</div>
+              <div>&gt; LOADING DB: SUPABASE............[OK]</div>
+              <div>&gt; LOADING AI: OPENAI-4o...........[OK]</div>
             </div>
           </div>
         </Section>
@@ -658,7 +649,7 @@ export default function Home() {
         </Section>
 
         {/* Pricing Section */}
-        <Section id="pricing" gradient="dark" className="py-24">
+        <Section id="pricing" gradient="dark" className="py-24 section-border">
           <FadeIn>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 text-brand-light">
               Transparent Pricing
