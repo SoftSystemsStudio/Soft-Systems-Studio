@@ -120,8 +120,16 @@ app.use(errorHandler);
 
 const port = env.PORT ? Number(env.PORT) : 5000;
 
-// Start server - note: require.main may be start.ts/.js when required from there
-if (require.main === module || require.main?.filename?.includes('start')) {
+// Debug: log require.main info
+console.log('[index.ts] require.main:', {
+  filename: require.main?.filename,
+  isModule: require.main === module,
+  includesStart: require.main?.filename?.includes('start'),
+});
+
+// Start server - always start when loaded (Railway needs this)
+// The old condition was failing in some environments
+{
   // TODO: Re-enable queue after debugging server hang
   // registerQueueShutdownHandlers();
   // startQueueMetrics();
