@@ -26,11 +26,10 @@ export default function Footer({
   return (
     <footer className={`border-t border-[#2a2a2a] py-10 bg-black ${className}`}>
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-sm text-[#656565]">
+        <div className="flex items-center gap-2 text-sm text-[#656565] font-mono">
           {logo && <Image src={logo} alt={brand} width={28} height={28} className="h-7 w-7" />}
-          <span className="flex items-center gap-1">
-            &copy; {new Date().getFullYear()} {brand}
-            <span className="inline-block w-2 h-4 bg-[#c0ff6b] ml-1 animate-pulse"></span>
+          <span>
+            &copy; {new Date().getFullYear()} SOFT SYSTEMS STUDIO<span className="blink-cursor">_</span>
           </span>
         </div>
         <div className="flex gap-6">

@@ -115,22 +115,21 @@ export default function SystemStatus() {
             </div>
           </div>
 
+          {/* ASCII Network Diagram */}
           <div className="pt-3 border-t border-blueprint-grid">
-            <div className="text-xs text-muted mb-2">SYSTEM LOG</div>
-            <div className="space-y-1 text-xs">
-              <div className="flex gap-2">
-                <span className="text-terminal-green">[OK]</span>
-                <span>Neural interface initialized</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="text-terminal-green">[OK]</span>
-                <span>API gateway connected</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="text-terminal-green">[OK]</span>
-                <span>Real-time monitoring active</span>
-              </div>
-            </div>
+            <pre className="text-center" style={{ fontFamily: 'monospace', fontSize: '12px', color: 'black' }}>
+{`      [ NETWORK_STATUS: ONLINE ]
+
+          ( INTERNET )
+               |
+        [ FIREWALL_V2 ]
+               |
+     +---------+---------+
+     |                   |
+[ AI_CORE ]         [ WEB_UI ]
+     |                   |
+( DATA_LAKE )       ( CLIENT )`}
+            </pre>
           </div>
 
           <div className="pt-3 border-t border-blueprint-grid flex items-center justify-between">
