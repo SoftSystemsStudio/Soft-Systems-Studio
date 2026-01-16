@@ -249,48 +249,34 @@ Required checks:
 
 _This section auto-populates with recent commit context to help Claude maintain continuity._
 
-**Last updated**: 2026-01-16T05:22:03.955Z
+**Last updated**: 2026-01-16T16:46:05.273Z
 
 **Current staged changes summary**:
-root/: 1 modified
-ai-automation-agency-os/: 8 added
-apps/: 1 modified
-packages/: 7 modified
+packages/: 6 modified
 
 **Recent git commits**:
 
 ```
-0e15f98 - feat(frontend): Luxury dark mode redesign with glassmorphism (9 hours ago)
-bf04ff7 - feat(frontend): Technical Brutalist V3 patch notes implementation (9 hours ago)
-9552087 - chore: add frontend build artifacts (9 hours ago)
-9352a30 - fix(agent-api): always start server and add debug logging (9 hours ago)
-7c84150 - fix(agent-api): fix server startup condition to match compiled .js filename (9 hours ago)
+18f7194 - feat: add agency OS templates, case study, and luxury dark mode redesign (11 hours ago)
+0e15f98 - feat(frontend): Luxury dark mode redesign with glassmorphism (20 hours ago)
+bf04ff7 - feat(frontend): Technical Brutalist V3 patch notes implementation (20 hours ago)
+9552087 - chore: add frontend build artifacts (21 hours ago)
+9352a30 - fix(agent-api): always start server and add debug logging (21 hours ago)
 ```
 
 **Recent commits**: (rolling window of last 10)
 
-### Commit 1: 2026-01-16T05:22:03.955Z
+### Commit 1: 2026-01-16T16:46:05.273Z
 
 **Staged files**:
 
 ```
-M	CLAUDE.md
-A	ai-automation-agency-os/00-admin/pricing/pricing-guide.md
-A	ai-automation-agency-os/00-admin/templates/discovery-call-script.md
-A	ai-automation-agency-os/00-admin/templates/onboarding-checklist.md
-A	ai-automation-agency-os/00-admin/templates/proposal-template.md
-A	ai-automation-agency-os/00-admin/templates/service-agreement.md
-A	ai-automation-agency-os/02-clients/midwifery/case-study.md
-A	ai-automation-agency-os/03-platform/n8n/lead-nurture-sequence.md
-A	ai-automation-agency-os/03-platform/voice-service/demo-environment.md
-M	apps/agent-api/src/api/v1/system/health.ts
-M	packages/frontend/railway.json
-M	packages/frontend/src/components/sentient/builder/TheArchitect.tsx
 M	packages/frontend/src/components/sentient/hero/SystemStatus.tsx
 M	packages/frontend/src/components/ui/Footer.tsx
 M	packages/frontend/src/components/ui/Navbar.tsx
 M	packages/frontend/src/components/ui/PricingCard.tsx
 M	packages/frontend/src/pages/index.tsx
+M	packages/frontend/src/styles/globals.css
 ```
 
 ## Session Checkpoints

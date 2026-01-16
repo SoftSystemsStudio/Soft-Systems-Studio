@@ -24,7 +24,7 @@ export default function Footer({
   className = '',
 }: FooterProps) {
   return (
-    <footer className={`border-t border-white/5 py-10 bg-[#0A0A0A] ${className}`}>
+    <footer className={`border-t border-white/5 py-10 bg-[#050505] ${className}`}>
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3 text-sm text-gray-500 font-mono">
           {logo && (

@@ -59,17 +59,23 @@ export default function SystemStatus() {
           <span className="text-sm font-mono text-gray-400">SYSTEM ONLINE</span>
         </motion.div>
 
-        {/* Main Headline - Massive & Bold */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={isLoaded ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-white mb-6 leading-[0.95]"
-        >
-          We Build <span className="text-gradient-purple">Intelligent</span>
-          <br />
-          Digital Systems
-        </motion.h1>
+        {/* Main Headline - Massive & Bold with Glow */}
+        <div className="relative">
+          {/* Purple glow behind headline */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 h-[300px] w-[300px] md:h-[400px] md:w-[400px] rounded-full bg-purple-600/20 blur-[100px]" />
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={isLoaded ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative z-10 text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6"
+          >
+            We Don&apos;t Build Websites.
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+              We Construct Systems.
+            </span>
+          </motion.h1>
+        </div>
 
         {/* Subheadline */}
         <motion.p

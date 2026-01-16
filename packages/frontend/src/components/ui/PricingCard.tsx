@@ -40,7 +40,7 @@ export default function PricingCard({
       className={`${baseClasses} ${highlighted ? highlightedClasses : normalClasses} ${className}`}
     >
       {badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-purple-500/10 px-4 py-1.5 text-xs font-medium text-purple-400 border border-purple-500/20">
           {badge}
         </span>
       )}
