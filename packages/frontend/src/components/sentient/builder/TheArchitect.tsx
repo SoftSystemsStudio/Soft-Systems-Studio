@@ -248,7 +248,10 @@ export default function TheArchitect() {
                   whileHover={!isPlaced ? { scale: 1.05 } : {}}
                   whileTap={!isPlaced && isMobile ? { scale: 0.95 } : {}}
                 >
-                  <HoloCard className="p-4" glowColor={module.category === 'ai' ? 'purple' : 'blue'}>
+                  <HoloCard
+                    className="p-4"
+                    glowColor={module.category === 'ai' ? 'purple' : 'blue'}
+                  >
                     <div className="flex items-start gap-3">
                       <span className="text-2xl">{module.icon}</span>
                       <div className="flex-1 min-w-0">
