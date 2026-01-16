@@ -29,8 +29,7 @@ export default function PricingCard({
   className = '',
   price, // Legacy support
 }: PricingCardProps) {
-  const baseClasses =
-    'relative flex flex-col p-8 rounded-2xl transition-all duration-300';
+  const baseClasses = 'relative flex flex-col p-8 rounded-2xl transition-all duration-300';
   const normalClasses =
     'bg-white/5 border border-white/10 backdrop-blur-sm hover:border-white/20 hover:bg-white/[0.08]';
   const highlightedClasses =

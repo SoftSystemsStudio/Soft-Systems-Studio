@@ -66,8 +66,7 @@ export default function SystemStatus() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-white mb-6 leading-[0.95]"
         >
-          We Build{' '}
-          <span className="text-gradient-purple">Intelligent</span>
+          We Build <span className="text-gradient-purple">Intelligent</span>
           <br />
           Digital Systems
         </motion.h1>
@@ -79,8 +78,8 @@ export default function SystemStatus() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          AI-powered automation, modern websites, and custom software
-          that transforms how your business operates.
+          AI-powered automation, modern websites, and custom software that transforms how your
+          business operates.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -113,17 +112,29 @@ export default function SystemStatus() {
         >
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-white">50+</span>
-            <span className="text-sm">Projects<br />Delivered</span>
+            <span className="text-sm">
+              Projects
+              <br />
+              Delivered
+            </span>
           </div>
           <div className="w-px h-8 bg-gray-800" />
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-white">95%</span>
-            <span className="text-sm">Client<br />Satisfaction</span>
+            <span className="text-sm">
+              Client
+              <br />
+              Satisfaction
+            </span>
           </div>
           <div className="w-px h-8 bg-gray-800" />
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-white">24hr</span>
-            <span className="text-sm">Response<br />Time</span>
+            <span className="text-sm">
+              Response
+              <br />
+              Time
+            </span>
           </div>
         </motion.div>
       </div>

@@ -80,7 +80,14 @@ const TheArchitect = dynamic(() => import('../components/sentient/builder/TheArc
     <div className="py-16 bg-black">
       <div className="container mx-auto px-4 text-center">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {['[ VOICE_AGENT ]', '[ CRM_SYNC ]', '[ CHAT_BOT ]', '[ PAYMENTS ]', '[ ANALYTICS ]', '[ EMAIL_AUTO ]'].map((label, i) => (
+          {[
+            '[ VOICE_AGENT ]',
+            '[ CRM_SYNC ]',
+            '[ CHAT_BOT ]',
+            '[ PAYMENTS ]',
+            '[ ANALYTICS ]',
+            '[ EMAIL_AUTO ]',
+          ].map((label, i) => (
             <div
               key={i}
               className="bg-zinc-900 h-40 border border-zinc-700 rounded p-4 flex flex-col items-center justify-center opacity-20"
@@ -542,10 +549,26 @@ export default function Home() {
 
           <div className="terminal-deps max-w-4xl mx-auto">
             <div className="space-y-2 font-mono text-sm">
-              <div><span className="text-purple-400">&gt;</span> LOADING CORE: <span className="text-white">NEXT.JS</span>...........<span className="text-green-400">[OK]</span></div>
-              <div><span className="text-purple-400">&gt;</span> LOADING UI: <span className="text-white">TAILWIND</span>............<span className="text-green-400">[OK]</span></div>
-              <div><span className="text-purple-400">&gt;</span> LOADING DB: <span className="text-white">POSTGRESQL</span>..........<span className="text-green-400">[OK]</span></div>
-              <div><span className="text-purple-400">&gt;</span> LOADING AI: <span className="text-white">OPENAI-4o</span>...........<span className="text-green-400">[OK]</span></div>
+              <div>
+                <span className="text-purple-400">&gt;</span> LOADING CORE:{' '}
+                <span className="text-white">NEXT.JS</span>...........
+                <span className="text-green-400">[OK]</span>
+              </div>
+              <div>
+                <span className="text-purple-400">&gt;</span> LOADING UI:{' '}
+                <span className="text-white">TAILWIND</span>............
+                <span className="text-green-400">[OK]</span>
+              </div>
+              <div>
+                <span className="text-purple-400">&gt;</span> LOADING DB:{' '}
+                <span className="text-white">POSTGRESQL</span>..........
+                <span className="text-green-400">[OK]</span>
+              </div>
+              <div>
+                <span className="text-purple-400">&gt;</span> LOADING AI:{' '}
+                <span className="text-white">OPENAI-4o</span>...........
+                <span className="text-green-400">[OK]</span>
+              </div>
             </div>
           </div>
         </Section>
@@ -693,7 +716,13 @@ export default function Home() {
 
           <FadeIn className="text-center mt-12">
             <p className="text-gray-400 mb-4">Still have questions?</p>
-            <Button as="link" href="/intake" variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10">
+            <Button
+              as="link"
+              href="/intake"
+              variant="outline"
+              size="lg"
+              className="border-white/20 text-white hover:bg-white/10"
+            >
               Schedule a Free Discovery Call
             </Button>
           </FadeIn>

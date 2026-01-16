@@ -3,10 +3,7 @@
   "build": {
     "builder": "NIXPACKS",
     "buildCommand": "pnpm install && pnpm --filter frontend build",
-    "watchPatterns": [
-      "/packages/frontend/**",
-      "/packages/ui-components/**"
-    ]
+    "watchPatterns": ["/packages/frontend/**", "/packages/ui-components/**"]
   },
   "deploy": {
     "runtime": "V2",

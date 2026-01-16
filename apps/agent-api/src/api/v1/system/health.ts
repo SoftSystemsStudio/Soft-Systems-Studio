@@ -36,7 +36,9 @@ router.get(
     // This ensures Railway health checks pass while services are still connecting
     if (inGracePeriod) {
       const uptimeSeconds = Math.floor((Date.now() - serverStartTime) / 1000);
-      const graceRemaining = Math.ceil((STARTUP_GRACE_PERIOD_MS - (Date.now() - serverStartTime)) / 1000);
+      const graceRemaining = Math.ceil(
+        (STARTUP_GRACE_PERIOD_MS - (Date.now() - serverStartTime)) / 1000,
+      );
 
       logger.info(
         { uptimeSeconds, graceRemaining },

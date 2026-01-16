@@ -57,7 +57,13 @@ export default function Navbar({
               {item.label}
             </a>
           ))}
-          <Button as="link" href={ctaHref} variant="primary" size="sm" className="ml-2 bg-white text-black hover:bg-gray-100">
+          <Button
+            as="link"
+            href={ctaHref}
+            variant="primary"
+            size="sm"
+            className="ml-2 bg-white text-black hover:bg-gray-100"
+          >
             {ctaLabel}
           </Button>
         </nav>
