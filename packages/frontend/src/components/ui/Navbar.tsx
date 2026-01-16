@@ -33,7 +33,7 @@ export default function Navbar({
 
   return (
     <header
-      className={`sticky top-0 z-50 backdrop-blur-md bg-[#0A0A0A]/90 border-b border-white/5 ${className}`}
+      className={`sticky top-0 z-50 backdrop-blur-md bg-[#050505]/90 border-b border-white/5 ${className}`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Brand with Logo */}
@@ -98,7 +98,7 @@ export default function Navbar({
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <nav className="md:hidden bg-[#0A0A0A] border-t border-white/5 px-6 py-4 space-y-4">
+        <nav className="md:hidden bg-[#050505] border-t border-white/5 px-6 py-4 space-y-4">
           {items.map((item) => (
             <a
               key={item.href}

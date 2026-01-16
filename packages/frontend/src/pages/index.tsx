@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import { Navbar, Footer, Section, PricingCard, Button, HoloCard, GlowText } from '../components/ui';
+import { Navbar, Footer, Section, PricingCard, Button, HoloCard } from '../components/ui';
 import { FadeIn, StaggerContainer } from '../components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
 import env from '../lib/env';
@@ -233,12 +233,7 @@ const PRICING_PLANS = [
   },
 ];
 
-const STATS = [
-  { label: 'Projects Delivered', value: '50+' },
-  { label: 'Client Satisfaction', value: '95%' },
-  { label: 'Response Time', value: '24hr' },
-  { label: 'Years Experience', value: '5+' },
-];
+// Stats are now integrated into the hero component
 
 const WHY_CHOOSE_US = [
   {
@@ -260,18 +255,7 @@ const WHY_CHOOSE_US = [
   },
 ];
 
-const TECH_STACK = [
-  { name: 'Next.js', category: 'Frontend' },
-  { name: 'React', category: 'Frontend' },
-  { name: 'TypeScript', category: 'Language' },
-  { name: 'Tailwind CSS', category: 'Styling' },
-  { name: 'Node.js', category: 'Backend' },
-  { name: 'PostgreSQL', category: 'Database' },
-  { name: 'OpenAI', category: 'AI' },
-  { name: 'Anthropic Claude', category: 'AI' },
-  { name: 'Vercel', category: 'Hosting' },
-  { name: 'Stripe', category: 'Payments' },
-];
+// Tech stack is now displayed in terminal-deps format
 
 const FAQS = [
   {
@@ -333,7 +317,7 @@ const CLIENT_RESULTS = [
 
 export default function Home() {
   return (
-    <div className="antialiased min-h-screen bg-[#0A0A0A] text-white">
+    <div className="antialiased min-h-screen bg-[#050505] text-gray-200 selection:bg-purple-500 selection:text-white">
       <Head>
         <title>
           AI Automation & Web Design Services | Soft Systems Studio - Expert Development
@@ -548,25 +532,25 @@ export default function Home() {
           </FadeIn>
 
           <div className="terminal-deps max-w-4xl mx-auto">
-            <div className="space-y-2 font-mono text-sm">
+            <div className="space-y-2 text-xs">
               <div>
-                <span className="text-purple-400">&gt;</span> LOADING CORE:{' '}
-                <span className="text-white">NEXT.JS</span>...........
+                <span className="text-green-400">&gt;</span> LOADING CORE:{' '}
+                <span className="text-green-300">NEXT.JS</span>...........
                 <span className="text-green-400">[OK]</span>
               </div>
               <div>
-                <span className="text-purple-400">&gt;</span> LOADING UI:{' '}
-                <span className="text-white">TAILWIND</span>............
+                <span className="text-green-400">&gt;</span> LOADING UI:{' '}
+                <span className="text-green-300">TAILWIND</span>............
                 <span className="text-green-400">[OK]</span>
               </div>
               <div>
-                <span className="text-purple-400">&gt;</span> LOADING DB:{' '}
-                <span className="text-white">POSTGRESQL</span>..........
+                <span className="text-green-400">&gt;</span> LOADING DB:{' '}
+                <span className="text-green-300">POSTGRESQL</span>..........
                 <span className="text-green-400">[OK]</span>
               </div>
               <div>
-                <span className="text-purple-400">&gt;</span> LOADING AI:{' '}
-                <span className="text-white">OPENAI-4o</span>...........
+                <span className="text-green-400">&gt;</span> LOADING AI:{' '}
+                <span className="text-green-300">OPENAI-4o</span>...........
                 <span className="text-green-400">[OK]</span>
               </div>
             </div>
