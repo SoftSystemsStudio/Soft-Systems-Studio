@@ -28,6 +28,7 @@ const envSchema = z.object({
   // Email (server-side only)
   RESEND_API_KEY: z.string().optional(),
   RESEND_FROM_EMAIL: z.string().optional(),
+  ADMIN_EMAIL: z.string().email().optional(),
 
   // Cron
   CRON_SECRET: z.string().optional(),

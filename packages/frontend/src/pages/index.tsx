@@ -156,35 +156,35 @@ const STEPS = [
 const TESTIMONIALS = [
   {
     quote:
-      'Our new website looks amazing and the AI receptionist saves us 10+ hours every week. Already booked 6 new clients through automated scheduling.',
-    author: 'Sarah M.',
-    role: 'Small Business Owner',
-    company: 'Home Services Co.',
+      'I used to miss calls while on job sites. Now the AI answers every call, books appointments, and sends me a text summary. Booked 8 new jobs last month alone.',
+    author: 'Mike T.',
+    role: 'Owner',
+    company: 'MT Plumbing Services',
     metrics: [
-      { label: 'Time Saved', value: '10+ hrs', icon: '⏰' },
-      { label: 'New Clients', value: '+6', icon: '📈' },
+      { label: 'Calls Answered', value: '100%', icon: '📞' },
+      { label: 'New Jobs', value: '+8/mo', icon: '📈' },
     ],
   },
   {
     quote:
-      'Professional team that really listens. They delivered exactly what we needed on time and under budget. The AI chat support is incredible.',
-    author: 'James K.',
-    role: 'Marketing Director',
-    company: 'TechStart Inc.',
+      'Patients can now book appointments 24/7. Our front desk staff focuses on patient care instead of answering phones all day. Game changer.',
+    author: 'Dr. Lisa Chen',
+    role: 'Practice Owner',
+    company: 'Bright Smile Dental',
     metrics: [
-      { label: 'On Budget', value: '100%', icon: '💰' },
-      { label: 'On Time', value: '✓', icon: '⚡' },
+      { label: 'Online Bookings', value: '+65%', icon: '📅' },
+      { label: 'Staff Hours Saved', value: '15/wk', icon: '⏰' },
     ],
   },
   {
     quote:
-      'Best investment we made this year. Their automation cut our support tickets in half and increased customer satisfaction scores by 28%.',
-    author: 'Michelle R.',
-    role: 'Operations Manager',
-    company: 'E-Commerce Plus',
+      'Finally have a professional website that ranks on Google. The AI receptionist handles calls in English and Spanish - huge for our community.',
+    author: 'Carlos R.',
+    role: 'Owner',
+    company: 'Rodriguez Landscaping',
     metrics: [
-      { label: 'Tickets Cut', value: '50%', icon: '📉' },
-      { label: 'CSAT Score', value: '+28%', icon: '😊' },
+      { label: 'Google Ranking', value: 'Top 3', icon: '🔍' },
+      { label: 'Lead Increase', value: '+40%', icon: '📊' },
     ],
   },
 ];
@@ -192,44 +192,44 @@ const TESTIMONIALS = [
 const PRICING_PLANS = [
   {
     name: 'Website Package',
-    scope: 'SMALL SYSTEM',
-    complexity: 'NODE: FOUNDATION',
-    description: 'Professional web presence',
+    price: '$2,500',
+    description: 'Professional web presence for local businesses',
     features: [
-      'Custom design & development',
-      'Mobile responsive',
+      '5-page custom website',
+      'Mobile responsive design',
       'SEO optimized',
-      'Content management system',
+      'Contact form & lead capture',
+      '30-day post-launch support',
     ],
-    ctaText: 'REQUEST SCOPE ANALYSIS',
+    ctaText: 'Get Started',
   },
   {
-    name: 'AI Automation',
-    scope: 'INTELLIGENT INFRASTRUCTURE',
-    complexity: 'CORE: INTEGRATION',
-    description: 'Intelligent business automation',
+    name: 'AI Receptionist',
+    price: '$997 + $197/mo',
+    description: 'Never miss a call again',
     features: [
-      'AI voice reception or chat support',
-      'Custom workflow automation',
-      'System integrations',
-      'Training & ongoing support',
+      '24/7 AI phone answering',
+      'Custom voice (not robotic)',
+      'Bilingual (English/Spanish)',
+      'Calendar integration',
+      'Monthly optimization included',
     ],
     highlighted: true,
-    badge: '[ HIGH_THROUGHPUT ]',
-    ctaText: 'INITIALIZE CONSULTATION',
+    badge: 'Most Popular',
+    ctaText: 'Book a Demo',
   },
   {
-    name: 'Complete Solution',
-    scope: 'ENTERPRISE ARCHITECTURE',
-    complexity: 'NEXUS: ORCHESTRATION',
-    description: 'Website + AI automation',
+    name: 'Complete Package',
+    price: '$2,997 + $197/mo',
+    description: 'Website + AI bundle (Save $500)',
     features: [
-      'Everything combined',
-      'Integrated experience',
-      'Priority development',
-      'Dedicated partnership',
+      '7-page website included',
+      'AI receptionist integrated',
+      'Website chat included',
+      '2 integrations (calendar, CRM)',
+      '60-day support included',
     ],
-    ctaText: 'REQUEST ARCHITECTURE REVIEW',
+    ctaText: 'Get the Bundle',
   },
 ];
 
@@ -259,34 +259,34 @@ const WHY_CHOOSE_US = [
 
 const FAQS = [
   {
-    question: 'How long does a typical project take?',
+    question: 'How does the AI receptionist work?',
     answer:
-      'Website projects typically take 3-6 weeks, while AI automation projects range from 4-8 weeks depending on complexity. We provide a detailed timeline in your custom proposal.',
+      'When someone calls your business, the AI answers professionally, understands what they need, books appointments directly into your calendar, and texts you a summary. It works 24/7, handles multiple calls at once, and speaks English and Spanish.',
   },
   {
-    question: 'Do you work with small businesses or just enterprises?',
+    question: 'Will customers know they are talking to AI?',
     answer:
-      'We work with businesses of all sizes! Our packages are designed to be accessible to small businesses while still meeting enterprise needs. If you have a genuine need for technology, we can help.',
+      'We use ElevenLabs for natural, human-sounding voices - not robotic. Most callers assume they are talking to a real receptionist. You can customize the voice, personality, and greeting to match your brand.',
   },
   {
-    question: 'What if I need changes after launch?',
+    question: 'What if the AI cannot answer a question?',
     answer:
-      'All projects include a 30-day warranty period for bug fixes. Beyond that, we offer ongoing maintenance packages or can handle changes on an hourly basis. Many clients choose our partnership plan for continuous improvements.',
+      'You set the rules. The AI can transfer to your cell phone, take a message, or schedule a callback. It never guesses or gives wrong information - it gracefully handles situations it was not trained for.',
   },
   {
-    question: 'How do AI automations integrate with my existing systems?',
+    question: 'How long does setup take?',
     answer:
-      'We build custom integrations with your existing tools (CRM, calendar, email, etc.) using APIs and webhooks. During discovery, we audit your tech stack and design a seamless integration plan.',
+      'Website: 2-3 weeks. AI Receptionist: 1-2 weeks. Complete package: 3-4 weeks. We handle everything - you just answer a few questions about your business and approve the final result.',
   },
   {
-    question: "What's included in ongoing support?",
+    question: 'What are the monthly costs?',
     answer:
-      'Our support includes bug fixes, security updates, performance monitoring, and priority response times. Partnership plans also include monthly strategy calls and new feature development.',
+      'AI Receptionist: $197/month platform fee + ~$30-80/month in phone usage (Twilio/ElevenLabs pass-through, varies by call volume). Website hosting is free if you host yourself, or $47-97/month for our managed hosting.',
   },
   {
-    question: 'Can you help us decide between a website and AI automation?',
+    question: 'Why is there a setup fee?',
     answer:
-      "Absolutely! Many clients aren't sure what they need most. Book a free discovery call and we'll assess your business, identify opportunities, and recommend the best starting point.",
+      'Unlike template-based services, we custom-build your AI with your services, pricing, and personality. The $997 setup covers voice training, business knowledge, integrations, and testing. It takes 10-15 hours of work - agencies charge $5,000+ for this.',
   },
 ];
 
@@ -299,19 +299,19 @@ const TRUST_BADGES = [
 
 const CLIENT_RESULTS = [
   {
-    metric: '40% increase',
-    description: 'in qualified leads captured',
-    client: 'Home Services Company',
+    metric: '100%',
+    description: 'of calls answered, even after hours',
+    client: 'Plumbing Company',
   },
   {
-    metric: '15 hrs/week',
-    description: 'saved on customer support',
-    client: 'E-commerce Store',
+    metric: '$2,000/mo',
+    description: 'saved vs. hiring a receptionist',
+    client: 'Dental Practice',
   },
   {
-    metric: '3x faster',
-    description: 'response time to inquiries',
-    client: 'Professional Services',
+    metric: '8 new jobs',
+    description: 'booked in the first month',
+    client: 'HVAC Contractor',
   },
 ];
 
@@ -657,8 +657,9 @@ export default function Home() {
               <PricingCard
                 key={plan.name}
                 name={plan.name}
-                scope={plan.scope}
-                complexity={plan.complexity}
+                price={plan.price}
+                scope=""
+                complexity=""
                 description={plan.description}
                 features={plan.features}
                 ctaText={plan.ctaText}

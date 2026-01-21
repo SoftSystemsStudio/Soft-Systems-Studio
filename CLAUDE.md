@@ -249,34 +249,39 @@ Required checks:
 
 _This section auto-populates with recent commit context to help Claude maintain continuity._
 
-**Last updated**: 2026-01-16T16:46:05.273Z
+**Last updated**: 2026-01-21T17:16:28.758Z
 
 **Current staged changes summary**:
-packages/: 6 modified
+root/: 1 modified
+ai-automation-agency-os/: 1 modified
+packages/: 1 added, 6 modified
 
 **Recent git commits**:
 
 ```
-18f7194 - feat: add agency OS templates, case study, and luxury dark mode redesign (11 hours ago)
-0e15f98 - feat(frontend): Luxury dark mode redesign with glassmorphism (20 hours ago)
-bf04ff7 - feat(frontend): Technical Brutalist V3 patch notes implementation (20 hours ago)
-9552087 - chore: add frontend build artifacts (21 hours ago)
-9352a30 - fix(agent-api): always start server and add debug logging (21 hours ago)
+2317a5f - feat(frontend): Final luxury dark mode polish (5 days ago)
+18f7194 - feat: add agency OS templates, case study, and luxury dark mode redesign (6 days ago)
+0e15f98 - feat(frontend): Luxury dark mode redesign with glassmorphism (6 days ago)
+bf04ff7 - feat(frontend): Technical Brutalist V3 patch notes implementation (6 days ago)
+9552087 - chore: add frontend build artifacts (6 days ago)
 ```
 
 **Recent commits**: (rolling window of last 10)
 
-### Commit 1: 2026-01-16T16:46:05.273Z
+### Commit 1: 2026-01-21T17:16:28.758Z
 
 **Staged files**:
 
 ```
+M	CLAUDE.md
+M	ai-automation-agency-os/00-admin/pricing/pricing-guide.md
+M	packages/frontend/next-env.d.ts
 M	packages/frontend/src/components/sentient/hero/SystemStatus.tsx
-M	packages/frontend/src/components/ui/Footer.tsx
-M	packages/frontend/src/components/ui/Navbar.tsx
-M	packages/frontend/src/components/ui/PricingCard.tsx
+M	packages/frontend/src/lib/env.ts
+A	packages/frontend/src/pages/api/intake.ts
 M	packages/frontend/src/pages/index.tsx
-M	packages/frontend/src/styles/globals.css
+M	packages/frontend/src/pages/intake.tsx
+M	packages/frontend/tsconfig.tsbuildinfo
 ```
 
 ## Session Checkpoints
