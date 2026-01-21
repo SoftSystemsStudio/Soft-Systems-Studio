@@ -70,9 +70,9 @@ export default function SystemStatus() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative z-10 text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6"
           >
-            We Don&apos;t Build Websites.
+            Your Phone Rings.
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-              We Construct Systems.
+              AI Answers.
             </span>
           </motion.h1>
         </div>
@@ -84,8 +84,8 @@ export default function SystemStatus() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          AI-powered automation, modern websites, and custom software that transforms how your
-          business operates.
+          Websites that book appointments. AI receptionists that never sleep. Built for plumbers,
+          dentists, contractors, and local service businesses.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -99,13 +99,13 @@ export default function SystemStatus() {
             href="/intake"
             className="px-8 py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105"
           >
-            Start Your Project
+            Get a Free Quote
           </a>
           <a
-            href="#pulse"
+            href="#pricing"
             className="px-8 py-4 glass-card text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
           >
-            See Our Work
+            See Pricing
           </a>
         </motion.div>
 

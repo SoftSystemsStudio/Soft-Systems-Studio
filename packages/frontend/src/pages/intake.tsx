@@ -1,159 +1,108 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import Layout from '../components/Layout';
-import styles from '../styles/Intake.module.css';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
-type Objective =
-  | 'reduce_support_volume'
-  | 'increase_leads'
-  | 'automate_workflows'
-  | 'increase_content_output'
-  | 'improve_reporting';
-
-type SystemInterest = 'ai_support' | 'ai_content' | 'ai_data_bi' | 'ai_workflow' | 'ai_voice';
-
-type SupportChannel = 'email' | 'web_chat' | 'social_dm' | 'phone' | 'sms';
+type ServiceInterest = 'website' | 'ai_receptionist' | 'complete_package';
 
 type FormState = {
-  companyName: string;
-  website: string;
-  industry: string;
-  size: string;
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
-  primaryObjectives: Objective[];
-  systems: SystemInterest[];
-  supportChannels: SupportChannel[];
-  dailyInquiries: string;
-  mainPainPoints: string;
-  notes: string;
+  name: string;
+  businessName: string;
+  email: string;
+  phone: string;
+  businessType: string;
+  serviceInterest: ServiceInterest | '';
+  monthlyCallVolume: string;
+  biggestChallenge: string;
+  howDidYouHear: string;
 };
-
-type FormField = keyof FormState;
 
 const initialForm: FormState = {
-  companyName: '',
-  website: '',
-  industry: '',
-  size: '',
-  contactName: '',
-  contactEmail: '',
-  contactPhone: '',
-  primaryObjectives: [],
-  systems: [],
-  supportChannels: [],
-  dailyInquiries: '10',
-  mainPainPoints: '',
-  notes: '',
+  name: '',
+  businessName: '',
+  email: '',
+  phone: '',
+  businessType: '',
+  serviceInterest: '',
+  monthlyCallVolume: '',
+  biggestChallenge: '',
+  howDidYouHear: '',
 };
 
-const steps = ['Company', 'Contact', 'Goals', 'Support & Pain'] as const;
+const BUSINESS_TYPES = [
+  'Plumbing',
+  'HVAC',
+  'Electrical',
+  'Roofing',
+  'Landscaping',
+  'Dental Practice',
+  'Medical/Med Spa',
+  'Legal Services',
+  'Real Estate',
+  'Other',
+];
+
+const CALL_VOLUMES = [
+  'Less than 50 calls/month',
+  '50-100 calls/month',
+  '100-200 calls/month',
+  '200+ calls/month',
+  'Not sure',
+];
+
+const SERVICES = [
+  {
+    key: 'website' as ServiceInterest,
+    name: 'Website Only',
+    price: '$2,500',
+    description: 'Professional 5-page website',
+  },
+  {
+    key: 'ai_receptionist' as ServiceInterest,
+    name: 'AI Receptionist',
+    price: '$997 + $197/mo',
+    description: 'Never miss a call again',
+  },
+  {
+    key: 'complete_package' as ServiceInterest,
+    name: 'Complete Package',
+    price: '$2,997 + $197/mo',
+    description: 'Website + AI (Save $500)',
+  },
+];
 
 export default function IntakePage() {
-  const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(initialForm);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function update<K extends FormField>(field: K, value: FormState[K]) {
+  function update<K extends keyof FormState>(field: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[field as string];
-      return next;
-    });
+    setError(null);
   }
 
-  const toggleObjective = (objective: Objective) => {
-    setForm((prev) => ({
-      ...prev,
-      primaryObjectives: prev.primaryObjectives.includes(objective)
-        ? prev.primaryObjectives.filter((o) => o !== objective)
-        : [...prev.primaryObjectives, objective],
-    }));
-  };
-
-  const toggleSystemInterest = (system: SystemInterest) => {
-    setForm((prev) => ({
-      ...prev,
-      systems: prev.systems.includes(system)
-        ? prev.systems.filter((s) => s !== system)
-        : [...prev.systems, system],
-    }));
-  };
-
-  const toggleSupportChannel = (channel: SupportChannel) => {
-    setForm((prev) => ({
-      ...prev,
-      supportChannels: prev.supportChannels.includes(channel)
-        ? prev.supportChannels.filter((c) => c !== channel)
-        : [...prev.supportChannels, channel],
-    }));
-  };
-
-  function validateStep(currentStep: number) {
-    const nextErrors: Record<string, string> = {};
-
-    if (currentStep === 1) {
-      if (!form.companyName.trim()) {
-        nextErrors.companyName = 'Company name is required';
-      }
-      if (form.website) {
-        try {
-          // eslint-disable-next-line no-new
-          new URL(form.website);
-        } catch {
-          nextErrors.website = 'Website must be a valid URL (include https://)';
-        }
-      }
-    }
-
-    if (currentStep === 2) {
-      if (!form.contactName.trim()) {
-        nextErrors.contactName = 'Contact name is required';
-      }
-      if (!form.contactEmail.trim()) {
-        nextErrors.contactEmail = 'Contact email is required';
-      } else {
-        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contactEmail);
-        if (!emailOk) {
-          nextErrors.contactEmail = 'Enter a valid email address';
-        }
-      }
-    }
-
-    if (currentStep === 3) {
-      if (!form.primaryObjectives.length) {
-        nextErrors.primaryObjectives = 'Select at least one primary objective';
-      }
-      if (!form.systems.length) {
-        nextErrors.systems = 'Select at least one system you’re interested in';
-      }
-    }
-
-    if (currentStep === 4) {
-      if (form.dailyInquiries && Number.isNaN(Number(form.dailyInquiries))) {
-        nextErrors.dailyInquiries = 'Enter a number (approximate is fine)';
-      }
-      if (!form.mainPainPoints.trim()) {
-        nextErrors.mainPainPoints = 'Describe what’s painful today';
-      }
-    }
-
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+  function validate(): string | null {
+    if (!form.name.trim()) return 'Please enter your name';
+    if (!form.businessName.trim()) return 'Please enter your business name';
+    if (!form.email.trim()) return 'Please enter your email';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return 'Please enter a valid email';
+    if (!form.phone.trim()) return 'Please enter your phone number';
+    if (!form.serviceInterest) return 'Please select which service you are interested in';
+    return null;
   }
 
-  async function submit() {
-    if (!validateStep(4)) {
-      setMessage('Please fix errors before submitting.');
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
     setLoading(true);
-    setMessage(null);
+    setError(null);
 
     try {
       const res = await fetch('/api/intake', {
@@ -162,463 +111,264 @@ export default function IntakePage() {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) throw new Error('submit_failed');
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to submit');
+      }
 
-      setMessage(
-        'Thanks — we’ll turn this into your AI Automation Blueprint and follow up with next steps.',
-      );
-      setForm(initialForm);
-      setStep(1);
-    } catch {
-      setMessage('Submission failed.');
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   }
 
-  const dailyInquiriesNumber = Number(form.dailyInquiries || '0');
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center px-4">
+        <Head>
+          <title>Thank You - Soft Systems Studio</title>
+        </Head>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md text-center"
+        >
+          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg
+              className="w-8 h-8 text-green-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold mb-4">Thank You!</h1>
+          <p className="text-gray-400 mb-6">
+            We&apos;ve received your request. You&apos;ll hear from us within 24 hours to schedule a
+            quick call and discuss your project.
+          </p>
+          <Link
+            href="/"
+            className="inline-block px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            Back to Home
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <Layout>
+    <div className="min-h-screen bg-[#050505] text-white">
       <Head>
-        <title>AI Systems Intake - Soft Systems Studio</title>
+        <title>Get a Free Quote - Soft Systems Studio</title>
         <meta
           name="description"
-          content="Tell us about your goals and systems. Get a concrete blueprint for AI automation."
+          content="Get a free quote for your website or AI receptionist. We help local service businesses never miss a call again."
         />
-        <link rel="canonical" href="https://softsystemsstudiollc.com/intake" />
       </Head>
-      <main className={styles.page}>
-        {/* Hero framing */}
-        <header className={styles.hero}>
-          <div className={styles.heroContent}>
-            <div className={styles.heroBadge}>Soft Systems Studio • Intake</div>
-            <h1 className={styles.heroTitle}>Your AI Automation Blueprint starts here.</h1>
-            <p className={styles.heroSubtitle}>
-              Answer a few focused questions and we’ll design a tailored AI playbook to reduce
-              support volume, automate workflows, and unlock capacity in your business.
-            </p>
-            <p className={styles.heroFootnote}>
-              Expect a concrete solution brief and phase-one proposal — not generic recommendations.
-            </p>
-          </div>
-          <aside className={styles.heroAside}>
-            <div className={styles.heroCard}>
-              <h3>What you’ll get</h3>
-              <ul>
-                <li>AI Solution Brief aligned to your goals</li>
-                <li>Phase 1 implementation proposal</li>
-                <li>System architecture and suggested stack</li>
-              </ul>
-              <div className={styles.heroCardMeta}>
-                Typical outcome: 30–70% reduction in repetitive work for support and ops teams.
+
+      {/* Header */}
+      <header className="border-b border-white/10">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <Link href="/" className="text-lg font-semibold">
+            Soft Systems Studio
+          </Link>
+          <Link href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
+            &larr; Back to site
+          </Link>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-4 py-12">
+        {/* Hero */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Get Your Free Quote</h1>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Tell us about your business and we&apos;ll get back to you within 24 hours with a custom
+            quote.
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Contact Info */}
+          <section className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
+            <h2 className="text-xl font-semibold mb-6">Contact Information</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Your Name *</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => update('name', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="John Smith"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Business Name *
+                </label>
+                <input
+                  type="text"
+                  value={form.businessName}
+                  onChange={(e) => update('businessName', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="Smith Plumbing LLC"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Email *</label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => update('email', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="john@smithplumbing.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Phone *</label>
+                <input
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => update('phone', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="(555) 123-4567"
+                />
               </div>
             </div>
-          </aside>
-        </header>
+          </section>
 
-        {/* Stepper */}
-        <section className={styles.stepperSection}>
-          <div className={styles.stepper}>
-            {steps.map((label, index) => {
-              const stepNumber = index + 1;
-              const isActive = stepNumber === step;
-              const isComplete = stepNumber < step;
-              return (
-                <div key={label} className={styles.stepperItem}>
-                  <div
-                    className={[
-                      styles.stepCircle,
-                      isActive ? styles.stepCircleActive : '',
-                      isComplete ? styles.stepCircleComplete : '',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
+          {/* Business Info */}
+          <section className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
+            <h2 className="text-xl font-semibold mb-6">About Your Business</h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  What type of business do you run?
+                </label>
+                <select
+                  value={form.businessType}
+                  onChange={(e) => update('businessType', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                >
+                  <option value="">Select your industry...</option>
+                  {BUSINESS_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  How many phone calls do you get per month?
+                </label>
+                <select
+                  value={form.monthlyCallVolume}
+                  onChange={(e) => update('monthlyCallVolume', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                >
+                  <option value="">Select call volume...</option>
+                  {CALL_VOLUMES.map((volume) => (
+                    <option key={volume} value={volume}>
+                      {volume}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </section>
+
+          {/* Service Selection */}
+          <section className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
+            <h2 className="text-xl font-semibold mb-6">What are you interested in? *</h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              {SERVICES.map((service) => {
+                const isSelected = form.serviceInterest === service.key;
+                return (
+                  <button
+                    key={service.key}
+                    type="button"
+                    onClick={() => update('serviceInterest', service.key)}
+                    className={`p-6 rounded-xl border-2 text-left transition-all ${
+                      isSelected
+                        ? 'border-purple-500 bg-purple-500/10'
+                        : 'border-white/10 hover:border-white/30'
+                    }`}
                   >
-                    {stepNumber}
-                  </div>
-                  <div className={styles.stepLabel}>{label}</div>
-                </div>
-              );
-            })}
+                    <div className="font-semibold mb-1">{service.name}</div>
+                    <div className="text-purple-400 font-bold mb-2">{service.price}</div>
+                    <div className="text-sm text-gray-400">{service.description}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Additional Info */}
+          <section className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
+            <h2 className="text-xl font-semibold mb-6">Tell Us More</h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  What&apos;s your biggest challenge right now?
+                </label>
+                <textarea
+                  value={form.biggestChallenge}
+                  onChange={(e) => update('biggestChallenge', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                  placeholder="e.g., Missing calls when I'm on job sites, no professional website, spending too much time on the phone..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  How did you hear about us?
+                </label>
+                <input
+                  type="text"
+                  value={form.howDidYouHear}
+                  onChange={(e) => update('howDidYouHear', e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="Google, referral, social media..."
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Error Message */}
+          {error && (
+            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+              {error}
+            </div>
+          )}
+
+          {/* Submit */}
+          <div className="text-center">
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-8 py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Submitting...' : 'Get My Free Quote'}
+            </button>
+            <p className="mt-4 text-sm text-gray-500">
+              We&apos;ll respond within 24 hours. No spam, ever.
+            </p>
           </div>
-        </section>
-
-        {/* Form card */}
-        <section className={styles.formCard}>
-          {/* STEP 1 – COMPANY */}
-          {step === 1 && (
-            <div className={styles.formSection}>
-              <h2 className={styles.sectionTitle}>Company profile</h2>
-              <p className={styles.sectionSubtitle}>
-                Help us understand who you are and the context we’re designing for.
-              </p>
-
-              <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>
-                  Company name
-                  <input
-                    className={styles.input}
-                    value={form.companyName}
-                    onChange={(e) => update('companyName', e.target.value)}
-                    placeholder="Soft Systems Studio LLC"
-                  />
-                </label>
-                {errors.companyName && <div className={styles.errorText}>{errors.companyName}</div>}
-              </div>
-
-              <div className={styles.fieldRow}>
-                <div className={styles.fieldCol}>
-                  <label className={styles.fieldLabel}>
-                    Website
-                    <input
-                      className={styles.input}
-                      value={form.website}
-                      onChange={(e) => update('website', e.target.value)}
-                      placeholder="https://example.com"
-                    />
-                  </label>
-                  {errors.website && <div className={styles.errorText}>{errors.website}</div>}
-                </div>
-              </div>
-
-              <div className={styles.fieldRow}>
-                <div className={styles.fieldCol}>
-                  <label className={styles.fieldLabel}>
-                    Industry
-                    <input
-                      className={styles.input}
-                      value={form.industry}
-                      onChange={(e) => update('industry', e.target.value)}
-                      placeholder="e.g. SaaS, agency, ecommerce"
-                    />
-                  </label>
-                </div>
-                <div className={styles.fieldCol}>
-                  <label className={styles.fieldLabel}>
-                    Company size
-                    <input
-                      className={styles.input}
-                      value={form.size}
-                      onChange={(e) => update('size', e.target.value)}
-                      placeholder="e.g. 1–10, 11–50"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className={styles.actionsRow}>
-                <button
-                  type="button"
-                  className={styles.primaryButton}
-                  onClick={() => {
-                    if (validateStep(1)) setStep(2);
-                    else setMessage('Please fix errors on this step.');
-                  }}
-                >
-                  Continue to contact
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2 – CONTACT */}
-          {step === 2 && (
-            <div className={styles.formSection}>
-              <h2 className={styles.sectionTitle}>Primary contact</h2>
-              <p className={styles.sectionSubtitle}>
-                The person we’ll send the blueprint and proposal to.
-              </p>
-
-              <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>
-                  Name
-                  <input
-                    className={styles.input}
-                    value={form.contactName}
-                    onChange={(e) => update('contactName', e.target.value)}
-                    placeholder="Your name"
-                  />
-                </label>
-                {errors.contactName && <div className={styles.errorText}>{errors.contactName}</div>}
-              </div>
-
-              <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>
-                  Email
-                  <input
-                    className={styles.input}
-                    value={form.contactEmail}
-                    onChange={(e) => update('contactEmail', e.target.value)}
-                    placeholder="you@company.com"
-                  />
-                </label>
-                {errors.contactEmail && (
-                  <div className={styles.errorText}>{errors.contactEmail}</div>
-                )}
-              </div>
-
-              <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>
-                  Phone (optional)
-                  <input
-                    className={styles.input}
-                    value={form.contactPhone}
-                    onChange={(e) => update('contactPhone', e.target.value)}
-                    placeholder="+1 (555) 000-0000"
-                  />
-                </label>
-              </div>
-
-              <div className={styles.actionsRow}>
-                <button
-                  type="button"
-                  className={styles.secondaryButton}
-                  onClick={() => {
-                    setMessage(null);
-                    setStep(1);
-                  }}
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  className={styles.primaryButton}
-                  onClick={() => {
-                    if (validateStep(2)) setStep(3);
-                    else setMessage('Please fix errors on this step.');
-                  }}
-                >
-                  Continue to goals
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3 – GOALS */}
-          {step === 3 && (
-            <div className={styles.formSection}>
-              <h2 className={styles.sectionTitle}>What are you trying to achieve?</h2>
-              <p className={styles.sectionSubtitle}>
-                These choices shape how we design your systems and phases.
-              </p>
-
-              <div className={styles.fieldGroup}>
-                <div className={styles.fieldLabelRow}>
-                  <span className={styles.fieldLabel}>Primary objectives</span>
-                  <span className={styles.fieldHint}>Select all that apply.</span>
-                </div>
-                <div className={styles.chipRow}>
-                  {[
-                    { key: 'reduce_support_volume', label: 'Reduce support volume' },
-                    { key: 'increase_leads', label: 'Increase qualified leads' },
-                    { key: 'automate_workflows', label: 'Automate internal workflows' },
-                    { key: 'increase_content_output', label: 'Increase content output' },
-                    { key: 'improve_reporting', label: 'Improve reporting & insight' },
-                  ].map((obj) => {
-                    const active = form.primaryObjectives.includes(obj.key as Objective);
-                    return (
-                      <button
-                        key={obj.key}
-                        type="button"
-                        onClick={() => toggleObjective(obj.key as Objective)}
-                        className={[styles.chip, active ? styles.chipActive : '']
-                          .filter(Boolean)
-                          .join(' ')}
-                      >
-                        {obj.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                {errors.primaryObjectives && (
-                  <div className={styles.errorText}>{errors.primaryObjectives}</div>
-                )}
-              </div>
-
-              <div className={styles.fieldGroup}>
-                <div className={styles.fieldLabelRow}>
-                  <span className={styles.fieldLabel}>Systems you’re interested in</span>
-                  <span className={styles.fieldHint}>
-                    This helps us prioritize the first build.
-                  </span>
-                </div>
-                <div className={styles.chipRow}>
-                  {[
-                    { key: 'ai_voice', label: 'AI Voice Reception' },
-                    { key: 'ai_support', label: 'AI Support System (Coming Soon)' },
-                    { key: 'ai_content', label: 'AI Content System (Coming Soon)' },
-                    { key: 'ai_data_bi', label: 'AI Data & BI (Coming Soon)' },
-                    { key: 'ai_workflow', label: 'AI Workflow Automation (Coming Soon)' },
-                  ].map((sys) => {
-                    const active = form.systems.includes(sys.key as SystemInterest);
-                    const isComingSoon = sys.label.includes('(Coming Soon)');
-                    return (
-                      <button
-                        key={sys.key}
-                        type="button"
-                        disabled={isComingSoon}
-                        onClick={() =>
-                          !isComingSoon && toggleSystemInterest(sys.key as SystemInterest)
-                        }
-                        className={[styles.chip, active ? styles.chipActive : '']
-                          .filter(Boolean)
-                          .join(' ')}
-                        style={isComingSoon ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                      >
-                        {sys.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                {errors.systems && <div className={styles.errorText}>{errors.systems}</div>}
-              </div>
-
-              <div className={styles.actionsRow}>
-                <button
-                  type="button"
-                  className={styles.secondaryButton}
-                  onClick={() => {
-                    setMessage(null);
-                    setStep(2);
-                  }}
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  className={styles.primaryButton}
-                  onClick={() => {
-                    if (validateStep(3)) setStep(4);
-                    else setMessage('Please fix errors on this step.');
-                  }}
-                >
-                  Continue to support & pain
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4 – SUPPORT & PAIN */}
-          {step === 4 && (
-            <div className={styles.formSection}>
-              <h2 className={styles.sectionTitle}>Support volume & pain points</h2>
-              <p className={styles.sectionSubtitle}>
-                This is where the blueprint gets sharp. Be candid — the more real this is, the more
-                useful your plan will be.
-              </p>
-
-              <div className={styles.fieldGroup}>
-                <div className={styles.fieldLabelRow}>
-                  <span className={styles.fieldLabel}>Support channels you care about</span>
-                  <span className={styles.fieldHint}>Select all that apply.</span>
-                </div>
-                <div className={styles.chipRow}>
-                  {[
-                    { key: 'email', label: 'Email' },
-                    { key: 'web_chat', label: 'Web chat' },
-                    { key: 'social_dm', label: 'Social DMs' },
-                    { key: 'phone', label: 'Phone' },
-                    { key: 'sms', label: 'SMS' },
-                  ].map((ch) => {
-                    const active = form.supportChannels.includes(ch.key as SupportChannel);
-                    return (
-                      <button
-                        key={ch.key}
-                        type="button"
-                        onClick={() => toggleSupportChannel(ch.key as SupportChannel)}
-                        className={[styles.chip, active ? styles.chipActive : '']
-                          .filter(Boolean)
-                          .join(' ')}
-                      >
-                        {ch.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className={styles.fieldGroup}>
-                <div className={styles.fieldLabelRow}>
-                  <span className={styles.fieldLabel}>
-                    Approx. daily inquiries (across channels)
-                  </span>
-                  <span className={styles.fieldHint}>A rough range is enough.</span>
-                </div>
-                <div className={styles.sliderRow}>
-                  <input
-                    type="range"
-                    min={0}
-                    max={200}
-                    step={5}
-                    value={dailyInquiriesNumber}
-                    onChange={(e) => update('dailyInquiries', e.target.value)}
-                    className={styles.slider}
-                  />
-                  <div className={styles.sliderValue}>~{dailyInquiriesNumber || 0} per day</div>
-                </div>
-                {errors.dailyInquiries && (
-                  <div className={styles.errorText}>{errors.dailyInquiries}</div>
-                )}
-              </div>
-
-              <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>
-                  What’s painful right now?
-                  <textarea
-                    className={styles.textarea}
-                    value={form.mainPainPoints}
-                    onChange={(e) => update('mainPainPoints', e.target.value)}
-                    rows={4}
-                    placeholder="Describe where things break down, what you’re constantly chasing, or the work that feels like it should already be automated."
-                  />
-                </label>
-                {errors.mainPainPoints && (
-                  <div className={styles.errorText}>{errors.mainPainPoints}</div>
-                )}
-              </div>
-
-              <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>
-                  Anything else we should know? (optional)
-                  <textarea
-                    className={styles.textarea}
-                    value={form.notes}
-                    onChange={(e) => update('notes', e.target.value)}
-                    rows={3}
-                    placeholder="Context, constraints, existing tools, teams, or timelines."
-                  />
-                </label>
-              </div>
-
-              <div className={styles.actionsRow}>
-                <button
-                  type="button"
-                  className={styles.secondaryButton}
-                  onClick={() => {
-                    setMessage(null);
-                    setStep(3);
-                  }}
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  className={styles.primaryButton}
-                  onClick={() => {
-                    void submit();
-                  }}
-                  disabled={loading}
-                >
-                  {loading ? 'Submitting…' : 'Submit for blueprint'}
-                </button>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {message && <div className={styles.messageArea}>{message}</div>}
+        </form>
       </main>
-    </Layout>
+    </div>
   );
 }
