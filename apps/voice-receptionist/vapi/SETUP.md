@@ -219,6 +219,60 @@ VAPI_PHONE_NUMBER=+1334xxx  # Your new number
 
 ---
 
+## Soft Systems Studio Demo Assistant (Outbound Calls)
+
+This assistant makes outbound demo calls when website visitors request a live AI demo.
+
+### Step 1: Create the Demo Assistant
+
+1. Go to **"Assistants"** → **"Create Assistant"** → **"Blank"**
+2. **Name:** `Soft Systems Studio Demo Agent`
+3. **First Message:** Leave blank (dynamically set per call)
+4. **Model:** OpenAI `gpt-4-turbo`
+5. **System Prompt:** Copy from `demo-assistant-config.json`
+6. **Voice:** ElevenLabs - Adam (`pNInz6obpgDQGcFmaJgB`) or another professional voice
+
+### Step 2: Get Your IDs
+
+After creating the assistant:
+1. Copy the **Assistant ID** (starts with `asst_`)
+2. Go to **Phone Numbers** and copy the **Phone Number ID** (the number that will make outbound calls)
+
+### Step 3: Configure Environment Variables
+
+Add these to your frontend deployment (Vercel, etc.):
+
+```bash
+VAPI_API_KEY=your_vapi_api_key
+VAPI_DEMO_ASSISTANT_ID=asst_xxx    # Demo assistant ID
+VAPI_PHONE_NUMBER_ID=phn_xxx       # Phone number ID for outbound calls
+```
+
+### Step 4: Test
+
+1. Go to your `/intake` page
+2. Enter a name and phone number
+3. Click **"Call Me Now"**
+4. You should receive a call within 30 seconds
+
+### How It Works
+
+1. User fills in name + phone on `/intake` page
+2. User clicks "Call Me Now"
+3. Frontend calls `/api/demo-call` endpoint
+4. Backend triggers Vapi outbound call via `POST https://api.vapi.ai/call/phone`
+5. Vapi calls the user with personalized greeting
+6. AI demonstrates voice capabilities and qualifies the lead
+
+### Webhook for Demo Calls (Optional)
+
+To receive end-of-call data for demo calls:
+1. Set the assistant's Server URL to your n8n webhook
+2. Create a workflow to handle demo call reports
+3. Use the `analysis.structuredData` to update your CRM with lead qualification data
+
+---
+
 ## Support
 
 - Vapi Documentation: https://docs.vapi.ai
