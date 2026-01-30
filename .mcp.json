@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "n8n": {
+      "command": "npx",
+      "args": ["-y", "@leonardsellem/n8n-mcp-server"],
+      "env": {
+        "N8N_API_URL": "${N8N_API_URL}",
+        "N8N_API_KEY": "${N8N_API_KEY}",
+        "N8N_WEBHOOK_USERNAME": "${N8N_WEBHOOK_USERNAME}",
+        "N8N_WEBHOOK_PASSWORD": "${N8N_WEBHOOK_PASSWORD}"
+      }
+    }
+  }
+}
