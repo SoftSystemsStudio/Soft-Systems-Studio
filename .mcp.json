@@ -9,6 +9,10 @@
         "N8N_WEBHOOK_USERNAME": "${N8N_WEBHOOK_USERNAME}",
         "N8N_WEBHOOK_PASSWORD": "${N8N_WEBHOOK_PASSWORD}"
       }
+    },
+    "claude-skills": {
+      "command": "uvx",
+      "args": ["claude-skills-mcp"]
     }
   }
 }
