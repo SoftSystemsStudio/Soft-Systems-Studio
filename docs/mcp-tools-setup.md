@@ -56,6 +56,53 @@ export N8N_WEBHOOK_PASSWORD="webhook_password"  # Optional
 
 ---
 
+## Claude Skills MCP Server
+
+Enables semantic search across Claude Agent Skills - find relevant skills, read skill documents, and browse the complete skill inventory. Works with your local `.claude/skills/` directory.
+
+### Setup
+
+1. **Install uv** (Python package manager) if not already installed:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+2. **Restart Claude Code** to load the MCP server
+
+No API keys or environment variables required - works offline with local caching.
+
+### Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `find_helpful_skills` | Semantic search to find skills matching your task description |
+| `read_skill_document` | Retrieve specific files (scripts, data, references) from a skill |
+| `list_skills` | Browse complete inventory of all available skills |
+
+### Skill Sources
+
+The server automatically loads skills from:
+- **Anthropic's Official Skills** (~15 skills)
+- **K-Dense AI Scientific Skills** (~78+ specialized skills)
+- **Local skills** from `~/.claude/skills/` and your repo's `.claude/skills/`
+
+### Usage Examples
+
+```
+"Find skills that help with PDF generation"
+"What skills are available for data visualization?"
+"Read the SKILL.md from the pdf skill"
+"List all available skills"
+```
+
+### Source
+
+- Repository: [K-Dense-AI/claude-skills-mcp](https://github.com/K-Dense-AI/claude-skills-mcp)
+- Package: `claude-skills-mcp` (via uvx)
+
+---
+
 ## Get Shit Done (GSD)
 
 A meta-prompting and context engineering system for Claude Code. Helps manage context quality, structured development phases, and verification workflows.
@@ -135,6 +182,10 @@ MCP servers are configured in `.mcp.json` at the repository root:
         "N8N_API_URL": "${N8N_API_URL}",
         "N8N_API_KEY": "${N8N_API_KEY}"
       }
+    },
+    "claude-skills": {
+      "command": "uvx",
+      "args": ["claude-skills-mcp"]
     }
   }
 }
@@ -155,6 +206,13 @@ MCP servers are configured in `.mcp.json` at the repository root:
 1. Re-run installer: `npx get-shit-done-cc@latest --claude --global`
 2. Check installation: Look for `.claude/commands/` directory
 3. Restart Claude Code
+
+### Claude Skills MCP not loading
+
+1. Verify uv is installed: `uv --version`
+2. If not installed: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+3. Test manually: `uvx claude-skills-mcp --help`
+4. Restart Claude Code
 
 ### MCP server errors in Claude Code
 
