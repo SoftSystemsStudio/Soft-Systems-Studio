@@ -13,134 +13,112 @@ export default function SystemStatus() {
   }, []);
 
   return (
-    <div className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-      {/* Ambient Glow Orbs */}
-      <div className="hero-glow animate-pulse-glow" />
+    <div className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+      {/* Subtle lime glow - matches logo */}
       <div
-        className="absolute w-[400px] h-[400px] rounded-full opacity-10 animate-float"
+        className="absolute w-[500px] h-[500px] rounded-full opacity-[0.07]"
         style={{
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-          top: '20%',
-          right: '10%',
-        }}
-      />
-      <div
-        className="absolute w-[300px] h-[300px] rounded-full opacity-10"
-        style={{
-          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-          bottom: '10%',
-          left: '15%',
-        }}
-      />
-
-      {/* Abstract Background Pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 25% 25%, rgba(168, 85, 247, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.3) 0%, transparent 50%)
-          `,
+          background: 'radial-gradient(circle, rgba(0, 255, 0, 0.5) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+          top: '10%',
+          left: '50%',
+          transform: 'translateX(-50%)',
         }}
       />
 
       {/* Main Content */}
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-        {/* Status Badge */}
+        {/* Urgency Badge - Moved to hero for visibility */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isLoaded ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full glass-card"
+          className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full border border-lime-500/30 bg-lime-500/10"
         >
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-sm font-mono text-gray-400">SYSTEM ONLINE</span>
+          <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
+          <span className="text-sm font-medium text-lime-400">
+            Only accepting 3 new clients this month
+          </span>
         </motion.div>
 
-        {/* Main Headline - Massive & Bold with Glow */}
-        <div className="relative">
-          {/* Purple glow behind headline */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 h-[300px] w-[300px] md:h-[400px] md:w-[400px] rounded-full bg-purple-600/20 blur-[100px]" />
+        {/* Pain Point Lead */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="text-lg text-gray-400 mb-4"
+        >
+          Tired of losing calls while you&apos;re on the job?
+        </motion.p>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={isLoaded ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative z-10 text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6"
-          >
-            Your Phone Rings.
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-              AI Answers.
-            </span>
-          </motion.h1>
-        </div>
+        {/* Main Headline - Outcome Focused */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1]"
+        >
+          Never Miss Another
+          <span className="block text-lime-400">$400 Job Again</span>
+        </motion.h1>
 
-        {/* Subheadline */}
+        {/* Value Proposition - Clear Benefit */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={isLoaded ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8 leading-relaxed"
         >
-          Websites that book appointments. AI receptionists that never sleep. Built for plumbers,
-          dentists, contractors, and local service businesses.
+          AI answers your calls 24/7, books appointments, and texts you summaries.
+          <span className="block mt-2 text-gray-400">
+            Built for plumbers, dentists, contractors, and local service businesses.
+          </span>
         </motion.p>
 
-        {/* CTA Buttons */}
+        {/* Single Primary CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isLoaded ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col items-center gap-4"
         >
           <a
             href="/intake"
-            className="px-8 py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105"
+            className="px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
           >
-            Get a Free Quote
+            Get Your Free Quote →
           </a>
-          <a
-            href="#pricing"
-            className="px-8 py-4 glass-card text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
-          >
-            See Pricing
-          </a>
+          <span className="text-sm text-gray-500">
+            30-day money-back guarantee • Setup in 2 weeks
+          </span>
         </motion.div>
 
-        {/* Trust Indicators */}
+        {/* Social Proof - Specific Results */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={isLoaded ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-16 flex flex-wrap items-center justify-center gap-8 text-gray-500"
+          className="mt-16 p-6 rounded-xl border border-white/10 bg-white/5 max-w-xl mx-auto"
         >
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-white">50+</span>
-            <span className="text-sm">
-              Projects
-              <br />
-              Delivered
-            </span>
-          </div>
-          <div className="w-px h-8 bg-gray-800" />
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-white">95%</span>
-            <span className="text-sm">
-              Client
-              <br />
-              Satisfaction
-            </span>
-          </div>
-          <div className="w-px h-8 bg-gray-800" />
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-white">24hr</span>
-            <span className="text-sm">
-              Response
-              <br />
-              Time
-            </span>
+          <p className="text-gray-300 italic mb-3">
+            &ldquo;Booked 8 new jobs in my first month. The AI answers calls while I&apos;m on job
+            sites.&rdquo;
+          </p>
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold">
+                M
+              </div>
+              <div className="text-left">
+                <p className="text-white font-medium text-sm">Mike T.</p>
+                <p className="text-gray-500 text-xs">MT Plumbing Services</p>
+              </div>
+            </div>
+            <div className="w-px h-8 bg-gray-700" />
+            <div className="text-left">
+              <p className="text-lime-400 font-bold">+8 jobs/mo</p>
+              <p className="text-gray-500 text-xs">100% calls answered</p>
+            </div>
           </div>
         </motion.div>
       </div>

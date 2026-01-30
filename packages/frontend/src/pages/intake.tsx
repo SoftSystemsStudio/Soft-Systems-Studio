@@ -260,11 +260,13 @@ export default function IntakePage() {
                 <select
                   value={form.businessType}
                   onChange={(e) => update('businessType', e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                  className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors text-white"
                 >
-                  <option value="">Select your industry...</option>
+                  <option value="" className="bg-[#1a1a1a] text-gray-400">
+                    Select your industry...
+                  </option>
                   {BUSINESS_TYPES.map((type) => (
-                    <option key={type} value={type}>
+                    <option key={type} value={type} className="bg-[#1a1a1a] text-white">
                       {type}
                     </option>
                   ))}
@@ -277,11 +279,13 @@ export default function IntakePage() {
                 <select
                   value={form.monthlyCallVolume}
                   onChange={(e) => update('monthlyCallVolume', e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                  className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg focus:outline-none focus:border-purple-500 transition-colors text-white"
                 >
-                  <option value="">Select call volume...</option>
+                  <option value="" className="bg-[#1a1a1a] text-gray-400">
+                    Select call volume...
+                  </option>
                   {CALL_VOLUMES.map((volume) => (
-                    <option key={volume} value={volume}>
+                    <option key={volume} value={volume} className="bg-[#1a1a1a] text-white">
                       {volume}
                     </option>
                   ))}

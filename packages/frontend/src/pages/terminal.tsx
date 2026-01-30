@@ -46,6 +46,11 @@ const ModuleBuilder = dynamic(() => import('@/components/sentient/builder/Module
   ),
 });
 
+// Use SSR instead of static generation for pages with 3D components
+export function getServerSideProps() {
+  return { props: {} };
+}
+
 export default function SentientTerminal() {
   const [isLoaded, setIsLoaded] = useState(false);
 

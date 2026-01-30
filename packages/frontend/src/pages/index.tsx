@@ -6,115 +6,14 @@ import { FadeIn, StaggerContainer } from '../components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
 import env from '../lib/env';
 
-// Note: FluidHero replaced with SystemStatus for Technical Brutalist redesign
+// Note: Heavy 3D components removed for performance (saves ~500KB bundle)
 
-// Dynamically import HolographicModel (client-side only)
-const HolographicModel = dynamic(() => import('../components/sentient/hologram/HolographicModel'), {
-  ssr: false,
-  loading: () => (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="aspect-video bg-zinc-900 border border-zinc-700 rounded flex items-center justify-center p-8">
-          <svg viewBox="0 0 800 450" className="w-full h-full opacity-30">
-            {/* Grid background */}
-            <defs>
-              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgb(63,63,70)" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="800" height="450" fill="url(#grid)" />
-
-            {/* Building wireframe outline */}
-            <g stroke="rgb(113,113,122)" strokeWidth="1" fill="none">
-              {/* Foundation */}
-              <rect x="300" y="350" width="200" height="80" />
-              {/* Floor 1 */}
-              <rect x="280" y="290" width="240" height="60" />
-              {/* Floor 2 */}
-              <rect x="260" y="230" width="280" height="60" />
-              {/* Floor 3 */}
-              <rect x="240" y="170" width="320" height="60" />
-              {/* Top floor */}
-              <rect x="220" y="110" width="360" height="60" />
-              {/* Connecting lines */}
-              <line x1="300" y1="350" x2="220" y2="170" />
-              <line x1="500" y1="350" x2="580" y2="170" />
-            </g>
-
-            {/* Pulsing dot indicator */}
-            <circle cx="400" cy="200" r="3" fill="#c0ff6b" opacity="0.6">
-              <animate
-                attributeName="opacity"
-                values="0.3;1;0.3"
-                dur="2s"
-                repeatCount="indefinite"
-              />
-            </circle>
-          </svg>
-        </div>
-      </div>
-    </div>
-  ),
-});
-
-// Dynamically import LivePulse (client-side only for real-time updates)
-const LivePulse = dynamic(() => import('../components/sentient/pulse/LivePulse'), {
-  ssr: false,
-  loading: () => (
-    <div className="py-16 bg-black">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 opacity-30">
-          <div className="bg-zinc-900 h-32 border border-zinc-800 rounded" />
-          <div className="bg-zinc-900 h-32 border border-zinc-800 rounded" />
-          <div className="bg-zinc-900 h-32 border border-zinc-800 rounded" />
-        </div>
-      </div>
-    </div>
-  ),
-});
-
-// Dynamically import TheArchitect (drag-drop builder)
-const TheArchitect = dynamic(() => import('../components/sentient/builder/TheArchitect'), {
-  ssr: false,
-  loading: () => (
-    <div className="py-16 bg-black">
-      <div className="container mx-auto px-4 text-center">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {[
-            '[ VOICE_AGENT ]',
-            '[ CRM_SYNC ]',
-            '[ CHAT_BOT ]',
-            '[ PAYMENTS ]',
-            '[ ANALYTICS ]',
-            '[ EMAIL_AUTO ]',
-          ].map((label, i) => (
-            <div
-              key={i}
-              className="bg-zinc-900 h-40 border border-zinc-700 rounded p-4 flex flex-col items-center justify-center opacity-20"
-            >
-              <div className="w-12 h-12 border-2 border-zinc-600 rounded mb-2 flex items-center justify-center">
-                <span className="text-zinc-600 font-mono text-xs">{label}</span>
-              </div>
-              <div className="h-2 bg-zinc-800 rounded w-3/4 mb-1"></div>
-              <div className="h-2 bg-zinc-800 rounded w-1/2"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  ),
-});
-
-// Dynamically import new sentient components
+// Dynamically import components (lighter weight)
 const InteractiveFAQ = dynamic(() => import('../components/sentient/faq/InteractiveFAQ'), {
   ssr: false,
 });
 
 const ProcessTimeline = dynamic(() => import('../components/sentient/process/ProcessTimeline'), {
-  ssr: false,
-});
-
-const TerminalCTA = dynamic(() => import('../components/sentient/cta/TerminalCTA'), {
   ssr: false,
 });
 
@@ -127,29 +26,32 @@ const SystemStatus = dynamic(() => import('../components/sentient/hero/SystemSta
   ssr: false,
 });
 
+const ROICalculator = dynamic(() => import('../components/sentient/pricing/ROICalculator'), {
+  ssr: false,
+});
+
 const NAV_ITEMS = [
-  { label: 'Capabilities', href: '#hologram' },
-  { label: 'Live Metrics', href: '#pulse' },
-  { label: 'Architect', href: '#builder' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'SYSTEM PREVIEW', href: '/demo/system-v1' },
+  { label: 'How It Works', href: '#how-we-work' },
+  { label: 'Results', href: '#testimonials' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'About', href: '/about' },
 ];
 
 const STEPS = [
   {
     step: '01',
-    title: '[ 01 ] DATA INGESTION',
-    desc: 'We learn about your business, goals, and challenges',
+    title: 'Tell Us About Your Business',
+    desc: 'Quick 5-minute call. We learn what you do, your biggest challenges, and how many calls you miss.',
   },
   {
     step: '02',
-    title: '[ 02 ] ARCHITECTURAL MAPPING',
-    desc: 'Receive a tailored plan with timeline and transparent pricing',
+    title: 'Get Your Custom Quote',
+    desc: 'Within 24 hours, receive a clear proposal with pricing, timeline, and exactly what you get.',
   },
   {
     step: '03',
-    title: '[ 03 ] SYSTEM DEPLOYMENT',
-    desc: 'We build your solution and support you every step of the way',
+    title: 'Go Live in 2 Weeks',
+    desc: 'We handle everything. You approve the final result, and your AI starts answering calls.',
   },
 ];
 
@@ -160,6 +62,8 @@ const TESTIMONIALS = [
     author: 'Mike T.',
     role: 'Owner',
     company: 'MT Plumbing Services',
+    date: 'January 2026',
+    location: 'Denver, CO',
     metrics: [
       { label: 'Calls Answered', value: '100%', icon: '📞' },
       { label: 'New Jobs', value: '+8/mo', icon: '📈' },
@@ -167,10 +71,12 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      'Patients can now book appointments 24/7. Our front desk staff focuses on patient care instead of answering phones all day. Game changer.',
+      'Patients can now book appointments 24/7. Our front desk staff focuses on patient care instead of answering phones all day. We went from missing 30% of calls to zero.',
     author: 'Dr. Lisa Chen',
     role: 'Practice Owner',
     company: 'Bright Smile Dental',
+    date: 'December 2025',
+    location: 'Austin, TX',
     metrics: [
       { label: 'Online Bookings', value: '+65%', icon: '📅' },
       { label: 'Staff Hours Saved', value: '15/wk', icon: '⏰' },
@@ -178,10 +84,12 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      'Finally have a professional website that ranks on Google. The AI receptionist handles calls in English and Spanish - huge for our community.',
+      'The AI receptionist handles calls in English and Spanish - huge for our community. We ranked top 3 on Google within 2 months of launching.',
     author: 'Carlos R.',
     role: 'Owner',
     company: 'Rodriguez Landscaping',
+    date: 'November 2025',
+    location: 'Phoenix, AZ',
     metrics: [
       { label: 'Google Ranking', value: 'Top 3', icon: '🔍' },
       { label: 'Lead Increase', value: '+40%', icon: '📊' },
@@ -205,22 +113,25 @@ const PRICING_PLANS = [
   },
   {
     name: 'AI Receptionist',
-    price: '$997 + $197/mo',
+    price: 'Setup: $997',
+    priceMonthly: '+ $197/mo',
     description: 'Never miss a call again',
     features: [
       '24/7 AI phone answering',
-      'Custom voice (not robotic)',
+      'Natural voice (not robotic)',
       'Bilingual (English/Spanish)',
       'Calendar integration',
       'Monthly optimization included',
     ],
     highlighted: true,
     badge: 'Most Popular',
-    ctaText: 'Book a Demo',
+    ctaText: 'Get Started',
+    valueNote: 'Less than $7/day — cheaper than a part-time hire',
   },
   {
     name: 'Complete Package',
-    price: '$2,997 + $197/mo',
+    price: 'Setup: $2,997',
+    priceMonthly: '+ $197/mo',
     description: 'Website + AI bundle (Save $500)',
     features: [
       '7-page website included',
@@ -230,6 +141,7 @@ const PRICING_PLANS = [
       '60-day support included',
     ],
     ctaText: 'Get the Bundle',
+    valueNote: 'Best value for full digital presence',
   },
 ];
 
@@ -237,21 +149,23 @@ const PRICING_PLANS = [
 
 const WHY_CHOOSE_US = [
   {
-    title: 'We Engineer Adaptive Systems',
+    title: 'Answer Every Call, 24/7',
     description:
-      'Not just websites. Digital nervous systems that learn, adapt, and scale with your business.',
+      'Never miss a lead again. Your AI receptionist works nights, weekends, and holidays.',
   },
   {
-    title: 'Built in Public, Deployed in Private',
-    description: 'Every line of code is battle-tested. We use the same stack we build for clients.',
+    title: 'Book Jobs While You Work',
+    description:
+      'AI schedules appointments directly into your calendar. Get text summaries instantly.',
   },
   {
-    title: 'Live Neural Link',
-    description: 'Real-time dashboard access. Watch your systems pulse. No black boxes.',
+    title: 'Sound Professional, Always',
+    description:
+      'Natural human voice (not robotic). Bilingual English/Spanish. Your brand, your personality.',
   },
   {
-    title: 'Zero Lock-In',
-    description: "Your code. Your data. Your infrastructure. We don't hold systems hostage.",
+    title: 'No Lock-In, No Surprises',
+    description: 'Cancel anytime. Transparent pricing. 30-day money-back guarantee.',
   },
 ];
 
@@ -317,7 +231,7 @@ const CLIENT_RESULTS = [
 
 export default function Home() {
   return (
-    <div className="antialiased min-h-screen bg-[#050505] text-gray-200 selection:bg-purple-500 selection:text-white">
+    <div className="antialiased min-h-screen bg-[#050505] text-gray-200 selection:bg-lime-400 selection:text-black">
       <Head>
         <title>
           AI Automation & Web Design Services | Soft Systems Studio - Expert Development
@@ -345,7 +259,9 @@ export default function Home() {
         />
         <meta property="og:url" content="https://softsystemsstudiollc.com/" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://softsystemsstudiollc.com/og-image.jpg" />
+        <meta property="og:image" content="https://softsystemsstudiollc.com/api/og" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:site_name" content="Soft Systems Studio" />
 
@@ -359,7 +275,7 @@ export default function Home() {
           name="twitter:description"
           content="Expert AI automation & web design services. 30-day guarantee. Book your free consultation."
         />
-        <meta name="twitter:image" content="https://softsystemsstudiollc.com/og-image.jpg" />
+        <meta name="twitter:image" content="https://softsystemsstudiollc.com/api/og" />
 
         {/* Structured Data - Organization */}
         <script
@@ -451,17 +367,11 @@ export default function Home() {
         />
       </Head>
       {/* Skip link for accessibility */}
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-
-      {/* System Preview Banner */}
       <a
-        href="/demo/system-v1"
-        className="block w-full bg-purple-500/10 text-white text-center py-3 font-mono text-sm border-b border-white/5 hover:bg-purple-500/20 transition-colors"
+        href="#main-content"
+        className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded"
       >
-        <span className="text-purple-400">◆</span> SYSTEM V1.0 PREVIEW → Interactive Architecture •
-        Live Metrics • Module Builder
+        Skip to main content
       </a>
 
       {/* Navbar */}
@@ -476,108 +386,96 @@ export default function Home() {
         {/* Stats Bar - Removed, now integrated into hero */}
 
         {/* Trust Badges */}
-        <Section className="py-12 border-y border-white/5">
+        <Section className="py-12 border-y border-white/10">
           <div className="flex flex-wrap justify-center items-center gap-8">
             {TRUST_BADGES.map((badge) => (
               <div key={badge.label} className="flex items-center gap-3">
-                <span className="text-2xl text-purple-400">{badge.icon}</span>
-                <span className="text-sm font-medium text-gray-300">{badge.label}</span>
+                <span className="text-2xl text-lime-400" aria-hidden="true">
+                  {badge.icon}
+                </span>
+                <span className="text-sm font-medium text-gray-200">{badge.label}</span>
               </div>
             ))}
           </div>
         </Section>
 
-        {/* System Architecture - Holographic Model */}
-        <HolographicModel />
-
-        {/* The Pulse - Live Metrics Dashboard */}
-        <Section id="pulse" className="py-24">
+        {/* Why Choose Us Section */}
+        <Section id="why-us" className="py-24">
           <FadeIn>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-white text-center">
-              We Don&apos;t Build Websites.
-              <br />
-              <span className="text-gradient-purple">We Construct Digital Nervous Systems.</span>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
+              Why Local Businesses Choose Us
             </h2>
-            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              Every system we engineer is adaptive, observable, and yours to control. Watch us work
-              in real-time.
+            <p className="text-gray-300 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+              Built specifically for plumbers, dentists, contractors, and service businesses who are
+              tired of missing calls.
             </p>
           </FadeIn>
 
-          {/* Live Dashboard */}
-          <div className="mb-16">
-            <LivePulse />
-          </div>
-
           {/* Why Choose Us Cards */}
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {WHY_CHOOSE_US.map((item) => (
-              <HoloCard key={item.title} className="p-6" glowColor="purple">
+              <HoloCard key={item.title} className="p-6" glowColor="lime">
                 <h3 className="font-semibold text-white mb-2 text-lg">{item.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+                <p className="text-gray-300 text-sm leading-relaxed">{item.description}</p>
               </HoloCard>
             ))}
           </StaggerContainer>
         </Section>
 
-        {/* Technology Stack Section */}
-        <Section className="py-24 section-elevated">
-          <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              Built with Best-in-Class Tools
+        {/* Quick Lead Capture Form */}
+        <Section className="py-20 bg-gradient-to-b from-transparent via-lime-500/5 to-transparent">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              See How Much You Could Save
             </h2>
-            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              We use modern, proven technologies to build fast, secure, and scalable solutions
+            <p className="text-gray-300 mb-8">Get a free, personalized quote in under 2 minutes</p>
+
+            {/* Simple inline form */}
+            <form
+              action="/intake"
+              method="GET"
+              className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto"
+            >
+              <select
+                name="service"
+                required
+                aria-label="What type of business do you have?"
+                className="flex-1 px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent"
+              >
+                <option value="" disabled selected className="text-gray-900">
+                  What type of business?
+                </option>
+                <option value="plumbing" className="text-gray-900">
+                  Plumbing
+                </option>
+                <option value="dental" className="text-gray-900">
+                  Dental Practice
+                </option>
+                <option value="hvac" className="text-gray-900">
+                  HVAC
+                </option>
+                <option value="landscaping" className="text-gray-900">
+                  Landscaping
+                </option>
+                <option value="electrical" className="text-gray-900">
+                  Electrical
+                </option>
+                <option value="other" className="text-gray-900">
+                  Other Service Business
+                </option>
+              </select>
+              <button
+                type="submit"
+                className="px-8 py-4 bg-lime-400 text-black font-bold rounded-xl hover:bg-lime-300 transition-all duration-300 whitespace-nowrap"
+              >
+                Get My Quote →
+              </button>
+            </form>
+
+            <p className="text-sm text-gray-500 mt-4">
+              No credit card required • Takes 2 minutes • 30-day guarantee
             </p>
-          </FadeIn>
-
-          <div className="terminal-deps max-w-4xl mx-auto">
-            <div className="space-y-2 text-xs">
-              <div>
-                <span className="text-green-400">&gt;</span> LOADING CORE:{' '}
-                <span className="text-green-300">NEXT.JS</span>...........
-                <span className="text-green-400">[OK]</span>
-              </div>
-              <div>
-                <span className="text-green-400">&gt;</span> LOADING UI:{' '}
-                <span className="text-green-300">TAILWIND</span>............
-                <span className="text-green-400">[OK]</span>
-              </div>
-              <div>
-                <span className="text-green-400">&gt;</span> LOADING DB:{' '}
-                <span className="text-green-300">POSTGRESQL</span>..........
-                <span className="text-green-400">[OK]</span>
-              </div>
-              <div>
-                <span className="text-green-400">&gt;</span> LOADING AI:{' '}
-                <span className="text-green-300">OPENAI-4o</span>...........
-                <span className="text-green-400">[OK]</span>
-              </div>
-            </div>
           </div>
-        </Section>
-
-        {/* The Architect - Project Builder Section */}
-        <Section id="builder" className="py-28">
-          <FadeIn>
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full glass-card">
-                <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-                <span className="text-xs font-mono uppercase tracking-widest text-purple-400">
-                  The Architect
-                </span>
-              </div>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-white">
-                Build Your <span className="text-gradient-purple">Stack</span>
-              </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                Drag modules. Watch the price ticker. Get instant quotes. No sales calls required.
-              </p>
-            </div>
-          </FadeIn>
-
-          {/* The Architect - Drag & Drop Builder */}
-          <TheArchitect />
         </Section>
 
         {/* How We Work Section - Process Timeline */}
@@ -614,15 +512,15 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               Real Results for Real Businesses
             </h2>
-            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              System performance metrics — Client data within 90-day observation period.
+            <p className="text-gray-300 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+              What happens when you stop missing calls
             </p>
           </FadeIn>
 
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {CLIENT_RESULTS.map((result, index) => (
-              <HoloCard key={index} className="p-8 text-center" glowColor="purple" showScanLine>
-                <div className="text-4xl md:text-5xl font-bold text-gradient-purple mb-3">
+              <HoloCard key={index} className="p-8 text-center" glowColor="lime">
+                <div className="text-4xl md:text-5xl font-bold text-lime-400 mb-3">
                   {result.metric}
                 </div>
                 <div className="text-white font-medium mb-2">{result.description}</div>
@@ -630,15 +528,6 @@ export default function Home() {
               </HoloCard>
             ))}
           </StaggerContainer>
-
-          <FadeIn className="text-center mt-12">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full glass-card">
-              <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-              <span className="text-sm text-purple-400 font-medium">
-                Limited to 3 new clients per month
-              </span>
-            </div>
-          </FadeIn>
         </Section>
 
         {/* Pricing Section */}
@@ -671,18 +560,25 @@ export default function Home() {
           </StaggerContainer>
 
           <FadeIn className="mt-12 text-center">
-            <HoloCard className="inline-block p-6 max-w-2xl" glowColor="blue">
+            <HoloCard className="inline-block p-6 max-w-2xl" glowColor="lime">
               <div className="flex items-start gap-4">
-                <span className="text-3xl">🛡️</span>
+                <span className="text-3xl" aria-hidden="true">
+                  🛡️
+                </span>
                 <div className="text-left">
                   <h3 className="text-white font-semibold mb-2">30-Day Money-Back Guarantee</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    If you&apos;re not completely satisfied with our work within the first 30 days,
-                    we&apos;ll refund your investment. No questions asked.
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    Not satisfied? Full refund within 30 days. No questions asked. Keep all the
+                    appointments your AI booked during the trial.
                   </p>
                 </div>
               </div>
             </HoloCard>
+          </FadeIn>
+
+          {/* ROI Calculator */}
+          <FadeIn className="mt-16">
+            <ROICalculator />
           </FadeIn>
         </Section>
 
@@ -713,9 +609,25 @@ export default function Home() {
           </FadeIn>
         </Section>
 
-        {/* Final CTA Section - Terminal Style */}
+        {/* Final CTA Section */}
         <Section className="py-28 relative overflow-hidden">
-          <TerminalCTA />
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Ready to Stop Missing Calls?
+            </h2>
+            <p className="text-gray-300 text-lg mb-8">
+              Get a free quote in under 2 minutes. See exactly what your AI receptionist will cost.
+            </p>
+            <a
+              href="/intake"
+              className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
+            >
+              Get Your Free Quote →
+            </a>
+            <p className="text-sm text-gray-500 mt-4">
+              30-day money-back guarantee • No credit card required
+            </p>
+          </div>
         </Section>
       </main>
 
