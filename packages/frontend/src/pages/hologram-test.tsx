@@ -1,5 +1,10 @@
 import dynamic from 'next/dynamic';
 
+// Use SSR instead of static generation for pages with 3D components
+export function getServerSideProps() {
+  return { props: {} };
+}
+
 // Dynamic import to avoid SSR issues with Three.js
 const HolographicModel = dynamic(() => import('@/components/sentient/hologram/HolographicModel'), {
   ssr: false,

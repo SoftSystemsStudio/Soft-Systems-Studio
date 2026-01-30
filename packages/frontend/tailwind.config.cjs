@@ -5,48 +5,33 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Technical Brutalist Palette
-        blueprint: {
-          bg: '#F0F0F0', // Off-white background
-          paper: '#FAFAFA', // Slightly lighter
-          grid: '#D0D0D0', // Grid lines
-          dark: '#1A1A1A', // Almost black
-          black: '#000000', // Pure black
-        },
-        terminal: {
-          green: '#00FF00', // Classic terminal green
-          orange: '#FF6B00', // Safety orange
-          red: '#FF0000', // Alert red
-          yellow: '#FFFF00', // Warning yellow
-        },
-        // Legacy colors (for gradual migration)
+        // Brand Colors (aligned with logo: black, gray, lime green)
         brand: {
-          lime: '#00FF00',
-          'lime-dark': '#00DD00',
-          light: '#1A1A1A',
-          gray: '#656565',
-          black: '#000000',
+          lime: '#84CC16', // Primary accent from logo
+          'lime-bright': '#A3E635', // Hover state
+          'lime-dark': '#65A30D', // Active state
+          gray: '#9CA3AF', // Logo gray
+          'gray-light': '#D1D5DB', // Text gray
+          black: '#000000', // Background
         },
-        bg: '#F0F0F0',
-        text: '#000000',
-        muted: '#656565',
-        border: '#000000',
-        surface: '#FAFAFA',
-        accent: '#00FF00',
-        'primary-accent': '#00FF00',
+        // Simplified dark theme palette
+        bg: '#050505',
+        text: '#F3F4F6',
+        muted: '#9CA3AF',
+        border: '#374151',
+        surface: '#111111',
+        accent: '#84CC16',
+        'primary-accent': '#84CC16',
+        // Single glow color (lime only)
         glow: {
-          cyan: '#22d3ee',
-          lime: '#00FF00',
-          fuchsia: '#d946ef',
+          lime: '#84CC16',
         },
       },
       boxShadow: {
-        glow: '0 0 20px 2px rgba(192, 255, 107, 0.4)',
-        'glow-sm': '0 0 10px 1px rgba(192, 255, 107, 0.3)',
-        'glow-lg': '0 0 30px 4px rgba(192, 255, 107, 0.5)',
-        'glow-cyan': '0 0 20px 4px rgba(34, 211, 238, 0.5)',
-        'glow-fuchsia': '0 0 20px 4px rgba(217, 70, 239, 0.5)',
-        neon: '0 0 5px #c0ff6b, 0 0 20px #c0ff6b, 0 0 40px #c0ff6b',
+        // Subtle, professional glows (reduced intensity)
+        glow: '0 0 15px 2px rgba(132, 204, 22, 0.2)',
+        'glow-sm': '0 0 8px 1px rgba(132, 204, 22, 0.15)',
+        'glow-lg': '0 0 20px 4px rgba(132, 204, 22, 0.25)',
       },
       backgroundImage: {
         'gradient-dark': 'linear-gradient(180deg, #000000 0%, #0a0a0a 50%, #000000 100%)',
@@ -72,8 +57,8 @@ module.exports = {
           '50%': { opacity: '0.5' },
         },
         'glow-pulse': {
-          '0%, 100%': { boxShadow: '0 0 20px 2px rgba(192, 255, 107, 0.4)' },
-          '50%': { boxShadow: '0 0 40px 8px rgba(192, 255, 107, 0.6)' },
+          '0%, 100%': { boxShadow: '0 0 10px 2px rgba(132, 204, 22, 0.2)' },
+          '50%': { boxShadow: '0 0 15px 4px rgba(132, 204, 22, 0.3)' },
         },
       },
       animation: {

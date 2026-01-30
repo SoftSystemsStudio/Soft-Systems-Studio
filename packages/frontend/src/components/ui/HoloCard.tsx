@@ -3,7 +3,7 @@ import React from 'react';
 interface HoloCardProps {
   children: React.ReactNode;
   className?: string;
-  glowColor?: 'purple' | 'blue' | 'cyan';
+  glowColor?: 'purple' | 'blue' | 'cyan' | 'lime';
   showScanLine?: boolean;
 }
 
@@ -28,6 +28,13 @@ const glowColors = {
     scanBg: 'bg-cyan-500',
     scanGlow: 'via-cyan-500/80',
     hoverBorder: 'hover:border-cyan-500/40',
+  },
+  lime: {
+    border: 'border-lime-500/20',
+    shadow: 'shadow-lime-500/10',
+    scanBg: 'bg-lime-500',
+    scanGlow: 'via-lime-500/80',
+    hoverBorder: 'hover:border-lime-500/40',
   },
 };
 
