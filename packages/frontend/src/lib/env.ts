@@ -32,6 +32,11 @@ const envSchema = z.object({
 
   // Cron
   CRON_SECRET: z.string().optional(),
+
+  // Vapi (server-side only)
+  VAPI_API_KEY: z.string().optional(),
+  VAPI_DEMO_ASSISTANT_ID: z.string().optional(),
+  VAPI_PHONE_NUMBER_ID: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

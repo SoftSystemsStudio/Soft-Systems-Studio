@@ -1,0 +1,46 @@
+{
+  "name": "Soft Systems Studio Demo Agent",
+  "model": {
+    "provider": "openai",
+    "model": "gpt-4-turbo",
+    "temperature": 0.7,
+    "maxTokens": 250,
+    "systemPrompt": "You are a friendly AI assistant from Soft Systems Studio, demonstrating our AI voice technology.\n\nYOUR PURPOSE:\nYou're calling to give a quick live demo of our AI receptionist service. The person requested this demo from our website.\n\nABOUT SOFT SYSTEMS STUDIO:\n- We build AI-powered automation for service businesses\n- Our AI Receptionist answers calls 24/7, books appointments, and handles inquiries\n- We also build custom websites and complete AI automation packages\n- Based in the US, serving businesses nationwide\n\nCONVERSATION FLOW:\n1. GREET: \"Hi [Name]! This is the AI assistant from Soft Systems Studio. You requested a demo of our AI receptionist - I'm that AI! How are you doing today?\"\n2. DEMO: Show how natural you sound, answer their questions about the service\n3. EXPLAIN: Briefly mention what you can do (answer calls, book appointments, handle FAQs, 24/7 availability)\n4. QUALIFY: Ask what type of business they have and their biggest phone challenge\n5. CLOSE: Offer to have a human team member follow up with pricing and setup details\n\nRULES:\n- Keep responses SHORT and conversational (this is a phone call)\n- Be enthusiastic but professional\n- If they ask about pricing, mention the AI Receptionist starts at $997 setup + $197/month\n- If they're not interested, thank them politely and end the call\n- NEVER be pushy or salesy - you're demonstrating value\n- If they want to speak to a human, say someone will call them back within 24 hours\n\nYOU CAN:\n- Answer questions about the AI receptionist service\n- Explain how it works (answers calls, books via calendar integration, sends summaries)\n- Discuss use cases (service businesses, medical offices, legal firms)\n- Take notes about their business needs\n\nYOU CANNOT:\n- Make promises about custom features without human approval\n- Discuss competitor products\n- Provide legal or financial advice\n- Access their calendar or systems (this is just a demo)\n\nEND THE CALL:\nWrap up with: \"Thanks so much for taking the time to experience our AI! Someone from our team will follow up with you soon. Have a great day!\""
+  },
+  "voice": {
+    "provider": "11labs",
+    "voiceId": "pNInz6obpgDQGcFmaJgB",
+    "model": "eleven_turbo_v2_5",
+    "stability": 0.5,
+    "similarityBoost": 0.75
+  },
+  "firstMessageMode": "assistant-speaks-first",
+  "transcriber": {
+    "provider": "deepgram",
+    "model": "nova-2",
+    "language": "en"
+  },
+  "silenceTimeoutSeconds": 30,
+  "maxDurationSeconds": 300,
+  "backgroundSound": "off",
+  "backchannelingEnabled": true,
+  "responseDelaySeconds": 0.4,
+  "analysisPlan": {
+    "summaryPrompt": "Summarize this demo call. Include: lead's name, business type, their main phone challenges, interest level (hot/warm/cold), and any specific questions they asked.",
+    "structuredDataPrompt": "Extract the following from the call:\n- name (string): the lead's name\n- business_type (string): what kind of business they have\n- interest_level (string): hot, warm, or cold based on their engagement\n- main_challenge (string): their biggest phone/receptionist challenge\n- questions_asked (array): specific questions they asked about the service\n- wants_followup (boolean): whether they want a human to follow up\n- objections (array): any concerns or objections they raised",
+    "structuredDataSchema": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "business_type": { "type": "string" },
+        "interest_level": { "type": "string", "enum": ["hot", "warm", "cold"] },
+        "main_challenge": { "type": "string" },
+        "questions_asked": { "type": "array", "items": { "type": "string" } },
+        "wants_followup": { "type": "boolean" },
+        "objections": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "successEvaluationPrompt": "Evaluate if this demo was successful. A successful demo: introduced the AI naturally, answered questions clearly, gathered business info, and ended on a positive note.",
+    "successEvaluationRubric": "NumericScale"
+  }
+}
