@@ -104,6 +104,135 @@ The server automatically loads skills from:
 
 ---
 
+## GitHub MCP Server
+
+Enables Claude to interact with GitHub - search repositories, manage issues/PRs, read files, and more.
+
+### Setup
+
+1. **Create a GitHub Personal Access Token**:
+   - Go to GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens
+   - Create a token with appropriate repository permissions (read/write for issues, PRs, contents)
+
+2. **Set environment variable**:
+
+```bash
+export GITHUB_PERSONAL_ACCESS_TOKEN="ghp_your_token_here"
+```
+
+3. **Restart Claude Code** to load the MCP server
+
+### Available Tools
+
+| Tool                  | Description                          |
+| --------------------- | ------------------------------------ |
+| `search_repositories` | Search for GitHub repositories       |
+| `get_file_contents`   | Read file contents from a repository |
+| `create_issue`        | Create a new issue                   |
+| `list_issues`         | List issues in a repository          |
+| `create_pull_request` | Create a new pull request            |
+| `list_pull_requests`  | List pull requests                   |
+| `get_pull_request`    | Get details of a specific PR         |
+| `create_branch`       | Create a new branch                  |
+| `push_files`          | Push file changes to a repository    |
+
+### Usage Examples
+
+```
+"Search for repositories about voice agents"
+"List open issues in this repo"
+"Get the contents of package.json from the main branch"
+"Create a PR from feature-branch to main"
+```
+
+### Source
+
+- Repository: [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/tree/main/src/github)
+- npm: `@modelcontextprotocol/server-github`
+
+---
+
+## PostgreSQL MCP Server
+
+Direct database access for schema exploration, queries, and debugging.
+
+### Setup
+
+1. **Set your database connection URL**:
+
+```bash
+export DATABASE_URL="postgresql://user:password@localhost:5432/database_name"
+```
+
+2. **Restart Claude Code** to load the MCP server
+
+### Available Tools
+
+| Tool    | Description                                        |
+| ------- | -------------------------------------------------- |
+| `query` | Execute read-only SQL queries against the database |
+
+### Features
+
+- **Schema introspection** - Explores tables, columns, types, and relationships
+- **Read-only by default** - Safe for production databases
+- **Query execution** - Run SELECT queries to explore data
+
+### Usage Examples
+
+```
+"Show me the schema for the users table"
+"What tables exist in this database?"
+"SELECT * FROM agents WHERE status = 'active' LIMIT 10"
+"How many records are in the executions table?"
+```
+
+### Source
+
+- Repository: [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/tree/main/src/postgres)
+- npm: `@modelcontextprotocol/server-postgres`
+
+---
+
+## Memory MCP Server
+
+Persistent knowledge graph for maintaining context across sessions. Stores entities, relationships, and observations.
+
+### Setup
+
+No configuration required - data is stored locally.
+
+**Restart Claude Code** to load the MCP server.
+
+### Available Tools
+
+| Tool                  | Description                                |
+| --------------------- | ------------------------------------------ |
+| `create_entities`     | Create new entities in the knowledge graph |
+| `create_relations`    | Create relationships between entities      |
+| `add_observations`    | Add observations/facts about entities      |
+| `search_nodes`        | Search for entities by name or type        |
+| `read_graph`          | Read the entire knowledge graph            |
+| `delete_entities`     | Remove entities from the graph             |
+| `delete_relations`    | Remove relationships                       |
+| `delete_observations` | Remove observations                        |
+
+### Usage Examples
+
+```
+"Remember that the intake API uses rate limiting"
+"What do you know about the agent-orchestrator package?"
+"Create an entity for the new feature we discussed"
+"Search for everything related to authentication"
+```
+
+### Source
+
+- Repository: [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/tree/main/src/memory)
+- npm: `@modelcontextprotocol/server-memory`
+
+---
+
 ## Get Shit Done (GSD)
 
 A meta-prompting and context engineering system for Claude Code. Helps manage context quality, structured development phases, and verification workflows.
@@ -181,12 +310,29 @@ MCP servers are configured in `.mcp.json` at the repository root:
       "args": ["-y", "@leonardsellem/n8n-mcp-server"],
       "env": {
         "N8N_API_URL": "${N8N_API_URL}",
-        "N8N_API_KEY": "${N8N_API_KEY}"
+        "N8N_API_KEY": "${N8N_API_KEY}",
+        "N8N_WEBHOOK_USERNAME": "${N8N_WEBHOOK_USERNAME}",
+        "N8N_WEBHOOK_PASSWORD": "${N8N_WEBHOOK_PASSWORD}"
       }
     },
     "claude-skills": {
       "command": "uvx",
       "args": ["claude-skills-mcp"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "${DATABASE_URL}"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
     }
   }
 }
@@ -214,6 +360,27 @@ MCP servers are configured in `.mcp.json` at the repository root:
 2. If not installed: `curl -LsSf https://astral.sh/uv/install.sh | sh`
 3. Test manually: `uvx claude-skills-mcp --help`
 4. Restart Claude Code
+
+### GitHub MCP not working
+
+1. Verify token is set: `echo $GITHUB_PERSONAL_ACCESS_TOKEN`
+2. Test token: `curl -H "Authorization: Bearer $GITHUB_PERSONAL_ACCESS_TOKEN" https://api.github.com/user`
+3. Ensure token has required permissions (repo, issues, pull_requests)
+4. Restart Claude Code
+
+### PostgreSQL MCP connection failed
+
+1. Verify DATABASE_URL is set: `echo $DATABASE_URL`
+2. Test connection: `psql $DATABASE_URL -c "SELECT 1"`
+3. Ensure the database is accessible from your machine
+4. Check if SSL is required (add `?sslmode=require` to URL if needed)
+5. Restart Claude Code
+
+### Memory MCP not persisting
+
+1. Check if the memory file exists in `~/.mcp-memory/`
+2. Ensure write permissions to the home directory
+3. Try clearing and recreating: `rm -rf ~/.mcp-memory && claude`
 
 ### MCP server errors in Claude Code
 
