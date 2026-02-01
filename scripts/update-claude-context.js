@@ -6,9 +6,9 @@
  * CLAUDE.md synchronized with recent commit activity.
  *
  * Features:
- * - Appends timestamp and staged files summary
- * - Maintains rolling window of last 10 commit contexts
- * - Preserves all other sections of CLAUDE.md unchanged
+ * - Updates timestamp and brief change summary
+ * - Shows last 5 commit messages (one-liners)
+ * - Keeps the section concise to avoid context bloat
  */
 
 const fs = require('fs');
@@ -19,26 +19,62 @@ const util = require('util');
 const execAsync = util.promisify(exec);
 
 const CLAUDE_MD_PATH = path.join(__dirname, '..', 'CLAUDE.md');
-const MAX_COMMIT_HISTORY = 10;
 
 /**
- * Get staged files summary
+ * Get staged files and generate a prose summary
  */
-async function getStagedFiles() {
+async function getStagedFilesSummary() {
   try {
     const { stdout } = await execAsync('git diff --cached --name-status');
-    return stdout.trim() || 'No files staged';
+    if (!stdout.trim()) {
+      return 'No files staged';
+    }
+
+    const lines = stdout.trim().split('\n');
+    const stats = { added: 0, modified: 0, deleted: 0 };
+    const areas = new Set();
+
+    lines.forEach((line) => {
+      const match = line.match(/^([AMD])\s+(.+)$/);
+      if (match) {
+        const [, status, file] = match;
+        if (status === 'A') stats.added++;
+        if (status === 'M') stats.modified++;
+        if (status === 'D') stats.deleted++;
+
+        // Identify area of change
+        if (file.startsWith('apps/agent-api')) areas.add('agent-api');
+        else if (file.startsWith('apps/voice-receptionist')) areas.add('voice-receptionist');
+        else if (file.startsWith('packages/frontend')) areas.add('frontend');
+        else if (file.startsWith('packages/')) areas.add('packages');
+        else if (file.startsWith('scripts/')) areas.add('scripts');
+        else if (file.startsWith('docs/')) areas.add('docs');
+        else if (file.startsWith('.claude/')) areas.add('claude-config');
+        else areas.add('root');
+      }
+    });
+
+    // Build prose summary
+    const parts = [];
+    if (stats.added > 0) parts.push(`${stats.added} added`);
+    if (stats.modified > 0) parts.push(`${stats.modified} modified`);
+    if (stats.deleted > 0) parts.push(`${stats.deleted} deleted`);
+
+    const fileCount = parts.join(', ');
+    const areaList = Array.from(areas).join(', ');
+
+    return `${lines.length} files (${fileCount}) in: ${areaList}`;
   } catch (error) {
-    return `Error getting staged files: ${error.message}`;
+    return `Error: ${error.message}`;
   }
 }
 
 /**
- * Get recent commit messages
+ * Get recent commit messages (one-liners)
  */
 async function getRecentCommits(count = 5) {
   try {
-    const { stdout } = await execAsync(`git log -${count} --pretty=format:"%h - %s (%cr)"`);
+    const { stdout } = await execAsync(`git log -${count} --pretty=format:"%h %s (%cr)"`);
     return stdout.trim() || 'No recent commits';
   } catch (error) {
     return 'Not a git repository or no commits yet';
@@ -46,104 +82,20 @@ async function getRecentCommits(count = 5) {
 }
 
 /**
- * Generate summary of changes by directory
- */
-function summarizeChanges(stagedFiles) {
-  if (!stagedFiles || stagedFiles === 'No files staged') {
-    return 'No changes';
-  }
-
-  const lines = stagedFiles.split('\n');
-  const summary = {};
-
-  lines.forEach((line) => {
-    const match = line.match(/^([AMD])\s+(.+)$/);
-    if (match) {
-      const [, status, file] = match;
-      const dir = file.includes('/') ? file.split('/')[0] : 'root';
-
-      if (!summary[dir]) {
-        summary[dir] = { A: 0, M: 0, D: 0 };
-      }
-      summary[dir][status] = (summary[dir][status] || 0) + 1;
-    }
-  });
-
-  const parts = [];
-  for (const [dir, counts] of Object.entries(summary)) {
-    const changes = [];
-    if (counts.A > 0) changes.push(`${counts.A} added`);
-    if (counts.M > 0) changes.push(`${counts.M} modified`);
-    if (counts.D > 0) changes.push(`${counts.D} deleted`);
-    parts.push(`${dir}/: ${changes.join(', ')}`);
-  }
-
-  return parts.join('\n  ');
-}
-
-/**
- * Parse existing CLAUDE.md and extract commit history
- */
-function parseExistingCommitHistory(content) {
-  const historyMatch = content.match(/\*\*Recent commits\*\*:[\s\S]*?(?=\n\n---|\n\n##|$)/);
-  if (!historyMatch) {
-    return [];
-  }
-
-  const historySection = historyMatch[0];
-  const entries = [];
-  const entryRegex = /### Commit (\d+): (.+?)\n\*\*Staged files\*\*:\n```\n([\s\S]*?)\n```/g;
-
-  let match;
-  while ((match = entryRegex.exec(historySection)) !== null) {
-    entries.push({
-      timestamp: match[2],
-      stagedFiles: match[3],
-    });
-  }
-
-  return entries;
-}
-
-/**
  * Build new commit context section
  */
 async function buildCommitContext() {
   const timestamp = new Date().toISOString();
-  const stagedFiles = await getStagedFiles();
+  const stagedSummary = await getStagedFilesSummary();
   const recentCommits = await getRecentCommits();
-  const changeSummary = summarizeChanges(stagedFiles);
 
-  // Read existing CLAUDE.md to get previous commit history
-  let existingHistory = [];
-  if (fs.existsSync(CLAUDE_MD_PATH)) {
-    const existingContent = fs.readFileSync(CLAUDE_MD_PATH, 'utf8');
-    existingHistory = parseExistingCommitHistory(existingContent);
-  }
-
-  // Add new entry at the beginning
-  existingHistory.unshift({
-    timestamp,
-    stagedFiles,
-  });
-
-  // Keep only last MAX_COMMIT_HISTORY entries
-  existingHistory = existingHistory.slice(0, MAX_COMMIT_HISTORY);
-
-  // Build the section
   let section = `## Auto-updated Commit Context\n\n`;
   section += `**Managed by pre-commit hook** (\`scripts/update-claude-context.js\`)\n\n`;
-  section += `_This section auto-populates with recent commit context to help Claude maintain continuity._\n\n`;
+  section += `_This section auto-populates with recent activity to help Claude maintain continuity._\n\n`;
   section += `**Last updated**: ${timestamp}\n\n`;
-  section += `**Current staged changes summary**:\n  ${changeSummary}\n\n`;
-  section += `**Recent git commits**:\n\`\`\`\n${recentCommits}\n\`\`\`\n\n`;
-  section += `**Recent commits**: (rolling window of last ${MAX_COMMIT_HISTORY})\n\n`;
-
-  // Add historical commit entries
-  existingHistory.forEach((entry, index) => {
-    section += `### Commit ${index + 1}: ${entry.timestamp}\n\n`;
-    section += `**Staged files**:\n\`\`\`\n${entry.stagedFiles}\n\`\`\`\n\n`;
-  });
+  section += `**Staged changes**: ${stagedSummary}\n\n`;
+  section += `**Recent commits**:\n\n`;
+  section += `\`\`\`text\n${recentCommits}\n\`\`\`\n`;
 
   return section;
 }

@@ -96,6 +96,7 @@ After completing the steps above, your new number will be:
 Vapi will send data to your n8n webhook. Add the transformer from `webhook-transformer.js` to convert it to your existing format.
 
 Quick n8n setup:
+
 1. Open your n8n intake workflow
 2. Add a **"Code"** node right after the webhook trigger
 3. Paste the contents of `webhook-transformer.js`

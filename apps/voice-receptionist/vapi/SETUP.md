@@ -18,10 +18,12 @@ This guide walks you through setting up the Prattville Midwifery voice reception
 4. Configure the following:
 
 **Basic Settings:**
+
 - **Name:** `Prattville Midwifery Receptionist`
 - **First Message:** `Hello, thank you for calling Prattville Midwifery. How can I help you today?`
 
 **Model:**
+
 - **Provider:** OpenAI
 - **Model:** `gpt-4-turbo`
 - **Temperature:** 0.7
@@ -68,11 +70,13 @@ End calls with: "Thank you for calling Prattville Midwifery. Someone will get ba
 ```
 
 **Voice:**
+
 - **Provider:** ElevenLabs
 - **Voice:** Rachel (`21m00Tcm4TlvDq8ikWAM`) or choose a bilingual voice
 - **Model:** `eleven_turbo_v2_5`
 
 **Transcriber:**
+
 - **Provider:** Deepgram
 - **Model:** `nova-2`
 - **Language:** `multi` (for English/Spanish)
@@ -84,6 +88,7 @@ End calls with: "Thank you for calling Prattville Midwifery. Someone will get ba
 3. Enable **"Send end-of-call report"**
 
 The webhook will receive a payload like:
+
 ```json
 {
   "message": {
@@ -141,6 +146,7 @@ VAPI_API_KEY=your_key N8N_INTAKE_WEBHOOK_URL=your_webhook npx ts-node setup-vapi
 Your existing n8n workflows expect the old payload format. Here's how to transform Vapi's format:
 
 **Vapi sends:**
+
 ```json
 {
   "message": {
@@ -154,6 +160,7 @@ Your existing n8n workflows expect the old payload format. Here's how to transfo
 ```
 
 **Your n8n expects:**
+
 ```json
 {
   "schema_version": "1.0",
@@ -184,15 +191,15 @@ VAPI_PHONE_NUMBER=+1334xxx  # Your new number
 
 ## Differences from Twilio Implementation
 
-| Feature | Twilio (old) | Vapi (new) |
-|---------|--------------|------------|
-| Phone Numbers | Twilio | Vapi (or bring your own) |
-| Real-time Audio | WebSocket server required | Handled by Vapi |
-| STT | Twilio/Deepgram | Deepgram (via Vapi) |
-| LLM | Your server calls OpenAI | Vapi calls OpenAI |
-| TTS | Your server calls ElevenLabs | Vapi calls ElevenLabs |
-| Webhook | Custom payload builder | Vapi end-of-call report |
-| Server Required | Yes (voice-receptionist app) | No (serverless) |
+| Feature         | Twilio (old)                 | Vapi (new)               |
+| --------------- | ---------------------------- | ------------------------ |
+| Phone Numbers   | Twilio                       | Vapi (or bring your own) |
+| Real-time Audio | WebSocket server required    | Handled by Vapi          |
+| STT             | Twilio/Deepgram              | Deepgram (via Vapi)      |
+| LLM             | Your server calls OpenAI     | Vapi calls OpenAI        |
+| TTS             | Your server calls ElevenLabs | Vapi calls ElevenLabs    |
+| Webhook         | Custom payload builder       | Vapi end-of-call report  |
+| Server Required | Yes (voice-receptionist app) | No (serverless)          |
 
 **Key Benefit:** No server infrastructure needed. Vapi handles everything.
 
@@ -201,19 +208,23 @@ VAPI_PHONE_NUMBER=+1334xxx  # Your new number
 ## Troubleshooting
 
 ### Caller hears nothing
+
 - Check the assistant's first message is set
 - Verify the voice provider credentials
 
 ### Webhook not receiving data
+
 - Verify the Server URL is correct
 - Check n8n webhook is active and accessible
 - Look at Vapi call logs for errors
 
 ### Wrong language responses
+
 - Ensure transcriber language is set to `multi`
 - Check the system prompt includes bilingual instructions
 
 ### Urgency not detected
+
 - The LLM handles urgency detection via the system prompt
 - Test with exact phrases: "I have severe pain"
 
@@ -235,6 +246,7 @@ This assistant makes outbound demo calls when website visitors request a live AI
 ### Step 2: Get Your IDs
 
 After creating the assistant:
+
 1. Copy the **Assistant ID** (starts with `asst_`)
 2. Go to **Phone Numbers** and copy the **Phone Number ID** (the number that will make outbound calls)
 
@@ -267,6 +279,7 @@ VAPI_PHONE_NUMBER_ID=phn_xxx       # Phone number ID for outbound calls
 ### Webhook for Demo Calls (Optional)
 
 To receive end-of-call data for demo calls:
+
 1. Set the assistant's Server URL to your n8n webhook
 2. Create a workflow to handle demo call reports
 3. Use the `analysis.structuredData` to update your CRM with lead qualification data

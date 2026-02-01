@@ -20,14 +20,7 @@
     "model": "nova-2",
     "language": "multi"
   },
-  "endCallPhrases": [
-    "goodbye",
-    "bye",
-    "have a good day",
-    "thank you bye",
-    "adiós",
-    "hasta luego"
-  ],
+  "endCallPhrases": ["goodbye", "bye", "have a good day", "thank you bye", "adiós", "hasta luego"],
   "silenceTimeoutSeconds": 30,
   "maxDurationSeconds": 600,
   "backgroundSound": "off",
@@ -45,7 +38,14 @@
         "callback_phone": { "type": "string" },
         "primary_intent": {
           "type": "string",
-          "enum": ["scheduling", "new_pregnancy_inquiry", "existing_patient_message", "non_pregnant_inquiry", "faq", "other"]
+          "enum": [
+            "scheduling",
+            "new_pregnancy_inquiry",
+            "existing_patient_message",
+            "non_pregnant_inquiry",
+            "faq",
+            "other"
+          ]
         },
         "pregnancy_related": { "type": "boolean" },
         "estimated_due_date": { "type": ["string", "null"] },

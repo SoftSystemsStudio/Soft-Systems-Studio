@@ -20,10 +20,7 @@ interface VapiCallResponse {
   [key: string]: unknown;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<DemoCallResponse>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<DemoCallResponse>) {
   // Only allow POST
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
@@ -64,9 +61,7 @@ export default async function handler(
   }
 
   // Format phone number for Vapi (E.164 format)
-  const formattedPhone = cleanPhone.startsWith('1')
-    ? `+${cleanPhone}`
-    : `+1${cleanPhone}`;
+  const formattedPhone = cleanPhone.startsWith('1') ? `+${cleanPhone}` : `+1${cleanPhone}`;
 
   try {
     // Build the first message with personalization

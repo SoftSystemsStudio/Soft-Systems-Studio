@@ -40,8 +40,7 @@ function transformVapiPayload(vapiPayload) {
 
   const transcript = (message.transcript || '').toLowerCase();
   const urgencyDetected =
-    structuredData.urgency_detected ||
-    urgencyKeywords.some((kw) => transcript.includes(kw));
+    structuredData.urgency_detected || urgencyKeywords.some((kw) => transcript.includes(kw));
 
   // Build legacy payload
   return {
@@ -66,10 +65,7 @@ function transformVapiPayload(vapiPayload) {
         phone_e164: call.customer?.number || call.phoneNumber || 'unknown',
         name: structuredData.name || 'Unknown',
         callback_phone_e164:
-          structuredData.callback_phone ||
-          call.customer?.number ||
-          call.phoneNumber ||
-          'unknown',
+          structuredData.callback_phone || call.customer?.number || call.phoneNumber || 'unknown',
       },
       routing: {
         business_hours: isBusinessHours(),
@@ -97,8 +93,7 @@ function transformVapiPayload(vapiPayload) {
         gestational_weeks: structuredData.gestational_weeks || null,
         care_interest: 'not_applicable',
         preferred_contact_method: 'phone',
-        preferred_callback_windows:
-          structuredData.preferred_callback_windows || [],
+        preferred_callback_windows: structuredData.preferred_callback_windows || [],
         notes: structuredData.notes || '',
       },
       actions: {
@@ -130,9 +125,7 @@ function transformVapiPayload(vapiPayload) {
 function isBusinessHours() {
   const now = new Date();
   // Convert to Chicago time
-  const chicagoTime = new Date(
-    now.toLocaleString('en-US', { timeZone: 'America/Chicago' })
-  );
+  const chicagoTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
   const day = chicagoTime.getDay(); // 0 = Sunday
   const hour = chicagoTime.getHours();
 

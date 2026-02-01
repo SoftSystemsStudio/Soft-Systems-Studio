@@ -26,19 +26,19 @@ export N8N_WEBHOOK_PASSWORD="webhook_password"  # Optional
 
 ### Available Tools
 
-| Tool | Description |
-|------|-------------|
-| `list_workflows` | List all workflows |
-| `get_workflow` | Get workflow details by ID |
-| `create_workflow` | Create a new workflow |
-| `update_workflow` | Update an existing workflow |
-| `delete_workflow` | Delete a workflow |
-| `activate_workflow` | Activate a workflow |
-| `deactivate_workflow` | Deactivate a workflow |
-| `execute_workflow` | Execute a workflow via API |
-| `get_execution` | Get execution details |
-| `list_executions` | List execution history |
-| `run_webhook` | Trigger a webhook workflow |
+| Tool                  | Description                 |
+| --------------------- | --------------------------- |
+| `list_workflows`      | List all workflows          |
+| `get_workflow`        | Get workflow details by ID  |
+| `create_workflow`     | Create a new workflow       |
+| `update_workflow`     | Update an existing workflow |
+| `delete_workflow`     | Delete a workflow           |
+| `activate_workflow`   | Activate a workflow         |
+| `deactivate_workflow` | Deactivate a workflow       |
+| `execute_workflow`    | Execute a workflow via API  |
+| `get_execution`       | Get execution details       |
+| `list_executions`     | List execution history      |
+| `run_webhook`         | Trigger a webhook workflow  |
 
 ### Usage Examples
 
@@ -74,15 +74,16 @@ No API keys or environment variables required - works offline with local caching
 
 ### Available Tools
 
-| Tool | Description |
-|------|-------------|
-| `find_helpful_skills` | Semantic search to find skills matching your task description |
+| Tool                  | Description                                                      |
+| --------------------- | ---------------------------------------------------------------- |
+| `find_helpful_skills` | Semantic search to find skills matching your task description    |
 | `read_skill_document` | Retrieve specific files (scripts, data, references) from a skill |
-| `list_skills` | Browse complete inventory of all available skills |
+| `list_skills`         | Browse complete inventory of all available skills                |
 
 ### Skill Sources
 
 The server automatically loads skills from:
+
 - **Anthropic's Official Skills** (~15 skills)
 - **K-Dense AI Scientific Skills** (~78+ specialized skills)
 - **Local skills** from `~/.claude/skills/` and your repo's `.claude/skills/`
@@ -144,14 +145,14 @@ npx get-shit-done-cc@latest
 
 ### Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `/gsd:help` | Show all available commands |
+| Command            | Description                       |
+| ------------------ | --------------------------------- |
+| `/gsd:help`        | Show all available commands       |
 | `/gsd:new-project` | Initialize a new project with GSD |
-| `/gsd:plan` | Create an atomic development plan |
-| `/gsd:task` | Start working on a specific task |
-| `/gsd:verify` | Run verification on current work |
-| `/gsd:status` | Show current project status |
+| `/gsd:plan`        | Create an atomic development plan |
+| `/gsd:task`        | Start working on a specific task  |
+| `/gsd:verify`      | Run verification on current work  |
+| `/gsd:status`      | Show current project status       |
 
 ### Recommended Usage
 
@@ -217,6 +218,7 @@ MCP servers are configured in `.mcp.json` at the repository root:
 ### MCP server errors in Claude Code
 
 Check the MCP server logs:
+
 ```bash
 claude --mcp-debug
 ```

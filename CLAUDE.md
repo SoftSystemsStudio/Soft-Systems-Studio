@@ -6,11 +6,24 @@ This file is the repo's operating runbook for Claude Code: how work is planned, 
 
 ---
 
+## Product Overview
+
+**What we build**: AI agents (voice, chat, automation) deployed for business clients.
+
+**Core value prop**: Businesses get custom AI automation without building in-house - voice receptionists, customer service agents, workflow automation.
+
+**User types**:
+
+- **Workspace admins**: Manage agents, view conversations, configure settings
+- **End users**: Interact with deployed agents (callers, chat users)
+- **Agency staff**: Internal team managing client deployments
+
+---
+
 ## Operating Model
 
 ### Always-On Requirements
 
-- **Thinking**: ON at all times
 - **Verify before asserting**: check files/grep/tests instead of guessing
 - **Keep diffs tight**: minimal, reversible changes
 
@@ -73,9 +86,7 @@ Run `clear`, then restate:
 
 ---
 
-## Repo Conventions
-
-### Tech Stack
+## Tech Stack
 
 - **Language/runtime**: Node.js + TypeScript 5.3+
 - **Frameworks**: Express (API), Next.js 16 (Frontend)
@@ -88,9 +99,28 @@ Run `clear`, then restate:
 - **Git hooks**: Husky 8
 - **Security**: secretlint, custom env/placeholder scanners
 
-### Architecture Map
+---
 
+## Deployment Topology
+
+```text
+Frontend (Vercel)
+├── Next.js app at packages/frontend/
+├── Edge middleware for Clerk auth
+└── API routes for BFF pattern
+
+Backend (Railway)
+├── agent-api Express server
+├── PostgreSQL database
+├── Redis cache
+└── Background workers (BullMQ)
 ```
+
+---
+
+## Architecture Map
+
+```text
 /apps/
   agent-api/           # Main Express API (auth, agents, admin, stripe)
   voice-receptionist/  # Vapi.ai voice agent integration
@@ -100,7 +130,7 @@ Run `clear`, then restate:
   agent-orchestrator/  # Agent execution engine (tools, state, observability)
   agent-customer-service/ # Customer service agent implementation
   agency-core/         # Shared business logic (client config mapping)
-  api/                 # Legacy/shared API utilities
+  api/                 # Legacy/shared API utilities (⚠️ prefer agent-api)
   core-llm/            # LLM abstractions (embeddings, providers)
 
 /scripts/              # Automation scripts (env sync, security audit, deployment)
@@ -115,33 +145,198 @@ Run `clear`, then restate:
 - `.env*` files - Never commit (guarded by pre-commit)
 - `pnpm-lock.yaml` - Only update via `pnpm install`
 
-### Standard Commands
+---
+
+## Data Model
+
+### Agent API Database (Primary)
+
+Location: `/apps/agent-api/prisma/schema.prisma`
+
+```text
+Workspace (multi-tenant container)
+├── WorkspaceMembership → User (with role)
+├── Conversation → Message
+├── KbDocument (knowledge base)
+└── RefreshToken
+
+EstimateRequest (lead gen, standalone)
+```
+
+**Core entities**:
+
+- **Workspace**: Multi-tenant container, has slug, soft-deletable
+- **User**: Auth entity (email, password hash), soft-deletable
+- **WorkspaceMembership**: Links users to workspaces with roles
+- **Conversation/Message**: Chat threads and messages
+- **KbDocument**: Knowledge base documents for RAG
+- **RefreshToken**: JWT refresh token storage with rotation tracking
+
+### Legacy API Database
+
+Location: `/packages/api/prisma/schema.prisma`
+
+⚠️ Legacy system for client intake/proposals. Prefer agent-api for new work.
+
+```text
+Client → IntakeSubmission, ClientConfig, ProposalDraft
+```
+
+---
+
+## Auth Patterns
+
+### Strategy: JWT + API Key (dual)
+
+**Primary**: JWT Bearer tokens
+
+- Access tokens: 15min (prod) / 30min (dev)
+- Refresh tokens: 7 days (prod) / 30 days (dev)
+- Stored in HTTP-only cookies (production)
+
+**Fallback**: API keys via `x-api-key` header or `api_key` query param
+
+### Role Hierarchy (highest → lowest)
+
+```text
+super_admin (5) → admin/owner (4) → manager (3) → member/user (2) → service (1) → viewer (0)
+```
+
+### Key Middleware
+
+| Middleware         | File                          | Purpose                        |
+| ------------------ | ----------------------------- | ------------------------------ |
+| `authCombined`     | `middleware/auth-combined.ts` | JWT + API key validation       |
+| `requireRole`      | `middleware/role.ts`          | Role enforcement               |
+| `requireWorkspace` | `middleware/tenant.ts`        | Workspace isolation            |
+| `adminAuth`        | `middleware/adminAuth.ts`     | Admin/cron endpoint protection |
+
+### Auth Routes
+
+- `POST /api/v1/auth/login` - User login
+- `POST /api/v1/auth/create-workspace` - Onboarding
+- `POST /api/v1/auth/token/refresh` - Token rotation
+- `POST /api/v1/auth/token/revoke` - Logout
+
+---
+
+## Third-Party Integrations
+
+| Service       | Purpose                      | Required | Config Keys                               |
+| ------------- | ---------------------------- | -------- | ----------------------------------------- |
+| PostgreSQL    | Primary database             | Yes      | `DATABASE_URL`                            |
+| Redis/Upstash | Cache, rate limiting, queues | Yes      | `REDIS_URL` or `UPSTASH_REDIS_REST_*`     |
+| OpenAI        | LLM chat & embeddings        | Yes      | `OPENAI_API_KEY`                          |
+| Qdrant        | Vector search/RAG            | No       | `QDRANT_HOST`, `QDRANT_API_KEY`           |
+| Stripe        | Payments, subscriptions      | No       | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_*`   |
+| Clerk         | Frontend auth                | No       | `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_*` |
+| Vapi.ai       | Voice agents                 | No       | `VAPI_API_KEY`                            |
+| ElevenLabs    | Text-to-speech               | No       | `ELEVENLABS_API_KEY`                      |
+| Resend        | Transactional email          | No       | `RESEND_API_KEY`                          |
+| Sentry        | Error tracking               | No       | `SENTRY_DSN`                              |
+| N8N           | Workflow webhooks            | No       | `N8N_*_WEBHOOK_URL`                       |
+| Anthropic     | Alternative LLM              | No       | `ANTHROPIC_API_KEY`                       |
+
+---
+
+## Frontend Patterns
+
+Location: `/packages/frontend/`
+
+### State Management
+
+React hooks only (`useState`, `useEffect`, `useRef`) - no global state library.
+
+### Data Fetching
+
+Native `fetch()` + Next.js API routes. No React Query, SWR, or tRPC.
+
+### Styling
+
+- **Primary**: Tailwind CSS 3.4 (utility-first)
+- **Design tokens**: Custom colors (`brand-lime`), glows, animations in `tailwind.config.cjs`
+- **Global CSS**: `/src/styles/globals.css` - glassmorphism, gradients, terminal effects
+- **CSS Modules**: Page-specific styles where needed
+
+### Component Organization
+
+```text
+/components/
+├── ui/           # Reusable components (Button, Card, HoloCard)
+├── sentient/     # Feature sections (hero/, pricing/, faq/)
+├── motion/       # Animation components
+├── three/        # 3D/Three.js components (use ssr: false)
+└── demo/         # Demo-specific components
+```
+
+### Key Conventions
+
+- 3D/heavy components: Use `dynamic()` with `ssr: false`
+- Forms: HTML forms + Zod validation on API routes
+- Auth: Clerk via `@clerk/nextjs`
+
+---
+
+## Code Standards
+
+### Naming
+
+- Files: `kebab-case.ts`, `PascalCase.tsx` for React components
+- Variables/functions: `camelCase`
+- Types/interfaces: `PascalCase`
+- Constants: `UPPER_SNAKE_CASE`
+- Prisma models: `PascalCase` singular
+
+### Error Handling
+
+- Services: throw descriptive errors
+- Controllers: try/catch, return appropriate HTTP status
+- Middleware: next(error) for error handling middleware
+- Use custom error classes where appropriate
+
+### Logging
+
+- Use `pino` logger from `apps/agent-api/src/logger.ts`
+- Structured logging with context (userId, workspaceId, requestId)
+- Redact sensitive fields automatically
+- No `console.log` in production code (except scripts)
+
+### Tests Required For
+
+- New API endpoints (integration tests)
+- Business logic functions (unit tests)
+- Middleware (unit tests)
+- Bug fixes (regression tests)
+
+### ESLint Rules to Note
+
+- `no-restricted-syntax`: Blocks direct `process.env` access (use typed env modules)
+- `security/*`: ESLint plugin security rules enforced
+- `@typescript-eslint/no-explicit-any`: Avoid `any`, use `unknown` or proper types
+
+---
+
+## Standard Commands
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Lint
-pnpm lint              # Check all packages
-pnpm lint:fix          # Auto-fix all packages
-
-# Type check
-pnpm typecheck         # Run tsc --noEmit across all packages
-
-# Test
-pnpm test              # Run all test suites
-pnpm test:ci           # CI mode with coverage
-
-# Build
-pnpm build             # Build all packages
-
-# Run
+# Development
 pnpm dev               # Start agent-api + frontend in parallel
 pnpm start             # Start agent-api in production mode
 
-# Format
+# Quality
+pnpm lint              # Check all packages
+pnpm lint:fix          # Auto-fix all packages
+pnpm typecheck         # Run tsc --noEmit across all packages
 pnpm format            # Format all files with Prettier
 pnpm format:check      # Check formatting without writing
+
+# Testing
+pnpm test              # Run all test suites
+pnpm test:ci           # CI mode with coverage
+pnpm build             # Build all packages
 
 # Security
 pnpm secretlint        # Scan for secrets
@@ -153,43 +348,6 @@ pnpm claude:briefing   # Generate repo summary for fresh AI session
 pnpm claude:clear      # Print context restart template
 pnpm claude:compact-guard # Check session compact count
 ```
-
-### Code Standards
-
-**Naming**:
-
-- Files: `kebab-case.ts`, `PascalCase.tsx` for React components
-- Variables/functions: `camelCase`
-- Types/interfaces: `PascalCase`
-- Constants: `UPPER_SNAKE_CASE`
-- Prisma models: `PascalCase` singular
-
-**Error handling**:
-
-- Services: throw descriptive errors
-- Controllers: try/catch, return appropriate HTTP status
-- Middleware: next(error) for error handling middleware
-- Use custom error classes where appropriate
-
-**Logging**:
-
-- Use `pino` logger from `apps/agent-api/src/logger.ts`
-- Structured logging with context (userId, workspaceId, requestId)
-- Redact sensitive fields automatically
-- No `console.log` in production code (except scripts)
-
-**Tests required for**:
-
-- New API endpoints (integration tests)
-- Business logic functions (unit tests)
-- Middleware (unit tests)
-- Bug fixes (regression tests)
-
-**ESLint rules to note**:
-
-- `no-restricted-syntax`: Blocks direct `process.env` access (use typed env modules)
-- `security/*`: ESLint plugin security rules enforced
-- `@typescript-eslint/no-explicit-any`: Avoid `any`, use `unknown` or proper types
 
 ---
 
@@ -222,8 +380,6 @@ pnpm claude:compact-guard # Check session compact count
 
 ### Pre-commit Checks (via Husky)
 
-Required checks:
-
 - ✅ CLAUDE.md context update (auto)
 - ✅ secretlint (secret scanning)
 - ✅ check-env-committed (prevent .env commits)
@@ -243,347 +399,35 @@ Required checks:
 
 ---
 
+## Known Issues & Tech Debt
+
+| Issue                      | Impact | Notes                                                     |
+| -------------------------- | ------ | --------------------------------------------------------- |
+| `/packages/api/` is legacy | Medium | Prefer `/apps/agent-api/` for new work                    |
+| Dual auth systems          | Medium | Custom JWT (API) + Clerk (frontend) - needs consolidation |
+| No frontend tests          | Low    | Test coverage is API-only currently                       |
+| Patterns scattered         | Low    | Some inconsistency in error handling, validation          |
+
+---
+
 ## Auto-updated Commit Context
 
 **Managed by pre-commit hook** (`scripts/update-claude-context.js`)
 
-_This section auto-populates with recent commit context to help Claude maintain continuity._
+_This section auto-populates with recent activity to help Claude maintain continuity._
 
-**Last updated**: 2026-01-30T20:48:18.415Z
+**Last updated**: 2026-02-01T04:24:59.881Z
 
-**Current staged changes summary**:
-.claude/: 284 added
-root/: 3 modified
-packages/: 8 added, 16 modified
+**Staged changes**: 9 files (9 modified) in: root, voice-receptionist, docs, frontend, scripts
 
-**Recent git commits**:
+**Recent commits**:
 
-```
-f927b98 - Update pricing guide, frontend environment config, and add intake API endpoint (9 days ago)
-2317a5f - feat(frontend): Final luxury dark mode polish (2 weeks ago)
-18f7194 - feat: add agency OS templates, case study, and luxury dark mode redesign (2 weeks ago)
-0e15f98 - feat(frontend): Luxury dark mode redesign with glassmorphism (2 weeks ago)
-bf04ff7 - feat(frontend): Technical Brutalist V3 patch notes implementation (2 weeks ago)
-```
-
-**Recent commits**: (rolling window of last 10)
-
-### Commit 1: 2026-01-30T20:48:18.415Z
-
-**Staged files**:
-
-```
-A	.claude/skills/algorithmic-art/LICENSE.txt
-A	.claude/skills/algorithmic-art/SKILL.md
-A	.claude/skills/algorithmic-art/templates/generator_template.js
-A	.claude/skills/algorithmic-art/templates/viewer.html
-A	.claude/skills/api-endpoint/SKILL.md
-A	.claude/skills/brand-guidelines/LICENSE.txt
-A	.claude/skills/brand-guidelines/SKILL.md
-A	.claude/skills/canvas-design/LICENSE.txt
-A	.claude/skills/canvas-design/SKILL.md
-A	.claude/skills/canvas-design/canvas-fonts/ArsenalSC-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/ArsenalSC-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/BigShoulders-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/BigShoulders-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/BigShoulders-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Boldonse-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/Boldonse-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/BricolageGrotesque-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/BricolageGrotesque-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/BricolageGrotesque-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/CrimsonPro-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/CrimsonPro-Italic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/CrimsonPro-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/CrimsonPro-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/DMMono-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/DMMono-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/EricaOne-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/EricaOne-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/GeistMono-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/GeistMono-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/GeistMono-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Gloock-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/Gloock-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/IBMPlexMono-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/IBMPlexMono-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/IBMPlexMono-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/IBMPlexSerif-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/IBMPlexSerif-BoldItalic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/IBMPlexSerif-Italic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/IBMPlexSerif-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/InstrumentSans-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/InstrumentSans-BoldItalic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/InstrumentSans-Italic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/InstrumentSans-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/InstrumentSans-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/InstrumentSerif-Italic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/InstrumentSerif-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Italiana-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/Italiana-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/JetBrainsMono-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/JetBrainsMono-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/JetBrainsMono-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Jura-Light.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Jura-Medium.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Jura-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/LibreBaskerville-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/LibreBaskerville-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Lora-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Lora-BoldItalic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Lora-Italic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Lora-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/Lora-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/NationalPark-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/NationalPark-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/NationalPark-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/NothingYouCouldDo-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/NothingYouCouldDo-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Outfit-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Outfit-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/Outfit-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/PixelifySans-Medium.ttf
-A	.claude/skills/canvas-design/canvas-fonts/PixelifySans-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/PoiretOne-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/PoiretOne-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/RedHatMono-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/RedHatMono-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/RedHatMono-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Silkscreen-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/Silkscreen-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/SmoochSans-Medium.ttf
-A	.claude/skills/canvas-design/canvas-fonts/SmoochSans-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/Tektur-Medium.ttf
-A	.claude/skills/canvas-design/canvas-fonts/Tektur-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/Tektur-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/WorkSans-Bold.ttf
-A	.claude/skills/canvas-design/canvas-fonts/WorkSans-BoldItalic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/WorkSans-Italic.ttf
-A	.claude/skills/canvas-design/canvas-fonts/WorkSans-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/WorkSans-Regular.ttf
-A	.claude/skills/canvas-design/canvas-fonts/YoungSerif-OFL.txt
-A	.claude/skills/canvas-design/canvas-fonts/YoungSerif-Regular.ttf
-A	.claude/skills/context-session/SKILL.md
-A	.claude/skills/deploy-railway/SKILL.md
-A	.claude/skills/doc-coauthoring/SKILL.md
-A	.claude/skills/docx/LICENSE.txt
-A	.claude/skills/docx/SKILL.md
-A	.claude/skills/docx/docx-js.md
-A	.claude/skills/docx/ooxml.md
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/dml-chart.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/dml-chartDrawing.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/dml-diagram.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/dml-lockedCanvas.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/dml-main.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/dml-picture.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/dml-spreadsheetDrawing.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/dml-wordprocessingDrawing.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/pml.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-additionalCharacteristics.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-bibliography.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-commonSimpleTypes.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-customXmlDataProperties.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-customXmlSchemaProperties.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesCustom.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesExtended.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesVariantTypes.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-math.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/shared-relationshipReference.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/sml.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/vml-main.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/vml-officeDrawing.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/vml-presentationDrawing.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/vml-spreadsheetDrawing.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/vml-wordprocessingDrawing.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/wml.xsd
-A	.claude/skills/docx/ooxml/schemas/ISO-IEC29500-4_2016/xml.xsd
-A	.claude/skills/docx/ooxml/schemas/ecma/fouth-edition/opc-contentTypes.xsd
-A	.claude/skills/docx/ooxml/schemas/ecma/fouth-edition/opc-coreProperties.xsd
-A	.claude/skills/docx/ooxml/schemas/ecma/fouth-edition/opc-digSig.xsd
-A	.claude/skills/docx/ooxml/schemas/ecma/fouth-edition/opc-relationships.xsd
-A	.claude/skills/docx/ooxml/schemas/mce/mc.xsd
-A	.claude/skills/docx/ooxml/schemas/microsoft/wml-2010.xsd
-A	.claude/skills/docx/ooxml/schemas/microsoft/wml-2012.xsd
-A	.claude/skills/docx/ooxml/schemas/microsoft/wml-2018.xsd
-A	.claude/skills/docx/ooxml/schemas/microsoft/wml-cex-2018.xsd
-A	.claude/skills/docx/ooxml/schemas/microsoft/wml-cid-2016.xsd
-A	.claude/skills/docx/ooxml/schemas/microsoft/wml-sdtdatahash-2020.xsd
-A	.claude/skills/docx/ooxml/schemas/microsoft/wml-symex-2015.xsd
-A	.claude/skills/docx/ooxml/scripts/pack.py
-A	.claude/skills/docx/ooxml/scripts/unpack.py
-A	.claude/skills/docx/ooxml/scripts/validate.py
-A	.claude/skills/docx/ooxml/scripts/validation/__init__.py
-A	.claude/skills/docx/ooxml/scripts/validation/base.py
-A	.claude/skills/docx/ooxml/scripts/validation/docx.py
-A	.claude/skills/docx/ooxml/scripts/validation/pptx.py
-A	.claude/skills/docx/ooxml/scripts/validation/redlining.py
-A	.claude/skills/docx/scripts/__init__.py
-A	.claude/skills/docx/scripts/document.py
-A	.claude/skills/docx/scripts/templates/comments.xml
-A	.claude/skills/docx/scripts/templates/commentsExtended.xml
-A	.claude/skills/docx/scripts/templates/commentsExtensible.xml
-A	.claude/skills/docx/scripts/templates/commentsIds.xml
-A	.claude/skills/docx/scripts/templates/people.xml
-A	.claude/skills/docx/scripts/utilities.py
-A	.claude/skills/frontend-component/SKILL.md
-A	.claude/skills/frontend-design/LICENSE.txt
-A	.claude/skills/frontend-design/SKILL.md
-A	.claude/skills/internal-comms/LICENSE.txt
-A	.claude/skills/internal-comms/SKILL.md
-A	.claude/skills/internal-comms/examples/3p-updates.md
-A	.claude/skills/internal-comms/examples/company-newsletter.md
-A	.claude/skills/internal-comms/examples/faq-answers.md
-A	.claude/skills/internal-comms/examples/general-comms.md
-A	.claude/skills/mcp-builder/LICENSE.txt
-A	.claude/skills/mcp-builder/SKILL.md
-A	.claude/skills/mcp-builder/reference/evaluation.md
-A	.claude/skills/mcp-builder/reference/mcp_best_practices.md
-A	.claude/skills/mcp-builder/reference/node_mcp_server.md
-A	.claude/skills/mcp-builder/reference/python_mcp_server.md
-A	.claude/skills/mcp-builder/scripts/connections.py
-A	.claude/skills/mcp-builder/scripts/evaluation.py
-A	.claude/skills/mcp-builder/scripts/example_evaluation.xml
-A	.claude/skills/mcp-builder/scripts/requirements.txt
-A	.claude/skills/pdf/LICENSE.txt
-A	.claude/skills/pdf/SKILL.md
-A	.claude/skills/pdf/forms.md
-A	.claude/skills/pdf/reference.md
-A	.claude/skills/pdf/scripts/check_bounding_boxes.py
-A	.claude/skills/pdf/scripts/check_bounding_boxes_test.py
-A	.claude/skills/pdf/scripts/check_fillable_fields.py
-A	.claude/skills/pdf/scripts/convert_pdf_to_images.py
-A	.claude/skills/pdf/scripts/create_validation_image.py
-A	.claude/skills/pdf/scripts/extract_form_field_info.py
-A	.claude/skills/pdf/scripts/fill_fillable_fields.py
-A	.claude/skills/pdf/scripts/fill_pdf_form_with_annotations.py
-A	.claude/skills/pptx/LICENSE.txt
-A	.claude/skills/pptx/SKILL.md
-A	.claude/skills/pptx/html2pptx.md
-A	.claude/skills/pptx/ooxml.md
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/dml-chart.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/dml-chartDrawing.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/dml-diagram.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/dml-lockedCanvas.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/dml-main.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/dml-picture.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/dml-spreadsheetDrawing.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/dml-wordprocessingDrawing.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/pml.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-additionalCharacteristics.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-bibliography.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-commonSimpleTypes.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-customXmlDataProperties.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-customXmlSchemaProperties.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesCustom.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesExtended.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesVariantTypes.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-math.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/shared-relationshipReference.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/sml.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/vml-main.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/vml-officeDrawing.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/vml-presentationDrawing.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/vml-spreadsheetDrawing.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/vml-wordprocessingDrawing.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/wml.xsd
-A	.claude/skills/pptx/ooxml/schemas/ISO-IEC29500-4_2016/xml.xsd
-A	.claude/skills/pptx/ooxml/schemas/ecma/fouth-edition/opc-contentTypes.xsd
-A	.claude/skills/pptx/ooxml/schemas/ecma/fouth-edition/opc-coreProperties.xsd
-A	.claude/skills/pptx/ooxml/schemas/ecma/fouth-edition/opc-digSig.xsd
-A	.claude/skills/pptx/ooxml/schemas/ecma/fouth-edition/opc-relationships.xsd
-A	.claude/skills/pptx/ooxml/schemas/mce/mc.xsd
-A	.claude/skills/pptx/ooxml/schemas/microsoft/wml-2010.xsd
-A	.claude/skills/pptx/ooxml/schemas/microsoft/wml-2012.xsd
-A	.claude/skills/pptx/ooxml/schemas/microsoft/wml-2018.xsd
-A	.claude/skills/pptx/ooxml/schemas/microsoft/wml-cex-2018.xsd
-A	.claude/skills/pptx/ooxml/schemas/microsoft/wml-cid-2016.xsd
-A	.claude/skills/pptx/ooxml/schemas/microsoft/wml-sdtdatahash-2020.xsd
-A	.claude/skills/pptx/ooxml/schemas/microsoft/wml-symex-2015.xsd
-A	.claude/skills/pptx/ooxml/scripts/pack.py
-A	.claude/skills/pptx/ooxml/scripts/unpack.py
-A	.claude/skills/pptx/ooxml/scripts/validate.py
-A	.claude/skills/pptx/ooxml/scripts/validation/__init__.py
-A	.claude/skills/pptx/ooxml/scripts/validation/base.py
-A	.claude/skills/pptx/ooxml/scripts/validation/docx.py
-A	.claude/skills/pptx/ooxml/scripts/validation/pptx.py
-A	.claude/skills/pptx/ooxml/scripts/validation/redlining.py
-A	.claude/skills/pptx/scripts/html2pptx.js
-A	.claude/skills/pptx/scripts/inventory.py
-A	.claude/skills/pptx/scripts/rearrange.py
-A	.claude/skills/pptx/scripts/replace.py
-A	.claude/skills/pptx/scripts/thumbnail.py
-A	.claude/skills/prisma-migrate/SKILL.md
-A	.claude/skills/queue-job/SKILL.md
-A	.claude/skills/skill-creator/LICENSE.txt
-A	.claude/skills/skill-creator/SKILL.md
-A	.claude/skills/skill-creator/references/output-patterns.md
-A	.claude/skills/skill-creator/references/workflows.md
-A	.claude/skills/skill-creator/scripts/init_skill.py
-A	.claude/skills/skill-creator/scripts/package_skill.py
-A	.claude/skills/skill-creator/scripts/quick_validate.py
-A	.claude/skills/slack-gif-creator/LICENSE.txt
-A	.claude/skills/slack-gif-creator/SKILL.md
-A	.claude/skills/slack-gif-creator/core/easing.py
-A	.claude/skills/slack-gif-creator/core/frame_composer.py
-A	.claude/skills/slack-gif-creator/core/gif_builder.py
-A	.claude/skills/slack-gif-creator/core/validators.py
-A	.claude/skills/slack-gif-creator/requirements.txt
-A	.claude/skills/test-suite/SKILL.md
-A	.claude/skills/theme-factory/LICENSE.txt
-A	.claude/skills/theme-factory/SKILL.md
-A	.claude/skills/theme-factory/theme-showcase.pdf
-A	.claude/skills/theme-factory/themes/arctic-frost.md
-A	.claude/skills/theme-factory/themes/botanical-garden.md
-A	.claude/skills/theme-factory/themes/desert-rose.md
-A	.claude/skills/theme-factory/themes/forest-canopy.md
-A	.claude/skills/theme-factory/themes/golden-hour.md
-A	.claude/skills/theme-factory/themes/midnight-galaxy.md
-A	.claude/skills/theme-factory/themes/modern-minimalist.md
-A	.claude/skills/theme-factory/themes/ocean-depths.md
-A	.claude/skills/theme-factory/themes/sunset-boulevard.md
-A	.claude/skills/theme-factory/themes/tech-innovation.md
-A	.claude/skills/vector-search/SKILL.md
-A	.claude/skills/web-artifacts-builder/LICENSE.txt
-A	.claude/skills/web-artifacts-builder/SKILL.md
-A	.claude/skills/web-artifacts-builder/scripts/bundle-artifact.sh
-A	.claude/skills/web-artifacts-builder/scripts/init-artifact.sh
-A	.claude/skills/web-artifacts-builder/scripts/shadcn-components.tar.gz
-A	.claude/skills/webapp-testing/LICENSE.txt
-A	.claude/skills/webapp-testing/SKILL.md
-A	.claude/skills/webapp-testing/examples/console_logging.py
-A	.claude/skills/webapp-testing/examples/element_discovery.py
-A	.claude/skills/webapp-testing/examples/static_html_automation.py
-A	.claude/skills/webapp-testing/scripts/with_server.py
-A	.claude/skills/xlsx/LICENSE.txt
-A	.claude/skills/xlsx/SKILL.md
-A	.claude/skills/xlsx/recalc.py
-M	CLAUDE.md
-M	packages/frontend/.gitignore
-M	packages/frontend/package.json
-A	packages/frontend/public/images/soft-systems-logo-128.png
-A	packages/frontend/public/images/soft-systems-logo-256.png
-A	packages/frontend/public/images/soft-systems-logo-512.png
-A	packages/frontend/public/images/soft-systems-logo-optimized.png
-A	packages/frontend/public/images/soft-systems-logo-original.png
-M	packages/frontend/public/images/soft-systems-logo.png
-M	packages/frontend/src/components/sentient/hero/SystemStatus.tsx
-A	packages/frontend/src/components/sentient/pricing/ROICalculator.tsx
-M	packages/frontend/src/components/ui/HoloCard.tsx
-M	packages/frontend/src/lib/env.ts
-M	packages/frontend/src/middleware.ts
-A	packages/frontend/src/pages/about.tsx
-M	packages/frontend/src/pages/api/intake.ts
-A	packages/frontend/src/pages/api/og.tsx
-M	packages/frontend/src/pages/hologram-test.tsx
-M	packages/frontend/src/pages/index.tsx
-M	packages/frontend/src/pages/intake.tsx
-M	packages/frontend/src/pages/terminal.tsx
-M	packages/frontend/src/styles/globals.css
-M	packages/frontend/tailwind.config.cjs
-M	packages/frontend/tsconfig.tsbuildinfo
-M	packages/frontend/vercel.json
-M	pnpm-lock.yaml
-M	vercel.json
+```text
+1c2b68d Merge pull request #6 from SoftSystemsStudio/claude/replace-twilio-voice-FMNmD (23 hours ago)
+2ca12c9 feat(voice): Add outbound demo call feature with Vapi (28 hours ago)
+40edaab feat: Add Claude Skills MCP server (29 hours ago)
+cee85d1 feat: Add n8n MCP server and Get Shit Done documentation (29 hours ago)
+098c43e feat(voice): Add Vapi.ai configuration as Twilio replacement (31 hours ago)
 ```
 
 ## Session Checkpoints
@@ -607,48 +451,6 @@ pnpm claude:clear
 ```bash
 pnpm claude:compact-guard
 ```
-
----
-
-## Quick Reference
-
-### When to use PLANNING MODE
-
-- Adding new features
-- Changing existing behavior
-- Refactoring across multiple files
-- Touching "do not touch" zones
-- Architecture changes
-- Database schema changes
-
-### When EXECUTION MODE is fine
-
-- Bug fixes (scoped, clear root cause)
-- Documentation updates
-- Adding tests to existing code
-- Formatting/linting fixes
-- Configuration tweaks with clear requirements
-
-### Emergency Procedures
-
-**If pre-commit hook fails**:
-
-1. Read the error message
-2. Fix the issue
-3. Re-stage: `git add .`
-4. Try commit again
-
-**If CI fails**:
-
-1. Pull CI logs
-2. Reproduce locally: `pnpm ci`
-3. Fix and push again
-
-**If you suspect context drift**:
-
-1. Run `pnpm claude:briefing`
-2. Review `.claude/session_state.json`
-3. Consider starting fresh session with summary
 
 ---
 
