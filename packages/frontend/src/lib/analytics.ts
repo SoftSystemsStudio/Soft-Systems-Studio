@@ -3,15 +3,8 @@
  * Provides type-safe event tracking for Google Analytics
  */
 
-declare global {
-  interface Window {
-    gtag?: (
-      command: 'event' | 'config' | 'set',
-      targetId: string,
-      config?: Record<string, unknown>,
-    ) => void;
-  }
-}
+import { getEnv } from './env';
+// Use gtag type from gtag.ts
 
 export type TerminalEvent =
   | 'terminal_loaded'
@@ -85,7 +78,7 @@ export function trackEvent(event: TerminalEvent, params?: EventParams): void {
   }
 
   // Development logging
-  if (process.env.NODE_ENV === 'development') {
+  if (getEnv().NODE_ENV === 'development') {
     console.log('[Analytics]', event, params);
   }
 }
@@ -148,7 +141,7 @@ export function trackError(error: { message: string; section?: string; stack?: s
  * Initialize analytics for Sentient Terminal
  */
 export function initializeAnalytics(): void {
-  if (process.env.NODE_ENV === 'development') {
+  if (getEnv().NODE_ENV === 'development') {
     console.log('[Analytics] Initialized in development mode (logging only)');
   }
 

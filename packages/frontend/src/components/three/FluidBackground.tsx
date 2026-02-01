@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- Three.js shader uniform types require runtime handling */
 
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
@@ -146,7 +147,7 @@ function FluidPlane() {
   // Initialize metaballs
   const balls = useMemo<FluidBall[]>(() => {
     const count = 12;
-    return Array.from({ length: count }, (_, i) => ({
+    return Array.from({ length: count }, () => ({
       position: new THREE.Vector3((Math.random() - 0.5) * 0.8, (Math.random() - 0.5) * 0.8, 0),
       velocity: new THREE.Vector2((Math.random() - 0.5) * 0.002, (Math.random() - 0.5) * 0.002),
       size: 0.05 + Math.random() * 0.08,

@@ -11,7 +11,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     <SoundManagerProvider>
       <ViewTransitionsProvider>
         {/* Inject view transition CSS */}
-        <style dangerouslySetInnerHTML={{ __html: viewTransitionStyles }} />
+        <style dangerouslySetInnerHTML={{ __html: viewTransitionStyles as string }} />
         {children}
       </ViewTransitionsProvider>
     </SoundManagerProvider>

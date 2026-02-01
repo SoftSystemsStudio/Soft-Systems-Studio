@@ -5,7 +5,7 @@ import { useMetrics } from '@/hooks/useMetrics';
 import MetricCard from './MetricCard';
 
 export default function PulseDashboard() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const { metrics, isConnected, error } = useMetrics();
 
   if (error) {

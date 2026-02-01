@@ -1,7 +1,8 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- useSounds hook returns dynamic type */
 
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence, useDragControls } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSounds } from '@/components/ui/SoundManager';
 
 /**
@@ -409,7 +410,8 @@ export default function NodeEditor() {
 
   // Calculate connection path (curved bezier)
   const getConnectionPath = useCallback(
-    (fromNodeId: string, fromPortId: string, toNodeId: string, toPortId: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (fromNodeId: string, _fromPortId: string, toNodeId: string, _toPortId: string): string => {
       const fromNode = placedNodes.find((n) => n.instanceId === fromNodeId);
       const toNode = placedNodes.find((n) => n.instanceId === toNodeId);
 

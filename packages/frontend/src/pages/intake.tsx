@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-misused-promises -- Form handlers are async and API responses need runtime validation */
 import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';

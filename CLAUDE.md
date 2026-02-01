@@ -416,18 +416,18 @@ pnpm claude:compact-guard # Check session compact count
 
 _This section auto-populates with recent activity to help Claude maintain continuity._
 
-**Last updated**: 2026-02-01T04:24:59.881Z
+**Last updated**: 2026-02-01T04:51:47.676Z
 
-**Staged changes**: 9 files (9 modified) in: root, voice-receptionist, docs, frontend, scripts
+**Staged changes**: 15 files (15 modified) in: root, frontend
 
 **Recent commits**:
 
 ```text
-1c2b68d Merge pull request #6 from SoftSystemsStudio/claude/replace-twilio-voice-FMNmD (23 hours ago)
-2ca12c9 feat(voice): Add outbound demo call feature with Vapi (28 hours ago)
-40edaab feat: Add Claude Skills MCP server (29 hours ago)
-cee85d1 feat: Add n8n MCP server and Get Shit Done documentation (29 hours ago)
-098c43e feat(voice): Add Vapi.ai configuration as Twilio replacement (31 hours ago)
+f862fba docs: Restructure CLAUDE.md with codebase knowledge (26 minutes ago)
+1c2b68d Merge pull request #6 from SoftSystemsStudio/claude/replace-twilio-voice-FMNmD (24 hours ago)
+2ca12c9 feat(voice): Add outbound demo call feature with Vapi (29 hours ago)
+40edaab feat: Add Claude Skills MCP server (30 hours ago)
+cee85d1 feat: Add n8n MCP server and Get Shit Done documentation (30 hours ago)
 ```
 
 ## Session Checkpoints

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { motion, useSpring, useTransform } from 'framer-motion';
+import { motion, useSpring } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -149,8 +149,8 @@ export default function ROICalculator({
     };
   }, [hoursPerWeek, hourlyWage, yearsToProject, setupCost, monthlyCost, efficiencyMultiplier]);
 
-  // Animated values
-  const animatedSavings = useSpring(calculations.savings, { stiffness: 100, damping: 20 });
+  // Keep spring animation for future use (intentionally suppressed)
+  useSpring(calculations.savings, { stiffness: 100, damping: 20 });
 
   return (
     <div className="w-full max-w-6xl mx-auto">

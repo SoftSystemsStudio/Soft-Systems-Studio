@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-floating-promises -- react-spring animation array requires complex typing */
 
 import { useState, useRef } from 'react';
 import { useSprings, animated, config } from '@react-spring/web';

@@ -48,7 +48,6 @@ export default function DynamicTypography({
   onClick,
 }: DynamicTypographyProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [weight, setWeight] = useState(minWeight);
   const [width, setWidth] = useState(100); // For variable width fonts
   const animationRef = useRef<number>(0);
@@ -157,7 +156,6 @@ export default function DynamicTypography({
             key={i}
             char={char}
             index={i}
-            total={characters.length}
             baseWeight={weight}
             maxWeight={maxWeight}
             reactToMouse={reactToMouse}
@@ -171,20 +169,12 @@ export default function DynamicTypography({
 interface CharacterSpanProps {
   char: string;
   index: number;
-  total: number;
   baseWeight: number;
   maxWeight: number;
   reactToMouse: boolean;
 }
 
-function CharacterSpan({
-  char,
-  index,
-  total,
-  baseWeight,
-  maxWeight,
-  reactToMouse,
-}: CharacterSpanProps) {
+function CharacterSpan({ char, index, baseWeight, maxWeight, reactToMouse }: CharacterSpanProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [localWeight, setLocalWeight] = useState(baseWeight);
 

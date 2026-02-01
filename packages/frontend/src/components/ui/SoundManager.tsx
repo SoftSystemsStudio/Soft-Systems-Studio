@@ -43,7 +43,7 @@ export function SoundManagerProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     return () => {
       if (audioContextRef.current) {
-        audioContextRef.current.close();
+        void audioContextRef.current.close();
       }
     };
   }, []);
@@ -239,7 +239,7 @@ export function SoundManagerProvider({ children }: { children: React.ReactNode }
   return <SoundManagerContext.Provider value={value}>{children}</SoundManagerContext.Provider>;
 }
 
-export function useSounds() {
+export function useSounds(): SoundManagerContextType {
   const context = useContext(SoundManagerContext);
   if (!context) {
     // Return no-op functions if not in provider

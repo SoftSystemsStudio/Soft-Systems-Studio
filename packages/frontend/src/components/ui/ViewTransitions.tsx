@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 /**
  * ViewTransitions - Seamless page transitions using View Transitions API
@@ -28,7 +28,6 @@ export function ViewTransitionsProvider({ children }: ViewTransitionsProviderPro
  */
 export function useViewTransition() {
   const router = useRouter();
-  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -99,7 +98,7 @@ export function TransitionLink({
     (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       onClick?.(e);
-      navigateWithTransition(href);
+      void navigateWithTransition(href);
     },
     [href, navigateWithTransition, onClick],
   );
@@ -247,7 +246,7 @@ export function useAnimatedMount(
     enterDelay?: number;
   } = {},
 ) {
-  const { enterDuration = 300, exitDuration = 200, enterDelay = 0 } = options;
+  const { enterDuration = 300, enterDelay = 0 } = options;
 
   const ref = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);

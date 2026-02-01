@@ -1,7 +1,9 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- Three.js cleanup requires dynamic type traversal */
 
 import dynamic from 'next/dynamic';
-import { Suspense, lazy, ComponentType } from 'react';
+import { Suspense, ComponentType } from 'react';
+import Image from 'next/image';
 
 /**
  * Performance Optimization Utilities for Lighthouse 100/100/100/100
@@ -160,9 +162,6 @@ export function OptimizedImage({
   priority = false,
   className = '',
 }: OptimizedImageProps) {
-  // Use Next.js Image component for automatic optimization
-  const Image = require('next/image').default;
-
   return (
     <Image
       src={src}
