@@ -27,15 +27,12 @@ const nextConfig = {
   // Production-only compression
   compress: true,
 
-  // Strict TypeScript and ESLint checks during build
+  // Strict TypeScript checks during build
   typescript: {
     // Don't fail build on TS errors in production (we catch in CI)
     ignoreBuildErrors: true,
   },
-  eslint: {
-    // Run ESLint during builds
-    ignoreDuringBuilds: true,
-  },
+  // Note: ESLint config moved to CLI flags in Next.js 16+
 
   // Security headers
   async headers() {
@@ -182,6 +179,25 @@ const nextConfig = {
     // Enable React Server Components optimizations
     serverActions: {
       bodySizeLimit: '2mb',
+    },
+  },
+
+  // Turbopack configuration (Next.js 16+ uses Turbopack by default)
+  turbopack: {
+    rules: {
+      // GLSL shader loader equivalent for Turbopack
+      '*.glsl': {
+        loaders: ['raw-loader'],
+        as: '*.js',
+      },
+      '*.vert': {
+        loaders: ['raw-loader'],
+        as: '*.js',
+      },
+      '*.frag': {
+        loaders: ['raw-loader'],
+        as: '*.js',
+      },
     },
   },
 };
