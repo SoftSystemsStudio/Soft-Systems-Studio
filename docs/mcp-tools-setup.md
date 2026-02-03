@@ -233,6 +233,204 @@ No configuration required - data is stored locally.
 
 ---
 
+## Expo Docs MCP Server
+
+Search and navigate Expo documentation with semantic search capabilities.
+
+### Setup
+
+No configuration required - works offline with local caching.
+
+**Restart Claude Code** to load the MCP server.
+
+### Available Tools
+
+| Tool                | Description                                  |
+| ------------------- | -------------------------------------------- |
+| `search_docs`       | Search Expo documentation                    |
+| `get_doc`           | Get specific documentation page              |
+| `list_sections`     | Browse documentation sections                |
+| `get_api_reference` | Get API reference for specific Expo packages |
+
+### Features
+
+- **Semantic search** - Find docs by meaning, not just keywords
+- **Version support** - Access docs for different SDK versions
+- **Offline-first** - Works without internet after initial cache
+- **Section filtering** - Search within specific doc sections
+
+### Usage Examples
+
+```
+"How do I set up push notifications in Expo?"
+"What's the API for expo-camera?"
+"Search for EAS Build documentation"
+"How do I configure app.json for production?"
+```
+
+### Source
+
+- Repository: [jaksm/expo-docs-mcp](https://github.com/jaksm/expo-docs-mcp)
+- npm: `expo-docs-mcp`
+
+---
+
+## Supabase MCP Server
+
+Interact with Supabase projects - manage databases, run queries, handle migrations, and more.
+
+### Setup
+
+1. **Get your Supabase access token**:
+   - Go to [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens)
+   - Create a new access token
+
+2. **Set environment variable**:
+
+```bash
+export SUPABASE_ACCESS_TOKEN="your_token_here"
+```
+
+3. **Restart Claude Code** to load the MCP server
+
+### Available Tools
+
+| Tool               | Description                            |
+| ------------------ | -------------------------------------- |
+| `list_projects`    | List all Supabase projects             |
+| `get_project`      | Get project details                    |
+| `execute_sql`      | Run SQL queries (read-only by default) |
+| `list_tables`      | List database tables                   |
+| `get_table_schema` | Get table schema details               |
+| `list_functions`   | List database functions                |
+| `get_logs`         | Retrieve project logs                  |
+| `list_branches`    | List database branches                 |
+
+### Security Notes
+
+- **Read-only mode** enabled by default (`--read-only` flag)
+- Use with development projects, not production
+- Never expose real user data to AI assistants
+
+### Usage Examples
+
+```
+"List all my Supabase projects"
+"Show me the schema for the users table"
+"Run SELECT * FROM orders WHERE status = 'pending'"
+"Get the logs from the last hour"
+```
+
+### Source
+
+- Repository: [supabase-community/supabase-mcp](https://github.com/supabase-community/supabase-mcp)
+- npm: `@supabase/mcp-server-supabase`
+- Docs: [supabase.com/docs/guides/getting-started/mcp](https://supabase.com/docs/guides/getting-started/mcp)
+
+---
+
+## RevenueCat MCP Server
+
+Manage in-app subscriptions, products, entitlements, and customer data through RevenueCat.
+
+### Setup
+
+1. **Get your RevenueCat API key**:
+   - Go to RevenueCat Dashboard → Project Settings → API Keys
+   - Create a V2 Secret Key (use a scoped key for safety)
+
+2. **Set environment variable**:
+
+```bash
+export REVENUECAT_API_KEY="sk_your_secret_key_here"
+```
+
+3. **Restart Claude Code** to load the MCP server
+
+### Available Tools
+
+| Tool                 | Description                    |
+| -------------------- | ------------------------------ |
+| `list_projects`      | List RevenueCat projects       |
+| `get_customer`       | Get customer subscription info |
+| `list_offerings`     | List product offerings         |
+| `get_offering`       | Get offering details           |
+| `list_entitlements`  | List entitlements              |
+| `list_products`      | List products                  |
+| `get_product`        | Get product details            |
+| `grant_entitlement`  | Grant entitlement to customer  |
+| `revoke_entitlement` | Revoke customer entitlement    |
+
+### Usage Examples
+
+```
+"List all offerings in my RevenueCat project"
+"Get subscription status for customer $rc_123"
+"What products are in the 'premium' offering?"
+"Show me all entitlements for the app"
+```
+
+### Source
+
+- Repository: [iamhenry/revenuecat-mcp](https://github.com/iamhenry/revenuecat-mcp)
+- npm: `revenuecat-mcp`
+- Docs: [revenuecat.com/docs/tools/mcp](https://www.revenuecat.com/docs/tools/mcp)
+
+---
+
+## App Store Connect MCP Server
+
+Manage iOS/macOS apps, TestFlight, app metadata, and submissions via App Store Connect API.
+
+### Setup
+
+1. **Create an App Store Connect API Key**:
+   - Go to [App Store Connect → Users and Access → Keys](https://appstoreconnect.apple.com/access/api)
+   - Create a new key with appropriate permissions
+   - Download the `.p8` file
+
+2. **Set environment variables**:
+
+```bash
+export APP_STORE_CONNECT_KEY_ID="your_key_id"
+export APP_STORE_CONNECT_ISSUER_ID="your_issuer_id"
+export APP_STORE_CONNECT_P8_PATH="/path/to/AuthKey_XXXX.p8"
+```
+
+3. **Restart Claude Code** to load the MCP server
+
+### Available Tools
+
+| Tool                | Description                |
+| ------------------- | -------------------------- |
+| `list_apps`         | List all apps              |
+| `get_app`           | Get app details            |
+| `list_builds`       | List app builds            |
+| `list_beta_testers` | List TestFlight testers    |
+| `add_beta_tester`   | Add tester to TestFlight   |
+| `list_app_versions` | List app version history   |
+| `get_app_info`      | Get app store listing info |
+| `update_app_info`   | Update app metadata        |
+| `list_screenshots`  | List app screenshots       |
+| `list_bundle_ids`   | List registered bundle IDs |
+| `list_devices`      | List registered devices    |
+
+### Usage Examples
+
+```
+"List all my apps in App Store Connect"
+"Show me the latest builds for app 123456789"
+"Add john@example.com as a TestFlight tester"
+"What's the current version info for my app?"
+```
+
+### Source
+
+- Repository: [SardorbekR/appstore-connect-mcp](https://github.com/SardorbekR/appstore-connect-mcp)
+- npm: `asc-mcp`
+
+---
+
 ## Get Shit Done (GSD)
 
 A meta-prompting and context engineering system for Claude Code. Helps manage context quality, structured development phases, and verification workflows.
@@ -333,6 +531,33 @@ MCP servers are configured in `.mcp.json` at the repository root:
     "memory": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "expo-docs": {
+      "command": "npx",
+      "args": ["-y", "expo-docs-mcp"]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest", "--read-only"],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
+      }
+    },
+    "revenuecat": {
+      "command": "npx",
+      "args": ["-y", "revenuecat-mcp"],
+      "env": {
+        "REVENUECAT_API_KEY": "${REVENUECAT_API_KEY}"
+      }
+    },
+    "appstore-connect": {
+      "command": "npx",
+      "args": ["-y", "asc-mcp"],
+      "env": {
+        "APP_STORE_CONNECT_KEY_ID": "${APP_STORE_CONNECT_KEY_ID}",
+        "APP_STORE_CONNECT_ISSUER_ID": "${APP_STORE_CONNECT_ISSUER_ID}",
+        "APP_STORE_CONNECT_P8_PATH": "${APP_STORE_CONNECT_P8_PATH}"
+      }
     }
   }
 }
@@ -381,6 +606,36 @@ MCP servers are configured in `.mcp.json` at the repository root:
 1. Check if the memory file exists in `~/.mcp-memory/`
 2. Ensure write permissions to the home directory
 3. Try clearing and recreating: `rm -rf ~/.mcp-memory && claude`
+
+### Expo Docs MCP not searching
+
+1. First search may be slow (builds cache)
+2. Clear cache if stale: `rm -rf ~/.cache/expo-docs-mcp`
+3. Restart Claude Code
+
+### Supabase MCP not connecting
+
+1. Verify token is set: `echo $SUPABASE_ACCESS_TOKEN`
+2. Test token: `curl -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" https://api.supabase.com/v1/projects`
+3. Ensure token has project access permissions
+4. Restart Claude Code
+
+### RevenueCat MCP authentication failed
+
+1. Verify API key is set: `echo $REVENUECAT_API_KEY`
+2. Ensure you're using a V2 API key (starts with `sk_`)
+3. Check key has appropriate project permissions
+4. Restart Claude Code
+
+### App Store Connect MCP not working
+
+1. Verify all three env vars are set:
+   - `echo $APP_STORE_CONNECT_KEY_ID`
+   - `echo $APP_STORE_CONNECT_ISSUER_ID`
+   - `echo $APP_STORE_CONNECT_P8_PATH`
+2. Verify P8 file exists: `ls -la $APP_STORE_CONNECT_P8_PATH`
+3. Ensure key has appropriate permissions in App Store Connect
+4. Restart Claude Code
 
 ### MCP server errors in Claude Code
 
