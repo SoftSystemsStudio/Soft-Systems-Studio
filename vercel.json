@@ -2,7 +2,7 @@
   "version": 2,
   "name": "softsystems-frontend",
   "framework": "nextjs",
-  "buildCommand": "pnpm --filter frontend build",
+  "buildCommand": "pnpm --filter @softsystems/ui-components build && cd packages/frontend && npx next build",
   "outputDirectory": "packages/frontend/.next",
   "installCommand": "pnpm install",
   "regions": ["iad1"]

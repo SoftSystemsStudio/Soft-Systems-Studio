@@ -1,8 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "pnpm --filter @softsystems/ui-components build && next build",
-  "installCommand": "pnpm install",
   "crons": [
     {
       "path": "/api/cron/cleanup-tokens",
