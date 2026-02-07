@@ -119,12 +119,15 @@ const nextConfig = {
     ];
   },
 
-  // API rewrites - production uses NEXT_PUBLIC_API_URL
+  // API rewrites - proxy to backend API when NEXT_PUBLIC_API_URL is set
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    const raw = process.env.NEXT_PUBLIC_API_URL;
+    if (!raw) return [];
+    // Ensure the URL always has a protocol prefix
+    const apiUrl = raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`;
     return [
       {
-        source: '/api/:path*',
+        source: '/api/backend/:path*',
         destination: `${apiUrl}/:path*`,
       },
     ];
