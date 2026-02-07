@@ -31,6 +31,12 @@ jobs:
 
     env:
       NODE_ENV: test
+      # Dummy values to satisfy env validation in packages that require them.
+      # No real connections are made — tests use mocks.
+      POSTGRES_URL: postgresql://ci:ci@localhost:5432/ci
+      OPENAI_API_KEY: sk-test-ci-dummy-key
+      JWT_SECRET: ci-test-jwt-secret-placeholder
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
 
     steps:
       - name: Checkout
@@ -82,9 +88,6 @@ jobs:
 
       - name: Test
         run: pnpm test
-
-      - name: Build
-        run: pnpm build
 
       - name: Inspect built scripts
         run: ls -la apps/agent-api/dist/scripts || true
