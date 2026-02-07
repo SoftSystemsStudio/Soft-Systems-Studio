@@ -56,7 +56,7 @@ module.exports = {
       version: 'detect',
     },
   },
-  ignorePatterns: ['dist/', 'node_modules/', '.next/', 'coverage/'],
+  ignorePatterns: ['dist/', 'node_modules/', '.next/', 'coverage/', 'next-env.d.ts'],
   overrides: [
     {
       files: ['**/env.ts', '**/env/**/*.ts', '**/config/env*.ts'],

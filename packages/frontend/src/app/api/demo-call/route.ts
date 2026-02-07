@@ -8,12 +8,6 @@ interface DemoCallRequest {
   businessType?: string;
 }
 
-interface DemoCallResponse {
-  success: boolean;
-  message: string;
-  callId?: string;
-}
-
 interface VapiCallResponse {
   id: string;
   status: string;

@@ -54,7 +54,8 @@ interface ConfigApiResponse {
 }
 
 export default function ClientDetailPage() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = typeof params.id === 'string' ? params.id : params.id?.[0];
 
   const [config, setConfig] = useState<ClientConfig | null>(null);
   const [loading, setLoading] = useState(false);
