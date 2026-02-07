@@ -3,7 +3,7 @@ name: Full Integration Tests (Lane B)
 on:
   workflow_dispatch: # Manual trigger
   schedule:
-    - cron: '0 2 * * *' # Nightly at 02:00 UTC (every day)
+    - cron: '0 2 * * 1,4' # Twice weekly at 02:00 UTC (Monday and Thursday)
 
 permissions:
   contents: read
@@ -105,14 +105,10 @@ jobs:
           done
 
       - name: Generate Prisma clients
-        run: |
-          pnpm --filter apps-agent-api prisma generate
-          pnpm --filter api prisma generate
-        continue-on-error: true
+        run: pnpm --filter apps-agent-api prisma generate
 
       - name: Run DB migrations
         run: pnpm --filter apps-agent-api prisma migrate deploy
-        continue-on-error: true
 
       - name: Build workspace
         run: pnpm -w -r build
