@@ -91,19 +91,14 @@ Soft Systems Studio is an enterprise-ready monorepo for building, deploying, and
 ```text
 soft-systems-studio/
 ├── apps/
-│   └── agent-api/              # Main API service
-│       ├── src/
-│       │   ├── api/v1/         # REST endpoints
-│       │   ├── middleware/     # Auth, rate limiting, validation
-│       │   ├── services/       # Business logic
-│       │   ├── schemas/        # Zod validation schemas
-│       │   └── worker/         # BullMQ workers
-│       └── prisma/             # Database schema & migrations
+│   ├── agent-api/              # Main API service
+│   └── voice-receptionist/     # Bilingual AI voice receptionist
 │
 ├── packages/
 │   ├── frontend/               # Next.js web application
 │   ├── agency-core/            # Shared config types & prompts
 │   ├── agent-customer-service/ # Customer service agent logic
+│   ├── agent-orchestrator/     # Agent orchestration layer
 │   ├── core-llm/               # LLM abstraction layer
 │   └── ui-components/          # Shared React components
 │
@@ -187,13 +182,6 @@ docker compose up --build
 ---
 
 ## API Endpoints
-
-## Recent Changes
-
-- Orchestrator refactor: added a `runChat` facade to standardize orchestrator inputs/outputs and keep controllers decoupled from implementation details.
-- Validation & Middleware: introduced a Zod `RunRequest` schema, `validateBody` middleware, and an in-memory `rateLimitRun` middleware for the `/run` endpoint.
-- Controller + Tests: extracted `/run` handling into a controller (`runController`) and added unit and optional integration tests (Jest + supertest). Tests mock the orchestrator for unit tests and can run integration checks when `RUN_INTEGRATION_TESTS=true` and a test DB is configured.
-- Docs: updated architecture/security review and docs to reflect these changes.
 
 ## Secrets and configuration
 
@@ -310,7 +298,7 @@ See [docs/ENV.md](docs/ENV.md) for the complete environment variable reference.
 | ------------------- | ---------------------------------- |
 | **Language**        | TypeScript 5.x                     |
 | **Runtime**         | Node.js 22                         |
-| **Frontend**        | Next.js 14, React 18, Tailwind CSS |
+| **Frontend**        | Next.js 16, React 18, Tailwind CSS |
 | **Backend**         | Express 4, Prisma 6, BullMQ        |
 | **Database**        | PostgreSQL 15                      |
 | **Cache/Queue**     | Redis (Upstash compatible)         |

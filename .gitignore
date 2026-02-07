@@ -55,3 +55,19 @@ RAILWAY_TROUBLESHOOTING.md
 .env.test-production
 .env.railway
 test-prod-connections.js
+
+# Claude Code configuration
+.claude/
+
+# MCP server configuration
+.mcp.json
+
+# Agency OS / client data
+ai-automation-agency-os/
+
+# Temporary/generated files
+tmp-*.json
+gitleaks-report*.json
+
+# Root-level screenshots
+/*.png
