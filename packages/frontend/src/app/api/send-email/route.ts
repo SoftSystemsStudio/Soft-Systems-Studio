@@ -2,12 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { sendEmail, SendEmailParams, SendEmailResult } from '@/lib/email';
 
-type ResponseData = {
-  success?: boolean;
-  id?: string;
-  error?: string;
-};
-
 export async function POST(request: NextRequest) {
   // Require authentication
   const { userId } = await auth();
