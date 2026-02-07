@@ -9,9 +9,9 @@ const envSchema = z.object({
   // Node environment
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 
-  // API URLs
-  NEXT_PUBLIC_API_URL: z.string().url().optional(),
-  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+  // API URLs (no .url() — values may omit protocol; next.config.mjs handles the prefix)
+  NEXT_PUBLIC_API_URL: z.string().min(1).optional(),
+  NEXT_PUBLIC_APP_URL: z.string().min(1).optional(),
 
   // Analytics
   NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
@@ -46,7 +46,14 @@ export type Env = z.infer<typeof envSchema>;
 
 function validateEnv(): Env {
   try {
-    return envSchema.parse(process.env);
+    // Strip empty-string env vars so .optional() treats them as undefined
+    const cleaned = { ...process.env };
+    for (const [key, val] of Object.entries(cleaned)) {
+      if (typeof val === 'string' && val.trim() === '') {
+        delete cleaned[key];
+      }
+    }
+    return envSchema.parse(cleaned);
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error('❌ Environment validation failed:', error.format());
