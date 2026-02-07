@@ -54,7 +54,7 @@ interface ConfigApiResponse {
 }
 
 export default function ClientDetailPage() {
-  const { id } = useParams() as { id?: string };
+  const { id } = useParams();
 
   const [config, setConfig] = useState<ClientConfig | null>(null);
   const [loading, setLoading] = useState(false);
@@ -173,11 +173,7 @@ export default function ClientDetailPage() {
                       <div style={{ color: '#6b7280', minWidth: 120 }}>Website</div>
                       <div>
                         {config.profile?.website ? (
-                          <a
-                            href={String(config.profile.website)}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
+                          <a href={String(config.profile.website)} target="_blank" rel="noreferrer">
                             {config.profile.website}
                           </a>
                         ) : (
@@ -246,48 +242,46 @@ export default function ClientDetailPage() {
           <section>
             <h3>Systems</h3>
             <div style={{ display: 'grid', gap: 12 }}>
-              {(Array.isArray(config?.subsystems) ? config.subsystems : []).map(
-                (s: Subsystem) => (
-                  <div
-                    key={s.id ?? s.type}
-                    style={{
-                      background: '#fff',
-                      borderRadius: 8,
-                      padding: 12,
-                      boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div>
-                        <strong>{s.type}</strong>
-                        <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
-                      </div>
-                      <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
+              {(Array.isArray(config?.subsystems) ? config.subsystems : []).map((s: Subsystem) => (
+                <div
+                  key={s.id ?? s.type}
+                  style={{
+                    background: '#fff',
+                    borderRadius: 8,
+                    padding: 12,
+                    boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div>
+                      <strong>{s.type}</strong>
+                      <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
                     </div>
-
-                    {s.settings && (
-                      <div style={{ marginTop: 8 }}>
-                        {Object.entries(s.settings).map(([k, v]) => (
-                          <div
-                            key={k}
-                            style={{
-                              display: 'flex',
-                              gap: 8,
-                              alignItems: 'center',
-                              marginTop: 6,
-                            }}
-                          >
-                            <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
-                            <div style={{ fontFamily: 'monospace', color: '#111' }}>
-                              {renderValue(v)}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
                   </div>
-                ),
-              )}
+
+                  {s.settings && (
+                    <div style={{ marginTop: 8 }}>
+                      {Object.entries(s.settings).map(([k, v]) => (
+                        <div
+                          key={k}
+                          style={{
+                            display: 'flex',
+                            gap: 8,
+                            alignItems: 'center',
+                            marginTop: 6,
+                          }}
+                        >
+                          <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
+                          <div style={{ fontFamily: 'monospace', color: '#111' }}>
+                            {renderValue(v)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </section>
         </div>
@@ -302,9 +296,7 @@ export default function ClientDetailPage() {
               boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
             }}
           >
-            <div
-              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-            >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ margin: 0, fontSize: 16 }}>Drafts</h2>
               <div role="tablist" aria-label="Draft types" style={{ display: 'flex', gap: 8 }}>
                 <button
@@ -316,8 +308,7 @@ export default function ClientDetailPage() {
                   style={{
                     padding: '6px 10px',
                     borderRadius: 6,
-                    border:
-                      activeDraftTab === 'brief' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
+                    border: activeDraftTab === 'brief' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
                     background: activeDraftTab === 'brief' ? '#eef2ff' : '#fff',
                   }}
                 >
@@ -332,8 +323,7 @@ export default function ClientDetailPage() {
                   style={{
                     padding: '6px 10px',
                     borderRadius: 6,
-                    border:
-                      activeDraftTab === 'phase1' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
+                    border: activeDraftTab === 'phase1' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
                     background: activeDraftTab === 'phase1' ? '#eef2ff' : '#fff',
                   }}
                 >
@@ -373,11 +363,7 @@ export default function ClientDetailPage() {
               )}
 
               <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-                <button
-                  onClick={() => void genBrief(false)}
-                  disabled={loading}
-                  style={{ flex: 1 }}
-                >
+                <button onClick={() => void genBrief(false)} disabled={loading} style={{ flex: 1 }}>
                   {loading ? 'Working...' : 'Generate Solution Brief'}
                 </button>
                 <button

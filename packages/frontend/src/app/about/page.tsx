@@ -35,8 +35,7 @@ const VALUES = [
   },
   {
     title: 'Built for Small Business',
-    description:
-      "We understand local service businesses because we've worked with them firsthand.",
+    description: "We understand local service businesses because we've worked with them firsthand.",
   },
   {
     title: 'Human Support',
@@ -78,8 +77,8 @@ export default function AboutPage() {
               <div className="space-y-6 text-gray-300 leading-relaxed">
                 <p>
                   Soft Systems Studio started when we noticed a pattern: local service businesses —
-                  plumbers, dentists, HVAC contractors — were losing thousands of dollars every month
-                  simply because they couldn&apos;t answer the phone while on job sites.
+                  plumbers, dentists, HVAC contractors — were losing thousands of dollars every
+                  month simply because they couldn&apos;t answer the phone while on job sites.
                 </p>
                 <p>
                   We&apos;d seen enterprise companies use AI for customer service, but the solutions
@@ -88,8 +87,8 @@ export default function AboutPage() {
                   prices real businesses can afford.
                 </p>
                 <p className="text-white font-medium">
-                  Our mission is simple: help local service businesses grow by making sure they never
-                  miss another customer.
+                  Our mission is simple: help local service businesses grow by making sure they
+                  never miss another customer.
                 </p>
               </div>
             </FadeIn>
@@ -102,10 +101,7 @@ export default function AboutPage() {
           </FadeIn>
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {VALUES.map((value) => (
-              <div
-                key={value.title}
-                className="p-6 rounded-xl border border-white/10 bg-white/5"
-              >
+              <div key={value.title} className="p-6 rounded-xl border border-white/10 bg-white/5">
                 <h3 className="font-semibold text-white mb-2">{value.title}</h3>
                 <p className="text-gray-300 text-sm leading-relaxed">{value.description}</p>
               </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { Navbar, Footer, Section, PricingCard, Button, FeatureCard } from '@/components/ui';
+import { Navbar, Footer, Section, PricingCard, Button } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
 import env from '@/lib/env';
@@ -193,7 +193,8 @@ export default function Home() {
                 <span className="block text-lime-400">$400 Job Again</span>
               </h1>
               <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto">
-                AI receptionists that answer every call, book appointments, and send you text summaries — so you can stay on the job site.
+                AI receptionists that answer every call, book appointments, and send you text
+                summaries — so you can stay on the job site.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -273,13 +274,27 @@ export default function Home() {
                 className="flex-1 px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent"
                 defaultValue=""
               >
-                <option value="" disabled className="text-gray-900">What type of business?</option>
-                <option value="plumbing" className="text-gray-900">Plumbing</option>
-                <option value="dental" className="text-gray-900">Dental Practice</option>
-                <option value="hvac" className="text-gray-900">HVAC</option>
-                <option value="landscaping" className="text-gray-900">Landscaping</option>
-                <option value="electrical" className="text-gray-900">Electrical</option>
-                <option value="other" className="text-gray-900">Other Service Business</option>
+                <option value="" disabled className="text-gray-900">
+                  What type of business?
+                </option>
+                <option value="plumbing" className="text-gray-900">
+                  Plumbing
+                </option>
+                <option value="dental" className="text-gray-900">
+                  Dental Practice
+                </option>
+                <option value="hvac" className="text-gray-900">
+                  HVAC
+                </option>
+                <option value="landscaping" className="text-gray-900">
+                  Landscaping
+                </option>
+                <option value="electrical" className="text-gray-900">
+                  Electrical
+                </option>
+                <option value="other" className="text-gray-900">
+                  Other Service Business
+                </option>
               </select>
               <button
                 type="submit"
@@ -364,7 +379,9 @@ export default function Home() {
           <FadeIn className="mt-12 text-center">
             <div className="inline-block p-6 max-w-2xl rounded-xl border border-white/10 bg-white/5">
               <div className="flex items-start gap-4">
-                <span className="text-3xl" aria-hidden="true">🛡️</span>
+                <span className="text-3xl" aria-hidden="true">
+                  🛡️
+                </span>
                 <div className="text-left">
                   <h3 className="text-white font-semibold mb-2">30-Day Money-Back Guarantee</h3>
                   <p className="text-gray-300 text-sm leading-relaxed">

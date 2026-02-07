@@ -10,7 +10,7 @@
     "test": "echo \"No frontend tests yet\""
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.35.6",
+    "@clerk/nextjs": "^6.37.3",
     "@sentry/nextjs": "^10.28.0",
     "@softsystems/ui-components": "workspace:^",
     "@stripe/stripe-js": "^8.5.3",

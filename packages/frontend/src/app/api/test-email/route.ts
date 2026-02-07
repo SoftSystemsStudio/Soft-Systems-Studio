@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
 
-type ResponseData = {
-  success?: boolean;
-  id?: string;
-  error?: string;
-  message?: string;
-};
+
 
 export async function POST(request: NextRequest) {
   try {

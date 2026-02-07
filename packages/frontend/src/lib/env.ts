@@ -19,6 +19,9 @@ const envSchema = z.object({
   // Stripe
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
 
+  // Clerk
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional(),
+
   // Sentry
   NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
   SENTRY_ORG: z.string().optional(),

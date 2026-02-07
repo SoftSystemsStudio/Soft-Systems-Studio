@@ -25,7 +25,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (!html && !text) {
-      return NextResponse.json({ error: 'Either html or text content is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Either html or text content is required' },
+        { status: 400 },
+      );
     }
 
     const result: SendEmailResult = await sendEmail({
