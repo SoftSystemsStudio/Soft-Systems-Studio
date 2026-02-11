@@ -416,18 +416,18 @@ pnpm claude:compact-guard # Check session compact count
 
 _This section auto-populates with recent activity to help Claude maintain continuity._
 
-**Last updated**: 2026-02-03T02:44:31.221Z
+**Last updated**: 2026-02-11T14:55:26.784Z
 
-**Staged changes**: 4 files (1 added, 3 modified) in: claude-config, root, docs
+**Staged changes**: 5 files (3 added, 2 modified) in: root, voice-receptionist, frontend
 
 **Recent commits**:
 
 ```text
-c632c96 fix(frontend): Add Next.js 16 Turbopack compatibility (2 days ago)
-9d748d9 feat: Add GitHub, PostgreSQL, and Memory MCP servers (2 days ago)
-3c0dae0 fix(frontend): Resolve 34 ESLint errors in frontend package (2 days ago)
-f862fba docs: Restructure CLAUDE.md with codebase knowledge (2 days ago)
-1c2b68d Merge pull request #6 from SoftSystemsStudio/claude/replace-twilio-voice-FMNmD (3 days ago)
+de40050 feat: Add Expo, Supabase, RevenueCat, App Store Connect MCP servers and n8n skill (9 days ago)
+5f1a9ee fix(frontend): Add Next.js 16 Turbopack compatibility (10 days ago)
+02f0ee7 feat: Add GitHub, PostgreSQL, and Memory MCP servers (10 days ago)
+ab21a88 fix(frontend): Resolve 34 ESLint errors in frontend package (10 days ago)
+cefc6f3 docs: Restructure CLAUDE.md with codebase knowledge (10 days ago)
 ```
 
 ## Session Checkpoints
