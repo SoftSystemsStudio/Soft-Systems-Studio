@@ -119,15 +119,21 @@ const nextConfig = {
     ];
   },
 
-  // API rewrites - production uses NEXT_PUBLIC_API_URL
+  // API rewrites - proxy to backend API, skip Next.js API routes
   async rewrites() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${apiUrl}/:path*`,
-      },
-    ];
+    // Ensure URL has protocol prefix
+    const normalizedUrl = apiUrl.startsWith('http') ? apiUrl : `https://${apiUrl}`;
+    return {
+      // "beforeFiles" rewrites run before Next.js API routes
+      // "afterFiles" rewrites run AFTER Next.js API routes (so local /api/* routes work)
+      afterFiles: [
+        {
+          source: '/api/v1/:path*',
+          destination: `${normalizedUrl}/api/v1/:path*`,
+        },
+      ],
+    };
   },
 
   // Redirect rules disabled: Vercel domain-level redirects handle canonicalization

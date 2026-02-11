@@ -416,18 +416,18 @@ pnpm claude:compact-guard # Check session compact count
 
 _This section auto-populates with recent activity to help Claude maintain continuity._
 
-**Last updated**: 2026-02-11T14:55:26.784Z
+**Last updated**: 2026-02-11T15:10:11.946Z
 
-**Staged changes**: 5 files (3 added, 2 modified) in: root, voice-receptionist, frontend
+**Staged changes**: 1 files (1 modified) in: frontend
 
 **Recent commits**:
 
 ```text
+418dcfc feat: Add AI receptionist config and Call Me Now button (15 minutes ago)
 de40050 feat: Add Expo, Supabase, RevenueCat, App Store Connect MCP servers and n8n skill (9 days ago)
 5f1a9ee fix(frontend): Add Next.js 16 Turbopack compatibility (10 days ago)
 02f0ee7 feat: Add GitHub, PostgreSQL, and Memory MCP servers (10 days ago)
 ab21a88 fix(frontend): Resolve 34 ESLint errors in frontend package (10 days ago)
-cefc6f3 docs: Restructure CLAUDE.md with codebase knowledge (10 days ago)
 ```
 
 ## Session Checkpoints
