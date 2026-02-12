@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface CallMeNowModalProps {
@@ -14,6 +15,12 @@ export default function CallMeNowModal({ isOpen, onClose }: CallMeNowModalProps)
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  // Wait for client-side mount before portaling
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +46,6 @@ export default function CallMeNowModal({ isOpen, onClose }: CallMeNowModalProps)
       if (data.success) {
         setStatus('success');
         setMessage("You'll receive a call in about 30 seconds!");
-        // Reset form after success
         setTimeout(() => {
           setName('');
           setPhone('');
@@ -59,36 +65,52 @@ export default function CallMeNowModal({ isOpen, onClose }: CallMeNowModalProps)
   };
 
   const formatPhone = (value: string) => {
-    // Remove all non-digits
     const digits = value.replace(/\D/g, '');
-    // Format as (XXX) XXX-XXXX
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
   };
 
-  return (
+  // Don't render on server or before mount
+  if (!mounted) return null;
+
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop - covers full viewport */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 9998,
+            }}
           />
 
-          {/* Modal */}
+          {/* Modal - centered in viewport */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', duration: 0.5 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4"
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 9999,
+              width: '100%',
+              maxWidth: '28rem',
+              padding: '0 1rem',
+            }}
           >
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl relative">
               {/* Close Button */}
               <button
                 onClick={onClose}
@@ -130,12 +152,15 @@ export default function CallMeNowModal({ isOpen, onClose }: CallMeNowModalProps)
               {/* Form */}
               <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="call-name"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Your Name
                   </label>
                   <input
                     type="text"
-                    id="name"
+                    id="call-name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="John Smith"
@@ -145,12 +170,15 @@ export default function CallMeNowModal({ isOpen, onClose }: CallMeNowModalProps)
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="call-phone"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Phone Number
                   </label>
                   <input
                     type="tel"
-                    id="phone"
+                    id="call-phone"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
                     placeholder="(555) 123-4567"
@@ -221,4 +249,7 @@ export default function CallMeNowModal({ isOpen, onClose }: CallMeNowModalProps)
       )}
     </AnimatePresence>
   );
+
+  // Portal to document.body so it's outside any overflow-hidden / transform containers
+  return createPortal(modalContent, document.body);
 }
