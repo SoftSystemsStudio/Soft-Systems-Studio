@@ -58,6 +58,23 @@ export async function POST(request: NextRequest) {
   const formattedPhone = cleanPhone.startsWith('1') ? `+${cleanPhone}` : `+1${cleanPhone}`;
 
   try {
+    const payload = {
+      assistantId: env.VAPI_DEMO_ASSISTANT_ID,
+      phoneNumberId: env.VAPI_PHONE_NUMBER_ID,
+      assistantOverrides: {
+        variableValues: {
+          name: name,
+          businessName: businessName || '',
+          businessType: businessType || '',
+        },
+      },
+      customer: {
+        number: formattedPhone,
+      },
+    };
+
+    console.log('Making Vapi call with payload:', JSON.stringify(payload, null, 2));
+
     // Create outbound call via Vapi API
     const response = await fetch('https://api.vapi.ai/call/phone', {
       method: 'POST',
@@ -65,20 +82,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${env.VAPI_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        assistantId: env.VAPI_DEMO_ASSISTANT_ID,
-        phoneNumberId: env.VAPI_PHONE_NUMBER_ID,
-        assistantOverrides: {
-          variableValues: {
-            name: name,
-            businessName: businessName || '',
-            businessType: businessType || '',
-          },
-        },
-        customer: {
-          number: formattedPhone,
-        },
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
