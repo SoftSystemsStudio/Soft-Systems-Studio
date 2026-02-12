@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { Navbar, Footer, Section, Button } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
@@ -106,6 +107,7 @@ const PORTFOLIO_SITES = [
     description: 'AI-powered fitness tracking app',
     gradient: 'from-purple-600 via-fuchsia-600 to-cyan-500',
     tech: ['Next.js', 'Python', 'PostgreSQL'],
+    url: '/demo/neuralfit',
   },
   {
     name: 'Apex Plumbing',
@@ -113,6 +115,7 @@ const PORTFOLIO_SITES = [
     description: '24/7 emergency plumbing services',
     gradient: 'from-orange-600 to-red-700',
     tech: ['React', 'Tailwind', 'Vercel'],
+    url: '/demo/apex-plumbing',
   },
   {
     name: 'VoltStore',
@@ -120,6 +123,7 @@ const PORTFOLIO_SITES = [
     description: 'Premium gaming peripherals store',
     gradient: 'from-lime-500 via-green-600 to-emerald-700',
     tech: ['Next.js', 'Stripe', 'Shopify'],
+    url: '/demo/voltstore',
   },
   {
     name: 'Creator Studio',
@@ -127,6 +131,7 @@ const PORTFOLIO_SITES = [
     description: 'Portfolio for developers and creators',
     gradient: 'from-pink-500 via-rose-600 to-orange-600',
     tech: ['Next.js', 'MDX', 'Framer'],
+    url: '/demo/creator-studio',
   },
 ];
 
@@ -446,19 +451,20 @@ export default function Home() {
 
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
             {PORTFOLIO_SITES.map((site) => (
-              <div
+              <Link
                 key={site.name}
-                className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/20"
+                href={site.url}
+                className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/20 block"
               >
                 {/* Animated gradient background */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${site.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
                 />
 
-                {/* Concept Example badge */}
+                {/* Demo badge */}
                 <div className="absolute top-4 right-4 z-20">
-                  <span className="px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/30 text-pink-400 text-xs font-medium">
-                    Concept Example
+                  <span className="px-3 py-1 rounded-full bg-lime-500/20 border border-lime-500/30 text-lime-400 text-xs font-medium">
+                    View Demo →
                   </span>
                 </div>
 
@@ -467,7 +473,9 @@ export default function Home() {
                     <div className="inline-block px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium mb-4">
                       {site.type}
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">{site.name}</h3>
+                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-lime-400 transition">
+                      {site.name}
+                    </h3>
                     <p className="text-gray-300 mb-4">{site.description}</p>
                   </div>
 
@@ -482,7 +490,7 @@ export default function Home() {
                   </div>
 
                   {/* Tech stack */}
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="flex flex-wrap gap-2">
                     {site.tech.map((tech) => (
                       <span
                         key={tech}
@@ -492,22 +500,14 @@ export default function Home() {
                       </span>
                     ))}
                   </div>
-
-                  {/* CTA */}
-                  <a
-                    href={`/intake?style=${site.name.toLowerCase()}`}
-                    className="block w-full px-4 py-3 text-center rounded-lg border-2 border-lime-400/50 text-lime-400 font-semibold text-sm hover:bg-lime-400/10 transition-all duration-300"
-                  >
-                    Build Something Like This →
-                  </a>
                 </div>
-              </div>
+              </Link>
             ))}
           </StaggerContainer>
 
           <FadeIn className="text-center mt-12">
             <p className="text-gray-400 mb-6">
-              These are concept examples. Your site will be custom-designed for your brand.
+              Click any example to explore a live demo. Your site will be custom-designed for your brand.
             </p>
             <a
               href="/intake"
