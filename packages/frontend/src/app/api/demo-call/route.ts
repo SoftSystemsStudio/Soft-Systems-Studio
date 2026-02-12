@@ -58,8 +58,8 @@ export async function POST(request: NextRequest) {
   const formattedPhone = cleanPhone.startsWith('1') ? `+${cleanPhone}` : `+1${cleanPhone}`;
 
   try {
-    // Build the first message with personalization
-    const firstMessage = `Hello, is this ${name}? We're calling you in regards to the demo you just requested of our AI receptionist from Soft Systems Studio. I'm the AI calling you right now - this is what the receptionist sounds like. Were there any specific questions you'd like to ask about the AI receptionist service?`;
+    // Build the first message with personalization - keep it SHORT for natural conversation
+    const firstMessage = `Hello, is this ${name}?`;
 
     // Create outbound call via Vapi API
     const response = await fetch('https://api.vapi.ai/call/phone', {
