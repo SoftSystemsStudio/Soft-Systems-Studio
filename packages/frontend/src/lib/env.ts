@@ -9,9 +9,21 @@ const envSchema = z.object({
   // Node environment
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 
-  // API URLs (no .url() — values may omit protocol; next.config.mjs handles the prefix)
-  NEXT_PUBLIC_API_URL: z.string().min(1).optional(),
-  NEXT_PUBLIC_APP_URL: z.string().min(1).optional(),
+  // API URLs (accept with or without protocol prefix)
+  NEXT_PUBLIC_API_URL: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val) return val;
+      return val.startsWith('http') ? val : `https://${val}`;
+    }),
+  NEXT_PUBLIC_APP_URL: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val) return val;
+      return val.startsWith('http') ? val : `https://${val}`;
+    }),
 
   // Analytics
   NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),

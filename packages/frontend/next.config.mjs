@@ -119,18 +119,32 @@ const nextConfig = {
     ];
   },
 
-  // API rewrites - proxy to backend API when NEXT_PUBLIC_API_URL is set
+  // API rewrites - proxy /api/v1/* to backend API (Railway)
   async rewrites() {
     const raw = process.env.NEXT_PUBLIC_API_URL;
-    if (!raw) return [];
-    // Ensure the URL always has a protocol prefix
-    const apiUrl = raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`;
-    return [
-      {
-        source: '/api/backend/:path*',
-        destination: `${apiUrl}/:path*`,
-      },
-    ];
+    // Skip rewrites if no backend API URL is configured
+    if (!raw) {
+      return { afterFiles: [] };
+    }
+    // Normalize: ensure protocol, strip trailing slashes
+    let normalizedUrl = raw.startsWith('http') ? raw : `https://${raw}`;
+    normalizedUrl = normalizedUrl.replace(/\/+$/, '');
+    try {
+      // Validate it's actually a parseable URL
+      new URL(normalizedUrl);
+    } catch {
+      console.warn(`⚠ NEXT_PUBLIC_API_URL is not a valid URL: "${raw}", skipping API rewrites`);
+      return { afterFiles: [] };
+    }
+    return {
+      // afterFiles so Next.js API routes (/api/*) still work
+      afterFiles: [
+        {
+          source: '/api/v1/:path*',
+          destination: `${normalizedUrl}/api/v1/:path*`,
+        },
+      ],
+    };
   },
 
   // Redirect rules disabled: Vercel domain-level redirects handle canonicalization
