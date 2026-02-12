@@ -25,7 +25,7 @@ const VALUES = [
   {
     title: 'No Fluff, No Filler',
     description:
-      'Every template, every tool, every line of code serves a purpose. We cut everything that doesn't help you make money or save time.',
+      "Every template, every tool, every line of code serves a purpose. We cut everything that doesn't help you make money or save time.",
     emoji: '🎯',
   },
   {
