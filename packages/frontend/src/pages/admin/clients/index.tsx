@@ -43,6 +43,9 @@ function buildSummary(client: ClientListItem): string {
   return parts.length > 0 ? parts.join(' · ') : 'No summary yet';
 }
 
+// Force SSR - admin pages require auth and cannot be statically prerendered
+export const getServerSideProps = () => ({ props: {} });
+
 export default function ClientsListPage() {
   const [clients, setClients] = useState<ClientListItem[]>([]);
   const [loading, setLoading] = useState(false);

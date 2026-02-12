@@ -52,6 +52,9 @@ interface ConfigApiResponse {
   config?: ClientConfig;
 }
 
+// Force SSR - admin pages require auth and cannot be statically prerendered
+export const getServerSideProps = () => ({ props: {} });
+
 export default function ClientDetailPage() {
   const router = useRouter();
   const { id } = router.query as { id?: string };

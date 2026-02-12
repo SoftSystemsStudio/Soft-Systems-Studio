@@ -416,18 +416,18 @@ pnpm claude:compact-guard # Check session compact count
 
 _This section auto-populates with recent activity to help Claude maintain continuity._
 
-**Last updated**: 2026-02-11T15:19:11.307Z
+**Last updated**: 2026-02-12T14:42:26.872Z
 
-**Staged changes**: 1 files (1 modified) in: frontend
+**Staged changes**: 2 files (2 modified) in: frontend
 
 **Recent commits**:
 
 ```text
-57a99ff fix(frontend): Fix Vercel build - normalize API URL and preserve Next.js API routes (9 minutes ago)
-418dcfc feat: Add AI receptionist config and Call Me Now button (24 minutes ago)
-de40050 feat: Add Expo, Supabase, RevenueCat, App Store Connect MCP servers and n8n skill (9 days ago)
-5f1a9ee fix(frontend): Add Next.js 16 Turbopack compatibility (10 days ago)
-02f0ee7 feat: Add GitHub, PostgreSQL, and Memory MCP servers (10 days ago)
+919b243 fix(frontend): Normalize API URL env vars missing protocol prefix (23 hours ago)
+57a99ff fix(frontend): Fix Vercel build - normalize API URL and preserve Next.js API routes (24 hours ago)
+418dcfc feat: Add AI receptionist config and Call Me Now button (24 hours ago)
+de40050 feat: Add Expo, Supabase, RevenueCat, App Store Connect MCP servers and n8n skill (10 days ago)
+5f1a9ee fix(frontend): Add Next.js 16 Turbopack compatibility (11 days ago)
 ```
 
 ## Session Checkpoints
