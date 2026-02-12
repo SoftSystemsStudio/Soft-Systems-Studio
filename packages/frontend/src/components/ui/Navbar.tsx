@@ -33,7 +33,7 @@ export default function Navbar({
 
   return (
     <header
-      className={`sticky top-0 z-50 backdrop-blur-md bg-[#050505]/90 border-b border-white/5 ${className}`}
+      className={`sticky top-0 z-[100] backdrop-blur-lg bg-black/95 border-b border-white/10 shadow-lg ${className}`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Brand with Logo */}
