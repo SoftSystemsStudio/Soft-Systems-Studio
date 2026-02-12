@@ -58,9 +58,6 @@ export async function POST(request: NextRequest) {
   const formattedPhone = cleanPhone.startsWith('1') ? `+${cleanPhone}` : `+1${cleanPhone}`;
 
   try {
-    // Build the first message with personalization - keep it SHORT for natural conversation
-    const firstMessage = `Hello, is this ${name}?`;
-
     // Create outbound call via Vapi API
     const response = await fetch('https://api.vapi.ai/call/phone', {
       method: 'POST',
@@ -71,12 +68,15 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         assistantId: env.VAPI_DEMO_ASSISTANT_ID,
         phoneNumberId: env.VAPI_PHONE_NUMBER_ID,
+        assistantOverrides: {
+          variableValues: {
+            name: name,
+            businessName: businessName || '',
+            businessType: businessType || '',
+          },
+        },
         customer: {
           number: formattedPhone,
-          name: name,
-        },
-        assistantOverrides: {
-          firstMessage: firstMessage,
         },
       }),
     });
