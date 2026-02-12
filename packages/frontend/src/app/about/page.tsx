@@ -62,19 +62,20 @@ const TIMELINE = [
 
 export default function AboutPage() {
   return (
-    <div className="antialiased min-h-screen bg-black text-gray-100 selection:bg-lime-400 selection:text-black overflow-x-hidden">
+    <>
       {/* Background effects */}
       <div className="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90 pointer-events-none" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-lime-900/20 via-transparent to-transparent pointer-events-none" />
 
-      <a
-        href="#main-content"
-        className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-lime-400 focus:text-black focus:px-4 focus:py-2 focus:rounded"
-      >
-        Skip to main content
-      </a>
-
       <Navbar items={NAV_ITEMS} ctaLabel="Get Started" ctaHref="/intake" />
+
+      <div className="antialiased min-h-screen bg-black text-gray-100 selection:bg-lime-400 selection:text-black overflow-x-hidden">
+        <a
+          href="#main-content"
+          className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-lime-400 focus:text-black focus:px-4 focus:py-2 focus:rounded"
+        >
+          Skip to main content
+        </a>
 
       <main id="main-content" className="relative z-10">
         {/* Hero */}
@@ -325,6 +326,7 @@ export default function AboutPage() {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }

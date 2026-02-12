@@ -160,19 +160,20 @@ const FAQS = [
 
 export default function Home() {
   return (
-    <div className="antialiased min-h-screen bg-black text-gray-100 selection:bg-lime-400 selection:text-black overflow-x-hidden">
-      <a
-        href="#main-content"
-        className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded"
-      >
-        Skip to main content
-      </a>
-
+    <>
       {/* Animated background gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90 pointer-events-none" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-lime-900/20 via-transparent to-transparent pointer-events-none" />
 
       <Navbar items={NAV_ITEMS} ctaLabel="Get Started" ctaHref="#web-design" />
+
+      <div className="antialiased min-h-screen bg-black text-gray-100 selection:bg-lime-400 selection:text-black overflow-x-hidden">
+        <a
+          href="#main-content"
+          className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded"
+        >
+          Skip to main content
+        </a>
 
       <main id="main-content" className="relative z-10">
         {/* Hero Section - Bold & Edgy */}
@@ -592,23 +593,24 @@ export default function Home() {
         position="bottom-right"
       />
 
-      <style jsx global>{`
-        @keyframes gradient {
-          0% {
-            background-position: 0% 50%;
+        <style jsx global>{`
+          @keyframes gradient {
+            0% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+            100% {
+              background-position: 0% 50%;
+            }
           }
-          50% {
-            background-position: 100% 50%;
+          .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
           }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
-      `}</style>
-    </div>
+        `}</style>
+      </div>
+    </>
   );
 }
