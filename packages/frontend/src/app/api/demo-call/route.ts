@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // Build the first message with personalization
-    const firstMessage = `Hi ${name}! This is the AI assistant from Soft Systems Studio. You requested a demo of our AI receptionist - I'm that AI! How are you doing today?`;
+    const firstMessage = `Hello, is this ${name}? We're calling you in regards to the demo you just requested of our AI receptionist from Soft Systems Studio. I'm the AI calling you right now - this is what the receptionist sounds like. Were there any specific questions you'd like to ask about the AI receptionist service?`;
 
     // Create outbound call via Vapi API
     const response = await fetch('https://api.vapi.ai/call/phone', {
