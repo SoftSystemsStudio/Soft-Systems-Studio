@@ -10,7 +10,7 @@ const isPublicRoute = createRouteMatcher([
   '/terms',
   '/sign-in(.*)',
   '/sign-up(.*)',
-  '/demo',
+  '/demo(.*)', // All demo routes are public
   '/api/cron/(.*)',
   '/api/intake',
   '/api/og',
