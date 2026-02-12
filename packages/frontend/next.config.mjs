@@ -119,14 +119,25 @@ const nextConfig = {
     ];
   },
 
-  // API rewrites - proxy to backend API, skip Next.js API routes
+  // API rewrites - proxy /api/v1/* to backend API (Railway)
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    // Ensure URL has protocol prefix
-    const normalizedUrl = apiUrl.startsWith('http') ? apiUrl : `https://${apiUrl}`;
+    const raw = process.env.NEXT_PUBLIC_API_URL;
+    // Skip rewrites if no backend API URL is configured
+    if (!raw) {
+      return { afterFiles: [] };
+    }
+    // Normalize: ensure protocol, strip trailing slashes
+    let normalizedUrl = raw.startsWith('http') ? raw : `https://${raw}`;
+    normalizedUrl = normalizedUrl.replace(/\/+$/, '');
+    try {
+      // Validate it's actually a parseable URL
+      new URL(normalizedUrl);
+    } catch {
+      console.warn(`⚠ NEXT_PUBLIC_API_URL is not a valid URL: "${raw}", skipping API rewrites`);
+      return { afterFiles: [] };
+    }
     return {
-      // "beforeFiles" rewrites run before Next.js API routes
-      // "afterFiles" rewrites run AFTER Next.js API routes (so local /api/* routes work)
+      // afterFiles so Next.js API routes (/api/*) still work
       afterFiles: [
         {
           source: '/api/v1/:path*',
