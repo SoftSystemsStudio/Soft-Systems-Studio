@@ -455,13 +455,20 @@ export default function Home() {
                   className={`absolute inset-0 bg-gradient-to-br ${site.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
                 />
 
+                {/* Concept Example badge */}
+                <div className="absolute top-4 right-4 z-20">
+                  <span className="px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/30 text-pink-400 text-xs font-medium">
+                    Concept Example
+                  </span>
+                </div>
+
                 <div className="relative z-10">
                   <div className="mb-4">
                     <div className="inline-block px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium mb-4">
                       {site.type}
                     </div>
                     <h3 className="text-2xl font-bold text-white mb-2">{site.name}</h3>
-                    <p className="text-gray-300">{site.description}</p>
+                    <p className="text-gray-300 mb-4">{site.description}</p>
                   </div>
 
                   {/* Mock browser window */}
@@ -475,7 +482,7 @@ export default function Home() {
                   </div>
 
                   {/* Tech stack */}
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {site.tech.map((tech) => (
                       <span
                         key={tech}
@@ -485,6 +492,14 @@ export default function Home() {
                       </span>
                     ))}
                   </div>
+
+                  {/* CTA */}
+                  <a
+                    href={`/intake?style=${site.name.toLowerCase()}`}
+                    className="block w-full px-4 py-3 text-center rounded-lg border-2 border-lime-400/50 text-lime-400 font-semibold text-sm hover:bg-lime-400/10 transition-all duration-300"
+                  >
+                    Build Something Like This →
+                  </a>
                 </div>
               </div>
             ))}
