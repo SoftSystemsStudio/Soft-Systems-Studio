@@ -12,8 +12,8 @@ interface PricingCardProps {
   highlighted?: boolean;
   badge?: string;
   className?: string;
-  // Legacy support
   price?: string;
+  priceMonthly?: string;
 }
 
 export default function PricingCard({
@@ -27,20 +27,21 @@ export default function PricingCard({
   highlighted = false,
   badge,
   className = '',
-  price, // Legacy support
+  price,
+  priceMonthly,
 }: PricingCardProps) {
   const baseClasses = 'relative flex flex-col p-8 rounded-2xl transition-all duration-300';
   const normalClasses =
     'bg-white/5 border border-white/10 backdrop-blur-sm hover:border-white/20 hover:bg-white/[0.08]';
   const highlightedClasses =
-    'bg-white/[0.08] border-2 border-purple-500/50 backdrop-blur-sm shadow-lg shadow-purple-500/10 hover:border-purple-500/70';
+    'bg-white/[0.08] border-2 border-lime-400/50 backdrop-blur-sm shadow-lg shadow-lime-400/10 hover:border-lime-400/70';
 
   return (
     <div
       className={`${baseClasses} ${highlighted ? highlightedClasses : normalClasses} ${className}`}
     >
       {badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-purple-500/10 px-4 py-1.5 text-xs font-medium text-purple-400 border border-purple-500/20">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-lime-400/10 px-4 py-1.5 text-xs font-medium text-lime-400 border border-lime-400/20">
           {badge}
         </span>
       )}
@@ -50,10 +51,15 @@ export default function PricingCard({
 
       <div className="mb-6">
         {price ? (
-          <span className="text-4xl font-bold text-white">{price}</span>
+          <div>
+            <span className="text-4xl font-bold text-white">{price}</span>
+            {priceMonthly && (
+              <span className="block text-lg font-semibold text-lime-400 mt-1">{priceMonthly}</span>
+            )}
+          </div>
         ) : (
           <>
-            <div className="text-sm font-mono text-purple-400 uppercase tracking-wide">{scope}</div>
+            <div className="text-sm font-mono text-lime-400 uppercase tracking-wide">{scope}</div>
             <div className="text-xs font-mono text-gray-500 mt-1">{complexity}</div>
           </>
         )}
@@ -64,7 +70,7 @@ export default function PricingCard({
           {features.map((feature, idx) => (
             <li key={idx} className="flex items-start gap-3 text-sm text-gray-300">
               <svg
-                className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5"
+                className="w-5 h-5 text-lime-400 flex-shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -88,7 +94,7 @@ export default function PricingCard({
           href={ctaHref}
           variant={highlighted ? 'primary' : 'ghost'}
           size="md"
-          className={`w-full justify-center ${highlighted ? 'bg-purple-500 hover:bg-purple-400 text-white' : 'text-white hover:bg-white/10'}`}
+          className={`w-full justify-center ${highlighted ? 'bg-lime-400 hover:bg-lime-300 text-black' : 'text-white hover:bg-white/10'}`}
         >
           {ctaText}
         </Button>

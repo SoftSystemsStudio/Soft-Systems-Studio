@@ -1,8 +1,14 @@
 import { Resend, CreateEmailOptions } from 'resend';
 import env from './env';
 
-// Initialize Resend client
-const resend = new Resend(env.RESEND_API_KEY);
+// Lazy-initialize Resend client (avoids crash when RESEND_API_KEY is missing at build time)
+let _resend: Resend | null = null;
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 export type SendEmailParams = {
   to: string | string[];
@@ -43,7 +49,7 @@ export async function sendEmail({
     replyTo,
   } as CreateEmailOptions;
 
-  const { data, error } = await resend.emails.send(emailOptions);
+  const { data, error } = await getResend().emails.send(emailOptions);
 
   if (error) {
     console.error('Failed to send email:', error);
@@ -99,4 +105,4 @@ export async function sendIntakeNotification(
   });
 }
 
-export { resend };
+export { getResend as resend };

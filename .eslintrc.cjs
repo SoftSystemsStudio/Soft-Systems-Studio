@@ -29,7 +29,14 @@ module.exports = {
     'prettier/prettier': 'error',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    // Security rules - adjust as needed
+    // Downgrade no-unsafe-* to warnings — Zod z.infer and path aliases cause
+    // false positives in the eslint type-checker that don't occur in tsc.
+    '@typescript-eslint/no-unsafe-member-access': 'warn',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/no-unsafe-call': 'warn',
+    '@typescript-eslint/no-unsafe-argument': 'warn',
+    '@typescript-eslint/no-unsafe-return': 'warn',
+    // Security rules
     'security/detect-object-injection': 'warn',
     'security/detect-non-literal-regexp': 'warn',
     'security/detect-unsafe-regex': 'error',
@@ -49,7 +56,7 @@ module.exports = {
       version: 'detect',
     },
   },
-  ignorePatterns: ['dist/', 'node_modules/', '.next/', 'coverage/'],
+  ignorePatterns: ['dist/', 'node_modules/', '.next/', 'coverage/', 'next-env.d.ts'],
   overrides: [
     {
       files: ['**/env.ts', '**/env/**/*.ts', '**/config/env*.ts'],
@@ -63,12 +70,8 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 'off',
       },
     },
-  ],
-  // Apply env/process.env guardrails to source files only to allow scripts/tests to continue
-  // This keeps the rollout low-risk while protecting application code paths.
-  // Files matched here will error on direct `process.env` access and warn on `as any`.
-  overrides: [
     {
+      // Enforce typed env module usage in application source
       files: ['apps/**/src/**/*.{ts,tsx}', 'packages/**/src/**/*.{ts,tsx}'],
       rules: {
         'no-restricted-syntax': [

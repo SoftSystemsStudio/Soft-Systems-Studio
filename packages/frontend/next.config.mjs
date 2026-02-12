@@ -74,7 +74,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.clerk.accounts.dev https://*.googletagmanager.com https://www.google-analytics.com https://js.stripe.com blob:",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.clerk.accounts.dev https://*.googletagmanager.com https://www.google-analytics.com https://js.stripe.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
@@ -119,12 +119,15 @@ const nextConfig = {
     ];
   },
 
-  // API rewrites - production uses NEXT_PUBLIC_API_URL
+  // API rewrites - proxy to backend API when NEXT_PUBLIC_API_URL is set
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    const raw = process.env.NEXT_PUBLIC_API_URL;
+    if (!raw) return [];
+    // Ensure the URL always has a protocol prefix
+    const apiUrl = raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`;
     return [
       {
-        source: '/api/:path*',
+        source: '/api/backend/:path*',
         destination: `${apiUrl}/:path*`,
       },
     ];
@@ -133,44 +136,7 @@ const nextConfig = {
   // Redirect rules disabled: Vercel domain-level redirects handle canonicalization
   // (one-way: apex → www for LLC domain)
   // Keeping old softsystems.studio → softsystemsstudiollc.com migration at Vercel level
-  async redirects() {
-    return [
-      {
-        source: '/demo/god-tier',
-        destination: '/demo/system-v1',
-        permanent: true,
-      },
-    ];
-  },
 
-  // Webpack configuration for GLSL shaders and optimizations
-  webpack: (config, { isServer }) => {
-    // Add GLSL shader loader
-    config.module.rules.push({
-      test: /\.(glsl|vs|fs|vert|frag)$/,
-      type: 'asset/source',
-    });
-
-    // Optimize Three.js bundle
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        three: 'three',
-      };
-
-      // Bundle size optimizations for production
-      if (process.env.NODE_ENV === 'production') {
-        // Tree shaking and code splitting
-        config.optimization = {
-          ...config.optimization,
-          usedExports: true,
-          sideEffects: true,
-        };
-      }
-    }
-
-    return config;
-  },
 
   // Experimental features for better performance
   experimental: {
@@ -182,24 +148,6 @@ const nextConfig = {
     },
   },
 
-  // Turbopack configuration (Next.js 16+ uses Turbopack by default)
-  turbopack: {
-    rules: {
-      // GLSL shader loader equivalent for Turbopack
-      '*.glsl': {
-        loaders: ['raw-loader'],
-        as: '*.js',
-      },
-      '*.vert': {
-        loaders: ['raw-loader'],
-        as: '*.js',
-      },
-      '*.frag': {
-        loaders: ['raw-loader'],
-        as: '*.js',
-      },
-    },
-  },
 };
 
 // Sentry configuration for error monitoring and source maps
