@@ -416,18 +416,18 @@ pnpm claude:compact-guard # Check session compact count
 
 _This section auto-populates with recent activity to help Claude maintain continuity._
 
-**Last updated**: 2026-02-12T15:43:01.091Z
+**Last updated**: 2026-02-12T15:58:42.582Z
 
-**Staged changes**: 2 files (2 modified) in: root, frontend
+**Staged changes**: 3 files (3 modified) in: root, frontend
 
 **Recent commits**:
 
 ```text
-a78c9cb fix(frontend): Harden API rewrite URL validation in next.config (14 minutes ago)
-e4344ca fix(frontend): Force SSR on admin pages to prevent Clerk prerender error (61 minutes ago)
-919b243 fix(frontend): Normalize API URL env vars missing protocol prefix (24 hours ago)
+ada6926 fix(frontend): Fix Call Me Now modal positioning and clipping (16 minutes ago)
+a78c9cb fix(frontend): Harden API rewrite URL validation in next.config (30 minutes ago)
+e4344ca fix(frontend): Force SSR on admin pages to prevent Clerk prerender error (76 minutes ago)
+919b243 fix(frontend): Normalize API URL env vars missing protocol prefix (25 hours ago)
 57a99ff fix(frontend): Fix Vercel build - normalize API URL and preserve Next.js API routes (25 hours ago)
-418dcfc feat: Add AI receptionist config and Call Me Now button (25 hours ago)
 ```
 
 ## Session Checkpoints
