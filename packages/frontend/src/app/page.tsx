@@ -2,9 +2,11 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useState } from 'react';
 import { Navbar, Footer, Section, Button } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
+import CallMeNowModal from '@/components/CallMeNowModal';
 import env from '@/lib/env';
 
 const InteractiveFAQ = dynamic(() => import('@/components/sentient/faq/InteractiveFAQ'), {
@@ -164,6 +166,8 @@ const FAQS = [
 ];
 
 export default function Home() {
+  const [showCallModal, setShowCallModal] = useState(false);
+
   return (
     <>
       {/* Animated background gradient */}
@@ -540,12 +544,20 @@ export default function Home() {
                   <span>✓ Calendar integration</span>
                   <span>✓ 24/7 availability</span>
                 </div>
-                <a
-                  href="/intake"
-                  className="inline-block px-8 py-4 bg-gradient-to-r from-lime-400 to-cyan-400 text-black font-bold rounded-lg hover:scale-105 transition-all duration-300"
-                >
-                  Get Free Quote
-                </a>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    onClick={() => setShowCallModal(true)}
+                    className="px-8 py-4 bg-gradient-to-r from-lime-400 to-cyan-400 text-black font-bold rounded-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-lime-400/30"
+                  >
+                    📞 Try Live Demo
+                  </button>
+                  <a
+                    href="/intake"
+                    className="inline-block px-8 py-4 border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
+                  >
+                    Get Free Quote
+                  </a>
+                </div>
               </div>
               <p className="text-sm text-gray-500">
                 Setup: $997 • Monthly: $197 + usage (~$30-80/mo)
@@ -607,6 +619,8 @@ export default function Home() {
         primaryColor="#a3e635"
         position="bottom-right"
       />
+
+      <CallMeNowModal isOpen={showCallModal} onClose={() => setShowCallModal(false)} />
 
         <style jsx global>{`
           @keyframes gradient {
