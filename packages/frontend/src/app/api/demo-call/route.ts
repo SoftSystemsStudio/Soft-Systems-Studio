@@ -77,13 +77,10 @@ export async function POST(request: NextRequest) {
         },
         assistantOverrides: {
           firstMessage: firstMessage,
-          model: {
-            messages: [
-              {
-                role: 'system',
-                content: `The person you're calling is ${name}${businessName ? ` from ${businessName}` : ''}${businessType ? `. They run a ${businessType} business` : ''}. They just requested a demo from the Soft Systems Studio website. Be friendly and personalized.`,
-              },
-            ],
+          variableValues: {
+            customerName: name,
+            businessName: businessName || 'their business',
+            businessType: businessType || 'service',
           },
         },
       }),
