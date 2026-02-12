@@ -1,0 +1,2 @@
+# False positive: dummy CI test key (not a real API key)
+20faafe6614a678f5c069fe668591a25d58464a7:.github/workflows/ci.yml:generic-api-key:38

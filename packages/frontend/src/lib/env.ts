@@ -31,6 +31,9 @@ const envSchema = z.object({
   // Stripe
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
 
+  // Clerk
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional(),
+
   // Sentry
   NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
   SENTRY_ORG: z.string().optional(),
@@ -55,7 +58,14 @@ export type Env = z.infer<typeof envSchema>;
 
 function validateEnv(): Env {
   try {
-    return envSchema.parse(process.env);
+    // Strip empty-string env vars so .optional() treats them as undefined
+    const cleaned = { ...process.env };
+    for (const [key, val] of Object.entries(cleaned)) {
+      if (typeof val === 'string' && val.trim() === '') {
+        delete cleaned[key];
+      }
+    }
+    return envSchema.parse(cleaned);
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.error('❌ Environment validation failed:', error.format());
