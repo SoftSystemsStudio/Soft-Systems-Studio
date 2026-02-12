@@ -19,10 +19,65 @@ const ROICalculator = dynamic(() => import('@/components/sentient/pricing/ROICal
 });
 
 const NAV_ITEMS = [
-  { label: 'How It Works', href: '#how-we-work' },
-  { label: 'Results', href: '#results' },
+  { label: 'Digital Products', href: '#digital-products' },
+  { label: 'AI Services', href: '#ai-services' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'About', href: '/about' },
+];
+
+const DIGITAL_PRODUCTS = [
+  {
+    name: 'AI Business in a Box',
+    price: '$29',
+    description: 'Everything to start an AI automation agency',
+    emoji: '🤖',
+    link: 'https://softsystemsstudioco.gumroad.com/l/ai-business-box',
+    features: [
+      '20 cold email templates',
+      'Service packages with pricing',
+      'Client proposals & scripts',
+      'Complete fulfillment SOPs',
+    ],
+  },
+  {
+    name: 'Solopreneur OS',
+    price: '$19',
+    description: 'Complete productivity system for one-person businesses',
+    emoji: '📊',
+    link: 'https://softsystemsstudioco.gumroad.com/l/solopreneur-os',
+    features: [
+      'Simple CRM',
+      'Revenue tracking dashboard',
+      'Content calendar',
+      '90-day roadmap template',
+    ],
+  },
+  {
+    name: 'AI Prompt Vault',
+    price: '$14.99',
+    description: '200+ battle-tested AI prompts',
+    emoji: '⚡',
+    link: 'https://softsystemsstudioco.gumroad.com/l/ai-prompt-vault',
+    features: [
+      'Business strategy prompts',
+      'Marketing & sales scripts',
+      'Coding & debugging helpers',
+      'Content creation templates',
+    ],
+  },
+  {
+    name: 'SaaS Launch Kit',
+    price: '$24',
+    description: 'Validate and launch your SaaS product',
+    emoji: '🚀',
+    link: 'https://softsystemsstudioco.gumroad.com/l/saas-launch-kit',
+    features: [
+      'Validation methods',
+      'Landing page templates',
+      '100-point launch checklist',
+      'Email sequences & pricing guide',
+    ],
+  },
 ];
 
 const STEPS = [
@@ -187,31 +242,31 @@ export default function Home() {
         {/* Hero Section */}
         <Section className="pt-24 pb-16">
           <FadeIn>
-            <div className="max-w-3xl mx-auto text-center">
+            <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                Never Miss Another
-                <span className="block text-lime-400">$400 Job Again</span>
+                Digital Products & AI Automation
+                <span className="block text-lime-400">For Growing Businesses</span>
               </h1>
-              <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto">
-                AI receptionists that answer every call, book appointments, and send you text
-                summaries — so you can stay on the job site.
+              <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8 max-w-3xl mx-auto">
+                Ready-to-use templates and intelligent systems to help you build faster, launch
+                smarter, and scale without burning out.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="/intake"
+                  href="#digital-products"
                   className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
                 >
-                  Get Your Free Quote
+                  Browse Products
                 </a>
                 <a
-                  href="#how-we-work"
+                  href="#ai-services"
                   className="inline-block px-10 py-5 border border-white/20 text-white font-semibold text-lg rounded-xl hover:bg-white/10 transition-all duration-300"
                 >
-                  See How It Works
+                  AI Services
                 </a>
               </div>
               <p className="text-sm text-gray-500 mt-6">
-                Built for plumbers, dentists, contractors, and local service businesses
+                Templates, launch kits, and AI automation for entrepreneurs and small businesses
               </p>
             </div>
           </FadeIn>
@@ -231,15 +286,69 @@ export default function Home() {
           </div>
         </Section>
 
-        {/* Why Choose Us */}
-        <Section id="why-us" className="py-24">
+        {/* Digital Products Section */}
+        <Section id="digital-products" className="py-24">
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              Why Local Businesses Choose Us
+              Digital Products
             </h2>
             <p className="text-gray-300 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              Built specifically for plumbers, dentists, contractors, and service businesses who are
-              tired of missing calls.
+              No fluff. No $997 courses. Just ready-to-use templates, systems, and tools you can
+              implement today.
+            </p>
+          </FadeIn>
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {DIGITAL_PRODUCTS.map((product) => (
+              <a
+                key={product.name}
+                href={product.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group p-6 rounded-xl border border-white/10 bg-white/5 hover:border-lime-400/50 hover:bg-white/10 transition-all duration-300 hover:scale-105"
+              >
+                <div className="text-4xl mb-4">{product.emoji}</div>
+                <h3 className="font-bold text-white mb-2 text-xl group-hover:text-lime-400 transition-colors">
+                  {product.name}
+                </h3>
+                <div className="text-2xl font-bold text-lime-400 mb-3">{product.price}</div>
+                <p className="text-gray-300 text-sm mb-4">{product.description}</p>
+                <ul className="space-y-2">
+                  {product.features.map((feature, idx) => (
+                    <li key={idx} className="text-gray-400 text-xs flex items-start gap-2">
+                      <span className="text-lime-400 mt-0.5">✓</span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 pt-4 border-t border-white/10">
+                  <span className="text-lime-400 text-sm font-medium group-hover:underline">
+                    View Product →
+                  </span>
+                </div>
+              </a>
+            ))}
+          </StaggerContainer>
+          <FadeIn className="text-center mt-12">
+            <p className="text-gray-400 mb-4">All products include 30-day money-back guarantee</p>
+            <a
+              href="https://softsystemsstudioco.gumroad.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-8 py-4 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
+            >
+              View All Products
+            </a>
+          </FadeIn>
+        </Section>
+
+        {/* AI Services Section */}
+        <Section id="ai-services" className="py-24 bg-gradient-to-b from-transparent via-lime-500/5 to-transparent">
+          <FadeIn>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
+              AI Automation Services
+            </h2>
+            <p className="text-gray-300 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
+              Custom AI solutions for service businesses — never miss another call or lead
             </p>
           </FadeIn>
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -253,60 +362,23 @@ export default function Home() {
               </div>
             ))}
           </StaggerContainer>
-        </Section>
-
-        {/* Quick Lead Capture */}
-        <Section className="py-20 bg-gradient-to-b from-transparent via-lime-500/5 to-transparent">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              See How Much You Could Save
-            </h2>
-            <p className="text-gray-300 mb-8">Get a free, personalized quote in under 2 minutes</p>
-            <form
-              action="/intake"
-              method="GET"
-              className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto"
-            >
-              <select
-                name="service"
-                required
-                aria-label="What type of business do you have?"
-                className="flex-1 px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent"
-                defaultValue=""
+          <FadeIn className="text-center mt-12">
+            <div className="max-w-3xl mx-auto">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Never Miss Another $400 Job Again
+              </h3>
+              <p className="text-gray-300 mb-6">
+                AI receptionists that answer every call, book appointments, and send you text
+                summaries — built for plumbers, dentists, contractors, and local service businesses.
+              </p>
+              <a
+                href="/intake"
+                className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
               >
-                <option value="" disabled className="text-gray-900">
-                  What type of business?
-                </option>
-                <option value="plumbing" className="text-gray-900">
-                  Plumbing
-                </option>
-                <option value="dental" className="text-gray-900">
-                  Dental Practice
-                </option>
-                <option value="hvac" className="text-gray-900">
-                  HVAC
-                </option>
-                <option value="landscaping" className="text-gray-900">
-                  Landscaping
-                </option>
-                <option value="electrical" className="text-gray-900">
-                  Electrical
-                </option>
-                <option value="other" className="text-gray-900">
-                  Other Service Business
-                </option>
-              </select>
-              <button
-                type="submit"
-                className="px-8 py-4 bg-lime-400 text-black font-bold rounded-xl hover:bg-lime-300 transition-all duration-300 whitespace-nowrap"
-              >
-                Get My Quote
-              </button>
-            </form>
-            <p className="text-sm text-gray-500 mt-4">
-              No credit card required · Takes 2 minutes · 30-day guarantee
-            </p>
-          </div>
+                Get Your Free Quote
+              </a>
+            </div>
+          </FadeIn>
         </Section>
 
         {/* How We Work */}
@@ -322,7 +394,7 @@ export default function Home() {
           <ProcessTimeline steps={STEPS} />
         </Section>
 
-        {/* Results Section - replaces fake testimonials */}
+        {/* Results Section */}
         <Section id="results" className="py-24">
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
@@ -352,7 +424,7 @@ export default function Home() {
         <Section id="pricing" className="py-24 section-elevated">
           <FadeIn>
             <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              Transparent Pricing
+              AI Service Pricing
             </h2>
             <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
               Clear packages tailored to your needs. No hidden fees, no surprises.
@@ -426,19 +498,29 @@ export default function Home() {
         <Section className="py-28 relative overflow-hidden">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Ready to Stop Missing Calls?
+              Ready to Build Smarter?
             </h2>
             <p className="text-gray-300 text-lg mb-8">
-              Get a free quote in under 2 minutes. See exactly what your AI receptionist will cost.
+              Browse digital products or get a custom AI solution for your business
             </p>
-            <a
-              href="/intake"
-              className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
-            >
-              Get Your Free Quote
-            </a>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="https://softsystemsstudioco.gumroad.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
+              >
+                Shop Products
+              </a>
+              <a
+                href="/intake"
+                className="inline-block px-10 py-5 border border-white/20 text-white font-semibold text-lg rounded-xl hover:bg-white/10 transition-all duration-300"
+              >
+                Get AI Automation
+              </a>
+            </div>
             <p className="text-sm text-gray-500 mt-4">
-              30-day money-back guarantee · No credit card required
+              30-day money-back guarantee on all products and services
             </p>
           </div>
         </Section>
@@ -449,12 +531,12 @@ export default function Home() {
       <ChatWidget
         apiUrl={(env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'}
         title="Chat With Us"
-        greeting="Hi! I'm here to help. Ask me about our AI automation services, website design, pricing, or anything else!"
+        greeting="Hi! I'm here to help. Ask me about our digital products, AI automation services, pricing, or anything else!"
         primaryColor="#a3e635"
         position="bottom-right"
       />
 
-      {/* JSON-LD - Organization only (no fabricated reviews) */}
+      {/* JSON-LD - Organization */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -464,7 +546,7 @@ export default function Home() {
             name: 'Soft Systems Studio LLC',
             url: 'https://softsystemsstudiollc.com',
             description:
-              'AI receptionists and websites for plumbers, dentists, contractors, and local service businesses.',
+              'Digital products and AI automation for entrepreneurs, solopreneurs, and small businesses.',
             foundingDate: '2019',
             address: { '@type': 'PostalAddress', addressCountry: 'US' },
             contactPoint: {
