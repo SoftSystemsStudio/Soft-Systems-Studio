@@ -71,64 +71,115 @@ export default function ClientsListPage() {
   }, []);
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1 style={{ marginBottom: 16 }}>Clients</h1>
+    <main style={{ padding: 32 }}>
+      <div style={{ marginBottom: 32 }}>
+        <h1 style={{ fontSize: 32, fontWeight: 700, color: '#f5f5f5', marginBottom: 8 }}>
+          Clients
+        </h1>
+        <p style={{ color: '#9ca3af', fontSize: 16 }}>
+          Manage all your clients and their projects.
+        </p>
+      </div>
 
-      {loading && <div>Loading clients…</div>}
-      {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
+      {loading && <div style={{ color: '#9ca3af' }}>Loading clients…</div>}
+      {error && <div style={{ color: '#ef4444', marginBottom: 12 }}>{error}</div>}
 
       {!loading && !error && clients.length === 0 && (
-        <div>No clients yet. Once someone completes the intake, they will appear here.</div>
+        <div
+          style={{
+            padding: 48,
+            textAlign: 'center',
+            background: 'linear-gradient(135deg, #111 0%, #1a1a1a 100%)',
+            border: '1px solid #2a2a2a',
+            borderRadius: 12,
+          }}
+        >
+          <div style={{ fontSize: 48, marginBottom: 16 }}>👥</div>
+          <div style={{ color: '#9ca3af', fontSize: 16 }}>
+            No clients yet. Once someone completes the intake, they will appear here.
+          </div>
+        </div>
       )}
 
       {!loading && !error && clients.length > 0 && (
-        <table
+        <div
           style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            border: '1px solid #e1e4e8',
+            background: 'linear-gradient(135deg, #111 0%, #1a1a1a 100%)',
+            border: '1px solid #2a2a2a',
+            borderRadius: 12,
+            overflow: 'hidden',
           }}
         >
-          <thead>
-            <tr style={{ background: '#f6f8fa' }}>
-              <th style={{ textAlign: 'left', padding: '8px 12px' }}>Client</th>
-              <th style={{ textAlign: 'left', padding: '8px 12px' }}>Website</th>
-              <th style={{ textAlign: 'left', padding: '8px 12px' }}>Summary</th>
-              <th style={{ textAlign: 'left', padding: '8px 12px' }}>Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clients.map((c, idx) => (
-              <tr
-                key={c.id}
-                style={{
-                  background: idx % 2 === 0 ? '#ffffff' : '#f9fafb',
-                  borderTop: '1px solid #e1e4e8',
-                }}
-              >
-                <td style={{ padding: '8px 12px' }}>
-                  <div style={{ fontWeight: 500 }}>
-                    <Link href={`/admin/clients/${c.id}`}>{c.companyName}</Link>
-                  </div>
-                  <div style={{ fontSize: 12, color: '#6a737d' }}>{c.id}</div>
-                </td>
-                <td style={{ padding: '8px 12px' }}>
-                  {c.website ? (
-                    <a href={c.website} target="_blank" rel="noreferrer">
-                      {c.website}
-                    </a>
-                  ) : (
-                    <span style={{ color: '#6a737d' }}>—</span>
-                  )}
-                </td>
-                <td style={{ padding: '8px 12px', fontSize: 14, color: '#24292e' }}>
-                  {buildSummary(c)}
-                </td>
-                <td style={{ padding: '8px 12px', fontSize: 14 }}>{formatCreated(c.createdAt)}</td>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+            }}
+          >
+            <thead>
+              <tr style={{ background: 'rgba(163, 230, 53, 0.05)', borderBottom: '1px solid #2a2a2a' }}>
+                <th style={{ textAlign: 'left', padding: '16px 20px', color: '#A3E635', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Client</th>
+                <th style={{ textAlign: 'left', padding: '16px 20px', color: '#A3E635', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Website</th>
+                <th style={{ textAlign: 'left', padding: '16px 20px', color: '#A3E635', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Summary</th>
+                <th style={{ textAlign: 'left', padding: '16px 20px', color: '#A3E635', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Created</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {clients.map((c, idx) => (
+                <tr
+                  key={c.id}
+                  style={{
+                    background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)',
+                    borderTop: idx === 0 ? 'none' : '1px solid #2a2a2a',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(163, 230, 53, 0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)';
+                  }}
+                >
+                  <td style={{ padding: '16px 20px' }}>
+                    <Link 
+                      href={`/admin/clients/${c.id}`}
+                      style={{
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <div style={{ fontWeight: 500, color: '#f5f5f5', marginBottom: 4 }}>
+                        {c.companyName}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#6b7280', fontFamily: 'monospace' }}>{c.id}</div>
+                    </Link>
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    {c.website ? (
+                      <a 
+                        href={c.website} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        style={{
+                          color: '#A3E635',
+                          textDecoration: 'none',
+                          fontSize: 14,
+                        }}
+                      >
+                        {c.website}
+                      </a>
+                    ) : (
+                      <span style={{ color: '#6b7280' }}>—</span>
+                    )}
+                  </td>
+                  <td style={{ padding: '16px 20px', fontSize: 14, color: '#9ca3af' }}>
+                    {buildSummary(c)}
+                  </td>
+                  <td style={{ padding: '16px 20px', fontSize: 14, color: '#9ca3af' }}>{formatCreated(c.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </main>
   );
