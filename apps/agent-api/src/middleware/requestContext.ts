@@ -10,6 +10,7 @@
  */
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../logger';
+import { recordResponseTime } from '../services/metricsCollector';
 import '../types/auth';
 
 // Keep namespace augmentation for Express Request to allow `req.context` and `req.log`
@@ -93,7 +94,9 @@ function extractAuthContext(req: Request): Partial<RequestContext> {
  * - req.context - structured context object
  * - req.log - child logger with bound context
  */
-export function requestContext(req: Request, _res: Response, next: NextFunction): void {
+export function requestContext(req: Request, res: Response, next: NextFunction): void {
+  const startTime = Date.now();
+
   // Extract request ID from pino-http or logger bindings safely
   let requestId = 'unknown';
   if (typeof req.id === 'string' && req.id) {
@@ -129,6 +132,12 @@ export function requestContext(req: Request, _res: Response, next: NextFunction)
     ...(context.role && { role: context.role }),
     ...(context.apiKeyId && { apiKeyId: context.apiKeyId }),
   }) as any;
+
+  // Record response time when request completes
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+    recordResponseTime(duration);
+  });
 
   next();
 }

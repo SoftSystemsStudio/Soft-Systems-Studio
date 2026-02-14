@@ -9,6 +9,7 @@ import {
 } from './metrics';
 import logger from './logger';
 import env from './env';
+import { recordAutomation } from './services/metricsCollector';
 
 // Lazy connection - only connect when queues are actually used
 let connection: ReturnType<typeof getRedisClient> | null = null;
@@ -133,6 +134,7 @@ const emailEvents = hasRedis() ? getEmailEvents() : null;
 if (ingestEvents) {
   ingestEvents.on('completed', ({ jobId }) => {
     logger.debug({ jobId, queue: 'ingest' }, 'Job completed');
+    recordAutomation(); // Track completed automation
   });
 
   ingestEvents.on('failed', async ({ jobId, failedReason }) => {
@@ -205,6 +207,7 @@ function extractFailureReason(errorMessage: string): string {
 if (emailEvents) {
   emailEvents.on('completed', ({ jobId }) => {
     logger.debug({ jobId, queue: 'email' }, 'Email job completed');
+    recordAutomation(); // Track email automation
   });
 
   emailEvents.on('failed', ({ jobId, failedReason }) => {

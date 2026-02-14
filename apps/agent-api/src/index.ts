@@ -19,6 +19,8 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { httpLogger, logger } from './logger';
 import { initSentry, sentryRequestHandler, sentryErrorHandler } from './sentry';
 import { requestContext } from './middleware/requestContext';
+import { createServer } from 'http';
+import { initSocketIO, shutdownSocketIO } from './socket/socketServer';
 // Temporarily disable queue to debug server hang
 // import { startQueueMetrics, gracefulShutdown, registerQueueShutdownHandlers } from './queue';
 
@@ -135,13 +137,24 @@ console.log('[index.ts] require.main:', {
   // startQueueMetrics();
 
   console.log('[index.ts] Starting server on port', port);
-  app.listen(port, () => {
+
+  // Create HTTP server to attach Socket.IO
+  const server = createServer(app);
+
+  server.listen(port, () => {
     logger.info({ port, serverRole: env.SERVER_ROLE }, `agent-api listening on ${port}`);
   });
 
-  // When re-enabling queue system:
-  // const server = app.listen(port, () => { ... });
-  // server.on('close', () => { void gracefulShutdown(); });
+  // Initialize Socket.IO for real-time metrics
+  initSocketIO(server);
+  logger.info('Real-time monitoring enabled via Socket.IO');
+
+  // Graceful shutdown
+  server.on('close', () => {
+    logger.info('HTTP server closing, shutting down Socket.IO');
+    shutdownSocketIO();
+    // void gracefulShutdown(); // Re-enable when queue is re-enabled
+  });
 }
 
 export default app;
