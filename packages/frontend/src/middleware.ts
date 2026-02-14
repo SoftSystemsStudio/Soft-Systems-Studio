@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   '/intake',
   '/privacy',
   '/terms',
+  '/digital-products', // Digital products section (redirects to homepage anchor)
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/demo(.*)', // All demo routes are public

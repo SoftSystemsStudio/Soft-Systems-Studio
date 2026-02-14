@@ -39,7 +39,15 @@ export default function Navbar({
         {/* Brand with Logo */}
         <Link href="/" className="flex items-center gap-3">
           {logo && (
-            <Image src={logo} alt={brand} width={36} height={36} className="h-9 w-9" priority />
+            <Image
+              src={logo}
+              alt={brand}
+              width={36}
+              height={36}
+              className="h-9 w-9"
+              priority
+              unoptimized
+            />
           )}
           <span className="font-bold text-xl tracking-tight text-white hidden sm:block">
             {brand}
