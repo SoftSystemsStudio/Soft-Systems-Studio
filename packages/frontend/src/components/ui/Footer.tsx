@@ -26,14 +26,14 @@ export default function Footer({
   return (
     <footer className={`border-t border-white/10 py-10 bg-[#050505] ${className}`}>
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3 text-sm text-gray-300 font-mono">
+        <div className="flex items-center gap-3 text-sm text-white/90 font-mono">
           {logo && (
             <Image
               src={logo}
               alt={brand}
               width={28}
               height={28}
-              className="h-7 w-7 opacity-90"
+              className="h-7 w-7"
               unoptimized
             />
           )}
@@ -47,7 +47,7 @@ export default function Footer({
             <Link
               key={link.href}
               href={link.href}
-              className="text-gray-400 hover:text-lime-400 text-sm transition focus:outline-none focus:ring-2 focus:ring-lime-500 rounded"
+              className="text-white/70 hover:text-lime-400 text-sm transition focus:outline-none focus:ring-2 focus:ring-lime-500 rounded"
             >
               {link.label}
             </Link>
