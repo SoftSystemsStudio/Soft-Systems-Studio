@@ -265,58 +265,119 @@ export default function Home() {
             </div>
           </FadeIn>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-            {DIGITAL_PRODUCTS.map((product) => (
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+            {DIGITAL_PRODUCTS.map((product, idx) => (
               <a
                 key={product.name}
                 href={product.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur hover:border-lime-400/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/20"
+                className="group relative block overflow-hidden"
+                style={{ animationDelay: `${idx * 100}ms` }}
               >
-                {/* Gradient overlay */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${product.gradient} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`}
-                />
+                {/* Card container with layered depth */}
+                <div className="relative bg-gradient-to-br from-[#0a0a0a] to-[#111111] border border-white/20 rounded-none transition-all duration-500 hover:border-lime-400/60 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(132,204,22,0.3)]">
+                  {/* Diagonal gradient slash - signature element */}
+                  <div
+                    className={`absolute -right-12 -top-12 w-48 h-48 bg-gradient-to-br ${product.gradient} opacity-10 rotate-45 group-hover:opacity-20 transition-all duration-500 group-hover:scale-125`}
+                  />
 
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-4">
-                    <h3 className="font-bold text-white text-lg group-hover:text-lime-400 transition-colors">
-                      {product.name}
-                    </h3>
-                    <span className="text-2xl font-black text-lime-400">{product.price}</span>
+                  {/* Neon glow accent bar */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  {/* Content container */}
+                  <div className="relative p-6 space-y-5">
+                    {/* Header with oversized price tag */}
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-black text-white text-xl leading-tight group-hover:text-lime-400 transition-colors duration-300">
+                        {product.name}
+                      </h3>
+                      <div className="flex-shrink-0 bg-gradient-to-br from-lime-400/20 to-cyan-400/20 border border-lime-400/50 px-3 py-1.5 backdrop-blur-sm">
+                        <span className="text-2xl font-mono font-black text-lime-400 tracking-tight">
+                          {product.price}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-gray-300 text-sm leading-relaxed font-medium">
+                      {product.description}
+                    </p>
+
+                    {/* Features list with enhanced styling */}
+                    <ul className="space-y-2.5 pt-2">
+                      {product.features.map((feature, idx) => (
+                        <li
+                          key={idx}
+                          className="text-gray-400 text-xs flex items-start gap-2.5 group-hover:text-gray-300 transition-colors"
+                        >
+                          <span className="flex-shrink-0 w-1.5 h-1.5 bg-lime-400 mt-1.5 group-hover:shadow-[0_0_8px_rgba(132,204,22,0.6)] transition-shadow" />
+                          <span className="leading-relaxed">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Bold CTA button with animated border */}
+                    <div className="pt-4">
+                      <div className="relative bg-lime-400 text-black font-bold text-sm px-5 py-3 overflow-hidden group-hover:bg-lime-300 transition-all duration-300">
+                        {/* Animated shine effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+
+                        <div className="relative flex items-center justify-between">
+                          <span className="uppercase tracking-wider">View Product</span>
+                          <svg
+                            className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2.5}
+                              d="M13 7l5 5m0 0l-5 5m5-5H6"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Border glow effect on hover */}
+                      <div className="absolute inset-0 border-2 border-lime-400/0 group-hover:border-lime-400/40 transition-all duration-300 pointer-events-none" />
+                    </div>
                   </div>
 
-                  <p className="text-gray-300 text-sm mb-4">{product.description}</p>
-
-                  <ul className="space-y-2">
-                    {product.features.map((feature, idx) => (
-                      <li key={idx} className="text-gray-400 text-xs flex items-center gap-2">
-                        <span className="w-1 h-1 bg-lime-400 rounded-full" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between">
-                    <span className="text-lime-400 text-sm font-medium group-hover:underline">
-                      View Product
-                    </span>
-                    <span className="text-lime-400">→</span>
-                  </div>
+                  {/* Corner accent - geometric detail */}
+                  <div className="absolute bottom-0 right-0 w-16 h-16 border-l-2 border-t-2 border-lime-400/20 group-hover:border-lime-400/50 transition-colors duration-300" />
                 </div>
               </a>
             ))}
           </StaggerContainer>
 
-          <FadeIn className="text-center mt-12">
+          <FadeIn className="text-center mt-16">
             <a
               href="https://softsystemsstudioco.gumroad.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-8 py-4 border-2 border-white/20 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-300"
+              className="group relative inline-flex items-center gap-3 px-10 py-5 border-2 border-lime-400/30 text-white font-bold text-base uppercase tracking-wider hover:border-lime-400 transition-all duration-300 overflow-hidden"
             >
-              View All Products
+              {/* Animated background on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-lime-400/0 via-lime-400/10 to-lime-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+
+              <span className="relative">View All Products</span>
+
+              <svg
+                className="relative w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
             </a>
           </FadeIn>
         </Section>
