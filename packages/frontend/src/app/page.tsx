@@ -298,7 +298,7 @@ export default function Home() {
                     ))}
                   </ul>
 
-                  <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                  <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between">
                     <span className="text-lime-400 text-sm font-medium group-hover:underline">
                       View Product
                     </span>
