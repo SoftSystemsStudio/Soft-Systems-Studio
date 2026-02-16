@@ -7,6 +7,12 @@ import { Navbar, Footer, Section, Button } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
 import CallMeNowModal from '@/components/CallMeNowModal';
+import {
+  OrganizationSchema,
+  ProductListSchema,
+  FAQSchema,
+  WebSiteSchema,
+} from '@/components/StructuredData';
 import env from '@/lib/env';
 
 const InteractiveFAQ = dynamic(() => import('@/components/sentient/faq/InteractiveFAQ'), {
@@ -170,6 +176,12 @@ export default function Home() {
 
   return (
     <>
+      {/* Structured Data for SEO */}
+      <OrganizationSchema />
+      <WebSiteSchema />
+      <ProductListSchema products={DIGITAL_PRODUCTS} />
+      <FAQSchema faqs={FAQS} />
+
       {/* Animated background gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90 pointer-events-none" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-lime-900/20 via-transparent to-transparent pointer-events-none" />
