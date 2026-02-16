@@ -14,7 +14,7 @@ const NAV_ITEMS = [
 export default function TermsPage() {
   return (
     <div className="antialiased min-h-screen bg-[#050505] text-gray-200">
-      <Navbar items={NAV_ITEMS} ctaLabel="Get Started" ctaHref="/intake" />
+      <Navbar items={NAV_ITEMS} ctaLabel="Get a Quote" ctaHref="/intake" />
       <main className="max-w-3xl mx-auto px-4 py-24">
         <h1 className="text-4xl font-bold text-white mb-8">Terms of Service</h1>
         <div className="prose prose-invert prose-gray max-w-none space-y-6 text-gray-300 leading-relaxed">

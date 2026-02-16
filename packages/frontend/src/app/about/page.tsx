@@ -67,7 +67,7 @@ export default function AboutPage() {
       <div className="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90 pointer-events-none" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-lime-900/20 via-transparent to-transparent pointer-events-none" />
 
-      <Navbar items={NAV_ITEMS} ctaLabel="Get Started" ctaHref="/intake" />
+      <Navbar items={NAV_ITEMS} ctaLabel="Get a Quote" ctaHref="/intake" />
 
       <div className="antialiased min-h-screen bg-black text-gray-100 selection:bg-lime-400 selection:text-black overflow-x-hidden">
         <a
