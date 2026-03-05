@@ -62,6 +62,7 @@ export default function Button({
 }: ButtonProps) {
   const baseClasses =
     'inline-flex items-center justify-center rounded-full transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
+  // eslint-disable-next-line security/detect-object-injection -- size and variant are typed unions, not user input
   const classes = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
 
   if (props.as === 'link') {

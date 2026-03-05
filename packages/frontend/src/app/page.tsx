@@ -342,7 +342,10 @@ export default function Home() {
         </Section>
 
         {/* AI Services Section */}
-        <Section id="ai-services" className="py-24 bg-gradient-to-b from-transparent via-lime-500/5 to-transparent">
+        <Section
+          id="ai-services"
+          className="py-24 bg-gradient-to-b from-transparent via-lime-500/5 to-transparent"
+        >
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               AI Automation Services
@@ -529,6 +532,7 @@ export default function Home() {
       <Footer />
 
       <ChatWidget
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- false positive: ESLint cannot resolve @/ path alias
         apiUrl={(env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'}
         title="Chat With Us"
         greeting="Hi! I'm here to help. Ask me about our digital products, AI automation services, pricing, or anything else!"

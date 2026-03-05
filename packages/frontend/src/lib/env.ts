@@ -62,6 +62,7 @@ function validateEnv(): Env {
     const cleaned = { ...process.env };
     for (const [key, val] of Object.entries(cleaned)) {
       if (typeof val === 'string' && val.trim() === '') {
+        // eslint-disable-next-line security/detect-object-injection -- key is from Object.entries of own properties
         delete cleaned[key];
       }
     }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call -- false positives: ESLint cannot resolve @/ path aliases */
 import { NextRequest, NextResponse } from 'next/server';
 import { getEnv } from '@/lib/env';
 
