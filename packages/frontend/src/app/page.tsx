@@ -1,531 +1,686 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { Navbar, Footer, Section, PricingCard, Button } from '@/components/ui';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Navbar, Footer, Section, Button } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
+import CallMeNowModal from '@/components/CallMeNowModal';
+import {
+  OrganizationSchema,
+  ProductListSchema,
+  FAQSchema,
+  WebSiteSchema,
+} from '@/components/StructuredData';
 import env from '@/lib/env';
 
 const InteractiveFAQ = dynamic(() => import('@/components/sentient/faq/InteractiveFAQ'), {
   ssr: false,
 });
 
-const ProcessTimeline = dynamic(() => import('@/components/sentient/process/ProcessTimeline'), {
-  ssr: false,
-});
-
-const ROICalculator = dynamic(() => import('@/components/sentient/pricing/ROICalculator'), {
-  ssr: false,
-});
-
 const NAV_ITEMS = [
-  { label: 'Digital Products', href: '#digital-products' },
+  { label: 'Products', href: '#digital-products' },
+  { label: 'Web Design', href: '#web-design' },
   { label: 'AI Services', href: '#ai-services' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'About', href: '/about' },
+  { label: 'Portfolio', href: '#portfolio' },
 ];
 
 const DIGITAL_PRODUCTS = [
   {
     name: 'AI Business in a Box',
     price: '$29',
-    description: 'Everything to start an AI automation agency',
-    emoji: '🤖',
+    description: 'Complete AI agency starter pack',
+    gradient: 'from-purple-600 to-pink-600',
     link: 'https://softsystemsstudioco.gumroad.com/l/ai-business-box',
-    features: [
-      '20 cold email templates',
-      'Service packages with pricing',
-      'Client proposals & scripts',
-      'Complete fulfillment SOPs',
-    ],
+    features: ['20 Email Templates', 'Service Packages', 'Client Scripts', 'SOPs'],
   },
   {
     name: 'Solopreneur OS',
     price: '$19',
-    description: 'Complete productivity system for one-person businesses',
-    emoji: '📊',
+    description: 'All-in-one productivity system',
+    gradient: 'from-cyan-500 to-blue-600',
     link: 'https://softsystemsstudioco.gumroad.com/l/solopreneur-os',
-    features: [
-      'Simple CRM',
-      'Revenue tracking dashboard',
-      'Content calendar',
-      '90-day roadmap template',
-    ],
+    features: ['CRM', 'Revenue Tracking', 'Content Calendar', '90-Day Roadmap'],
   },
   {
     name: 'AI Prompt Vault',
     price: '$14.99',
-    description: '200+ battle-tested AI prompts',
-    emoji: '⚡',
+    description: '200+ battle-tested prompts',
+    gradient: 'from-orange-500 to-red-600',
     link: 'https://softsystemsstudioco.gumroad.com/l/ai-prompt-vault',
-    features: [
-      'Business strategy prompts',
-      'Marketing & sales scripts',
-      'Coding & debugging helpers',
-      'Content creation templates',
-    ],
+    features: ['Business Strategy', 'Marketing Scripts', 'Code Helpers', 'Content Tools'],
   },
   {
     name: 'SaaS Launch Kit',
     price: '$24',
-    description: 'Validate and launch your SaaS product',
-    emoji: '🚀',
+    description: 'Zero to launch playbook',
+    gradient: 'from-lime-500 to-green-600',
     link: 'https://softsystemsstudioco.gumroad.com/l/saas-launch-kit',
-    features: [
-      'Validation methods',
-      'Landing page templates',
-      '100-point launch checklist',
-      'Email sequences & pricing guide',
-    ],
+    features: ['Validation Guide', 'Landing Pages', '100-Point Checklist', 'Email Flows'],
   },
 ];
 
-const STEPS = [
+const WEBSITE_PACKAGES = [
   {
-    step: '01',
-    title: 'Tell Us About Your Business',
-    desc: 'Quick 5-minute call. We learn what you do, your biggest challenges, and how many calls you miss.',
-  },
-  {
-    step: '02',
-    title: 'Get Your Custom Quote',
-    desc: 'Within 24 hours, receive a clear proposal with pricing, timeline, and exactly what you get.',
-  },
-  {
-    step: '03',
-    title: 'Go Live in 2 Weeks',
-    desc: 'We handle everything. You approve the final result, and your AI starts answering calls.',
-  },
-];
-
-const PRICING_PLANS = [
-  {
-    name: 'Website Package',
-    price: '$2,500',
-    description: 'Professional web presence for local businesses',
+    name: 'Starter Landing',
+    price: '$799',
+    delivery: '48 hours',
+    description: 'Perfect for product launches and lead capture',
     features: [
-      '5-page custom website',
-      'Mobile responsive design',
+      'Single high-converting page',
+      'Mobile responsive',
       'SEO optimized',
-      'Contact form & lead capture',
+      'Contact form integration',
+      '2 rounds of revisions',
+    ],
+    badge: 'Fast Track',
+    gradient: 'from-pink-500 to-rose-600',
+  },
+  {
+    name: 'Business Website',
+    price: '$1,997',
+    delivery: '1 week',
+    description: 'Complete web presence for your business',
+    features: [
+      '5-7 pages (Home, About, Services, Contact, etc.)',
+      'Custom design system',
+      'CMS integration',
+      'Analytics setup',
       '30-day post-launch support',
     ],
-    ctaText: 'Get Started',
+    popular: true,
+    gradient: 'from-lime-400 to-emerald-500',
   },
   {
-    name: 'AI Receptionist',
-    price: 'Setup: $997',
-    priceMonthly: '+ $197/mo',
-    description: 'Never miss a call again',
+    name: 'Premium Package',
+    price: '$3,497',
+    delivery: '2 weeks',
+    description: 'Full-featured site with advanced functionality',
     features: [
-      '24/7 AI phone answering',
-      'Natural voice (not robotic)',
-      'Bilingual (English/Spanish)',
-      'Calendar integration',
-      'Monthly optimization included',
+      '10+ pages with custom features',
+      'E-commerce or booking system',
+      'Advanced integrations (CRM, email, etc.)',
+      'Performance optimization',
+      '60-day support + training',
     ],
-    highlighted: true,
-    badge: 'Most Popular',
-    ctaText: 'Get Started',
-    valueNote: 'Less than $7/day — cheaper than a part-time hire',
-  },
-  {
-    name: 'Complete Package',
-    price: 'Setup: $2,997',
-    priceMonthly: '+ $197/mo',
-    description: 'Website + AI bundle (Save $500)',
-    features: [
-      '7-page website included',
-      'AI receptionist integrated',
-      'Website chat included',
-      '2 integrations (calendar, CRM)',
-      '60-day support included',
-    ],
-    ctaText: 'Get the Bundle',
-    valueNote: 'Best value for full digital presence',
+    gradient: 'from-cyan-400 to-blue-600',
   },
 ];
 
-const WHY_CHOOSE_US = [
+const PORTFOLIO_SITES = [
   {
-    title: 'Answer Every Call, 24/7',
-    description:
-      'Never miss a lead again. Your AI receptionist works nights, weekends, and holidays.',
+    name: 'NeuralFit',
+    type: 'SaaS Platform',
+    description: 'AI-powered fitness tracking app',
+    gradient: 'from-purple-600 via-fuchsia-600 to-cyan-500',
+    tech: ['Next.js', 'Python', 'PostgreSQL'],
+    url: '/demo/neuralfit',
   },
   {
-    title: 'Book Jobs While You Work',
-    description:
-      'AI schedules appointments directly into your calendar. Get text summaries instantly.',
+    name: 'Apex Plumbing',
+    type: 'Service Business',
+    description: '24/7 emergency plumbing services',
+    gradient: 'from-orange-600 to-red-700',
+    tech: ['React', 'Tailwind', 'Vercel'],
+    url: '/demo/apex-plumbing',
   },
   {
-    title: 'Sound Professional, Always',
-    description:
-      'Natural human voice (not robotic). Bilingual English/Spanish. Your brand, your personality.',
+    name: 'VoltStore',
+    type: 'E-commerce',
+    description: 'Premium gaming peripherals store',
+    gradient: 'from-lime-500 via-green-600 to-emerald-700',
+    tech: ['Next.js', 'Stripe', 'Shopify'],
+    url: '/demo/voltstore',
   },
   {
-    title: 'No Lock-In, No Surprises',
-    description: 'Cancel anytime. Transparent pricing. 30-day money-back guarantee.',
+    name: 'Creator Studio',
+    type: 'Personal Brand',
+    description: 'Portfolio for developers and creators',
+    gradient: 'from-pink-500 via-rose-600 to-orange-600',
+    tech: ['Next.js', 'MDX', 'Framer'],
+    url: '/demo/creator-studio',
   },
 ];
 
 const FAQS = [
   {
-    question: 'How does the AI receptionist work?',
+    question: 'How long does website design take?',
     answer:
-      'When someone calls your business, the AI answers professionally, understands what they need, books appointments directly into your calendar, and texts you a summary. It works 24/7, handles multiple calls at once, and speaks English and Spanish.',
+      'Starter Landing: 48 hours. Business Website: 1 week. Premium Package: 2 weeks. We work fast without sacrificing quality.',
   },
   {
-    question: 'Will customers know they are talking to AI?',
+    question: 'Do you use AI to design websites?',
     answer:
-      'We use ElevenLabs for natural, human-sounding voices - not robotic. Most callers assume they are talking to a real receptionist. You can customize the voice, personality, and greeting to match your brand.',
+      'Yes - we use AI tools to accelerate design and development, but every site is custom-tailored to your brand and reviewed by human designers for quality.',
   },
   {
-    question: 'What if the AI cannot answer a question?',
+    question: 'What if I need changes after launch?',
     answer:
-      'You set the rules. The AI can transfer to your cell phone, take a message, or schedule a callback. It never guesses or gives wrong information - it gracefully handles situations it was not trained for.',
+      'All packages include revision rounds during development. After launch, Starter gets 2 weeks support, Business gets 30 days, Premium gets 60 days of free updates.',
   },
   {
-    question: 'How long does setup take?',
+    question: 'Can I see examples of your work?',
     answer:
-      'Website: 2-3 weeks. AI Receptionist: 1-2 weeks. Complete package: 3-4 weeks. We handle everything - you just answer a few questions about your business and approve the final result.',
+      'Check out our portfolio section below. Each site showcases different styles and industries. We adapt to match your brand.',
   },
   {
-    question: 'What are the monthly costs?',
+    question: 'Do you offer hosting?',
     answer:
-      'AI Receptionist: $197/month platform fee + ~$30-80/month in phone usage (Twilio/ElevenLabs pass-through, varies by call volume). Website hosting is free if you host yourself, or $47-97/month for our managed hosting.',
-  },
-  {
-    question: 'Why is there a setup fee?',
-    answer:
-      'Unlike template-based services, we custom-build your AI with your services, pricing, and personality. The $997 setup covers voice training, business knowledge, integrations, and testing. It takes 10-15 hours of work - agencies charge $5,000+ for this.',
-  },
-];
-
-const TRUST_BADGES = [
-  { label: '30-Day Guarantee', icon: '✓' },
-  { label: 'No Lock-In Contracts', icon: '∞' },
-  { label: 'Transparent Pricing', icon: '$' },
-  { label: 'Expert Support', icon: '★' },
-];
-
-const CLIENT_RESULTS = [
-  {
-    metric: '100%',
-    description: 'of calls answered, even after hours',
-    client: 'Plumbing Company',
-  },
-  {
-    metric: '$2,000/mo',
-    description: 'saved vs. hiring a receptionist',
-    client: 'Dental Practice',
-  },
-  {
-    metric: '8 new jobs',
-    description: 'booked in the first month',
-    client: 'HVAC Contractor',
+      'We deploy all sites to Vercel (free tier for most small sites). For larger sites or custom hosting needs, we can set up managed hosting for $47-97/month.',
   },
 ];
 
 export default function Home() {
+  const [showCallModal, setShowCallModal] = useState(false);
+
   return (
-    <div className="antialiased min-h-screen bg-[#050505] text-gray-200 selection:bg-lime-400 selection:text-black">
-      <a
-        href="#main-content"
-        className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded"
-      >
-        Skip to main content
-      </a>
+    <>
+      {/* Structured Data for SEO */}
+      <OrganizationSchema />
+      <WebSiteSchema />
+      <ProductListSchema products={DIGITAL_PRODUCTS} />
+      <FAQSchema faqs={FAQS} />
 
-      <Navbar items={NAV_ITEMS} ctaLabel="Get Started" ctaHref="/intake" />
+      {/* Animated background gradient */}
+      <div className="fixed inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90 pointer-events-none" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-lime-900/20 via-transparent to-transparent pointer-events-none" />
 
-      <main id="main-content">
-        {/* Hero Section */}
-        <Section className="pt-24 pb-16">
+      <Navbar items={NAV_ITEMS} ctaLabel="Get a Quote" ctaHref="/intake" />
+
+      <div className="antialiased min-h-screen bg-black text-gray-100 selection:bg-lime-400 selection:text-black overflow-x-hidden">
+        <a
+          href="#main-content"
+          className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded"
+        >
+          Skip to main content
+        </a>
+
+      <main id="main-content" className="relative z-10">
+        {/* Hero Section - Bold & Edgy */}
+        <Section className="pt-32 pb-24">
           <FadeIn>
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                Digital Products & AI Automation
-                <span className="block text-lime-400">For Growing Businesses</span>
-              </h1>
-              <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8 max-w-3xl mx-auto">
-                Ready-to-use templates and intelligent systems to help you build faster, launch
-                smarter, and scale without burning out.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="#digital-products"
-                  className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
-                >
-                  Browse Products
-                </a>
-                <a
-                  href="#ai-services"
-                  className="inline-block px-10 py-5 border border-white/20 text-white font-semibold text-lg rounded-xl hover:bg-white/10 transition-all duration-300"
-                >
-                  AI Services
-                </a>
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-16">
+                {/* Animated badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lime-400/10 border border-lime-400/30 text-lime-400 text-sm font-medium mb-8 animate-pulse">
+                  <span className="w-2 h-2 bg-lime-400 rounded-full animate-ping" />
+                  Digital Products · AI Automation · Web Design
+                </div>
+
+                <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tight">
+                  Build Smarter.
+                  <br />
+                  <span className="bg-gradient-to-r from-lime-400 via-cyan-400 to-pink-500 text-transparent bg-clip-text animate-gradient">
+                    Launch Faster.
+                  </span>
+                </h1>
+
+                <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-10 max-w-3xl mx-auto font-light">
+                  Ready-to-use templates, AI-powered websites, and intelligent automation for
+                  entrepreneurs who refuse to waste time.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <a
+                    href="#digital-products"
+                    className="group relative inline-block px-8 py-4 bg-lime-400 text-black font-bold text-lg rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
+                  >
+                    <span className="relative z-10">Browse Products</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-lime-300 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </a>
+                  <a
+                    href="#web-design"
+                    className="inline-block px-8 py-4 border-2 border-lime-400/50 text-lime-400 font-bold text-lg rounded-lg hover:bg-lime-400/10 transition-all duration-300"
+                  >
+                    Get a Website →
+                  </a>
+                </div>
+
+                <p className="text-sm text-gray-500 mt-6">
+                  No fluff. No $997 courses. Just tools that work.
+                </p>
               </div>
-              <p className="text-sm text-gray-500 mt-6">
-                Templates, launch kits, and AI automation for entrepreneurs and small businesses
-              </p>
+
+              {/* Stats bar */}
+              <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto mt-16">
+                <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
+                  <div className="text-3xl font-bold text-lime-400 mb-2">48hr</div>
+                  <div className="text-sm text-gray-400">Website Delivery</div>
+                </div>
+                <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
+                  <div className="text-3xl font-bold text-pink-400 mb-2">$19-29</div>
+                  <div className="text-sm text-gray-400">Digital Products</div>
+                </div>
+                <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
+                  <div className="text-3xl font-bold text-cyan-400 mb-2">30-Day</div>
+                  <div className="text-sm text-gray-400">Money Back</div>
+                </div>
+              </div>
             </div>
           </FadeIn>
         </Section>
 
-        {/* Trust Badges */}
-        <Section className="py-12 border-y border-white/10">
-          <div className="flex flex-wrap justify-center items-center gap-8">
-            {TRUST_BADGES.map((badge) => (
-              <div key={badge.label} className="flex items-center gap-3">
-                <span className="text-2xl text-lime-400" aria-hidden="true">
-                  {badge.icon}
-                </span>
-                <span className="text-sm font-medium text-gray-200">{badge.label}</span>
-              </div>
-            ))}
-          </div>
-        </Section>
-
         {/* Digital Products Section */}
-        <Section id="digital-products" className="py-24">
+        <Section id="digital-products" className="py-24 relative">
+          {/* Background accent */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-lime-900/5 to-transparent pointer-events-none" />
+
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              Digital Products
-            </h2>
-            <p className="text-gray-300 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              No fluff. No $997 courses. Just ready-to-use templates, systems, and tools you can
-              implement today.
-            </p>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                Digital Products
+              </h2>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                Templates and systems you can use immediately. No courses. No fluff.
+              </p>
+            </div>
           </FadeIn>
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {DIGITAL_PRODUCTS.map((product) => (
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+            {DIGITAL_PRODUCTS.map((product, idx) => (
               <a
                 key={product.name}
                 href={product.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group p-6 rounded-xl border border-white/10 bg-white/5 hover:border-lime-400/50 hover:bg-white/10 transition-all duration-300 hover:scale-105"
+                className="group relative block overflow-hidden"
+                style={{ animationDelay: `${idx * 100}ms` }}
               >
-                <div className="text-4xl mb-4">{product.emoji}</div>
-                <h3 className="font-bold text-white mb-2 text-xl group-hover:text-lime-400 transition-colors">
-                  {product.name}
-                </h3>
-                <div className="text-2xl font-bold text-lime-400 mb-3">{product.price}</div>
-                <p className="text-gray-300 text-sm mb-4">{product.description}</p>
-                <ul className="space-y-2">
-                  {product.features.map((feature, idx) => (
-                    <li key={idx} className="text-gray-400 text-xs flex items-start gap-2">
-                      <span className="text-lime-400 mt-0.5">✓</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-4 pt-4 border-t border-white/10">
-                  <span className="text-lime-400 text-sm font-medium group-hover:underline">
-                    View Product →
-                  </span>
+                {/* Card container with layered depth */}
+                <div className="relative bg-gradient-to-br from-[#0a0a0a] to-[#111111] border border-white/20 rounded-none transition-all duration-500 hover:border-lime-400/60 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(132,204,22,0.3)]">
+                  {/* Diagonal gradient slash - signature element */}
+                  <div
+                    className={`absolute -right-12 -top-12 w-48 h-48 bg-gradient-to-br ${product.gradient} opacity-10 rotate-45 group-hover:opacity-20 transition-all duration-500 group-hover:scale-125`}
+                  />
+
+                  {/* Neon glow accent bar */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  {/* Content container */}
+                  <div className="relative p-6 space-y-5">
+                    {/* Header with oversized price tag */}
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-black text-white text-xl leading-tight group-hover:text-lime-400 transition-colors duration-300">
+                        {product.name}
+                      </h3>
+                      <div className="flex-shrink-0 bg-gradient-to-br from-lime-400/20 to-cyan-400/20 border border-lime-400/50 px-3 py-1.5 backdrop-blur-sm">
+                        <span className="text-2xl font-mono font-black text-lime-400 tracking-tight">
+                          {product.price}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-gray-300 text-sm leading-relaxed font-medium">
+                      {product.description}
+                    </p>
+
+                    {/* Features list with enhanced styling */}
+                    <ul className="space-y-2.5 pt-2">
+                      {product.features.map((feature, idx) => (
+                        <li
+                          key={idx}
+                          className="text-gray-400 text-xs flex items-start gap-2.5 group-hover:text-gray-300 transition-colors"
+                        >
+                          <span className="flex-shrink-0 w-1.5 h-1.5 bg-lime-400 mt-1.5 group-hover:shadow-[0_0_8px_rgba(132,204,22,0.6)] transition-shadow" />
+                          <span className="leading-relaxed">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Bold CTA button with animated border */}
+                    <div className="pt-4">
+                      <div className="relative bg-lime-400 text-black font-bold text-sm px-5 py-3 overflow-hidden group-hover:bg-lime-300 transition-all duration-300">
+                        {/* Animated shine effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+
+                        <div className="relative flex items-center justify-between">
+                          <span className="uppercase tracking-wider">View Product</span>
+                          <svg
+                            className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2.5}
+                              d="M13 7l5 5m0 0l-5 5m5-5H6"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Border glow effect on hover */}
+                      <div className="absolute inset-0 border-2 border-lime-400/0 group-hover:border-lime-400/40 transition-all duration-300 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  {/* Corner accent - geometric detail */}
+                  <div className="absolute bottom-0 right-0 w-16 h-16 border-l-2 border-t-2 border-lime-400/20 group-hover:border-lime-400/50 transition-colors duration-300" />
                 </div>
               </a>
             ))}
           </StaggerContainer>
-          <FadeIn className="text-center mt-12">
-            <p className="text-gray-400 mb-4">All products include 30-day money-back guarantee</p>
+
+          <FadeIn className="text-center mt-16">
             <a
               href="https://softsystemsstudioco.gumroad.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-8 py-4 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300"
+              className="group relative inline-flex items-center gap-3 px-10 py-5 border-2 border-lime-400/30 text-white font-bold text-base uppercase tracking-wider hover:border-lime-400 transition-all duration-300 overflow-hidden"
             >
-              View All Products
+              {/* Animated background on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-lime-400/0 via-lime-400/10 to-lime-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+
+              <span className="relative">View All Products</span>
+
+              <svg
+                className="relative w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
             </a>
           </FadeIn>
         </Section>
 
-        {/* AI Services Section */}
-        <Section
-          id="ai-services"
-          className="py-24 bg-gradient-to-b from-transparent via-lime-500/5 to-transparent"
-        >
+        {/* Website Design Section - New & Prominent */}
+        <Section id="web-design" className="py-24 relative">
+          {/* Dramatic gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-lime-900/10 via-transparent to-pink-900/10 pointer-events-none" />
+
+
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              AI Automation Services
-            </h2>
-            <p className="text-gray-300 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              Custom AI solutions for service businesses — never miss another call or lead
-            </p>
-          </FadeIn>
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {WHY_CHOOSE_US.map((item) => (
-              <div
-                key={item.title}
-                className="p-6 rounded-xl border border-white/10 bg-white/5 hover:border-lime-400/30 transition-colors"
-              >
-                <h3 className="font-semibold text-white mb-2 text-lg">{item.title}</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">{item.description}</p>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-sm font-medium mb-6">
+                ✨ New Service
               </div>
-            ))}
-          </StaggerContainer>
-          <FadeIn className="text-center mt-12">
-            <div className="max-w-3xl mx-auto">
-              <h3 className="text-2xl font-bold text-white mb-4">
-                Never Miss Another $400 Job Again
-              </h3>
-              <p className="text-gray-300 mb-6">
-                AI receptionists that answer every call, book appointments, and send you text
-                summaries — built for plumbers, dentists, contractors, and local service businesses.
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                AI-Powered Website Design
+              </h2>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                Modern, fast, conversion-optimized websites built in days, not months. Starting at
+                $799.
               </p>
-              <a
-                href="/intake"
-                className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
-              >
-                Get Your Free Quote
-              </a>
             </div>
           </FadeIn>
-        </Section>
 
-        {/* How We Work */}
-        <Section id="how-we-work" className="py-24 section-elevated">
-          <FadeIn>
-            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              How We Work
-            </h2>
-            <p className="text-gray-400 mb-16 max-w-2xl leading-relaxed text-center mx-auto">
-              A simple, transparent process from first conversation to successful launch.
-            </p>
-          </FadeIn>
-          <ProcessTimeline steps={STEPS} />
-        </Section>
-
-        {/* Results Section */}
-        <Section id="results" className="py-24">
-          <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              Real Results for Real Businesses
-            </h2>
-            <p className="text-gray-300 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              What happens when you stop missing calls
-            </p>
-          </FadeIn>
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {CLIENT_RESULTS.map((result, index) => (
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 relative z-10">
+            {WEBSITE_PACKAGES.map((pkg) => (
               <div
-                key={index}
-                className="p-8 text-center rounded-xl border border-white/10 bg-white/5"
+                key={pkg.name}
+                className={`relative p-8 rounded-2xl border ${
+                  pkg.popular ? 'border-lime-400/50 scale-105' : 'border-white/10'
+                } bg-white/5 backdrop-blur transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                  pkg.popular ? 'hover:shadow-lime-400/30' : 'hover:shadow-white/20'
+                }`}
               >
-                <div className="text-4xl md:text-5xl font-bold text-lime-400 mb-3">
-                  {result.metric}
+                {/* Gradient background */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${pkg.gradient} opacity-5 rounded-2xl`}
+                />
+
+                {pkg.badge && (
+                  <div className="absolute -top-3 left-8 px-4 py-1 bg-pink-500 text-white text-xs font-bold rounded-full">
+                    {pkg.badge}
+                  </div>
+                )}
+
+                {pkg.popular && (
+                  <div className="absolute -top-3 left-8 px-4 py-1 bg-lime-400 text-black text-xs font-bold rounded-full">
+                    Most Popular
+                  </div>
+                )}
+
+                <div className="relative z-10">
+                  <h3 className="text-2xl font-bold text-white mb-2">{pkg.name}</h3>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-4xl font-black text-lime-400">{pkg.price}</span>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-4">Delivered in {pkg.delivery}</p>
+                  <p className="text-gray-300 mb-6">{pkg.description}</p>
+
+                  <ul className="space-y-3 mb-8">
+                    {pkg.features.map((feature, idx) => (
+                      <li key={idx} className="text-gray-300 text-sm flex items-start gap-3">
+                        <span className="text-lime-400 mt-0.5">✓</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <a
+                    href="/intake"
+                    className={`block text-center px-6 py-3 rounded-lg font-bold transition-all duration-300 ${
+                      pkg.popular
+                        ? 'bg-lime-400 text-black hover:bg-lime-300 hover:scale-105'
+                        : 'border-2 border-white/20 text-white hover:bg-white/10'
+                    }`}
+                  >
+                    Get Started
+                  </a>
                 </div>
-                <div className="text-white font-medium mb-2">{result.description}</div>
-                <div className="text-sm text-gray-400 italic">{result.client}</div>
               </div>
             ))}
           </StaggerContainer>
-        </Section>
 
-        {/* Pricing */}
-        <Section id="pricing" className="py-24 section-elevated">
+          {/* Process */}
           <FadeIn>
-            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              AI Service Pricing
-            </h2>
-            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              Clear packages tailored to your needs. No hidden fees, no surprises.
-            </p>
-          </FadeIn>
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {PRICING_PLANS.map((plan) => (
-              <PricingCard
-                key={plan.name}
-                name={plan.name}
-                price={plan.price}
-                priceMonthly={plan.priceMonthly}
-                scope=""
-                complexity=""
-                description={plan.description}
-                features={plan.features}
-                ctaText={plan.ctaText}
-                ctaHref="/intake"
-                highlighted={plan.highlighted}
-                badge={plan.badge}
-              />
-            ))}
-          </StaggerContainer>
-          <FadeIn className="mt-12 text-center">
-            <div className="inline-block p-6 max-w-2xl rounded-xl border border-white/10 bg-white/5">
-              <div className="flex items-start gap-4">
-                <span className="text-3xl" aria-hidden="true">
-                  🛡️
-                </span>
-                <div className="text-left">
-                  <h3 className="text-white font-semibold mb-2">30-Day Money-Back Guarantee</h3>
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    Not satisfied? Full refund within 30 days. No questions asked. Keep all the
-                    appointments your AI booked during the trial.
+            <div className="max-w-4xl mx-auto text-center">
+              <h3 className="text-2xl font-bold text-white mb-8">How It Works</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="p-6">
+                  <div className="w-12 h-12 rounded-full bg-lime-400/10 border-2 border-lime-400 flex items-center justify-center text-lime-400 font-black text-xl mb-4 mx-auto">
+                    1
+                  </div>
+                  <h4 className="font-bold text-white mb-2">Quick Intake</h4>
+                  <p className="text-gray-400 text-sm">
+                    Tell us about your business, brand, and goals in a 10-minute form
+                  </p>
+                </div>
+                <div className="p-6">
+                  <div className="w-12 h-12 rounded-full bg-pink-400/10 border-2 border-pink-400 flex items-center justify-center text-pink-400 font-black text-xl mb-4 mx-auto">
+                    2
+                  </div>
+                  <h4 className="font-bold text-white mb-2">We Build</h4>
+                  <p className="text-gray-400 text-sm">
+                    AI-assisted design + human review. We handle everything from design to
+                    deployment
+                  </p>
+                </div>
+                <div className="p-6">
+                  <div className="w-12 h-12 rounded-full bg-cyan-400/10 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 font-black text-xl mb-4 mx-auto">
+                    3
+                  </div>
+                  <h4 className="font-bold text-white mb-2">You Launch</h4>
+                  <p className="text-gray-400 text-sm">
+                    Approve the final result, go live, and start getting customers
                   </p>
                 </div>
               </div>
             </div>
           </FadeIn>
-          <FadeIn className="mt-16">
-            <ROICalculator />
+        </Section>
+
+        {/* Portfolio Section */}
+        <Section id="portfolio" className="py-24 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-900/5 to-transparent pointer-events-none" />
+
+          <FadeIn>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                Example Projects
+              </h2>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                Different styles for different needs. We adapt to match your brand.
+              </p>
+            </div>
+          </FadeIn>
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+            {PORTFOLIO_SITES.map((site) => (
+              <Link
+                key={site.name}
+                href={site.url}
+                className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/20 block"
+              >
+                {/* Animated gradient background */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${site.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
+                />
+
+                {/* Demo badge */}
+                <div className="absolute top-4 right-4 z-20">
+                  <span className="px-3 py-1 rounded-full bg-lime-500/20 border border-lime-500/30 text-lime-400 text-xs font-medium">
+                    View Demo →
+                  </span>
+                </div>
+
+                <div className="relative z-10">
+                  <div className="mb-4">
+                    <div className="inline-block px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium mb-4">
+                      {site.type}
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-lime-400 transition">
+                      {site.name}
+                    </h3>
+                    <p className="text-gray-300 mb-4">{site.description}</p>
+                  </div>
+
+                  {/* Mock browser window */}
+                  <div className="bg-black/50 rounded-lg p-4 border border-white/20 mb-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-3 h-3 rounded-full bg-red-500" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+                    <div className={`h-32 rounded bg-gradient-to-br ${site.gradient} opacity-40`} />
+                  </div>
+
+                  {/* Tech stack */}
+                  <div className="flex flex-wrap gap-2">
+                    {site.tech.map((tech) => (
+                      <span
+                        key={tech}
+                        className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </StaggerContainer>
+
+          <FadeIn className="text-center mt-12">
+            <p className="text-gray-400 mb-6">
+              Click any example to explore a live demo. Your site will be custom-designed for your brand.
+            </p>
+            <a
+              href="/intake"
+              className="inline-block px-8 py-4 bg-lime-400 text-black font-bold rounded-lg hover:bg-lime-300 transition-all duration-300 hover:scale-105"
+            >
+              Start Your Project
+            </a>
+          </FadeIn>
+        </Section>
+
+        {/* AI Services (Condensed) */}
+        <Section id="ai-services" className="py-24 relative">
+          <FadeIn>
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                AI Automation Services
+              </h2>
+              <p className="text-xl text-gray-300 mb-8">
+                Custom AI receptionists and automation for service businesses
+              </p>
+              <div className="p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur mb-8">
+                <h3 className="text-2xl font-bold text-white mb-4">AI Receptionist</h3>
+                <p className="text-gray-300 mb-6">
+                  24/7 phone answering, appointment booking, and lead capture for local businesses.
+                  Never miss a $400 job again.
+                </p>
+                <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mb-6">
+                  <span>✓ Natural voice (not robotic)</span>
+                  <span>✓ Bilingual (EN/ES)</span>
+                  <span>✓ Calendar integration</span>
+                  <span>✓ 24/7 availability</span>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    onClick={() => setShowCallModal(true)}
+                    className="px-8 py-4 bg-gradient-to-r from-lime-400 to-cyan-400 text-black font-bold rounded-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-lime-400/30"
+                  >
+                    📞 Try Live Demo
+                  </button>
+                  <a
+                    href="/intake"
+                    className="inline-block px-8 py-4 border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
+                  >
+                    Get Free Quote
+                  </a>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500">
+                Setup: $997 • Monthly: $197 + usage (~$30-80/mo)
+              </p>
+            </div>
           </FadeIn>
         </Section>
 
         {/* FAQ */}
-        <Section id="faq" className="py-24">
+        <Section id="faq" className="py-24 relative">
           <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
-              Frequently Asked Questions
+            <h2 className="text-4xl md:text-5xl font-black text-white text-center mb-16">
+              Questions?
             </h2>
-            <p className="text-gray-400 mb-12 max-w-2xl leading-relaxed text-center mx-auto">
-              Everything you need to know about working with us
-            </p>
           </FadeIn>
-          <InteractiveFAQ faqs={FAQS} />
-          <FadeIn className="text-center mt-12">
-            <p className="text-gray-400 mb-4">Still have questions?</p>
-            <Button
-              as="link"
-              href="/intake"
-              variant="outline"
-              size="lg"
-              className="border-white/20 text-white hover:bg-white/10"
-            >
-              Schedule a Free Discovery Call
-            </Button>
-          </FadeIn>
+          <div className="max-w-3xl mx-auto">
+            <InteractiveFAQ faqs={FAQS} />
+          </div>
         </Section>
 
         {/* Final CTA */}
-        <Section className="py-28 relative overflow-hidden">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Ready to Build Smarter?
-            </h2>
-            <p className="text-gray-300 text-lg mb-8">
-              Browse digital products or get a custom AI solution for your business
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="https://softsystemsstudioco.gumroad.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-xl hover:bg-lime-300 transition-all duration-300 hover:scale-105 shadow-lg shadow-lime-400/20"
-              >
-                Shop Products
-              </a>
-              <a
-                href="/intake"
-                className="inline-block px-10 py-5 border border-white/20 text-white font-semibold text-lg rounded-xl hover:bg-white/10 transition-all duration-300"
-              >
-                Get AI Automation
-              </a>
+        <Section className="py-28 relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-lime-900/20 via-transparent to-pink-900/20 pointer-events-none" />
+          <FadeIn>
+            <div className="max-w-3xl mx-auto text-center relative z-10">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+                Ready to Build Something Great?
+              </h2>
+              <p className="text-xl text-gray-300 mb-10">
+                Browse digital products or start your website project today
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="https://softsystemsstudioco.gumroad.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-lg hover:bg-lime-300 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
+                >
+                  Shop Products
+                </a>
+                <a
+                  href="/intake"
+                  className="inline-block px-10 py-5 border-2 border-white/20 text-white font-bold text-lg rounded-lg hover:bg-white/10 transition-all duration-300"
+                >
+                  Get a Website
+                </a>
+              </div>
             </div>
-            <p className="text-sm text-gray-500 mt-4">
-              30-day money-back guarantee on all products and services
-            </p>
-          </div>
+          </FadeIn>
         </Section>
       </main>
 
@@ -535,32 +690,31 @@ export default function Home() {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- false positive: ESLint cannot resolve @/ path alias
         apiUrl={(env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'}
         title="Chat With Us"
-        greeting="Hi! I'm here to help. Ask me about our digital products, AI automation services, pricing, or anything else!"
+        greeting="Hi! Ask me about our digital products, website design, or AI automation services!"
         primaryColor="#a3e635"
         position="bottom-right"
       />
 
-      {/* JSON-LD - Organization */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: 'Soft Systems Studio LLC',
-            url: 'https://softsystemsstudiollc.com',
-            description:
-              'Digital products and AI automation for entrepreneurs, solopreneurs, and small businesses.',
-            foundingDate: '2019',
-            address: { '@type': 'PostalAddress', addressCountry: 'US' },
-            contactPoint: {
-              '@type': 'ContactPoint',
-              contactType: 'Customer Service',
-              availableLanguage: ['English', 'Spanish'],
-            },
-          }),
-        }}
-      />
-    </div>
+      <CallMeNowModal isOpen={showCallModal} onClose={() => setShowCallModal(false)} />
+
+        <style jsx global>{`
+          @keyframes gradient {
+            0% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+            100% {
+              background-position: 0% 50%;
+            }
+          }
+          .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+          }
+        `}</style>
+      </div>
+    </>
   );
 }

@@ -14,19 +14,22 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL('https://softsystemsstudiollc.com'),
   title: {
-    default: 'Soft Systems Studio — AI Receptionists for Local Businesses',
+    default: 'Soft Systems Studio — Digital Products, AI Websites & Automation for Entrepreneurs',
     template: '%s | Soft Systems Studio',
   },
   description:
-    'AI receptionists and websites for plumbers, dentists, contractors, and local service businesses. Never miss a customer call again.',
+    'Ready-to-use templates ($19-29), AI-powered websites ($799+), and intelligent automation for entrepreneurs who refuse to waste time. No fluff, just tools that work.',
   keywords: [
-    'AI receptionist',
-    'virtual receptionist',
-    'plumber answering service',
-    'dentist receptionist',
-    'contractor phone service',
-    'small business AI',
-    'local business automation',
+    'digital products for entrepreneurs',
+    'AI website design',
+    'solopreneur templates',
+    'business automation tools',
+    'SaaS templates',
+    'AI business tools',
+    'entrepreneur productivity',
+    'custom website development',
+    'AI-powered websites',
+    'startup templates',
   ],
   authors: [{ name: 'Soft Systems Studio LLC' }],
   creator: 'Soft Systems Studio LLC',
@@ -35,23 +38,23 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://softsystemsstudiollc.com',
     siteName: 'Soft Systems Studio',
-    title: 'Soft Systems Studio — AI Receptionists for Local Businesses',
+    title: 'Digital Products, AI Websites & Automation | Soft Systems Studio',
     description:
-      'AI receptionists and websites for plumbers, dentists, contractors, and local service businesses. Never miss a customer call again.',
+      'Ready-to-use templates ($19-29), AI-powered websites ($799+), and intelligent automation for entrepreneurs. Ship faster, launch smarter.',
     images: [
       {
         url: '/api/og',
         width: 1200,
         height: 630,
-        alt: 'Soft Systems Studio',
+        alt: 'Soft Systems Studio - Digital Products and AI Automation',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Soft Systems Studio — AI Receptionists for Local Businesses',
+    title: 'Digital Products, AI Websites & Automation | Soft Systems Studio',
     description:
-      'AI receptionists and websites for plumbers, dentists, contractors, and local service businesses.',
+      'Ready-to-use templates, AI-powered websites, and intelligent automation for entrepreneurs who refuse to waste time.',
     images: ['/api/og'],
   },
   robots: {

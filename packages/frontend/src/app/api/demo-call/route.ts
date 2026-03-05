@@ -59,8 +59,22 @@ export async function POST(request: NextRequest) {
   const formattedPhone = cleanPhone.startsWith('1') ? `+${cleanPhone}` : `+1${cleanPhone}`;
 
   try {
-    // Build the first message with personalization
-    const firstMessage = `Hi ${name}! This is the AI assistant from Soft Systems Studio. You requested a demo of our AI receptionist - I'm that AI! How are you doing today?`;
+    const payload = {
+      assistantId: env.VAPI_DEMO_ASSISTANT_ID,
+      phoneNumberId: env.VAPI_PHONE_NUMBER_ID,
+      assistantOverrides: {
+        variableValues: {
+          name: name,
+          businessName: businessName || '',
+          businessType: businessType || '',
+        },
+      },
+      customer: {
+        number: formattedPhone,
+      },
+    };
+
+    console.log('Making Vapi call with payload:', JSON.stringify(payload, null, 2));
 
     // Create outbound call via Vapi API
     const response = await fetch('https://api.vapi.ai/call/phone', {
@@ -69,25 +83,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${env.VAPI_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        assistantId: env.VAPI_DEMO_ASSISTANT_ID,
-        phoneNumberId: env.VAPI_PHONE_NUMBER_ID,
-        customer: {
-          number: formattedPhone,
-          name: name,
-        },
-        assistantOverrides: {
-          firstMessage: firstMessage,
-          model: {
-            messages: [
-              {
-                role: 'system',
-                content: `The person you're calling is ${name}${businessName ? ` from ${businessName}` : ''}${businessType ? `. They run a ${businessType} business` : ''}. They just requested a demo from the Soft Systems Studio website. Be friendly and personalized.`,
-              },
-            ],
-          },
-        },
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {

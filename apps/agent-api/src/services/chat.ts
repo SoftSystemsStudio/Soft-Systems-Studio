@@ -6,6 +6,7 @@ import prisma from '../db';
 import { logger } from '../logger';
 import { querySimilar } from './qdrant';
 import { chat as llmChat } from './llm';
+import { recordTokens } from './metricsCollector';
 
 export interface ChatInput {
   workspaceId: string;
@@ -96,6 +97,11 @@ ANTI-PATTERNS (DO NOT DO):
   ];
 
   const reply = await llmChat(messages);
+
+  // Record token usage (estimate: 1 token ≈ 4 chars)
+  const estimatedTokens = messages.reduce((sum, m) => sum + Math.ceil(m.content.length / 4), 0);
+  const replyTokens = Math.ceil(reply.length / 4);
+  recordTokens(estimatedTokens + replyTokens);
 
   logger.debug({ workspaceId, replyLength: reply.length }, 'Generated reply');
 

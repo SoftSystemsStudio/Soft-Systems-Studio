@@ -144,8 +144,13 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1>Client {id}</h1>
+    <main style={{ padding: 32 }}>
+      <div style={{ marginBottom: 32 }}>
+        <h1 style={{ fontSize: 32, fontWeight: 700, color: '#f5f5f5', marginBottom: 8 }}>
+          Client Details
+        </h1>
+        <p style={{ color: '#6b7280', fontSize: 14, fontFamily: 'monospace' }}>{id}</p>
+      </div>
       <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 24 }}>
           <section>
@@ -157,24 +162,24 @@ export default function ClientDetailPage() {
               <div style={{ display: 'grid', gap: 16 }}>
                 <div
                   style={{
-                    background: '#fff',
-                    borderRadius: 8,
-                    padding: 16,
-                    boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
+                    background: 'linear-gradient(135deg, #111 0%, #1a1a1a 100%)',
+                    border: '1px solid #2a2a2a',
+                    borderRadius: 12,
+                    padding: 20,
                   }}
                 >
-                  <h3 style={{ margin: 0 }}>Profile</h3>
-                  <div style={{ marginTop: 8, color: '#374151', display: 'grid', gap: 8 }}>
+                  <h3 style={{ margin: 0, color: '#A3E635', fontSize: 18, fontWeight: 600 }}>Profile</h3>
+                  <div style={{ marginTop: 16, color: '#9ca3af', display: 'grid', gap: 12 }}>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       <div style={{ color: '#6b7280', minWidth: 120 }}>Company</div>
-                      <div style={{ fontWeight: 600 }}>{config.profile?.companyName ?? '—'}</div>
+                      <div style={{ fontWeight: 600, color: '#f5f5f5' }}>{config.profile?.companyName ?? '—'}</div>
                     </div>
 
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       <div style={{ color: '#6b7280', minWidth: 120 }}>Website</div>
                       <div>
                         {config.profile?.website ? (
-                          <a href={String(config.profile.website)} target="_blank" rel="noreferrer">
+                          <a href={String(config.profile.website)} target="_blank" rel="noreferrer" style={{ color: '#A3E635', textDecoration: 'none' }}>
                             {config.profile.website}
                           </a>
                         ) : (
@@ -185,29 +190,29 @@ export default function ClientDetailPage() {
 
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       <div style={{ color: '#6b7280', minWidth: 120 }}>Industry</div>
-                      <div>{config.profile?.industry ?? '-'}</div>
+                      <div style={{ color: '#f5f5f5' }}>{config.profile?.industry ?? '-'}</div>
                     </div>
 
                     <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       <div style={{ color: '#6b7280', minWidth: 120 }}>Size</div>
-                      <div>{config.profile?.size ?? '-'}</div>
+                      <div style={{ color: '#f5f5f5' }}>{config.profile?.size ?? '-'}</div>
                     </div>
 
                     {config.contact && (
-                      <div style={{ marginTop: 6 }}>
-                        <div style={{ color: '#6b7280', marginBottom: 6 }}>Primary contact</div>
-                        <div style={{ display: 'grid', gap: 4 }}>
+                      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #2a2a2a' }}>
+                        <div style={{ color: '#6b7280', marginBottom: 8, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Primary contact</div>
+                        <div style={{ display: 'grid', gap: 6 }}>
                           <div style={{ display: 'flex', gap: 12 }}>
                             <div style={{ minWidth: 120, color: '#6b7280' }}>Name</div>
-                            <div>{config.contact.name ?? '-'}</div>
+                            <div style={{ color: '#f5f5f5' }}>{config.contact.name ?? '-'}</div>
                           </div>
                           <div style={{ display: 'flex', gap: 12 }}>
                             <div style={{ minWidth: 120, color: '#6b7280' }}>Email</div>
-                            <div>{config.contact.email ?? '-'}</div>
+                            <div style={{ color: '#A3E635' }}>{config.contact.email ?? '-'}</div>
                           </div>
                           <div style={{ display: 'flex', gap: 12 }}>
                             <div style={{ minWidth: 120, color: '#6b7280' }}>Phone</div>
-                            <div>{config.contact.phone ?? '-'}</div>
+                            <div style={{ color: '#f5f5f5' }}>{config.contact.phone ?? '-'}</div>
                           </div>
                         </div>
                       </div>
@@ -215,21 +220,22 @@ export default function ClientDetailPage() {
                   </div>
                 </div>
 
-                <details style={{ background: '#f6f8fa', padding: 12, borderRadius: 8 }}>
-                  <summary style={{ cursor: 'pointer' }}>Raw config (debug)</summary>
+                <details style={{ background: 'rgba(163, 230, 53, 0.05)', padding: 16, borderRadius: 12, border: '1px solid #2a2a2a' }}>
+                  <summary style={{ cursor: 'pointer', color: '#9ca3af', fontSize: 14 }}>Raw config (debug)</summary>
                   <div
                     style={{
-                      marginTop: 8,
-                      border: '1px solid #e1e4e8',
+                      marginTop: 12,
+                      border: '1px solid #2a2a2a',
                       borderRadius: 8,
                       padding: 12,
-                      background: '#ffffff',
+                      background: '#0a0a0a',
                       maxHeight: 320,
                       overflowY: 'auto',
                       whiteSpace: 'pre-wrap',
                       fontSize: 13,
                       lineHeight: 1.4,
                       fontFamily: 'monospace',
+                      color: '#A3E635',
                     }}
                   >
                     {JSON.stringify(config, null, 2)}
@@ -239,42 +245,42 @@ export default function ClientDetailPage() {
             )}
           </section>
 
-          {/* Systems section remains as-is but placed in left column */}
+          {/* Systems section */}
           <section>
-            <h3>Systems</h3>
+            <h2 style={{ fontSize: 20, fontWeight: 600, color: '#f5f5f5', marginBottom: 16 }}>Systems</h2>
             <div style={{ display: 'grid', gap: 12 }}>
               {(Array.isArray(config?.subsystems) ? config.subsystems : []).map((s: Subsystem) => (
                 <div
                   key={s.id ?? s.type}
                   style={{
-                    background: '#fff',
-                    borderRadius: 8,
-                    padding: 12,
-                    boxShadow: '0 6px 18px rgba(15,23,42,0.04)',
+                    background: 'linear-gradient(135deg, #111 0%, #1a1a1a 100%)',
+                    border: '1px solid #2a2a2a',
+                    borderRadius: 12,
+                    padding: 16,
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div>
-                      <strong>{s.type}</strong>
-                      <div style={{ color: '#6b7280', fontSize: 13 }}>{s.description}</div>
+                      <strong style={{ color: '#A3E635', fontSize: 16 }}>{s.type}</strong>
+                      <div style={{ color: '#9ca3af', fontSize: 13, marginTop: 4 }}>{s.description}</div>
                     </div>
-                    <div style={{ color: '#6b7280', fontSize: 13 }}>{s.id}</div>
+                    <div style={{ color: '#6b7280', fontSize: 12, fontFamily: 'monospace' }}>{s.id}</div>
                   </div>
 
                   {s.settings && (
-                    <div style={{ marginTop: 8 }}>
+                    <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #2a2a2a' }}>
                       {Object.entries(s.settings).map(([k, v]) => (
                         <div
                           key={k}
                           style={{
                             display: 'flex',
-                            gap: 8,
+                            gap: 12,
                             alignItems: 'center',
-                            marginTop: 6,
+                            marginTop: 8,
                           }}
                         >
-                          <div style={{ color: '#6b7280', minWidth: 140 }}>{k}</div>
-                          <div style={{ fontFamily: 'monospace', color: '#111' }}>
+                          <div style={{ color: '#6b7280', minWidth: 140, fontSize: 13 }}>{k}</div>
+                          <div style={{ fontFamily: 'monospace', color: '#f5f5f5', fontSize: 13 }}>
                             {renderValue(v)}
                           </div>
                         </div>
@@ -291,90 +297,129 @@ export default function ClientDetailPage() {
         <aside style={{ width: 420 }}>
           <div
             style={{
-              background: '#fff',
-              borderRadius: 8,
-              padding: 12,
-              boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
+              background: 'linear-gradient(135deg, #111 0%, #1a1a1a 100%)',
+              border: '1px solid #2a2a2a',
+              borderRadius: 12,
+              padding: 20,
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: 16 }}>Drafts</h2>
-              <div role="tablist" aria-label="Draft types" style={{ display: 'flex', gap: 8 }}>
-                <button
-                  id="draft-tab-brief"
-                  role="tab"
-                  aria-selected={activeDraftTab === 'brief'}
-                  aria-controls="draft-panel"
-                  onClick={() => setActiveDraftTab('brief')}
-                  style={{
-                    padding: '6px 10px',
-                    borderRadius: 6,
-                    border: activeDraftTab === 'brief' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
-                    background: activeDraftTab === 'brief' ? '#eef2ff' : '#fff',
-                  }}
-                >
-                  Solution brief
-                </button>
-                <button
-                  id="draft-tab-phase1"
-                  role="tab"
-                  aria-selected={activeDraftTab === 'phase1'}
-                  aria-controls="draft-panel"
-                  onClick={() => setActiveDraftTab('phase1')}
-                  style={{
-                    padding: '6px 10px',
-                    borderRadius: 6,
-                    border: activeDraftTab === 'phase1' ? '1px solid #4f46e5' : '1px solid #e5e7eb',
-                    background: activeDraftTab === 'phase1' ? '#eef2ff' : '#fff',
-                  }}
-                >
-                  Phase 1 proposal
-                </button>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#A3E635' }}>Drafts</h2>
             </div>
 
-            <div style={{ marginTop: 12 }}>
-              <div
-                role="tabpanel"
-                id="draft-panel"
-                aria-labelledby={
-                  activeDraftTab === 'brief' ? 'draft-tab-brief' : 'draft-tab-phase1'
-                }
+            <div role="tablist" aria-label="Draft types" style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              <button
+                id="draft-tab-brief"
+                role="tab"
+                aria-selected={activeDraftTab === 'brief'}
+                aria-controls="draft-panel"
+                onClick={() => setActiveDraftTab('brief')}
                 style={{
-                  border: '1px solid #e1e4e8',
+                  flex: 1,
+                  padding: '10px 14px',
                   borderRadius: 8,
-                  padding: 12,
-                  background: '#ffffff',
-                  maxHeight: 360,
-                  overflowY: 'auto',
-                  whiteSpace: 'pre-wrap',
-                  fontSize: 14,
-                  lineHeight: 1.6,
+                  border: activeDraftTab === 'brief' ? '1px solid #A3E635' : '1px solid #2a2a2a',
+                  background: activeDraftTab === 'brief' ? 'rgba(163, 230, 53, 0.1)' : 'transparent',
+                  color: activeDraftTab === 'brief' ? '#A3E635' : '#9ca3af',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
                 }}
               >
-                {activeDraftTab === 'brief'
-                  ? (solutionBrief ?? 'No solution brief yet. Generate one to see it here.')
-                  : (phase1Proposal ?? 'No phase 1 proposal yet. Generate one to see it here.')}
-              </div>
+                Solution Brief
+              </button>
+              <button
+                id="draft-tab-phase1"
+                role="tab"
+                aria-selected={activeDraftTab === 'phase1'}
+                aria-controls="draft-panel"
+                onClick={() => setActiveDraftTab('phase1')}
+                style={{
+                  flex: 1,
+                  padding: '10px 14px',
+                  borderRadius: 8,
+                  border: activeDraftTab === 'phase1' ? '1px solid #A3E635' : '1px solid #2a2a2a',
+                  background: activeDraftTab === 'phase1' ? 'rgba(163, 230, 53, 0.1)' : 'transparent',
+                  color: activeDraftTab === 'phase1' ? '#A3E635' : '#9ca3af',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                Phase 1
+              </button>
+            </div>
 
-              {lastSaved && (
-                <div style={{ marginTop: 8, color: '#6b7280', fontSize: 13 }}>
-                  Last saved: {lastSaved}
-                </div>
-              )}
+            <div
+              role="tabpanel"
+              id="draft-panel"
+              aria-labelledby={
+                activeDraftTab === 'brief' ? 'draft-tab-brief' : 'draft-tab-phase1'
+              }
+              style={{
+                border: '1px solid #2a2a2a',
+                borderRadius: 8,
+                padding: 16,
+                background: '#0a0a0a',
+                maxHeight: 400,
+                overflowY: 'auto',
+                whiteSpace: 'pre-wrap',
+                fontSize: 13,
+                lineHeight: 1.6,
+                color: '#9ca3af',
+                marginBottom: 12,
+              }}
+            >
+              {activeDraftTab === 'brief'
+                ? (solutionBrief ?? 'No solution brief yet. Generate one to see it here.')
+                : (phase1Proposal ?? 'No phase 1 proposal yet. Generate one to see it here.')}
+            </div>
 
-              <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-                <button onClick={() => void genBrief(false)} disabled={loading} style={{ flex: 1 }}>
-                  {loading ? 'Working...' : 'Generate Solution Brief'}
-                </button>
-                <button
-                  onClick={() => void genProposal(1, false)}
-                  disabled={loading}
-                  style={{ flex: 1 }}
-                >
-                  {loading ? 'Working...' : 'Generate Phase 1 Proposal'}
-                </button>
+            {lastSaved && (
+              <div style={{ marginBottom: 12, color: '#6b7280', fontSize: 12 }}>
+                Last saved: {lastSaved}
               </div>
+            )}
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button 
+                onClick={() => void genBrief(false)} 
+                disabled={loading} 
+                style={{ 
+                  width: '100%',
+                  padding: '10px 16px',
+                  borderRadius: 8,
+                  border: '1px solid #A3E635',
+                  background: loading ? '#2a2a2a' : 'rgba(163, 230, 53, 0.1)',
+                  color: loading ? '#6b7280' : '#A3E635',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {loading ? '⏳ Working...' : '📄 Generate Solution Brief'}
+              </button>
+              <button
+                onClick={() => void genProposal(1, false)}
+                disabled={loading}
+                style={{ 
+                  width: '100%',
+                  padding: '10px 16px',
+                  borderRadius: 8,
+                  border: '1px solid #A3E635',
+                  background: loading ? '#2a2a2a' : 'rgba(163, 230, 53, 0.1)',
+                  color: loading ? '#6b7280' : '#A3E635',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {loading ? '⏳ Working...' : '📋 Generate Phase 1 Proposal'}
+              </button>
             </div>
           </div>
         </aside>
