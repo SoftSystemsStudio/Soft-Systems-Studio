@@ -399,6 +399,7 @@ export default function Home() {
           {/* Dramatic gradient background */}
           <div className="absolute inset-0 bg-gradient-to-br from-lime-900/10 via-transparent to-pink-900/10 pointer-events-none" />
 
+
           <FadeIn>
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-sm font-medium mb-6">
@@ -686,6 +687,7 @@ export default function Home() {
       <Footer />
 
       <ChatWidget
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- false positive: ESLint cannot resolve @/ path alias
         apiUrl={(env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'}
         title="Chat With Us"
         greeting="Hi! Ask me about our digital products, website design, or AI automation services!"

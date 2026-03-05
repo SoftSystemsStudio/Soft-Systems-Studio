@@ -14,8 +14,10 @@ const gradientClasses: Record<'none' | 'subtle' | 'dark', string> = {
 };
 
 export default function Section({ children, id, className = '', gradient = 'none' }: SectionProps) {
+  // eslint-disable-next-line security/detect-object-injection -- gradient is a typed union, not user input
+  const gradientClass = gradientClasses[gradient];
   return (
-    <section id={id} className={`py-24 ${gradientClasses[gradient]} ${className}`}>
+    <section id={id} className={`py-24 ${gradientClass} ${className}`}>
       <div className="max-w-7xl mx-auto px-6">{children}</div>
     </section>
   );

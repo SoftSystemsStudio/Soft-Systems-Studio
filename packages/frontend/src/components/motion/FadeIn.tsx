@@ -36,6 +36,7 @@ export default function FadeIn({
   const variants: Variants = {
     hidden: {
       opacity: 0,
+      // eslint-disable-next-line security/detect-object-injection -- direction is a typed union, not user input
       ...directions[direction],
     },
     visible: {

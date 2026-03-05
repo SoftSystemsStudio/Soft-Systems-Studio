@@ -56,6 +56,7 @@ Sentry.init({
       const headers = event.request.headers as Record<string, string>;
       sensitiveHeaders.forEach((header) => {
         if (header in headers) {
+          // eslint-disable-next-line security/detect-object-injection -- header is from a hardcoded string array
           headers[header] = '[REDACTED]';
         }
       });
