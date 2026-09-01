@@ -48,10 +48,10 @@ const envSchema = z.object({
   // Cron
   CRON_SECRET: z.string().optional(),
 
-  // Vapi (server-side only)
-  VAPI_API_KEY: z.string().optional(),
-  VAPI_DEMO_ASSISTANT_ID: z.string().optional(),
-  VAPI_PHONE_NUMBER_ID: z.string().optional(),
+  // LiveKit (server-side only — mints tokens for the in-browser voice demo)
+  LIVEKIT_URL: z.string().optional(),
+  LIVEKIT_API_KEY: z.string().optional(),
+  LIVEKIT_API_SECRET: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

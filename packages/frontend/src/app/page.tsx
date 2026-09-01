@@ -2,11 +2,10 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useState } from 'react';
 import { Navbar, Footer, Section } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
-import CallMeNowModal from '@/components/CallMeNowModal';
+import VoiceDemo from '@/components/VoiceDemo';
 import {
   OrganizationSchema,
   ProductListSchema,
@@ -172,8 +171,6 @@ const FAQS = [
 ];
 
 export default function Home() {
-  const [showCallModal, setShowCallModal] = useState(false);
-
   return (
     <>
       {/* Structured Data for SEO */}
@@ -621,12 +618,7 @@ export default function Home() {
                     <span>✓ 24/7 availability</span>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button
-                      onClick={() => setShowCallModal(true)}
-                      className="px-8 py-4 bg-gradient-to-r from-lime-400 to-cyan-400 text-black font-bold rounded-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-lime-400/30"
-                    >
-                      📞 Try Live Demo
-                    </button>
+                    <VoiceDemo />
                     <a
                       href="/intake"
                       className="inline-block px-8 py-4 border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
@@ -635,6 +627,10 @@ export default function Home() {
                     </a>
                   </div>
                 </div>
+                <p className="text-sm text-gray-500 mb-2">
+                  Real voice, real AI — talk to it right now, no signup. Calls end automatically
+                  after 3 minutes.
+                </p>
                 <p className="text-sm text-gray-500">
                   Setup: $997 • Monthly: $197 + usage (~$30-80/mo)
                 </p>
@@ -696,8 +692,6 @@ export default function Home() {
           primaryColor="#a3e635"
           position="bottom-right"
         />
-
-        <CallMeNowModal isOpen={showCallModal} onClose={() => setShowCallModal(false)} />
 
         <style jsx global>{`
           @keyframes gradient {

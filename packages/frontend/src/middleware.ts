@@ -15,7 +15,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/cron/(.*)',
   '/api/intake',
   '/api/og',
-  '/api/demo-call',
+  '/api/livekit-token',
   '/api/send-email',
   '/api/test-email',
 ]);

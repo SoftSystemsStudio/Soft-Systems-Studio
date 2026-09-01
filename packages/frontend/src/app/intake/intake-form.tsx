@@ -78,10 +78,6 @@ export default function IntakeForm() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [demoCallLoading, setDemoCallLoading] = useState(false);
-  const [demoCallStatus, setDemoCallStatus] = useState<'idle' | 'calling' | 'success' | 'error'>(
-    'idle',
-  );
 
   function update<K extends keyof FormState>(field: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -96,45 +92,6 @@ export default function IntakeForm() {
     if (!form.phone.trim()) return 'Please enter your phone number';
     if (!form.serviceInterest) return 'Please select which service you are interested in';
     return null;
-  }
-
-  async function handleDemoCall() {
-    if (!form.name.trim() || !form.phone.trim()) {
-      setError('Please enter your name and phone number to receive a demo call');
-      return;
-    }
-
-    setDemoCallLoading(true);
-    setDemoCallStatus('calling');
-    setError(null);
-
-    try {
-      const res = await fetch('/api/demo-call', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          phone: form.phone,
-          businessName: form.businessName,
-          businessType: form.businessType,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || 'Failed to initiate demo call');
-      }
-
-      setDemoCallStatus('success');
-    } catch (err) {
-      setDemoCallStatus('error');
-      setError(
-        err instanceof Error ? err.message : 'Failed to initiate demo call. Please try again.',
-      );
-    } finally {
-      setDemoCallLoading(false);
-    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -282,7 +239,7 @@ export default function IntakeForm() {
               </div>
             </div>
 
-            {/* Demo Call CTA */}
+            {/* Voice demo pointer */}
             <div className="mt-8 p-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-xl">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
@@ -303,66 +260,17 @@ export default function IntakeForm() {
                     Want to hear our AI in action?
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Enter your name and phone above, then click to receive a live demo call from our
-                    AI.
+                    Try the live voice demo on our homepage — talk to it right in your browser, no
+                    phone number needed.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleDemoCall}
-                  disabled={demoCallLoading || demoCallStatus === 'success'}
-                  className={`px-6 py-3 font-semibold rounded-lg transition-all whitespace-nowrap ${
-                    demoCallStatus === 'success'
-                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                      : 'bg-purple-600 hover:bg-purple-700 text-white'
-                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                <Link
+                  href="/#ai-services"
+                  className="px-6 py-3 font-semibold rounded-lg transition-all whitespace-nowrap bg-purple-600 hover:bg-purple-700 text-white text-center"
                 >
-                  {demoCallLoading ? (
-                    <span className="flex items-center gap-2">
-                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Calling...
-                    </span>
-                  ) : demoCallStatus === 'success' ? (
-                    <span className="flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      Call incoming!
-                    </span>
-                  ) : (
-                    'Call Me Now'
-                  )}
-                </button>
+                  Try the Voice Demo
+                </Link>
               </div>
-              {demoCallStatus === 'success' && (
-                <p className="mt-3 text-sm text-green-400">
-                  Our AI will call you within 30 seconds. Make sure your phone is nearby!
-                </p>
-              )}
             </div>
           </section>
 
