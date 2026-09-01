@@ -121,8 +121,6 @@ export default function VoiceDemo() {
     }
   }, []);
 
-  if (!mounted) return null;
-
   const modalContent = (
     <AnimatePresence>
       {open && (
@@ -250,7 +248,10 @@ export default function VoiceDemo() {
       >
         🎙️ Talk to Our AI Receptionist Now
       </button>
-      {createPortal(modalContent, document.body)}
+      {/* Portal target (document.body) only exists client-side — gate just
+          the portal, not the button, so the CTA still renders in the
+          server-rendered HTML. */}
+      {mounted && createPortal(modalContent, document.body)}
     </>
   );
 }
