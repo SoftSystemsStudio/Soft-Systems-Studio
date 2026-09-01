@@ -28,14 +28,7 @@ export default function Footer({
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3 text-sm text-white/90 font-mono">
           {logo && (
-            <Image
-              src={logo}
-              alt={brand}
-              width={28}
-              height={28}
-              className="h-7 w-7"
-              unoptimized
-            />
+            <Image src={logo} alt={brand} width={28} height={28} className="h-7 w-7" unoptimized />
           )}
           <span>
             &copy; {new Date().getFullYear()} Soft Systems Studio

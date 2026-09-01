@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import env from '@/lib/env';
 
 export interface MetricSnapshot {
   uptime: number;
@@ -31,7 +32,7 @@ export function useMetrics() {
   const [status, setStatus] = useState<ConnectionStatus>('connecting');
 
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const backendUrl = env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
     const socket: Socket = io(backendUrl, {
       transports: ['websocket', 'polling'],

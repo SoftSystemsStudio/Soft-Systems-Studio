@@ -342,7 +342,10 @@ export default function Home() {
         </Section>
 
         {/* AI Services Section */}
-        <Section id="ai-services" className="py-24 bg-gradient-to-b from-transparent via-lime-500/5 to-transparent">
+        <Section
+          id="ai-services"
+          className="py-24 bg-gradient-to-b from-transparent via-lime-500/5 to-transparent"
+        >
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white text-center">
               AI Automation Services

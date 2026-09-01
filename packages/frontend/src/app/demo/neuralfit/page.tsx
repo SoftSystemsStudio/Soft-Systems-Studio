@@ -1,11 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function NeuralFitDemo() {
-  const [activeTab, setActiveTab] = useState('overview');
-
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Animated gradient background */}
@@ -250,7 +247,10 @@ export default function NeuralFitDemo() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-32 bg-gradient-to-b from-transparent via-purple-900/10 to-transparent">
+      <section
+        id="how-it-works"
+        className="py-32 bg-gradient-to-b from-transparent via-purple-900/10 to-transparent"
+      >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-5xl font-black mb-6">How It Works</h2>

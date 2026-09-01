@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getEnv } from '@/lib/env';
 
-export async function GET(request: NextRequest) {
+export function GET() {
   const env = getEnv();
 
   return NextResponse.json({

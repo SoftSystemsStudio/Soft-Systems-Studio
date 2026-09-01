@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useState } from 'react';
-import { Navbar, Footer, Section, Button } from '@/components/ui';
+import { Navbar, Footer, Section } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
 import { ChatWidget } from '@softsystems/ui-components';
 import CallMeNowModal from '@/components/CallMeNowModal';
@@ -196,506 +196,508 @@ export default function Home() {
           Skip to main content
         </a>
 
-      <main id="main-content" className="relative z-10">
-        {/* Hero Section - Bold & Edgy */}
-        <Section className="pt-32 pb-24">
-          <FadeIn>
-            <div className="max-w-6xl mx-auto">
+        <main id="main-content" className="relative z-10">
+          {/* Hero Section - Bold & Edgy */}
+          <Section className="pt-32 pb-24">
+            <FadeIn>
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-16">
+                  {/* Animated badge */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lime-400/10 border border-lime-400/30 text-lime-400 text-sm font-medium mb-8 animate-pulse">
+                    <span className="w-2 h-2 bg-lime-400 rounded-full animate-ping" />
+                    Digital Products · AI Automation · Web Design
+                  </div>
+
+                  <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tight">
+                    Build Smarter.
+                    <br />
+                    <span className="bg-gradient-to-r from-lime-400 via-cyan-400 to-pink-500 text-transparent bg-clip-text animate-gradient">
+                      Launch Faster.
+                    </span>
+                  </h1>
+
+                  <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-10 max-w-3xl mx-auto font-light">
+                    Ready-to-use templates, AI-powered websites, and intelligent automation for
+                    entrepreneurs who refuse to waste time.
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a
+                      href="#digital-products"
+                      className="group relative inline-block px-8 py-4 bg-lime-400 text-black font-bold text-lg rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
+                    >
+                      <span className="relative z-10">Browse Products</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-lime-300 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </a>
+                    <a
+                      href="#web-design"
+                      className="inline-block px-8 py-4 border-2 border-lime-400/50 text-lime-400 font-bold text-lg rounded-lg hover:bg-lime-400/10 transition-all duration-300"
+                    >
+                      Get a Website →
+                    </a>
+                  </div>
+
+                  <p className="text-sm text-gray-500 mt-6">
+                    No fluff. No $997 courses. Just tools that work.
+                  </p>
+                </div>
+
+                {/* Stats bar */}
+                <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto mt-16">
+                  <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
+                    <div className="text-3xl font-bold text-lime-400 mb-2">48hr</div>
+                    <div className="text-sm text-gray-400">Website Delivery</div>
+                  </div>
+                  <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
+                    <div className="text-3xl font-bold text-pink-400 mb-2">$19-29</div>
+                    <div className="text-sm text-gray-400">Digital Products</div>
+                  </div>
+                  <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">30-Day</div>
+                    <div className="text-sm text-gray-400">Money Back</div>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          </Section>
+
+          {/* Digital Products Section */}
+          <Section id="digital-products" className="py-24 relative">
+            {/* Background accent */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-lime-900/5 to-transparent pointer-events-none" />
+
+            <FadeIn>
               <div className="text-center mb-16">
-                {/* Animated badge */}
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lime-400/10 border border-lime-400/30 text-lime-400 text-sm font-medium mb-8 animate-pulse">
-                  <span className="w-2 h-2 bg-lime-400 rounded-full animate-ping" />
-                  Digital Products · AI Automation · Web Design
-                </div>
-
-                <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tight">
-                  Build Smarter.
-                  <br />
-                  <span className="bg-gradient-to-r from-lime-400 via-cyan-400 to-pink-500 text-transparent bg-clip-text animate-gradient">
-                    Launch Faster.
-                  </span>
-                </h1>
-
-                <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-10 max-w-3xl mx-auto font-light">
-                  Ready-to-use templates, AI-powered websites, and intelligent automation for
-                  entrepreneurs who refuse to waste time.
-                </p>
-
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a
-                    href="#digital-products"
-                    className="group relative inline-block px-8 py-4 bg-lime-400 text-black font-bold text-lg rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
-                  >
-                    <span className="relative z-10">Browse Products</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-lime-300 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </a>
-                  <a
-                    href="#web-design"
-                    className="inline-block px-8 py-4 border-2 border-lime-400/50 text-lime-400 font-bold text-lg rounded-lg hover:bg-lime-400/10 transition-all duration-300"
-                  >
-                    Get a Website →
-                  </a>
-                </div>
-
-                <p className="text-sm text-gray-500 mt-6">
-                  No fluff. No $997 courses. Just tools that work.
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                  Digital Products
+                </h2>
+                <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                  Templates and systems you can use immediately. No courses. No fluff.
                 </p>
               </div>
+            </FadeIn>
 
-              {/* Stats bar */}
-              <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto mt-16">
-                <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
-                  <div className="text-3xl font-bold text-lime-400 mb-2">48hr</div>
-                  <div className="text-sm text-gray-400">Website Delivery</div>
-                </div>
-                <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
-                  <div className="text-3xl font-bold text-pink-400 mb-2">$19-29</div>
-                  <div className="text-sm text-gray-400">Digital Products</div>
-                </div>
-                <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
-                  <div className="text-3xl font-bold text-cyan-400 mb-2">30-Day</div>
-                  <div className="text-sm text-gray-400">Money Back</div>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        </Section>
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+              {DIGITAL_PRODUCTS.map((product, idx) => (
+                <a
+                  key={product.name}
+                  href={product.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative block overflow-hidden"
+                  style={{ animationDelay: `${idx * 100}ms` }}
+                >
+                  {/* Card container with layered depth */}
+                  <div className="relative bg-gradient-to-br from-[#0a0a0a] to-[#111111] border border-white/20 rounded-none transition-all duration-500 hover:border-lime-400/60 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(132,204,22,0.3)]">
+                    {/* Diagonal gradient slash - signature element */}
+                    <div
+                      className={`absolute -right-12 -top-12 w-48 h-48 bg-gradient-to-br ${product.gradient} opacity-10 rotate-45 group-hover:opacity-20 transition-all duration-500 group-hover:scale-125`}
+                    />
 
-        {/* Digital Products Section */}
-        <Section id="digital-products" className="py-24 relative">
-          {/* Background accent */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-lime-900/5 to-transparent pointer-events-none" />
+                    {/* Neon glow accent bar */}
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          <FadeIn>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                Digital Products
-              </h2>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                Templates and systems you can use immediately. No courses. No fluff.
-              </p>
-            </div>
-          </FadeIn>
+                    {/* Content container */}
+                    <div className="relative p-6 space-y-5">
+                      {/* Header with oversized price tag */}
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="font-black text-white text-xl leading-tight group-hover:text-lime-400 transition-colors duration-300">
+                          {product.name}
+                        </h3>
+                        <div className="flex-shrink-0 bg-gradient-to-br from-lime-400/20 to-cyan-400/20 border border-lime-400/50 px-3 py-1.5 backdrop-blur-sm">
+                          <span className="text-2xl font-mono font-black text-lime-400 tracking-tight">
+                            {product.price}
+                          </span>
+                        </div>
+                      </div>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
-            {DIGITAL_PRODUCTS.map((product, idx) => (
-              <a
-                key={product.name}
-                href={product.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative block overflow-hidden"
-                style={{ animationDelay: `${idx * 100}ms` }}
-              >
-                {/* Card container with layered depth */}
-                <div className="relative bg-gradient-to-br from-[#0a0a0a] to-[#111111] border border-white/20 rounded-none transition-all duration-500 hover:border-lime-400/60 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(132,204,22,0.3)]">
-                  {/* Diagonal gradient slash - signature element */}
-                  <div
-                    className={`absolute -right-12 -top-12 w-48 h-48 bg-gradient-to-br ${product.gradient} opacity-10 rotate-45 group-hover:opacity-20 transition-all duration-500 group-hover:scale-125`}
-                  />
+                      {/* Description */}
+                      <p className="text-gray-300 text-sm leading-relaxed font-medium">
+                        {product.description}
+                      </p>
 
-                  {/* Neon glow accent bar */}
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      {/* Features list with enhanced styling */}
+                      <ul className="space-y-2.5 pt-2">
+                        {product.features.map((feature, idx) => (
+                          <li
+                            key={idx}
+                            className="text-gray-400 text-xs flex items-start gap-2.5 group-hover:text-gray-300 transition-colors"
+                          >
+                            <span className="flex-shrink-0 w-1.5 h-1.5 bg-lime-400 mt-1.5 group-hover:shadow-[0_0_8px_rgba(132,204,22,0.6)] transition-shadow" />
+                            <span className="leading-relaxed">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
 
-                  {/* Content container */}
-                  <div className="relative p-6 space-y-5">
-                    {/* Header with oversized price tag */}
-                    <div className="flex items-start justify-between gap-4">
-                      <h3 className="font-black text-white text-xl leading-tight group-hover:text-lime-400 transition-colors duration-300">
-                        {product.name}
-                      </h3>
-                      <div className="flex-shrink-0 bg-gradient-to-br from-lime-400/20 to-cyan-400/20 border border-lime-400/50 px-3 py-1.5 backdrop-blur-sm">
-                        <span className="text-2xl font-mono font-black text-lime-400 tracking-tight">
-                          {product.price}
-                        </span>
+                      {/* Bold CTA button with animated border */}
+                      <div className="pt-4">
+                        <div className="relative bg-lime-400 text-black font-bold text-sm px-5 py-3 overflow-hidden group-hover:bg-lime-300 transition-all duration-300">
+                          {/* Animated shine effect */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+
+                          <div className="relative flex items-center justify-between">
+                            <span className="uppercase tracking-wider">View Product</span>
+                            <svg
+                              className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2.5}
+                                d="M13 7l5 5m0 0l-5 5m5-5H6"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+
+                        {/* Border glow effect on hover */}
+                        <div className="absolute inset-0 border-2 border-lime-400/0 group-hover:border-lime-400/40 transition-all duration-300 pointer-events-none" />
                       </div>
                     </div>
 
-                    {/* Description */}
-                    <p className="text-gray-300 text-sm leading-relaxed font-medium">
-                      {product.description}
-                    </p>
+                    {/* Corner accent - geometric detail */}
+                    <div className="absolute bottom-0 right-0 w-16 h-16 border-l-2 border-t-2 border-lime-400/20 group-hover:border-lime-400/50 transition-colors duration-300" />
+                  </div>
+                </a>
+              ))}
+            </StaggerContainer>
 
-                    {/* Features list with enhanced styling */}
-                    <ul className="space-y-2.5 pt-2">
-                      {product.features.map((feature, idx) => (
-                        <li
-                          key={idx}
-                          className="text-gray-400 text-xs flex items-start gap-2.5 group-hover:text-gray-300 transition-colors"
-                        >
-                          <span className="flex-shrink-0 w-1.5 h-1.5 bg-lime-400 mt-1.5 group-hover:shadow-[0_0_8px_rgba(132,204,22,0.6)] transition-shadow" />
-                          <span className="leading-relaxed">{feature}</span>
+            <FadeIn className="text-center mt-16">
+              <a
+                href="https://softsystemsstudioco.gumroad.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative inline-flex items-center gap-3 px-10 py-5 border-2 border-lime-400/30 text-white font-bold text-base uppercase tracking-wider hover:border-lime-400 transition-all duration-300 overflow-hidden"
+              >
+                {/* Animated background on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-lime-400/0 via-lime-400/10 to-lime-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+
+                <span className="relative">View All Products</span>
+
+                <svg
+                  className="relative w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </a>
+            </FadeIn>
+          </Section>
+
+          {/* Website Design Section - New & Prominent */}
+          <Section id="web-design" className="py-24 relative">
+            {/* Dramatic gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-lime-900/10 via-transparent to-pink-900/10 pointer-events-none" />
+
+            <FadeIn>
+              <div className="text-center mb-16">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-sm font-medium mb-6">
+                  ✨ New Service
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                  AI-Powered Website Design
+                </h2>
+                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                  Modern, fast, conversion-optimized websites built in days, not months. Starting at
+                  $799.
+                </p>
+              </div>
+            </FadeIn>
+
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 relative z-10">
+              {WEBSITE_PACKAGES.map((pkg) => (
+                <div
+                  key={pkg.name}
+                  className={`relative p-8 rounded-2xl border ${
+                    pkg.popular ? 'border-lime-400/50 scale-105' : 'border-white/10'
+                  } bg-white/5 backdrop-blur transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
+                    pkg.popular ? 'hover:shadow-lime-400/30' : 'hover:shadow-white/20'
+                  }`}
+                >
+                  {/* Gradient background */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${pkg.gradient} opacity-5 rounded-2xl`}
+                  />
+
+                  {pkg.badge && (
+                    <div className="absolute -top-3 left-8 px-4 py-1 bg-pink-500 text-white text-xs font-bold rounded-full">
+                      {pkg.badge}
+                    </div>
+                  )}
+
+                  {pkg.popular && (
+                    <div className="absolute -top-3 left-8 px-4 py-1 bg-lime-400 text-black text-xs font-bold rounded-full">
+                      Most Popular
+                    </div>
+                  )}
+
+                  <div className="relative z-10">
+                    <h3 className="text-2xl font-bold text-white mb-2">{pkg.name}</h3>
+                    <div className="flex items-baseline gap-2 mb-1">
+                      <span className="text-4xl font-black text-lime-400">{pkg.price}</span>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-4">Delivered in {pkg.delivery}</p>
+                    <p className="text-gray-300 mb-6">{pkg.description}</p>
+
+                    <ul className="space-y-3 mb-8">
+                      {pkg.features.map((feature, idx) => (
+                        <li key={idx} className="text-gray-300 text-sm flex items-start gap-3">
+                          <span className="text-lime-400 mt-0.5">✓</span>
+                          <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
 
-                    {/* Bold CTA button with animated border */}
-                    <div className="pt-4">
-                      <div className="relative bg-lime-400 text-black font-bold text-sm px-5 py-3 overflow-hidden group-hover:bg-lime-300 transition-all duration-300">
-                        {/* Animated shine effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-
-                        <div className="relative flex items-center justify-between">
-                          <span className="uppercase tracking-wider">View Product</span>
-                          <svg
-                            className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2.5}
-                              d="M13 7l5 5m0 0l-5 5m5-5H6"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-
-                      {/* Border glow effect on hover */}
-                      <div className="absolute inset-0 border-2 border-lime-400/0 group-hover:border-lime-400/40 transition-all duration-300 pointer-events-none" />
-                    </div>
+                    <a
+                      href="/intake"
+                      className={`block text-center px-6 py-3 rounded-lg font-bold transition-all duration-300 ${
+                        pkg.popular
+                          ? 'bg-lime-400 text-black hover:bg-lime-300 hover:scale-105'
+                          : 'border-2 border-white/20 text-white hover:bg-white/10'
+                      }`}
+                    >
+                      Get Started
+                    </a>
                   </div>
-
-                  {/* Corner accent - geometric detail */}
-                  <div className="absolute bottom-0 right-0 w-16 h-16 border-l-2 border-t-2 border-lime-400/20 group-hover:border-lime-400/50 transition-colors duration-300" />
                 </div>
-              </a>
-            ))}
-          </StaggerContainer>
+              ))}
+            </StaggerContainer>
 
-          <FadeIn className="text-center mt-16">
-            <a
-              href="https://softsystemsstudioco.gumroad.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative inline-flex items-center gap-3 px-10 py-5 border-2 border-lime-400/30 text-white font-bold text-base uppercase tracking-wider hover:border-lime-400 transition-all duration-300 overflow-hidden"
-            >
-              {/* Animated background on hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-lime-400/0 via-lime-400/10 to-lime-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-
-              <span className="relative">View All Products</span>
-
-              <svg
-                className="relative w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2.5}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </a>
-          </FadeIn>
-        </Section>
-
-        {/* Website Design Section - New & Prominent */}
-        <Section id="web-design" className="py-24 relative">
-          {/* Dramatic gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-lime-900/10 via-transparent to-pink-900/10 pointer-events-none" />
-
-
-          <FadeIn>
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-sm font-medium mb-6">
-                ✨ New Service
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                AI-Powered Website Design
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Modern, fast, conversion-optimized websites built in days, not months. Starting at
-                $799.
-              </p>
-            </div>
-          </FadeIn>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 relative z-10">
-            {WEBSITE_PACKAGES.map((pkg) => (
-              <div
-                key={pkg.name}
-                className={`relative p-8 rounded-2xl border ${
-                  pkg.popular ? 'border-lime-400/50 scale-105' : 'border-white/10'
-                } bg-white/5 backdrop-blur transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-                  pkg.popular ? 'hover:shadow-lime-400/30' : 'hover:shadow-white/20'
-                }`}
-              >
-                {/* Gradient background */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${pkg.gradient} opacity-5 rounded-2xl`}
-                />
-
-                {pkg.badge && (
-                  <div className="absolute -top-3 left-8 px-4 py-1 bg-pink-500 text-white text-xs font-bold rounded-full">
-                    {pkg.badge}
+            {/* Process */}
+            <FadeIn>
+              <div className="max-w-4xl mx-auto text-center">
+                <h3 className="text-2xl font-bold text-white mb-8">How It Works</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="p-6">
+                    <div className="w-12 h-12 rounded-full bg-lime-400/10 border-2 border-lime-400 flex items-center justify-center text-lime-400 font-black text-xl mb-4 mx-auto">
+                      1
+                    </div>
+                    <h4 className="font-bold text-white mb-2">Quick Intake</h4>
+                    <p className="text-gray-400 text-sm">
+                      Tell us about your business, brand, and goals in a 10-minute form
+                    </p>
                   </div>
-                )}
-
-                {pkg.popular && (
-                  <div className="absolute -top-3 left-8 px-4 py-1 bg-lime-400 text-black text-xs font-bold rounded-full">
-                    Most Popular
+                  <div className="p-6">
+                    <div className="w-12 h-12 rounded-full bg-pink-400/10 border-2 border-pink-400 flex items-center justify-center text-pink-400 font-black text-xl mb-4 mx-auto">
+                      2
+                    </div>
+                    <h4 className="font-bold text-white mb-2">We Build</h4>
+                    <p className="text-gray-400 text-sm">
+                      AI-assisted design + human review. We handle everything from design to
+                      deployment
+                    </p>
                   </div>
-                )}
-
-                <div className="relative z-10">
-                  <h3 className="text-2xl font-bold text-white mb-2">{pkg.name}</h3>
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-4xl font-black text-lime-400">{pkg.price}</span>
+                  <div className="p-6">
+                    <div className="w-12 h-12 rounded-full bg-cyan-400/10 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 font-black text-xl mb-4 mx-auto">
+                      3
+                    </div>
+                    <h4 className="font-bold text-white mb-2">You Launch</h4>
+                    <p className="text-gray-400 text-sm">
+                      Approve the final result, go live, and start getting customers
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-400 mb-4">Delivered in {pkg.delivery}</p>
-                  <p className="text-gray-300 mb-6">{pkg.description}</p>
-
-                  <ul className="space-y-3 mb-8">
-                    {pkg.features.map((feature, idx) => (
-                      <li key={idx} className="text-gray-300 text-sm flex items-start gap-3">
-                        <span className="text-lime-400 mt-0.5">✓</span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <a
-                    href="/intake"
-                    className={`block text-center px-6 py-3 rounded-lg font-bold transition-all duration-300 ${
-                      pkg.popular
-                        ? 'bg-lime-400 text-black hover:bg-lime-300 hover:scale-105'
-                        : 'border-2 border-white/20 text-white hover:bg-white/10'
-                    }`}
-                  >
-                    Get Started
-                  </a>
                 </div>
               </div>
-            ))}
-          </StaggerContainer>
+            </FadeIn>
+          </Section>
 
-          {/* Process */}
-          <FadeIn>
-            <div className="max-w-4xl mx-auto text-center">
-              <h3 className="text-2xl font-bold text-white mb-8">How It Works</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="p-6">
-                  <div className="w-12 h-12 rounded-full bg-lime-400/10 border-2 border-lime-400 flex items-center justify-center text-lime-400 font-black text-xl mb-4 mx-auto">
-                    1
-                  </div>
-                  <h4 className="font-bold text-white mb-2">Quick Intake</h4>
-                  <p className="text-gray-400 text-sm">
-                    Tell us about your business, brand, and goals in a 10-minute form
-                  </p>
-                </div>
-                <div className="p-6">
-                  <div className="w-12 h-12 rounded-full bg-pink-400/10 border-2 border-pink-400 flex items-center justify-center text-pink-400 font-black text-xl mb-4 mx-auto">
-                    2
-                  </div>
-                  <h4 className="font-bold text-white mb-2">We Build</h4>
-                  <p className="text-gray-400 text-sm">
-                    AI-assisted design + human review. We handle everything from design to
-                    deployment
-                  </p>
-                </div>
-                <div className="p-6">
-                  <div className="w-12 h-12 rounded-full bg-cyan-400/10 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 font-black text-xl mb-4 mx-auto">
-                    3
-                  </div>
-                  <h4 className="font-bold text-white mb-2">You Launch</h4>
-                  <p className="text-gray-400 text-sm">
-                    Approve the final result, go live, and start getting customers
-                  </p>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        </Section>
+          {/* Portfolio Section */}
+          <Section id="portfolio" className="py-24 relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-900/5 to-transparent pointer-events-none" />
 
-        {/* Portfolio Section */}
-        <Section id="portfolio" className="py-24 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-900/5 to-transparent pointer-events-none" />
-
-          <FadeIn>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                Example Projects
-              </h2>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                Different styles for different needs. We adapt to match your brand.
-              </p>
-            </div>
-          </FadeIn>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
-            {PORTFOLIO_SITES.map((site) => (
-              <Link
-                key={site.name}
-                href={site.url}
-                className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/20 block"
-              >
-                {/* Animated gradient background */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${site.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
-                />
-
-                {/* Demo badge */}
-                <div className="absolute top-4 right-4 z-20">
-                  <span className="px-3 py-1 rounded-full bg-lime-500/20 border border-lime-500/30 text-lime-400 text-xs font-medium">
-                    View Demo →
-                  </span>
-                </div>
-
-                <div className="relative z-10">
-                  <div className="mb-4">
-                    <div className="inline-block px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium mb-4">
-                      {site.type}
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-lime-400 transition">
-                      {site.name}
-                    </h3>
-                    <p className="text-gray-300 mb-4">{site.description}</p>
-                  </div>
-
-                  {/* Mock browser window */}
-                  <div className="bg-black/50 rounded-lg p-4 border border-white/20 mb-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-3 h-3 rounded-full bg-red-500" />
-                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                      <div className="w-3 h-3 rounded-full bg-green-500" />
-                    </div>
-                    <div className={`h-32 rounded bg-gradient-to-br ${site.gradient} opacity-40`} />
-                  </div>
-
-                  {/* Tech stack */}
-                  <div className="flex flex-wrap gap-2">
-                    {site.tech.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </StaggerContainer>
-
-          <FadeIn className="text-center mt-12">
-            <p className="text-gray-400 mb-6">
-              Click any example to explore a live demo. Your site will be custom-designed for your brand.
-            </p>
-            <a
-              href="/intake"
-              className="inline-block px-8 py-4 bg-lime-400 text-black font-bold rounded-lg hover:bg-lime-300 transition-all duration-300 hover:scale-105"
-            >
-              Start Your Project
-            </a>
-          </FadeIn>
-        </Section>
-
-        {/* AI Services (Condensed) */}
-        <Section id="ai-services" className="py-24 relative">
-          <FadeIn>
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                AI Automation Services
-              </h2>
-              <p className="text-xl text-gray-300 mb-8">
-                Custom AI receptionists and automation for service businesses
-              </p>
-              <div className="p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur mb-8">
-                <h3 className="text-2xl font-bold text-white mb-4">AI Receptionist</h3>
-                <p className="text-gray-300 mb-6">
-                  24/7 phone answering, appointment booking, and lead capture for local businesses.
-                  Never miss a $400 job again.
+            <FadeIn>
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                  Example Projects
+                </h2>
+                <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                  Different styles for different needs. We adapt to match your brand.
                 </p>
-                <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mb-6">
-                  <span>✓ Natural voice (not robotic)</span>
-                  <span>✓ Bilingual (EN/ES)</span>
-                  <span>✓ Calendar integration</span>
-                  <span>✓ 24/7 availability</span>
+              </div>
+            </FadeIn>
+
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+              {PORTFOLIO_SITES.map((site) => (
+                <Link
+                  key={site.name}
+                  href={site.url}
+                  className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/20 block"
+                >
+                  {/* Animated gradient background */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${site.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
+                  />
+
+                  {/* Demo badge */}
+                  <div className="absolute top-4 right-4 z-20">
+                    <span className="px-3 py-1 rounded-full bg-lime-500/20 border border-lime-500/30 text-lime-400 text-xs font-medium">
+                      View Demo →
+                    </span>
+                  </div>
+
+                  <div className="relative z-10">
+                    <div className="mb-4">
+                      <div className="inline-block px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium mb-4">
+                        {site.type}
+                      </div>
+                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-lime-400 transition">
+                        {site.name}
+                      </h3>
+                      <p className="text-gray-300 mb-4">{site.description}</p>
+                    </div>
+
+                    {/* Mock browser window */}
+                    <div className="bg-black/50 rounded-lg p-4 border border-white/20 mb-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-3 h-3 rounded-full bg-red-500" />
+                        <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                        <div className="w-3 h-3 rounded-full bg-green-500" />
+                      </div>
+                      <div
+                        className={`h-32 rounded bg-gradient-to-br ${site.gradient} opacity-40`}
+                      />
+                    </div>
+
+                    {/* Tech stack */}
+                    <div className="flex flex-wrap gap-2">
+                      {site.tech.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </StaggerContainer>
+
+            <FadeIn className="text-center mt-12">
+              <p className="text-gray-400 mb-6">
+                Click any example to explore a live demo. Your site will be custom-designed for your
+                brand.
+              </p>
+              <a
+                href="/intake"
+                className="inline-block px-8 py-4 bg-lime-400 text-black font-bold rounded-lg hover:bg-lime-300 transition-all duration-300 hover:scale-105"
+              >
+                Start Your Project
+              </a>
+            </FadeIn>
+          </Section>
+
+          {/* AI Services (Condensed) */}
+          <Section id="ai-services" className="py-24 relative">
+            <FadeIn>
+              <div className="max-w-4xl mx-auto text-center">
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                  AI Automation Services
+                </h2>
+                <p className="text-xl text-gray-300 mb-8">
+                  Custom AI receptionists and automation for service businesses
+                </p>
+                <div className="p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur mb-8">
+                  <h3 className="text-2xl font-bold text-white mb-4">AI Receptionist</h3>
+                  <p className="text-gray-300 mb-6">
+                    24/7 phone answering, appointment booking, and lead capture for local
+                    businesses. Never miss a $400 job again.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mb-6">
+                    <span>✓ Natural voice (not robotic)</span>
+                    <span>✓ Bilingual (EN/ES)</span>
+                    <span>✓ Calendar integration</span>
+                    <span>✓ 24/7 availability</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                      onClick={() => setShowCallModal(true)}
+                      className="px-8 py-4 bg-gradient-to-r from-lime-400 to-cyan-400 text-black font-bold rounded-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-lime-400/30"
+                    >
+                      📞 Try Live Demo
+                    </button>
+                    <a
+                      href="/intake"
+                      className="inline-block px-8 py-4 border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
+                    >
+                      Get Free Quote
+                    </a>
+                  </div>
                 </div>
+                <p className="text-sm text-gray-500">
+                  Setup: $997 • Monthly: $197 + usage (~$30-80/mo)
+                </p>
+              </div>
+            </FadeIn>
+          </Section>
+
+          {/* FAQ */}
+          <Section id="faq" className="py-24 relative">
+            <FadeIn>
+              <h2 className="text-4xl md:text-5xl font-black text-white text-center mb-16">
+                Questions?
+              </h2>
+            </FadeIn>
+            <div className="max-w-3xl mx-auto">
+              <InteractiveFAQ faqs={FAQS} />
+            </div>
+          </Section>
+
+          {/* Final CTA */}
+          <Section className="py-28 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-lime-900/20 via-transparent to-pink-900/20 pointer-events-none" />
+            <FadeIn>
+              <div className="max-w-3xl mx-auto text-center relative z-10">
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+                  Ready to Build Something Great?
+                </h2>
+                <p className="text-xl text-gray-300 mb-10">
+                  Browse digital products or start your website project today
+                </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button
-                    onClick={() => setShowCallModal(true)}
-                    className="px-8 py-4 bg-gradient-to-r from-lime-400 to-cyan-400 text-black font-bold rounded-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-lime-400/30"
+                  <a
+                    href="https://softsystemsstudioco.gumroad.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-lg hover:bg-lime-300 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
                   >
-                    📞 Try Live Demo
-                  </button>
+                    Shop Products
+                  </a>
                   <a
                     href="/intake"
-                    className="inline-block px-8 py-4 border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
+                    className="inline-block px-10 py-5 border-2 border-white/20 text-white font-bold text-lg rounded-lg hover:bg-white/10 transition-all duration-300"
                   >
-                    Get Free Quote
+                    Get a Website
                   </a>
                 </div>
               </div>
-              <p className="text-sm text-gray-500">
-                Setup: $997 • Monthly: $197 + usage (~$30-80/mo)
-              </p>
-            </div>
-          </FadeIn>
-        </Section>
+            </FadeIn>
+          </Section>
+        </main>
 
-        {/* FAQ */}
-        <Section id="faq" className="py-24 relative">
-          <FadeIn>
-            <h2 className="text-4xl md:text-5xl font-black text-white text-center mb-16">
-              Questions?
-            </h2>
-          </FadeIn>
-          <div className="max-w-3xl mx-auto">
-            <InteractiveFAQ faqs={FAQS} />
-          </div>
-        </Section>
+        <Footer />
 
-        {/* Final CTA */}
-        <Section className="py-28 relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-lime-900/20 via-transparent to-pink-900/20 pointer-events-none" />
-          <FadeIn>
-            <div className="max-w-3xl mx-auto text-center relative z-10">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-                Ready to Build Something Great?
-              </h2>
-              <p className="text-xl text-gray-300 mb-10">
-                Browse digital products or start your website project today
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="https://softsystemsstudioco.gumroad.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-lg hover:bg-lime-300 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
-                >
-                  Shop Products
-                </a>
-                <a
-                  href="/intake"
-                  className="inline-block px-10 py-5 border-2 border-white/20 text-white font-bold text-lg rounded-lg hover:bg-white/10 transition-all duration-300"
-                >
-                  Get a Website
-                </a>
-              </div>
-            </div>
-          </FadeIn>
-        </Section>
-      </main>
+        <ChatWidget
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- false positive: ESLint cannot resolve @/ path alias
+          apiUrl={(env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'}
+          title="Chat With Us"
+          greeting="Hi! Ask me about our digital products, website design, or AI automation services!"
+          primaryColor="#a3e635"
+          position="bottom-right"
+        />
 
-      <Footer />
-
-      <ChatWidget
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- false positive: ESLint cannot resolve @/ path alias
-        apiUrl={(env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'}
-        title="Chat With Us"
-        greeting="Hi! Ask me about our digital products, website design, or AI automation services!"
-        primaryColor="#a3e635"
-        position="bottom-right"
-      />
-
-      <CallMeNowModal isOpen={showCallModal} onClose={() => setShowCallModal(false)} />
+        <CallMeNowModal isOpen={showCallModal} onClose={() => setShowCallModal(false)} />
 
         <style jsx global>{`
           @keyframes gradient {
