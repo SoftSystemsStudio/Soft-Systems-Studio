@@ -10,7 +10,7 @@ This file is the repo's operating runbook for Claude Code: how work is planned, 
 
 **What this repo is**: the marketing website for Soft Systems Studio (softsystemsstudiollc.com) — a Next.js site plus its shared UI components package.
 
-**Provenance**: until 2026-08-31 this repo was a larger monorepo (`SoftSystemsStudio/Soft-Systems-Studio`) that also held a customer-service chatbot, a Twilio voice receptionist, and a multi-tenant SaaS agent platform. Those were split out so each product gets its own repo — the chatbot is now [`SoftSystemsStudio/sss-chatbot`](https://github.com/SoftSystemsStudio/sss-chatbot); the voice receptionist and SaaS platform code were removed from this repo in the same pass and are not yet in a repo of their own. If you're looking for `apps/agent-api`, `packages/agent-orchestrator`, `packages/core-llm`, `packages/api`, or `packages/agency-core`, they no longer live here.
+**Provenance**: until 2026-08-31 this repo was a larger monorepo, `SoftSystemsStudio/Soft-Systems-Studio`, that also held a customer-service chatbot, a Twilio voice receptionist, and a multi-tenant SaaS agent platform. Those were split out so each product gets its own repo — the chatbot is now [`SoftSystemsStudio/sss-chatbot`](https://github.com/SoftSystemsStudio/sss-chatbot); the voice receptionist and SaaS platform code were removed from this repo in the same pass and are not yet in a repo of their own. The repo itself was then renamed `SoftSystemsStudio/sss-website` to match what it now contains (GitHub redirects the old name). If you're looking for `apps/agent-api`, `packages/agent-orchestrator`, `packages/core-llm`, `packages/api`, or `packages/agency-core`, they no longer live here.
 
 **User types**:
 

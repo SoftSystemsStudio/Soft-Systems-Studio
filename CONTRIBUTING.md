@@ -1,6 +1,6 @@
-# Contributing to Soft Systems Studio
+# Contributing to Soft Systems Studio (Website)
 
-Thank you for your interest in contributing! This guide will help you get started.
+Thank you for your interest in contributing! This guide covers the marketing website repo — see `README.md` for what this repo is and its provenance.
 
 ---
 
@@ -12,7 +12,6 @@ Thank you for your interest in contributing! This guide will help you get starte
 - [Testing](#testing)
 - [Code Style](#code-style)
 - [Pull Request Process](#pull-request-process)
-- [Architecture Decisions](#architecture-decisions)
 
 ---
 
@@ -22,15 +21,14 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 - **Node.js 22+** — Required runtime
 - **pnpm 8+** — Package manager
-- **Docker** — For local Postgres, Redis, Qdrant
 - **Git** — Version control
 
 ### Quick Start
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/SoftSystemsStudio/Soft-Systems-Studio.git
-cd Soft-Systems-Studio
+git clone https://github.com/SoftSystemsStudio/sss-website.git
+cd sss-website
 
 # 2. Enable corepack and install dependencies
 corepack enable
@@ -38,18 +36,9 @@ corepack prepare pnpm@8.11.0 --activate
 pnpm install
 
 # 3. Set up environment variables
-cp .env.example .env
-cp apps/agent-api/.env.example apps/agent-api/.env
+cp packages/frontend/.env.example packages/frontend/.env.local
 
-# 4. Start local infrastructure
-docker compose -f infra/docker-compose.yml up -d
-
-# 5. Initialize database
-pnpm --filter apps-agent-api prisma:generate
-pnpm --filter apps-agent-api migrate:dev
-pnpm --filter apps-agent-api seed
-
-# 6. Start development servers
+# 4. Start the dev server
 pnpm dev
 ```
 
@@ -61,38 +50,18 @@ The repository includes a devcontainer configuration for instant setup:
 2. Wait for container to build (~2 minutes)
 3. Environment is pre-configured with Node 22, pnpm, and extensions
 
-### Environment Variables
-
-Edit `.env` files with your credentials:
-
-```env
-# Required for local development
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/agent_api
-REDIS_URL=redis://localhost:6379
-JWT_SECRET=dev-secret-at-least-32-characters-long
-OPENAI_API_KEY=sk-your-key-here
-```
-
 ### Secrets Policy
 
-- **Never** commit real secrets (API keys, tokens, passwords) to the repository. Only store example values in `.env.example` or `docs` files.
-- The repository enforces secret scanning with `secretlint`. The project-level ignore rules live in `.secretlintignore` — if you believe a pattern should be ignored, open a PR and explain the rationale for team review.
-- For CI and deployments, store secrets in your platform's secret store (GitHub Actions secrets, Vercel/Render/Railway environment settings, or HashiCorp Vault).
+- **Never** commit real secrets (API keys, tokens, passwords) to the repository. Only store example values in `.env.example` files.
+- The repository enforces secret scanning with `secretlint`. Project-level ignore rules live in `.secretlintignore` — if you believe a pattern should be ignored, open a PR and explain the rationale.
+- For deployments, store secrets in Vercel's environment settings.
 
 Quick checks:
 
 ```bash
-# Run secret scanner locally
-pnpm -w run secretlint
-
-# Run the placeholder scanner
+pnpm secretlint
 node scripts/scan-placeholders.js
-```
-
-Use the sync script to merge example variables:
-
-```bash
-pnpm sync-env
+node scripts/check-env-committed.js
 ```
 
 ---
@@ -100,77 +69,37 @@ pnpm sync-env
 ## Project Structure
 
 ```
-soft-systems-studio/
-├── apps/
-│   └── agent-api/          # Main API (Express + Prisma)
+.
 ├── packages/
-│   ├── frontend/           # Next.js frontend
-│   ├── agency-core/        # Shared types & prompts
-│   ├── agent-customer-service/  # Customer service agent
-│   ├── core-llm/           # LLM abstraction
-│   └── ui-components/      # Shared React components
-├── docs/                   # Documentation
-├── infra/                  # Docker configs
-├── scripts/                # Build utilities
-└── types/                  # Global TypeScript types
+│   ├── frontend/           # Next.js marketing site (app router)
+│   └── ui-components/      # Shared React components (ChatWidget, etc.)
+└── scripts/                # Repo-hygiene scripts
 ```
 
 ### Key Files
 
-| File                                  | Purpose                |
-| ------------------------------------- | ---------------------- |
-| `apps/agent-api/src/index.ts`         | API entry point        |
-| `apps/agent-api/src/env.ts`           | Environment validation |
-| `apps/agent-api/prisma/schema.prisma` | Database schema        |
-| `packages/frontend/src/pages/`        | Next.js pages          |
-| `jest.config.ts`                      | Test configuration     |
-| `tsconfig.json`                       | TypeScript config      |
+| File                                  | Purpose                       |
+| -------------------------------------- | ------------------------------ |
+| `packages/frontend/src/app/`          | Next.js app router pages/routes |
+| `packages/frontend/src/lib/env.ts`    | Typed environment variable access |
+| `packages/frontend/src/middleware.ts` | Clerk auth gating + route matcher |
+| `vercel.json`                         | Vercel build config            |
+| `tsconfig.json`                       | Root TypeScript config (extended by each package) |
 
 ---
 
 ## Development Workflow
 
-### Running Services
-
 ```bash
-# Start everything in dev mode
+# Start the dev server
 pnpm dev
 
-# Start specific packages
-pnpm --filter apps-agent-api dev     # API only
-pnpm --filter frontend dev           # Frontend only
-
-# Run the worker
-pnpm --filter apps-agent-api worker
-```
-
-### Building
-
-```bash
-# Build all packages
+# Build ui-components then frontend, in dependency order
 pnpm build
 
-# Build specific package
-pnpm --filter apps-agent-api build
-```
-
-### Database Operations
-
-```bash
-# Generate Prisma client
-pnpm --filter apps-agent-api prisma:generate
-
-# Create migration
-pnpm --filter apps-agent-api migrate:dev
-
-# Apply migrations (production)
-pnpm --filter apps-agent-api migrate:deploy
-
-# Seed database
-pnpm --filter apps-agent-api seed
-
-# Open Prisma Studio
-pnpm --filter apps-agent-api prisma studio
+# Build a single package
+pnpm --filter @softsystems/ui-components build
+pnpm --filter frontend build
 ```
 
 ### Adding Dependencies
@@ -179,75 +108,21 @@ pnpm --filter apps-agent-api prisma studio
 # Add to root (dev dependency)
 pnpm add -D -w <package>
 
-# Add to specific package
-pnpm --filter apps-agent-api add <package>
+# Add to a specific package
 pnpm --filter frontend add <package>
+pnpm --filter @softsystems/ui-components add <package>
 ```
 
 ---
 
 ## Testing
 
-### Running Tests
-
 ```bash
-# Run all tests
-pnpm test
-
-# Run specific package tests
-pnpm --filter apps-agent-api test
-pnpm --filter agency-core test
-
-# Run with coverage
+pnpm test        # per-package test scripts — frontend's is currently a stub; ui-components has none
 pnpm test:ci
-
-# Run integration tests (requires database)
-POSTGRES_URL=postgresql://postgres:postgres@localhost:5432/test \
-  pnpm --filter apps-agent-api test:integration
 ```
 
-### Integration Tests with Docker
-
-```bash
-# Start test database
-docker run --name ss-test-db \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=agent_api_test \
-  -p 5432:5432 -d postgres:15
-
-# Run integration tests
-POSTGRES_URL=postgresql://postgres:postgres@localhost:5432/agent_api_test \
-  pnpm --filter apps-agent-api test:integration
-
-# Cleanup
-docker rm -f ss-test-db
-```
-
-### Writing Tests
-
-```typescript
-// Unit test example
-import { ingestDocuments } from '../services/ingest';
-
-describe('ingestDocuments', () => {
-  it('should validate workspaceId', async () => {
-    await expect(
-      ingestDocuments({
-        workspaceId: '',
-        documents: [],
-      }),
-    ).rejects.toThrow('workspaceId is required');
-  });
-});
-```
-
-### Test Coverage
-
-Aim for:
-
-- **Services**: 80%+ coverage
-- **Middleware**: 90%+ coverage
-- **Critical paths**: 100% coverage
+There's no meaningful automated test coverage here yet. If you're adding non-trivial logic (a new API route, a shared component with real behavior), consider adding a test alongside it rather than treating this as precedent to skip tests.
 
 ---
 
@@ -256,33 +131,16 @@ Aim for:
 ### Linting & Formatting
 
 ```bash
-# Run ESLint
-pnpm lint
-
-# Fix auto-fixable issues
+pnpm lint         # ESLint
 pnpm lint:fix
-
-# Format with Prettier
-pnpm format
-
-# Check formatting
+pnpm format       # Prettier
 pnpm format:check
-
-# Type check
-pnpm typecheck
+pnpm typecheck    # tsc --noEmit across workspace packages
 ```
 
 ### Pre-Commit Hooks
 
-Husky runs these checks before each commit:
-
-```bash
-# Verify .env not committed
-pnpm check-env-committed
-
-# Scan for secret patterns
-pnpm scan-placeholders
-```
+Husky runs these checks before each commit — a `.env`-pattern guard (added/modified files only, not deletions) and the build/lint checks defined in `.husky/pre-commit`.
 
 Enable hooks after cloning:
 
@@ -291,75 +149,31 @@ pnpm install
 pnpm prepare
 ```
 
-### Secrets + local development
-
-Secrets are managed centrally in HashiCorp Vault. The application bootstraps secrets into `process.env` on startup; see `apps/agent-api/src/bootstrap/vault.ts`.
-
-#### Local development
-
-- You may use a local `.env` file for development overrides, but `.env` files **must never** be committed.
-- `.env` patterns are already in `.gitignore`.
-- Pre-commit and CI use `secretlint` to guard against committing secrets.
-
-Typical local workflow:
-
-1. Configure minimal Vault-related env vars (`VAULT_ADDR`, `VAULT_TOKEN` or AppRole, `VAULT_MOUNT`, optional `VAULT_PREFIX`).
-2. Optionally define `VAULT_MAPPING` for your environment.
-3. Run the app via the standard dev script; `bootstrapVault` will load secrets before the app code runs.
-
-#### Required env vars and enforcement
-
-Production enforcement is controlled via:
-
-- `REQUIRED_ENV_VARS` – comma-separated list of env vars that must be present post-bootstrap.
-- `VAULT_FATAL` – optional escape hatch.
-
-Behavior:
-
-- Non-prod: missing vars → warnings only.
-- Prod:
-  - Default: missing required vars → startup fails fast.
-  - `VAULT_FATAL=false`: temporary override to downgrade failures to warnings.
-
-Recommended rollout:
-
-1. Deploy code with `REQUIRED_ENV_VARS` unset → no change in behavior.
-2. In staging, set `REQUIRED_ENV_VARS` and `VAULT_FATAL=false` → verify logs.
-3. Remove `VAULT_FATAL` in staging → verify fail-fast semantics.
-4. Gradually enable in production starting with a minimal `REQUIRED_ENV_VARS` set (e.g. `DATABASE_URL`).
-
 ### TypeScript Guidelines
 
 ```typescript
 // ✅ Good: Explicit types for function signatures
-export async function createUser(email: string, password: string): Promise<User> {
+export async function sendIntake(data: IntakeFormData): Promise<void> {
   // ...
 }
 
 // ✅ Good: Use Zod for runtime validation
 const schema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
 });
-
-// ✅ Good: Prefer async/await over callbacks
-const result = await prisma.user.findUnique({ where: { email } });
 
 // ❌ Bad: Using any
 const data: any = req.body;
 
-// ❌ Bad: Ignoring errors
-try {
-  /* ... */
-} catch (e) {}
+// ❌ Bad: Direct process.env access outside lib/env.ts
+const key = process.env.SOME_KEY; // use the typed env module instead
 ```
 
 ### File Naming
 
 - **Components**: `PascalCase.tsx` (e.g., `ChatWidget.tsx`)
-- **Services**: `camelCase.ts` (e.g., `ingest.ts`)
-- **Types**: `camelCase.ts` (e.g., `auth.ts`)
-- **Tests**: `*.test.ts` (e.g., `mapping.test.ts`)
+- **Utilities/services**: `camelCase.ts` (e.g., `email.ts`)
+- **Tests**: `*.test.ts`
 
 ---
 
@@ -368,102 +182,45 @@ try {
 ### 1. Create a Branch
 
 ```bash
-# Feature branch
-git checkout -b feature/add-new-agent
-
-# Bug fix
-git checkout -b fix/auth-token-refresh
-
-# Documentation
-git checkout -b docs/api-reference
+git checkout -b feature/update-pricing-copy
+git checkout -b fix/intake-form-validation
 ```
 
 ### 2. Make Changes
 
 - Write code following the style guide
-- Add/update tests
-- Update documentation if needed
+- Update documentation if the change affects setup, deployment, or the repo's structure
 
 ### 3. Commit
 
 Use conventional commits:
 
 ```bash
-# Format: type(scope): description
-git commit -m "feat(agent-api): add document ingestion endpoint"
-git commit -m "fix(auth): handle expired refresh tokens"
-git commit -m "docs(readme): update quick start guide"
-git commit -m "test(ingest): add integration tests"
+git commit -m "feat(frontend): add annual pricing toggle"
+git commit -m "fix(intake): validate phone number format"
+git commit -m "docs(readme): update deploy instructions"
 ```
 
-**Types:**
-
-- `feat` — New feature
-- `fix` — Bug fix
-- `docs` — Documentation
-- `test` — Tests
-- `refactor` — Code refactoring
-- `chore` — Maintenance
+**Types:** `feat`, `fix`, `docs`, `test`, `refactor`, `chore`
 
 ### 4. Push & Create PR
 
 ```bash
-git push origin feature/add-new-agent
+git push origin feature/update-pricing-copy
 ```
 
-Then create a Pull Request on GitHub with:
-
-- Clear title describing the change
-- Description of what and why
-- Link to related issues
-- Screenshots for UI changes
+Then open a Pull Request with a clear title, a description of what and why, and screenshots for UI changes.
 
 ### 5. Review Process
 
-- CI must pass (lint, typecheck, tests)
-- At least one approval required
+- CI must pass (see `.github/workflows/ci.yml`)
 - Address review comments
 - Squash and merge when approved
 
 ---
 
-## Architecture Decisions
-
-### Adding a New Agent
-
-1. Create package in `packages/agent-{name}/`
-2. Define schemas in `src/schemas.ts`
-3. Implement handler in `src/handlers/`
-4. Add routes in `apps/agent-api/src/api/v1/agents/`
-5. Export from `packages/agent-{name}/src/index.ts`
-
-### Adding a New API Endpoint
-
-1. Create route file in `apps/agent-api/src/api/v1/`
-2. Define Zod schema in `apps/agent-api/src/schemas/`
-3. Implement service logic in `apps/agent-api/src/services/`
-4. Add middleware stack (auth, validation)
-5. Register route in `apps/agent-api/src/index.ts`
-
-### Database Changes
-
-1. Modify `apps/agent-api/prisma/schema.prisma`
-2. Run `pnpm --filter apps-agent-api migrate:dev --name describe-change`
-3. Update affected services
-4. Add tests for new models
-
-### Adding Environment Variables
-
-1. Add to `apps/agent-api/src/env.ts` schema
-2. Add to `.env.example` files
-3. Document in `docs/ENV.md`
-4. Update deployment docs if required
-
----
-
 ## Getting Help
 
-- **Questions**: Open a GitHub Discussion
 - **Bugs**: Open a GitHub Issue with reproduction steps
 - **Security**: Email security@softsystems.studio (do not open public issues)
 
