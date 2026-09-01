@@ -1,341 +1,70 @@
-# Soft Systems Studio
+# Soft Systems Studio — Website
 
-## Production-Grade AI Agent Platform
+The marketing site for [softsystemsstudiollc.com](https://softsystemsstudiollc.com): a Next.js app plus its shared UI components package.
 
-Multi-tenant SaaS infrastructure for deploying intelligent business automation agents.
+## What this repo is
 
-**🚀 [Try the Demo](docs/DEMO.md)** | [Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Deployment](#deployment)
+This used to be a larger monorepo that also held a customer-service chatbot, a Twilio voice receptionist, and a multi-tenant SaaS agent platform. Those were split out on **2026-08-31** so each product has its own repo:
 
----
+- The chatbot moved to [`SoftSystemsStudio/sss-chatbot`](https://github.com/SoftSystemsStudio/sss-chatbot).
+- The voice receptionist and SaaS platform (`apps/agent-api`, `packages/agent-orchestrator`, `packages/core-llm`, `packages/api`, `packages/agency-core`) were removed from this repo as part of the same split; they are not yet extracted to their own repo.
 
-## Overview
+What's left here is just the two packages that make up the marketing site.
 
-Soft Systems Studio is an enterprise-ready monorepo for building, deploying, and scaling AI-powered business agents. Built with TypeScript, it provides complete infrastructure for multi-tenant agent deployments with RAG-based knowledge retrieval, secure authentication, queue-based processing, and real-time observability.
-
-### What It Does
-
-- **Customer Service Agents** — AI-powered chat with knowledge base retrieval and conversation memory
-- **Document Ingestion** — Async processing pipeline for knowledge base documents with vector search
-- **Multi-Tenant Architecture** — Workspace isolation with role-based access control
-- **Production Infrastructure** — Queue workers, rate limiting, audit logging, and graceful shutdown
-
----
-
-## Features
-
-### Core Capabilities
-
-| Feature               | Description                                                          |
-| --------------------- | -------------------------------------------------------------------- |
-| 🤖 **AI Agents**      | Customer service agent with RAG retrieval and LLM reasoning          |
-| 📚 **Knowledge Base** | Document ingestion with Qdrant vector search                         |
-| 🔐 **Authentication** | JWT + refresh tokens with workspace scoping                          |
-| 👥 **Multi-Tenancy**  | Workspace isolation with RBAC (admin, owner, member, agent, service) |
-| 💳 **Billing**        | Stripe integration for subscriptions and usage billing               |
-| 📊 **Observability**  | Prometheus metrics, Sentry error tracking, structured logging        |
-
-### Security Hardening
-
-- **Zod Validation** — Strict schema validation on all API endpoints
-- **Rate Limiting** — Per-endpoint and per-tenant rate limits with Redis backing
-- **Timing-Safe Auth** — Constant-time comparison for secrets to prevent timing attacks
-- **Audit Logging** — All admin actions logged with IP, user agent, and timestamp
-- **Idempotent Operations** — Deterministic IDs and skip-duplicates for safe retries
-
-### Infrastructure
-
-- **BullMQ Queues** — Reliable background job processing with exponential backoff
-- **Graceful Shutdown** — Clean process termination for serverless and container deployments
-- **Environment Validation** — Fail-fast startup with comprehensive env var checking
-- **Docker Support** — Development and production Docker configurations
-
----
-
-## Architecture
+## Package structure
 
 ```text
-┌─────────────────────────────────────────────────────────────────────────┐
-│                              Frontend                                    │
-│                     Next.js + Clerk Auth + Tailwind                     │
-└─────────────────────────────────┬───────────────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                             Agent API                                    │
-│                    Express + TypeScript + Prisma                        │
-├─────────────────────────────────────────────────────────────────────────┤
-│  Routes          │  Middleware       │  Services                        │
-│  ─────────────   │  ────────────     │  ──────────                      │
-│  /auth/*         │  requireAuth      │  chat.ts (RAG + LLM)            │
-│  /agents/*       │  requireWorkspace │  ingest.ts (KB ingestion)       │
-│  /admin/*        │  requireRole      │  qdrant.ts (vector search)      │
-│  /stripe/*       │  validateBody     │  token.ts (JWT management)      │
-└─────────────────────────────────┬───────────────────────────────────────┘
-                                  │
-          ┌───────────────────────┼───────────────────────┐
-          ▼                       ▼                       ▼
-┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
-│    PostgreSQL    │   │      Redis       │   │      Qdrant      │
-│   (Prisma ORM)   │   │  (BullMQ/Cache)  │   │  (Vector Store)  │
-└──────────────────┘   └────────┬─────────┘   └──────────────────┘
-                                │
-                                ▼
-                       ┌──────────────────┐
-                       │  Ingest Worker   │
-                       │   (BullMQ)       │
-                       └──────────────────┘
-```
-
-### Package Structure
-
-```text
-soft-systems-studio/
-├── apps/
-│   ├── agent-api/              # Main API service
-│   └── voice-receptionist/     # Bilingual AI voice receptionist
-│
+.
 ├── packages/
-│   ├── frontend/               # Next.js web application
-│   ├── agency-core/            # Shared config types & prompts
-│   ├── agent-customer-service/ # Customer service agent logic
-│   ├── agent-orchestrator/     # Agent orchestration layer
-│   ├── core-llm/               # LLM abstraction layer
-│   └── ui-components/          # Shared React components
-│
-├── docs/                       # Documentation
-├── infra/                      # Docker compose for local dev
-└── scripts/                    # Build & utility scripts
+│   ├── frontend/            # Next.js marketing site (app router)
+│   └── ui-components/       # Shared React components (e.g. ChatWidget)
+└── scripts/                 # Repo-hygiene scripts (env checks, secret/placeholder scanning)
 ```
 
----
+`frontend` depends on `ui-components` via the `workspace:^` protocol — build `ui-components` first.
 
-## Quick Start
-
-### 🎯 One-Command Demo
+## Quick start
 
 ```bash
-git clone https://github.com/SoftSystemsStudio/Soft-Systems-Studio.git
-cd Soft-Systems-Studio
-./scripts/demo.sh
-```
-
-This will install dependencies, start services, seed demo data, and launch the API server.
-
-📖 **Full Demo Guide:** [docs/DEMO.md](docs/DEMO.md)
-
-### Prerequisites
-
-- Node.js 22+
-- pnpm 8+
-- Docker (for local Postgres/Redis/Qdrant)
-
-### Manual Development Setup
-
-```bash
-# 1. Clone and install
-git clone https://github.com/SoftSystemsStudio/Soft-Systems-Studio.git
-cd Soft-Systems-Studio
 corepack enable
 pnpm install
-
-# 2. Set up environment
-cp .env.example .env
-cp apps/agent-api/.env.example apps/agent-api/.env
-# Edit .env files with your credentials
-
-# 3. Start infrastructure
-docker compose -f infra/docker-compose.yml up -d
-
-# 4. Initialize database
-pnpm --filter apps-agent-api prisma:generate
-pnpm --filter apps-agent-api migrate:dev
-pnpm --filter apps-agent-api seed
-
-# 5. Start development servers
+cp packages/frontend/.env.example packages/frontend/.env.local
 pnpm dev
 ```
 
-### Using Docker Compose
+`pnpm dev` runs `frontend`'s own dev server (`next dev`). See `packages/frontend/.env.example` for the environment variables the site expects (Clerk, Resend, Stripe payment links, Sentry, Vapi demo-call, backend API URL).
+
+## Build & deploy
 
 ```bash
-# Full stack with hot reload
-docker compose -f docker-compose.dev.yml up --build
-
-# Production build
-docker compose up --build
+pnpm --filter @softsystems/ui-components build
+pnpm --filter frontend build
 ```
 
----
+Production deploys are on **Vercel**, driven by the root [`vercel.json`](vercel.json) (`buildCommand: "pnpm --filter frontend build"`, output `packages/frontend/.next`). Vercel also runs the daily `/api/cron/cleanup-tokens` cron job, which proxies to the backend SaaS API's admin cleanup endpoint (`NEXT_PUBLIC_API_URL`) — that's a runtime call to a separate service, not a build dependency.
 
-## Documentation
+## What's intentionally still wired to the old backend
 
-| Document                             | Description                          |
-| ------------------------------------ | ------------------------------------ |
-| [**Demo Guide**](docs/DEMO.md)       | **Quick start demo with examples**   |
-| [Architecture](docs/ARCHITECTURE.md) | System design and component overview |
-| [API Reference](docs/API.md)         | REST API endpoints and schemas       |
-| [Environment](docs/ENV.md)           | Environment variables reference      |
-| [Security](docs/SECURITY.md)         | Security model and best practices    |
-| [Deployment](docs/DEPLOYMENT.md)     | Production deployment guide          |
-| [Contributing](CONTRIBUTING.md)      | Development workflow and testing     |
+A few routes call out to the SaaS platform's API at runtime over HTTP (not a source dependency — nothing here imports platform code):
 
----
+- `src/app/api/cron/cleanup-tokens/route.ts` — proxies to `{NEXT_PUBLIC_API_URL}/api/v1/admin/cleanup-tokens`.
+- The Next.js rewrite in `next.config.mjs` — proxies `/api/v1/*` to `NEXT_PUBLIC_API_URL`.
+- `src/app/api/demo-call/route.ts` and the `VAPI_*` env vars — the live-demo-call feature (Vapi.ai). Left untouched by the 2026-08-31 split.
 
-## API Endpoints
+If `NEXT_PUBLIC_API_URL` isn't configured, the rewrite and cron route no-op gracefully; they don't block the build.
 
-## Secrets and configuration
-
-Runtime secrets are sourced from HashiCorp Vault at process startup via `bootstrapVault` (see `apps/agent-api/src/bootstrap/vault.ts`). The bootstrapper authenticates to Vault, reads KV v2 secrets, and populates `process.env` before the application is loaded.
-
-Key environment variables:
-
-- `VAULT_ADDR` – Vault base URL.
-- `VAULT_TOKEN` or `VAULT_ROLE_ID` / `VAULT_SECRET_ID` – authentication (token or AppRole).
-- `VAULT_MOUNT` – KV mount name (default: `secret`).
-- `VAULT_PREFIX` – optional path prefix for all secret lookups (e.g. `myteam`).
-- `VAULT_MAPPING` – JSON mapping from env var names to Vault KV v2 paths, e.g.:
-
-  ```json
-  {
-    "DATABASE_URL": "app/prod/db#DATABASE_URL",
-    "REDIS_URL": "app/prod/redis#url",
-    "JWT_SECRET": "app/prod/jwt#secret"
-  }
-  ```
-
-Each mapping value uses the format `<relativePath>#<fieldName>`, where:
-
-- `relativePath` is combined with `VAULT_MOUNT` and `VAULT_PREFIX`, e.g. `secret/myteam/app/prod/db`.
-- `fieldName` is the key within the secret’s data.
-
-### Required environment variables
-
-To enforce that certain variables are present after Vault hydration, set:
-
-- `REQUIRED_ENV_VARS` – comma-separated list of required env vars, e.g.:
-
-  ```bash
-  REQUIRED_ENV_VARS=DATABASE_URL,REDIS_URL,JWT_SECRET
-  ```
-
-Enforcement semantics:
-
-- In non-production (`NODE_ENV !== "production"`): missing vars are logged as warnings.
-- In production (`NODE_ENV === "production"`):
-  - Default behavior: missing vars are fatal and cause startup to fail.
-  - `VAULT_FATAL=false`: disables fatal behavior and downgrades to warnings (escape hatch).
-
-> Note: `bootstrapVault` runs before the application entrypoint. All required variables must be resolvable from Vault or set in the process environment prior to app startup.
-
-### Authentication
-
-| Method | Endpoint                  | Description                    |
-| ------ | ------------------------- | ------------------------------ |
-| POST   | `/api/v1/auth/login`      | User login with email/password |
-| POST   | `/api/v1/auth/token`      | Refresh access token           |
-| POST   | `/api/v1/auth/onboarding` | Create workspace and user      |
-
-### Agents
-
-| Method | Endpoint                                 | Description                      |
-| ------ | ---------------------------------------- | -------------------------------- |
-| POST   | `/api/v1/agents/customer-service/run`    | Chat with customer service agent |
-| POST   | `/api/v1/agents/customer-service/ingest` | Ingest KB documents              |
-
-### Admin
-
-| Method | Endpoint                | Description                 |
-| ------ | ----------------------- | --------------------------- |
-| POST   | `/api/v1/admin/cleanup` | Trigger data cleanup (cron) |
-
-### Billing
-
-| Method | Endpoint                 | Description            |
-| ------ | ------------------------ | ---------------------- |
-| POST   | `/api/v1/stripe/webhook` | Stripe webhook handler |
-
-### Health & Metrics
-
-| Method | Endpoint   | Description            |
-| ------ | ---------- | ---------------------- |
-| GET    | `/health`  | Health check           |
-| GET    | `/status`  | Detailed system status |
-| GET    | `/metrics` | Prometheus metrics     |
-
----
-
-## Deployment
-
-### Vercel (Recommended for Frontend)
-
-The frontend is configured for Vercel deployment. Set environment variables in the Vercel dashboard.
-
-### Railway / Render (API)
-
-The API includes a `Dockerfile` optimized for containerized deployments:
+## Commands
 
 ```bash
-docker build -t soft-systems-api .
-docker run -p 5000:5000 --env-file .env soft-systems-api
+pnpm lint              # ESLint across workspace packages
+pnpm typecheck         # tsc --noEmit across workspace packages
+pnpm test              # per-package test scripts (frontend has none yet; ui-components has none)
+pnpm format            # Prettier
+pnpm secretlint        # secret scanning
+pnpm scan-placeholders # find placeholder values left in source
+pnpm check-env-committed # fail if a .env file is tracked in git
 ```
-
-### Environment Variables
-
-See [docs/ENV.md](docs/ENV.md) for the complete environment variable reference.
-
-**Required for production:**
-
-- `DATABASE_URL` — PostgreSQL connection string
-- `REDIS_URL` — Redis connection string
-- `JWT_SECRET` — 32+ character secret for JWT signing
-- `OPENAI_API_KEY` — OpenAI API key for LLM calls
-
----
-
-## Tech Stack
-
-| Layer               | Technology                         |
-| ------------------- | ---------------------------------- |
-| **Language**        | TypeScript 5.x                     |
-| **Runtime**         | Node.js 22                         |
-| **Frontend**        | Next.js 16, React 18, Tailwind CSS |
-| **Backend**         | Express 4, Prisma 6, BullMQ        |
-| **Database**        | PostgreSQL 15                      |
-| **Cache/Queue**     | Redis (Upstash compatible)         |
-| **Vector DB**       | Qdrant                             |
-| **Auth**            | JWT + Clerk (frontend)             |
-| **Payments**        | Stripe                             |
-| **Observability**   | Pino, Prometheus, Sentry           |
-| **Package Manager** | pnpm workspaces                    |
-
----
-
-## Scripts
-
-```bash
-# Development
-pnpm dev                    # Start all services in dev mode
-pnpm build                  # Build all packages
-pnpm lint                   # Run ESLint
-pnpm typecheck              # TypeScript type checking
-pnpm test                   # Run all tests
-
-# Database
-pnpm --filter apps-agent-api migrate:dev      # Run migrations (dev)
-pnpm --filter apps-agent-api migrate:deploy   # Run migrations (prod)
-pnpm --filter apps-agent-api seed             # Seed database
-
-# Utilities
-pnpm sync-env               # Sync .env.example to .env
-pnpm format                 # Format code with Prettier
-```
-
----
 
 ## License
 
-Copyright © 2025 Soft Systems Studio. All rights reserved.
-
----
-
-Built with ❤️ for production AI deployments.
+Copyright © 2026 Soft Systems Studio. All rights reserved.

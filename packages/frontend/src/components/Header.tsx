@@ -18,9 +18,6 @@ export default function Header() {
             Home
           </Link>
           <Link href="/intake">Intake</Link>
-          <SignedIn>
-            <Link href="/admin/clients">Clients</Link>
-          </SignedIn>
         </div>
         <div>
           <SignedOut>

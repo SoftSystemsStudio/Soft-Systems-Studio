@@ -14,7 +14,6 @@ function check(path) {
 }
 
 check('.env');
-check('apps/agent-api/.env');
 
 if (process.exitCode === 1) {
   console.error('\nCommit aborted: tracked environment files detected.');

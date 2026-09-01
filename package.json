@@ -1,18 +1,16 @@
 {
-  "name": "soft-systems-studio",
+  "name": "soft-systems-studio-website",
   "private": true,
   "version": "0.1.0",
   "packageManager": "pnpm@8.11.0",
   "workspaces": [
-    "packages/*",
-    "apps/*"
+    "packages/*"
   ],
   "scripts": {
-    "postinstall": "pnpm -r --if-present prisma:generate",
     "setup": "pnpm -w install && pnpm -r build",
-    "dev": "pnpm --parallel --filter apps-agent-api --filter frontend dev",
+    "dev": "pnpm --filter frontend dev",
     "build": "pnpm -r build",
-    "start": "pnpm --filter apps-agent-api start",
+    "start": "pnpm --filter frontend start",
     "lint:fix": "pnpm -r --if-present lint -- --fix",
     "lint": "pnpm -r --if-present lint",
     "typecheck": "pnpm -r exec tsc --noEmit",
@@ -32,26 +30,19 @@
   },
   "devDependencies": {
     "@secretlint/secretlint-rule-preset-recommend": "8.2.0",
-    "@types/body-parser": "^1.19.2",
-    "@types/express": "^4.17.21",
-    "@types/jest": "^29.0.0",
     "@types/node": "^20.5.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
-    "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
-    "concurrently": "^8.2.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-security": "^3.0.1",
     "husky": "^8.0.0",
-    "jest": "^30.2.0",
     "next": "^16.1.1",
     "prettier": "^3.7.3",
     "secretlint": "8.2.0",
-    "ts-jest": "^29.4.5",
-    "typescript": "^5.3.0",
-    "ws": "^8.18.3"
+    "typescript": "^5.3.0"
   }
 }
