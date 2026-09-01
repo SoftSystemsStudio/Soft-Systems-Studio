@@ -10,12 +10,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
     tsconfigRootDir: __dirname,
-    project: [
-      './tsconfig.json',
-      './apps/*/tsconfig.json',
-      './apps/*/tsconfig.test.json',
-      './packages/*/tsconfig.json',
-    ],
+    project: ['./tsconfig.json', './packages/*/tsconfig.json'],
   },
   plugins: ['@typescript-eslint', 'prettier', 'security'],
   extends: [
@@ -72,7 +67,7 @@ module.exports = {
     },
     {
       // Enforce typed env module usage in application source
-      files: ['apps/**/src/**/*.{ts,tsx}', 'packages/**/src/**/*.{ts,tsx}'],
+      files: ['packages/**/src/**/*.{ts,tsx}'],
       rules: {
         'no-restricted-syntax': [
           'error',

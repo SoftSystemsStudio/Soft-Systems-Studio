@@ -8,7 +8,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # Security check: no .env files committed
 echo "\n🔒 Running security checks..."
 echo "  → Checking for committed .env files..."
-if git diff --cached --name-only | grep -qE '\.env($|\.)'; then
+if git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.env($|\.)'; then
   echo "❌ Refusing to commit .env files"
   exit 1
 fi

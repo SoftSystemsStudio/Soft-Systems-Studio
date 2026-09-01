@@ -80,29 +80,4 @@ export async function sendWelcomeEmail(email: string, name?: string) {
   });
 }
 
-/**
- * Send intake submission notification to admin
- */
-export async function sendIntakeNotification(
-  adminEmail: string,
-  clientData: { companyName: string; email: string; website?: string },
-) {
-  return sendEmail({
-    to: adminEmail,
-    subject: `New Intake: ${clientData.companyName}`,
-    html: `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #c0ff6b;">New Client Intake</h1>
-        <p>A new client has submitted the intake form:</p>
-        <ul>
-          <li><strong>Company:</strong> ${clientData.companyName}</li>
-          <li><strong>Email:</strong> ${clientData.email}</li>
-          ${clientData.website ? `<li><strong>Website:</strong> ${clientData.website}</li>` : ''}
-        </ul>
-        <p><a href="${env.NEXT_PUBLIC_APP_URL || ''}/admin/clients" style="color: #c0ff6b;">View in Dashboard →</a></p>
-      </div>
-    `,
-  });
-}
-
 export { getResend as resend };
