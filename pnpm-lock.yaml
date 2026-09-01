@@ -62,9 +62,6 @@ importers:
       '@livekit/components-react':
         specifier: ^2.9.24
         version: 2.9.24(livekit-client@2.22.1)(react-dom@18.3.0)(react@18.3.0)(tslib@2.8.1)
-      '@livekit/components-styles':
-        specifier: ^1.2.0
-        version: 1.2.0
       '@sentry/nextjs':
         specifier: ^10.28.0
         version: 10.28.0(@opentelemetry/context-async-hooks@2.6.0)(@opentelemetry/core@2.6.0)(@opentelemetry/sdk-trace-base@2.6.0)(next@16.1.1)(react@18.3.0)(webpack@5.105.4)
@@ -762,11 +759,6 @@ packages:
       react-dom: 18.3.0(react@18.3.0)
       tslib: 2.8.1
       usehooks-ts: 3.1.1(react@18.3.0)
-    dev: false
-
-  /@livekit/components-styles@1.2.0:
-    resolution: {integrity: sha512-74/rt0lDh6aHmOPmWAeDE9C4OrNW9RIdmhX/YRbovQBVNGNVWojRjl3FgQZ5LPFXO6l1maKB4JhXcBFENVxVvw==}
-    engines: {node: '>=18'}
     dev: false
 
   /@livekit/mutex@1.1.1:
