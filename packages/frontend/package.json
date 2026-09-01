@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.0",
+    "@livekit/components-react": "^2.9.24",
     "@sentry/nextjs": "^10.28.0",
     "@softsystems/ui-components": "workspace:^",
     "@stripe/stripe-js": "^8.5.3",
     "framer-motion": "^12.23.25",
+    "livekit-client": "^2.22.1",
+    "livekit-server-sdk": "^2.18.0",
     "next": "^16.1.1",
     "react": "18.3.0",
     "react-dom": "18.3.0",

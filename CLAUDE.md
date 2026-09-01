@@ -57,7 +57,7 @@ This file is the repo's operating runbook for Claude Code: how work is planned, 
 - **Email**: Resend (intake-form notifications, welcome emails)
 - **Payments**: Stripe Payment Links (hardcoded URLs in `api/intake/route.ts`, not the Stripe API)
 - **Error tracking**: Sentry
-- **Voice demo**: Vapi.ai (`/api/demo-call`) — left as-is by the 2026-08-31 split
+- **Voice demo**: LiveKit (`/api/livekit-token` mints a room-scoped token; `components/VoiceDemo.tsx` connects in-browser) — replaced the Vapi phone-callback demo on 2026-09-01. The agent itself runs as a separate always-on service on LiveKit Cloud (project `sss-receptionist`), not in this repo.
 
 ---
 
@@ -68,7 +68,7 @@ Vercel
 ├── Next.js app at packages/frontend/
 ├── Edge middleware for Clerk auth
 ├── Daily cron: /api/cron/cleanup-tokens (proxies to the SaaS backend, elsewhere)
-└── API routes for BFF pattern (intake, demo-call, cron)
+└── API routes for BFF pattern (intake, livekit-token, cron)
 ```
 
 There is no backend deployed from this repo. `NEXT_PUBLIC_API_URL` (when set) points at the separate SaaS platform's API for the `/api/v1/*` rewrite and the cleanup-tokens cron proxy — that's a runtime HTTP call, not a build dependency.
@@ -89,7 +89,7 @@ There is no backend deployed from this repo. `NEXT_PUBLIC_API_URL` (when set) po
 
 - `.env*` files — never commit (guarded by pre-commit and `check-env-committed`)
 - `pnpm-lock.yaml` — only update via `pnpm install`
-- `src/app/api/demo-call/route.ts` and the `VAPI_*` env vars — a separate, deliberate piece of scope; don't fold changes to it into unrelated work
+- `src/app/api/livekit-token/route.ts` — mints tokens server-side only; `LIVEKIT_API_KEY`/`LIVEKIT_API_SECRET` must never reach the client
 
 ---
 
