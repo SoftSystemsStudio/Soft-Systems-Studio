@@ -75,9 +75,9 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://*.clerk.accounts.dev https://*.googletagmanager.com https://www.google-analytics.com https://js.stripe.com",
-              "style-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https: blob:",
-              "font-src 'self' data:",
+              "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https: wss: http://localhost:* ws://localhost:* https://api.softsystemsstudiollc.com",
               "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
               "worker-src 'self' blob:",
