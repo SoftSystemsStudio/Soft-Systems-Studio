@@ -1,139 +1,88 @@
 # Portfolio Website Concepts
 
-## 1. NeuralFit - AI Fitness Platform (SaaS)
+Supersedes the original four tech-startup-flavored concepts (NeuralFit,
+Apex Plumbing, VoltStore, Creator Studio), replaced 2026-09 because they
+spoke to nobody on Austin's actual lead list (see `SITE-AUDIT-2026-09.md`
+and the "Rebuild the portfolio demo section" session). Austin sells to
+local businesses around Phenix City, AL and Columbus, GA, overwhelmingly
+automotive/trades — these three demos match that market and each solves a
+different design problem so the set reads as range, not one template
+reused three times.
 
-**Style:** Bold tech, dark theme with electric purple/cyan gradients
-
-**Hero:**
-```
-Title: "Your AI Personal Trainer"
-Subtitle: "Get personalized workout plans powered by machine learning"
-Colors: Deep purple (#8B5CF6) to cyan (#06B6D4) gradient
-Image: Dashboard mockup showing workout analytics
-CTA: "Start Free Trial"
-```
-
-**Features:**
-- Real-time workout tracking
-- AI-generated meal plans
-- Progress analytics
-- Social challenges
-
-**Tech Stack Shown:** React, Python, TensorFlow
-**Target:** Tech-savvy fitness enthusiasts
-**Vibe:** Futuristic, data-driven, powerful
+All three live under `/demo/<slug>` in `packages/frontend/src/app/demo/`,
+carry a persistent "Demo Site" badge and a "Back to Portfolio" link, use
+real Pexels photography (credited in each footer), and are built around
+fictional businesses with invented names checked against real Phenix
+City/Columbus-area businesses before use.
 
 ---
 
-## 2. Apex Plumbing - Local Service Business
+## 1. Kettle & Grain Coffee Co. — Coffee Shop
 
-**Style:** High-contrast, trust-focused, bold CTAs
+**Slug:** `/demo/kettle-and-grain`
 
-**Hero:**
-```
-Title: "Emergency Plumbing, 24/7"
-Subtitle: "Licensed, insured, and ready to help. Serving Austin since 2020."
-Colors: Electric orange (#FF6B35) on deep black (#0A0A0A)
-Image: Professional plumber with tools
-CTA: "Call Now: (512) 555-APEX" + "Book Online"
-```
+**Design problem:** sells atmosphere, not urgency. No phone-first CTA, no
+countdown, no emergency framing — the opposite pull from the auto-repair
+demo.
 
-**Features:**
-- Same-day service
-- Upfront pricing
-- 100% satisfaction guarantee
-- Emergency availability
+**Style:** Editorial and unhurried. Deep forest-green dark theme
+(`#132018` base, `#C99A44` warm gold accent) rather than the cliché warm
+cream + brass palette. Display face is Cormorant Garamond (heritage,
+justified by the genuinely editorial/heritage brief), body is Manrope.
 
-**Sections:**
-- Services grid
-- Before/after photos
-- Customer reviews (5-star showcase)
-- Service area map
-
-**Target:** Homeowners with urgent plumbing needs
-**Vibe:** Reliable, professional, fast response
+**Structure:** full-bleed photo hero → asymmetric stat strip (days open,
+roaster relationships, drinks on the board, as real data not fake
+process steps) → atmosphere section (image + sensory copy) → grouped
+menu (espresso / drip / pastries, priced) → image gallery → hours &
+location.
 
 ---
 
-## 3. VoltStore - E-commerce Tech Brand
+## 2. Ironwood Auto & Tire — Auto Repair
 
-**Style:** Product-first, clean but edgy, conversion-optimized
+**Slug:** `/demo/ironwood-auto`
 
-**Hero:**
-```
-Title: "Premium Gaming Peripherals"
-Subtitle: "Engineered for performance. Built to last."
-Colors: Neon green (#39FF14) accents on dark slate (#1E293B)
-Image: Product hero shot (mechanical keyboard)
-CTA: "Shop Now" + "New Arrivals"
-```
+**Design problem:** the biggest slice of Austin's real lead list (9 of
+top 15 no-website prospects are auto/tire shops). Urgency-driven,
+phone-first, has to work for someone standing in a parking lot with a
+dead car.
 
-**Features:**
-- Product grid with hover effects
-- Quick-view modals
-- Cart preview
-- Free shipping badge
+**Style:** Bold and high-contrast. Near-black (`#0B0C0E`) with a single
+safety-orange accent (`#F2551E`). Display face is Anton (condensed,
+heavy), paired with JetBrains Mono for stat numerals and Work Sans for
+body copy.
 
-**Design Elements:**
-- Large product photos
-- Sticky nav with cart
-- Trust badges (secure checkout, 30-day returns)
-- Testimonials slider
-
-**Target:** Gaming enthusiasts, tech buyers
-**Vibe:** Premium, sleek, performance-focused
+**Structure:** urgency bar with a real phone link → hero with a phone CTA
+above the fold → services bento (asymmetric, not six equal cards) → trust
+panel with organic (non-round) stats → short reviews → hours/location →
+a sticky mobile "Call Now" bar, because most of these prospects are found
+on a phone.
 
 ---
 
-## 4. Creator Studio - Personal Brand Site
+## 3. Green Bench Lawn & Landscape — Lawn Care & Landscaping
 
-**Style:** Portfolio-first, minimalist but bold, personality-driven
+**Slug:** `/demo/green-bench`
 
-**Hero:**
-```
-Title: "Jordan Mills"
-Subtitle: "Full-Stack Developer & Content Creator"
-Colors: Hot pink (#FF1493) on off-white (#F8F9FA)
-Image: Professional photo with color filter
-CTA: "View Work" + "Newsletter"
-```
+**Design problem:** trades, but a different problem than auto repair —
+portfolio-driven and seasonal rather than emergency-driven. Sells
+finished work and a reliable weekly relationship, not a same-day fix.
 
-**Sections:**
-- Project showcase (grid with hover reveals)
-- About (story + skills)
-- Latest blog posts
-- Newsletter signup
-- Social links
+**Style:** Light theme (the other two are dark, so this carries the
+contrast), olive/brick/paper family (`#F4F5F0` cool paper, `#B5502E`
+brick accent) rather than the beige-and-brass premium-consumer default.
+Display face is Outfit, body is Karla.
 
-**Design Elements:**
-- Bento grid layout
-- Smooth scroll animations
-- Typography-focused
-- Mobile-first
-
-**Target:** Potential clients, followers, collaborators
-**Vibe:** Personal, creative, approachable but professional
+**Structure:** full-bleed hero of a finished yard → "recent work" image
+grid captioned by project type, not by fictional client → a genuine
+seasonal timeline (spring cleanup → growing season → fall cleanup →
+winterizing — numbered because it's an actual sequence) → services grid
+→ one short quote → service-area contact section.
 
 ---
 
-## Image Generation Prompts
+## Image sourcing
 
-### NeuralFit Hero:
-```
-Modern SaaS dashboard interface showing workout analytics, dark theme with purple and cyan gradient accents, clean typography, fitness data visualization, sleek design, high contrast, professional UI/UX, 16:9 landscape
-```
-
-### Apex Plumbing Hero:
-```
-Professional plumber in branded uniform holding wrench and toolbox, confident pose, orange and black color scheme, high quality photography, trustworthy and reliable aesthetic, website hero image, 16:9 landscape
-```
-
-### VoltStore Hero:
-```
-Premium mechanical gaming keyboard with RGB lighting on dark slate surface, neon green accent lighting, product photography, e-commerce hero shot, high-end tech aesthetic, sharp focus, 16:9 landscape
-```
-
-### Creator Studio Hero:
-```
-Modern minimalist portfolio website mockup, clean layout with project thumbnails in grid, hot pink accent color, professional web design, bento grid style, contemporary UI, 16:9 landscape
-```
+All photography is real, sourced from the Pexels API and downloaded into
+`packages/frontend/public/images/demo/<slug>/`. No AI-generated people or
+premises. Photographer credits appear in each page's footer.
