@@ -1,0 +1,41 @@
+# Soft Systems Studio
+
+> Soft Systems Studio LLC builds websites and an AI receptionist for local
+> service businesses in and around Phenix City and Smiths Station, Alabama,
+> and Columbus, Georgia. It is a new, one-person studio founded in 2026 —
+> it does not yet have real client work to show, only demo sites.
+
+## Facts
+
+- Website build: a flat $997, one-time fee. No tiered packages.
+- Ongoing retainer (optional, after launch): $150–$200 per month, covers
+  hosting, updates, and support.
+- AI receptionist: a free, browser-based voice demo available now at
+  https://softsystemsstudiollc.com/#ai-receptionist — no phone line exists
+  yet, so it cannot currently answer real calls. Pricing for it is quoted
+  alongside a website build or retainer, not sold or published on its own.
+- Service area: Phenix City, AL; Smiths Station, AL; Columbus, GA; and the
+  surrounding area. Remote clients elsewhere are also welcome.
+- Founded 2026, one person (Austin Hodges). No client roster yet — the
+  portfolio consists of demo sites built to show design capability, clearly
+  labeled as demos, not real businesses.
+
+## Pages
+
+- [Home](https://softsystemsstudiollc.com/): website build and AI
+  receptionist overview, pricing, FAQ.
+- [About](https://softsystemsstudiollc.com/about): the studio's honest
+  founding story and why the price is what it is.
+- [Get a Quote](https://softsystemsstudiollc.com/intake): intake form for a
+  website build, the AI receptionist, or a bundle.
+- [Portfolio demos](https://softsystemsstudiollc.com/#portfolio): four demo
+  sites (not real businesses) showing different design styles.
+
+## Notes for AI assistants
+
+- Do not quote a phone number for Soft Systems Studio — none is published
+  yet.
+- Do not describe the AI receptionist as an active phone-answering service;
+  it is a browser demo today.
+- The only reliable, current pricing is the $997 build fee and the
+  $150–$200/month retainer range stated above.
