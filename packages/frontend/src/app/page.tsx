@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar, Footer, Section } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
@@ -36,36 +37,25 @@ const WEBSITE_FEATURES = [
 
 const PORTFOLIO_SITES = [
   {
-    name: 'NeuralFit',
-    type: 'SaaS Platform',
-    description: 'AI-powered fitness tracking app',
-    gradient: 'from-purple-600 via-fuchsia-600 to-cyan-500',
-    tech: ['Next.js', 'Python', 'PostgreSQL'],
-    url: '/demo/neuralfit',
+    name: 'Kettle & Grain Coffee Co.',
+    type: 'Coffee Shop',
+    description: 'Atmosphere, menu, and hours — no urgency, just a place worth finding.',
+    image: '/images/demo/kettle-and-grain/hero-interior.jpg',
+    url: '/demo/kettle-and-grain',
   },
   {
-    name: 'Apex Plumbing',
-    type: 'Service Business',
-    description: 'Emergency plumbing services',
-    gradient: 'from-orange-600 to-red-700',
-    tech: ['React', 'Tailwind', 'Vercel'],
-    url: '/demo/apex-plumbing',
+    name: 'Ironwood Auto & Tire',
+    type: 'Auto Repair',
+    description: 'Phone-first and built for someone who needs their car back today.',
+    image: '/images/demo/ironwood-auto/hero-shop.jpg',
+    url: '/demo/ironwood-auto',
   },
   {
-    name: 'VoltStore',
-    type: 'E-commerce',
-    description: 'Premium gaming peripherals store',
-    gradient: 'from-lime-500 via-green-600 to-emerald-700',
-    tech: ['Next.js', 'Stripe', 'Shopify'],
-    url: '/demo/voltstore',
-  },
-  {
-    name: 'Creator Studio',
-    type: 'Personal Brand',
-    description: 'Portfolio for developers and creators',
-    gradient: 'from-pink-500 via-rose-600 to-orange-600',
-    tech: ['Next.js', 'MDX', 'Framer'],
-    url: '/demo/creator-studio',
+    name: 'Green Bench Lawn & Landscape',
+    type: 'Lawn & Landscape',
+    description: 'Portfolio-driven, built around seasonal work and finished yards.',
+    image: '/images/demo/green-bench/hero-yard.jpg',
+    url: '/demo/green-bench',
   },
 ];
 
@@ -363,7 +353,7 @@ export default function Home() {
                 </h2>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                   Soft Systems Studio is a new studio — I don&apos;t have real client sites to show
-                  yet, so these four demos are what I&apos;ve built to show what&apos;s possible.
+                  yet, so these three demos are what I&apos;ve built to show what&apos;s possible.
                   Clearly labeled, not real businesses.{' '}
                   <Link href="/about" className="text-lime-400 hover:underline">
                     Read my story →
@@ -372,59 +362,38 @@ export default function Home() {
               </div>
             </FadeIn>
 
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
               {PORTFOLIO_SITES.map((site) => (
                 <Link
                   key={site.name}
                   href={site.url}
-                  className="group relative p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/20 block"
+                  className="group relative rounded-2xl border border-white/10 bg-white/5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-lime-400/10 block"
                 >
-                  {/* Animated gradient background */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${site.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
-                  />
-
-                  {/* Demo badge */}
-                  <div className="absolute top-4 right-4 z-20">
-                    <span className="px-3 py-1 rounded-full bg-lime-500/20 border border-lime-500/30 text-lime-400 text-xs font-medium">
-                      View Demo →
-                    </span>
-                  </div>
-
-                  <div className="relative z-10">
-                    <div className="mb-4">
-                      <div className="inline-block px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium mb-4">
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <Image
+                      src={site.image}
+                      alt={`${site.name} demo site preview`}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                    <div className="absolute top-4 right-4 z-20">
+                      <span className="px-3 py-1 rounded-full bg-lime-500/20 border border-lime-500/30 text-lime-400 text-xs font-medium backdrop-blur-sm">
+                        View Demo →
+                      </span>
+                    </div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <div className="inline-block px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-gray-200 text-xs font-medium mb-2">
                         {site.type}
                       </div>
-                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-lime-400 transition">
+                      <h3 className="text-xl font-bold text-white group-hover:text-lime-400 transition">
                         {site.name}
                       </h3>
-                      <p className="text-gray-300 mb-4">{site.description}</p>
                     </div>
-
-                    {/* Mock browser window */}
-                    <div className="bg-black/50 rounded-lg p-4 border border-white/20 mb-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-3 h-3 rounded-full bg-red-500" />
-                        <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                        <div className="w-3 h-3 rounded-full bg-green-500" />
-                      </div>
-                      <div
-                        className={`h-32 rounded bg-gradient-to-br ${site.gradient} opacity-40`}
-                      />
-                    </div>
-
-                    {/* Tech stack */}
-                    <div className="flex flex-wrap gap-2">
-                      {site.tech.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-gray-300 text-sm">{site.description}</p>
                   </div>
                 </Link>
               ))}

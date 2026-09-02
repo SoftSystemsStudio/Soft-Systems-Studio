@@ -19,25 +19,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // Demo sites - showcase portfolio
     {
-      url: `${baseUrl}/demo/apex-plumbing`,
+      url: `${baseUrl}/demo/kettle-and-grain`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/demo/neuralfit`,
+      url: `${baseUrl}/demo/ironwood-auto`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/demo/voltstore`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/demo/creator-studio`,
+      url: `${baseUrl}/demo/green-bench`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,
