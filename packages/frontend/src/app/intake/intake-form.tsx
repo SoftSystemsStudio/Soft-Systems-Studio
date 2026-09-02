@@ -55,21 +55,21 @@ const CALL_VOLUMES = [
 const SERVICES = [
   {
     key: 'website' as ServiceInterest,
-    name: 'Website Only',
-    price: '$2,500',
-    description: 'Professional 5-page website',
+    name: 'Website Build',
+    price: '$997',
+    description: 'Flat one-time build fee',
   },
   {
     key: 'ai_receptionist' as ServiceInterest,
     name: 'AI Receptionist',
-    price: '$997 + $197/mo',
-    description: 'Never miss a call again',
+    price: 'Quote with build/retainer',
+    description: 'Try the free browser demo first',
   },
   {
     key: 'complete_package' as ServiceInterest,
-    name: 'Complete Package',
-    price: '$2,997 + $197/mo',
-    description: 'Website + AI (Save $500)',
+    name: 'Website + AI Receptionist',
+    price: 'Custom quote',
+    description: 'Bundle — pricing discussed on your call',
   },
 ];
 
@@ -265,7 +265,7 @@ export default function IntakeForm() {
                   </p>
                 </div>
                 <Link
-                  href="/#ai-services"
+                  href="/#ai-receptionist"
                   className="px-6 py-3 font-semibold rounded-lg transition-all whitespace-nowrap bg-purple-600 hover:bg-purple-700 text-white text-center"
                 >
                   Try the Voice Demo

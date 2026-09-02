@@ -8,10 +8,11 @@ import { ChatWidget } from '@softsystems/ui-components';
 import VoiceDemo from '@/components/VoiceDemo';
 import {
   OrganizationSchema,
-  ProductListSchema,
+  LocalBusinessSchema,
   FAQSchema,
   WebSiteSchema,
 } from '@/components/StructuredData';
+import { BUILD_FEE, RETAINER_RANGE, SERVICE_AREA_LABEL } from '@/lib/business';
 import env from '@/lib/env';
 
 const InteractiveFAQ = dynamic(() => import('@/components/sentient/faq/InteractiveFAQ'), {
@@ -19,92 +20,18 @@ const InteractiveFAQ = dynamic(() => import('@/components/sentient/faq/Interacti
 });
 
 const NAV_ITEMS = [
-  { label: 'Products', href: '#digital-products' },
-  { label: 'Web Design', href: '#web-design' },
-  { label: 'AI Services', href: '#ai-services' },
+  { label: 'Website Build', href: '#website' },
+  { label: 'AI Receptionist', href: '#ai-receptionist' },
   { label: 'Portfolio', href: '#portfolio' },
+  { label: 'About', href: '/about' },
 ];
 
-const DIGITAL_PRODUCTS = [
-  {
-    name: 'AI Business in a Box',
-    price: '$29',
-    description: 'Complete AI agency starter pack',
-    gradient: 'from-purple-600 to-pink-600',
-    link: 'https://softsystemsstudioco.gumroad.com/l/ai-business-box',
-    features: ['20 Email Templates', 'Service Packages', 'Client Scripts', 'SOPs'],
-  },
-  {
-    name: 'Solopreneur OS',
-    price: '$19',
-    description: 'All-in-one productivity system',
-    gradient: 'from-cyan-500 to-blue-600',
-    link: 'https://softsystemsstudioco.gumroad.com/l/solopreneur-os',
-    features: ['CRM', 'Revenue Tracking', 'Content Calendar', '90-Day Roadmap'],
-  },
-  {
-    name: 'AI Prompt Vault',
-    price: '$14.99',
-    description: '200+ battle-tested prompts',
-    gradient: 'from-orange-500 to-red-600',
-    link: 'https://softsystemsstudioco.gumroad.com/l/ai-prompt-vault',
-    features: ['Business Strategy', 'Marketing Scripts', 'Code Helpers', 'Content Tools'],
-  },
-  {
-    name: 'SaaS Launch Kit',
-    price: '$24',
-    description: 'Zero to launch playbook',
-    gradient: 'from-lime-500 to-green-600',
-    link: 'https://softsystemsstudioco.gumroad.com/l/saas-launch-kit',
-    features: ['Validation Guide', 'Landing Pages', '100-Point Checklist', 'Email Flows'],
-  },
-];
-
-const WEBSITE_PACKAGES = [
-  {
-    name: 'Starter Landing',
-    price: '$799',
-    delivery: '48 hours',
-    description: 'Perfect for product launches and lead capture',
-    features: [
-      'Single high-converting page',
-      'Mobile responsive',
-      'SEO optimized',
-      'Contact form integration',
-      '2 rounds of revisions',
-    ],
-    badge: 'Fast Track',
-    gradient: 'from-pink-500 to-rose-600',
-  },
-  {
-    name: 'Business Website',
-    price: '$1,997',
-    delivery: '1 week',
-    description: 'Complete web presence for your business',
-    features: [
-      '5-7 pages (Home, About, Services, Contact, etc.)',
-      'Custom design system',
-      'CMS integration',
-      'Analytics setup',
-      '30-day post-launch support',
-    ],
-    popular: true,
-    gradient: 'from-lime-400 to-emerald-500',
-  },
-  {
-    name: 'Premium Package',
-    price: '$3,497',
-    delivery: '2 weeks',
-    description: 'Full-featured site with advanced functionality',
-    features: [
-      '10+ pages with custom features',
-      'E-commerce or booking system',
-      'Advanced integrations (CRM, email, etc.)',
-      'Performance optimization',
-      '60-day support + training',
-    ],
-    gradient: 'from-cyan-400 to-blue-600',
-  },
+const WEBSITE_FEATURES = [
+  'Custom design built around your business and brand',
+  'Mobile-responsive, fast-loading',
+  'Contact / intake form wired straight to your email',
+  'Basic on-page SEO',
+  'Launched and ready to go live',
 ];
 
 const PORTFOLIO_SITES = [
@@ -119,7 +46,7 @@ const PORTFOLIO_SITES = [
   {
     name: 'Apex Plumbing',
     type: 'Service Business',
-    description: '24/7 emergency plumbing services',
+    description: 'Emergency plumbing services',
     gradient: 'from-orange-600 to-red-700',
     tech: ['React', 'Tailwind', 'Vercel'],
     url: '/demo/apex-plumbing',
@@ -144,29 +71,36 @@ const PORTFOLIO_SITES = [
 
 const FAQS = [
   {
-    question: 'How long does website design take?',
+    question: 'How long does a website build take?',
     answer:
-      'Starter Landing: 48 hours. Business Website: 1 week. Premium Package: 2 weeks. We work fast without sacrificing quality.',
+      "It depends on scope, so I'll give you a specific date during your intake call — before you commit to anything, not after.",
   },
   {
-    question: 'Do you use AI to design websites?',
+    question: 'Do you use AI to build websites?',
     answer:
-      'Yes - we use AI tools to accelerate design and development, but every site is custom-tailored to your brand and reviewed by human designers for quality.',
+      "Yes — I use AI tools to move faster, but every site is personally designed and reviewed by me before it ships. It's just me; there's no team of designers behind the scenes.",
   },
   {
     question: 'What if I need changes after launch?',
-    answer:
-      'All packages include revision rounds during development. After launch, Starter gets 2 weeks support, Business gets 30 days, Premium gets 60 days of free updates.',
+    answer: `A monthly retainer (${RETAINER_RANGE}) covers hosting, updates, and ongoing support after launch. Without a retainer, changes are quoted individually.`,
   },
   {
     question: 'Can I see examples of your work?',
     answer:
-      'Check out our portfolio section below. Each site showcases different styles and industries. We adapt to match your brand.',
+      "Check out the demo portfolio below. Soft Systems Studio is a new studio — I don't have real client sites to show yet, so these are demos I built myself to show what's possible, clearly labeled as demos.",
   },
   {
     question: 'Do you offer hosting?',
+    answer: `Hosting is included with a retainer (${RETAINER_RANGE}). Without one, you're welcome to host the site wherever you like.`,
+  },
+  {
+    question: 'How much does the AI receptionist cost?',
     answer:
-      'We deploy all sites to Vercel (free tier for most small sites). For larger sites or custom hosting needs, we can set up managed hosting for $47-97/month.',
+      "It's quoted alongside a website build or retainer, not sold on its own — ask when you request a quote. You can try the browser demo free, right now, no commitment.",
+  },
+  {
+    question: 'Where are you located, and who do you work with?',
+    answer: `Based near Phenix City, Alabama. I work with local service businesses in ${SERVICE_AREA_LABEL} — and remotely with businesses outside that area.`,
   },
 ];
 
@@ -175,8 +109,8 @@ export default function Home() {
     <>
       {/* Structured Data for SEO */}
       <OrganizationSchema />
+      <LocalBusinessSchema />
       <WebSiteSchema />
-      <ProductListSchema products={DIGITAL_PRODUCTS} />
       <FAQSchema faqs={FAQS} />
 
       {/* Animated background gradient */}
@@ -194,7 +128,7 @@ export default function Home() {
         </a>
 
         <main id="main-content" className="relative z-10">
-          {/* Hero Section - Bold & Edgy */}
+          {/* Hero Section */}
           <Section className="pt-32 pb-24">
             <FadeIn>
               <div className="max-w-6xl mx-auto">
@@ -202,277 +136,109 @@ export default function Home() {
                   {/* Animated badge */}
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lime-400/10 border border-lime-400/30 text-lime-400 text-sm font-medium mb-8 animate-pulse">
                     <span className="w-2 h-2 bg-lime-400 rounded-full animate-ping" />
-                    Digital Products · AI Automation · Web Design
+                    Website Builds · AI Receptionist Demo · Phenix City, AL &amp; Columbus, GA
                   </div>
 
                   <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tight">
-                    Build Smarter.
+                    Websites &amp; AI Receptionists
                     <br />
                     <span className="bg-gradient-to-r from-lime-400 via-cyan-400 to-pink-500 text-transparent bg-clip-text animate-gradient">
-                      Launch Faster.
+                      For Local Businesses.
                     </span>
                   </h1>
 
                   <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-10 max-w-3xl mx-auto font-light">
-                    Ready-to-use templates, AI-powered websites, and intelligent automation for
-                    entrepreneurs who refuse to waste time.
+                    A flat {BUILD_FEE} website build and a live, browser-based AI receptionist demo,
+                    built by one person for service businesses in {SERVICE_AREA_LABEL}.
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <a
-                      href="#digital-products"
+                      href="/intake"
                       className="group relative inline-block px-8 py-4 bg-lime-400 text-black font-bold text-lg rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
                     >
-                      <span className="relative z-10">Browse Products</span>
+                      <span className="relative z-10">Get a Quote</span>
                       <div className="absolute inset-0 bg-gradient-to-r from-lime-300 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </a>
                     <a
-                      href="#web-design"
+                      href="#ai-receptionist"
                       className="inline-block px-8 py-4 border-2 border-lime-400/50 text-lime-400 font-bold text-lg rounded-lg hover:bg-lime-400/10 transition-all duration-300"
                     >
-                      Get a Website →
+                      Try the AI Receptionist →
                     </a>
                   </div>
-
-                  <p className="text-sm text-gray-500 mt-6">
-                    No fluff. No $997 courses. Just tools that work.
-                  </p>
                 </div>
 
                 {/* Stats bar */}
                 <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto mt-16">
                   <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
-                    <div className="text-3xl font-bold text-lime-400 mb-2">48hr</div>
-                    <div className="text-sm text-gray-400">Website Delivery</div>
+                    <div className="text-3xl font-bold text-lime-400 mb-2">{BUILD_FEE}</div>
+                    <div className="text-sm text-gray-400">Flat Website Build</div>
                   </div>
                   <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
-                    <div className="text-3xl font-bold text-pink-400 mb-2">$19-29</div>
-                    <div className="text-sm text-gray-400">Digital Products</div>
+                    <div className="text-3xl font-bold text-pink-400 mb-2">$150+</div>
+                    <div className="text-sm text-gray-400">Monthly Retainers</div>
                   </div>
                   <div className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
-                    <div className="text-3xl font-bold text-cyan-400 mb-2">30-Day</div>
-                    <div className="text-sm text-gray-400">Money Back</div>
+                    <div className="text-3xl font-bold text-cyan-400 mb-2">Free</div>
+                    <div className="text-sm text-gray-400">AI Receptionist Demo</div>
                   </div>
                 </div>
               </div>
             </FadeIn>
           </Section>
 
-          {/* Digital Products Section */}
-          <Section id="digital-products" className="py-24 relative">
-            {/* Background accent */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-lime-900/5 to-transparent pointer-events-none" />
-
-            <FadeIn>
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                  Digital Products
-                </h2>
-                <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                  Templates and systems you can use immediately. No courses. No fluff.
-                </p>
-              </div>
-            </FadeIn>
-
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
-              {DIGITAL_PRODUCTS.map((product, idx) => (
-                <a
-                  key={product.name}
-                  href={product.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative block overflow-hidden"
-                  style={{ animationDelay: `${idx * 100}ms` }}
-                >
-                  {/* Card container with layered depth */}
-                  <div className="relative bg-gradient-to-br from-[#0a0a0a] to-[#111111] border border-white/20 rounded-none transition-all duration-500 hover:border-lime-400/60 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(132,204,22,0.3)]">
-                    {/* Diagonal gradient slash - signature element */}
-                    <div
-                      className={`absolute -right-12 -top-12 w-48 h-48 bg-gradient-to-br ${product.gradient} opacity-10 rotate-45 group-hover:opacity-20 transition-all duration-500 group-hover:scale-125`}
-                    />
-
-                    {/* Neon glow accent bar */}
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                    {/* Content container */}
-                    <div className="relative p-6 space-y-5">
-                      {/* Header with oversized price tag */}
-                      <div className="flex items-start justify-between gap-4">
-                        <h3 className="font-black text-white text-xl leading-tight group-hover:text-lime-400 transition-colors duration-300">
-                          {product.name}
-                        </h3>
-                        <div className="flex-shrink-0 bg-gradient-to-br from-lime-400/20 to-cyan-400/20 border border-lime-400/50 px-3 py-1.5 backdrop-blur-sm">
-                          <span className="text-2xl font-mono font-black text-lime-400 tracking-tight">
-                            {product.price}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-gray-300 text-sm leading-relaxed font-medium">
-                        {product.description}
-                      </p>
-
-                      {/* Features list with enhanced styling */}
-                      <ul className="space-y-2.5 pt-2">
-                        {product.features.map((feature, idx) => (
-                          <li
-                            key={idx}
-                            className="text-gray-400 text-xs flex items-start gap-2.5 group-hover:text-gray-300 transition-colors"
-                          >
-                            <span className="flex-shrink-0 w-1.5 h-1.5 bg-lime-400 mt-1.5 group-hover:shadow-[0_0_8px_rgba(132,204,22,0.6)] transition-shadow" />
-                            <span className="leading-relaxed">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      {/* Bold CTA button with animated border */}
-                      <div className="pt-4">
-                        <div className="relative bg-lime-400 text-black font-bold text-sm px-5 py-3 overflow-hidden group-hover:bg-lime-300 transition-all duration-300">
-                          {/* Animated shine effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-
-                          <div className="relative flex items-center justify-between">
-                            <span className="uppercase tracking-wider">View Product</span>
-                            <svg
-                              className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2.5}
-                                d="M13 7l5 5m0 0l-5 5m5-5H6"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-
-                        {/* Border glow effect on hover */}
-                        <div className="absolute inset-0 border-2 border-lime-400/0 group-hover:border-lime-400/40 transition-all duration-300 pointer-events-none" />
-                      </div>
-                    </div>
-
-                    {/* Corner accent - geometric detail */}
-                    <div className="absolute bottom-0 right-0 w-16 h-16 border-l-2 border-t-2 border-lime-400/20 group-hover:border-lime-400/50 transition-colors duration-300" />
-                  </div>
-                </a>
-              ))}
-            </StaggerContainer>
-
-            <FadeIn className="text-center mt-16">
-              <a
-                href="https://softsystemsstudioco.gumroad.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative inline-flex items-center gap-3 px-10 py-5 border-2 border-lime-400/30 text-white font-bold text-base uppercase tracking-wider hover:border-lime-400 transition-all duration-300 overflow-hidden"
-              >
-                {/* Animated background on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-lime-400/0 via-lime-400/10 to-lime-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-
-                <span className="relative">View All Products</span>
-
-                <svg
-                  className="relative w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2.5}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </a>
-            </FadeIn>
-          </Section>
-
-          {/* Website Design Section - New & Prominent */}
-          <Section id="web-design" className="py-24 relative">
-            {/* Dramatic gradient background */}
+          {/* Website Build Section */}
+          <Section id="website" className="py-24 relative">
             <div className="absolute inset-0 bg-gradient-to-br from-lime-900/10 via-transparent to-pink-900/10 pointer-events-none" />
 
             <FadeIn>
               <div className="text-center mb-16">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-sm font-medium mb-6">
-                  ✨ New Service
-                </div>
                 <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                  AI-Powered Website Design
+                  One Website Build. One Price.
                 </h2>
-                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                  Modern, fast, conversion-optimized websites built in days, not months. Starting at
-                  $799.
+                <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                  {BUILD_FEE} flat. No tiers, no upsells disguised as &quot;packages.&quot;
+                  Everything a local service business needs to launch a professional site.
                 </p>
               </div>
             </FadeIn>
 
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 relative z-10">
-              {WEBSITE_PACKAGES.map((pkg) => (
-                <div
-                  key={pkg.name}
-                  className={`relative p-8 rounded-2xl border ${
-                    pkg.popular ? 'border-lime-400/50 scale-105' : 'border-white/10'
-                  } bg-white/5 backdrop-blur transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-                    pkg.popular ? 'hover:shadow-lime-400/30' : 'hover:shadow-white/20'
-                  }`}
-                >
-                  {/* Gradient background */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${pkg.gradient} opacity-5 rounded-2xl`}
-                  />
-
-                  {pkg.badge && (
-                    <div className="absolute -top-3 left-8 px-4 py-1 bg-pink-500 text-white text-xs font-bold rounded-full">
-                      {pkg.badge}
-                    </div>
-                  )}
-
-                  {pkg.popular && (
-                    <div className="absolute -top-3 left-8 px-4 py-1 bg-lime-400 text-black text-xs font-bold rounded-full">
-                      Most Popular
-                    </div>
-                  )}
-
-                  <div className="relative z-10">
-                    <h3 className="text-2xl font-bold text-white mb-2">{pkg.name}</h3>
-                    <div className="flex items-baseline gap-2 mb-1">
-                      <span className="text-4xl font-black text-lime-400">{pkg.price}</span>
-                    </div>
-                    <p className="text-sm text-gray-400 mb-4">Delivered in {pkg.delivery}</p>
-                    <p className="text-gray-300 mb-6">{pkg.description}</p>
-
-                    <ul className="space-y-3 mb-8">
-                      {pkg.features.map((feature, idx) => (
-                        <li key={idx} className="text-gray-300 text-sm flex items-start gap-3">
-                          <span className="text-lime-400 mt-0.5">✓</span>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <a
-                      href="/intake"
-                      className={`block text-center px-6 py-3 rounded-lg font-bold transition-all duration-300 ${
-                        pkg.popular
-                          ? 'bg-lime-400 text-black hover:bg-lime-300 hover:scale-105'
-                          : 'border-2 border-white/20 text-white hover:bg-white/10'
-                      }`}
-                    >
-                      Get Started
-                    </a>
+            <FadeIn className="max-w-2xl mx-auto relative z-10">
+              <div className="relative p-8 md:p-10 rounded-2xl border border-lime-400/40 bg-white/5 backdrop-blur">
+                <div className="absolute inset-0 bg-gradient-to-br from-lime-400/10 to-cyan-400/10 opacity-50 rounded-2xl" />
+                <div className="relative z-10">
+                  <div className="flex items-baseline gap-2 mb-6">
+                    <span className="text-5xl font-black text-lime-400">{BUILD_FEE}</span>
+                    <span className="text-gray-400">one-time</span>
                   </div>
+                  <ul className="space-y-3 mb-8">
+                    {WEBSITE_FEATURES.map((feature) => (
+                      <li key={feature} className="text-gray-300 flex items-start gap-3">
+                        <span className="text-lime-400 mt-0.5">✓</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <a
+                    href="/intake"
+                    className="block text-center px-6 py-3 rounded-lg font-bold bg-lime-400 text-black hover:bg-lime-300 hover:scale-105 transition-all duration-300"
+                  >
+                    Get Started
+                  </a>
+                  <p className="text-sm text-gray-500 text-center mt-4">
+                    Want ongoing updates after launch?{' '}
+                    <a href="#retainer" className="text-lime-400 hover:underline">
+                      Retainers start at $150/month.
+                    </a>
+                  </p>
                 </div>
-              ))}
-            </StaggerContainer>
+              </div>
+            </FadeIn>
 
             {/* Process */}
             <FadeIn>
-              <div className="max-w-4xl mx-auto text-center">
+              <div className="max-w-4xl mx-auto text-center mt-20">
                 <h3 className="text-2xl font-bold text-white mb-8">How It Works</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="p-6">
@@ -481,17 +247,16 @@ export default function Home() {
                     </div>
                     <h4 className="font-bold text-white mb-2">Quick Intake</h4>
                     <p className="text-gray-400 text-sm">
-                      Tell us about your business, brand, and goals in a 10-minute form
+                      Tell me about your business, brand, and goals in a short form
                     </p>
                   </div>
                   <div className="p-6">
                     <div className="w-12 h-12 rounded-full bg-pink-400/10 border-2 border-pink-400 flex items-center justify-center text-pink-400 font-black text-xl mb-4 mx-auto">
                       2
                     </div>
-                    <h4 className="font-bold text-white mb-2">We Build</h4>
+                    <h4 className="font-bold text-white mb-2">I Build It</h4>
                     <p className="text-gray-400 text-sm">
-                      AI-assisted design + human review. We handle everything from design to
-                      deployment
+                      I design and build the site myself, using AI to move fast
                     </p>
                   </div>
                   <div className="p-6">
@@ -508,6 +273,85 @@ export default function Home() {
             </FadeIn>
           </Section>
 
+          {/* Retainer Section */}
+          <Section id="retainer" className="py-24 relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-900/5 to-transparent pointer-events-none" />
+            <FadeIn>
+              <div className="max-w-3xl mx-auto text-center">
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-4">Keep It Running</h2>
+                <p className="text-xl text-gray-300 mb-10">
+                  An optional monthly retainer covers hosting, updates, and ongoing support after
+                  launch.
+                </p>
+                <div className="inline-block p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur mb-8">
+                  <div className="text-4xl md:text-5xl font-black text-cyan-400 mb-2">
+                    {RETAINER_RANGE}
+                  </div>
+                  <p className="text-gray-400 text-sm">Priced to scope — $150/month to start</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto text-left mb-10">
+                  {[
+                    'Hosting & uptime monitoring',
+                    'Content and text updates',
+                    'Small design tweaks',
+                    'Priority email support',
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-3 text-gray-300 text-sm">
+                      <span className="text-cyan-400 mt-0.5">✓</span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <a
+                  href="/intake"
+                  className="inline-block px-8 py-4 border-2 border-cyan-400/50 text-cyan-400 font-bold rounded-lg hover:bg-cyan-400/10 transition-all duration-300"
+                >
+                  Ask About a Retainer
+                </a>
+              </div>
+            </FadeIn>
+          </Section>
+
+          {/* AI Receptionist Section */}
+          <Section id="ai-receptionist" className="py-24 relative">
+            <FadeIn>
+              <div className="max-w-4xl mx-auto text-center">
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                  Try the AI Receptionist
+                </h2>
+                <p className="text-xl text-gray-300 mb-8">
+                  A live, browser-based voice demo — talk to it right now, no signup, no phone call.
+                </p>
+                <div className="p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur mb-8">
+                  <h3 className="text-2xl font-bold text-white mb-4">AI Receptionist Demo</h3>
+                  <p className="text-gray-300 mb-6">
+                    This is a working demo of what an AI phone receptionist could sound like for
+                    your business — it&apos;s not wired up to a real phone line yet, so what you
+                    hear today is exactly what it is: a demo, not a live service.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mb-6">
+                    <span>✓ Real voice, real AI — not a script</span>
+                    <span>✓ Try it in your browser right now</span>
+                    <span>✓ Ends automatically after 3 minutes</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <VoiceDemo />
+                    <a
+                      href="/intake"
+                      className="inline-block px-8 py-4 border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
+                    >
+                      Get Free Quote
+                    </a>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500">
+                  Pricing is quoted alongside a website build or retainer — ask when you request a
+                  quote.
+                </p>
+              </div>
+            </FadeIn>
+          </Section>
+
           {/* Portfolio Section */}
           <Section id="portfolio" className="py-24 relative">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-900/5 to-transparent pointer-events-none" />
@@ -515,10 +359,15 @@ export default function Home() {
             <FadeIn>
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                  Example Projects
+                  See What I Can Build
                 </h2>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                  Different styles for different needs. We adapt to match your brand.
+                  Soft Systems Studio is a new studio — I don&apos;t have real client sites to show
+                  yet, so these four demos are what I&apos;ve built to show what&apos;s possible.
+                  Clearly labeled, not real businesses.{' '}
+                  <Link href="/about" className="text-lime-400 hover:underline">
+                    Read my story →
+                  </Link>
                 </p>
               </div>
             </FadeIn>
@@ -595,49 +444,6 @@ export default function Home() {
             </FadeIn>
           </Section>
 
-          {/* AI Services (Condensed) */}
-          <Section id="ai-services" className="py-24 relative">
-            <FadeIn>
-              <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-                  AI Automation Services
-                </h2>
-                <p className="text-xl text-gray-300 mb-8">
-                  Custom AI receptionists and automation for service businesses
-                </p>
-                <div className="p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur mb-8">
-                  <h3 className="text-2xl font-bold text-white mb-4">AI Receptionist</h3>
-                  <p className="text-gray-300 mb-6">
-                    24/7 phone answering, appointment booking, and lead capture for local
-                    businesses. Never miss a $400 job again.
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mb-6">
-                    <span>✓ Natural voice (not robotic)</span>
-                    <span>✓ Bilingual (EN/ES)</span>
-                    <span>✓ Calendar integration</span>
-                    <span>✓ 24/7 availability</span>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <VoiceDemo />
-                    <a
-                      href="/intake"
-                      className="inline-block px-8 py-4 border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300"
-                    >
-                      Get Free Quote
-                    </a>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-500 mb-2">
-                  Real voice, real AI — talk to it right now, no signup. Calls end automatically
-                  after 3 minutes.
-                </p>
-                <p className="text-sm text-gray-500">
-                  Setup: $997 • Monthly: $197 + usage (~$30-80/mo)
-                </p>
-              </div>
-            </FadeIn>
-          </Section>
-
           {/* FAQ */}
           <Section id="faq" className="py-24 relative">
             <FadeIn>
@@ -659,22 +465,20 @@ export default function Home() {
                   Ready to Build Something Great?
                 </h2>
                 <p className="text-xl text-gray-300 mb-10">
-                  Browse digital products or start your website project today
+                  Get a quote for a website build, or try the AI receptionist demo first
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
-                    href="https://softsystemsstudioco.gumroad.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="/intake"
                     className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-lg hover:bg-lime-300 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
                   >
-                    Shop Products
+                    Get a Quote
                   </a>
                   <a
-                    href="/intake"
+                    href="#ai-receptionist"
                     className="inline-block px-10 py-5 border-2 border-white/20 text-white font-bold text-lg rounded-lg hover:bg-white/10 transition-all duration-300"
                   >
-                    Get a Website
+                    Try the Demo
                   </a>
                 </div>
               </div>
@@ -688,7 +492,7 @@ export default function Home() {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- false positive: ESLint cannot resolve @/ path alias
           apiUrl={(env.NEXT_PUBLIC_API_URL || 'http://localhost:4000') + '/api/v1/public/chat'}
           title="Chat With Us"
-          greeting="Hi! Ask me about our digital products, website design, or AI automation services!"
+          greeting="Hi! Ask me about website builds, retainers, or the AI receptionist demo!"
           primaryColor="#a3e635"
           position="bottom-right"
         />

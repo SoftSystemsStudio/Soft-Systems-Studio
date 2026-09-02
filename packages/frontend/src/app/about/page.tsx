@@ -1,17 +1,19 @@
 import type { Metadata } from 'next';
 import { Navbar, Footer, Section } from '@/components/ui';
 import { FadeIn, StaggerContainer } from '@/components/motion';
+import { BUILD_FEE, RETAINER_RANGE, SERVICE_AREA_LABEL } from '@/lib/business';
 
 export const metadata: Metadata = {
-  title: 'About Us | Soft Systems Studio',
+  title: 'About',
   description:
-    'Digital products, AI automation, and websites for entrepreneurs who refuse to waste time. Built by Austin Hodges.',
+    'A new studio, one person, honest pricing. Why Soft Systems Studio charges $997 for a website build instead of $3,000+.',
+  alternates: { canonical: '/about' },
 };
 
 const NAV_ITEMS = [
   { label: 'Home', href: '/' },
-  { label: 'Products', href: '/#digital-products' },
-  { label: 'Web Design', href: '/#web-design' },
+  { label: 'Website Build', href: '/#website' },
+  { label: 'AI Receptionist', href: '/#ai-receptionist' },
   { label: 'Contact', href: '/intake' },
 ];
 
@@ -19,44 +21,25 @@ const VALUES = [
   {
     title: 'Ship Fast, Iterate Faster',
     description:
-      'No 6-month development cycles. We build in days, launch immediately, and improve based on real feedback.',
+      'No 6-month development cycles. I build in days, launch quickly, and improve based on real feedback.',
     emoji: '⚡',
   },
   {
     title: 'No Fluff, No Filler',
     description:
-      "Every template, every tool, every line of code serves a purpose. We cut everything that doesn't help you make money or save time.",
+      "Every line of code serves a purpose. I cut everything that doesn't help your business get customers.",
     emoji: '🎯',
   },
   {
-    title: 'AI-Assisted, Human-Approved',
+    title: 'AI-Assisted, Personally Reviewed',
     description:
-      'We use AI to work faster, but every product is reviewed, tested, and refined by humans who actually use this stuff.',
+      'I use AI to work faster, but every site is designed and reviewed by me — the person who actually builds it, not a team you never meet.',
     emoji: '🤖',
   },
   {
     title: 'Transparent by Default',
-    description:
-      'Clear pricing. No hidden fees. No $997 courses. 30-day money-back guarantee on everything. Simple.',
+    description: `Clear pricing, no hidden fees. A ${BUILD_FEE} flat build fee, retainers from ${RETAINER_RANGE}. That's the whole price list.`,
     emoji: '💎',
-  },
-];
-
-const TIMELINE = [
-  {
-    year: '2019',
-    title: 'Started Building',
-    description: 'Began helping local businesses with automation and web design',
-  },
-  {
-    year: '2023',
-    title: 'AI Pivot',
-    description: 'Integrated AI tools to 10x speed and quality of work',
-  },
-  {
-    year: '2026',
-    title: 'Digital Products Launch',
-    description: 'Released templates and systems to help entrepreneurs move faster',
   },
 ];
 
@@ -87,17 +70,17 @@ export default function AboutPage() {
                 </div>
 
                 <h1 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
-                  Built for Entrepreneurs
+                  A New Studio,
                   <br />
                   <span className="bg-gradient-to-r from-lime-400 via-cyan-400 to-pink-500 text-transparent bg-clip-text">
-                    Who Move Fast
+                    Honest Pricing
                   </span>
                 </h1>
 
                 <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
-                  Digital products, AI automation, and websites for people who are tired of wasting
-                  time on courses, templates that don't work, and agencies that take months to
-                  deliver.
+                  I&apos;m Austin. I started Soft Systems Studio this year, and I don&apos;t have a
+                  client roster to point to yet — just a handful of demo sites and a price that
+                  reflects exactly where I&apos;m starting from.
                 </p>
               </div>
             </FadeIn>
@@ -109,57 +92,40 @@ export default function AboutPage() {
 
             <div className="max-w-3xl mx-auto relative z-10">
               <FadeIn>
-                <h2 className="text-3xl md:text-4xl font-black text-white mb-8">The Story</h2>
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-8">
+                  The Honest Version
+                </h2>
                 <div className="space-y-6 text-gray-300 leading-relaxed text-lg">
                   <p>
-                    I started Soft Systems Studio in 2019 because I was tired of watching
-                    entrepreneurs waste months (and thousands of dollars) on things that should take
-                    days.
+                    I started Soft Systems Studio at the beginning of 2026. I don&apos;t have a
+                    roster of clients yet — what I have is a handful of demo sites I built myself to
+                    show what I can do, and a {BUILD_FEE} flat build fee that reflects exactly that:
+                    a new studio building its first portfolio, not an established shop with ten
+                    years of case studies to point to.
                   </p>
                   <p>
-                    I'd spent years building automation for Fortune 500 companies. The tools were
-                    powerful, but they were locked behind $50k+ enterprise contracts. Small
-                    businesses and solopreneurs couldn't access them.
+                    That&apos;s not something I&apos;m hiding — it&apos;s the reason the price is
+                    what it is. An established studio with a client list can charge $3,000 or more,
+                    because they&apos;re not just selling you a website, they&apos;re selling you
+                    their track record. I don&apos;t have one of those yet. So instead of charging
+                    for a reputation I haven&apos;t built, I charge for the work itself — and I do
+                    the work myself.
                   </p>
                   <p>
-                    Then AI happened. Suddenly, I could build in a weekend what used to take a team
-                    of developers 6 months. I could create templates and systems that actually
-                    worked, not generic Notion docs with placeholder text.
+                    AI is what makes that math work. It lets one person build and ship what used to
+                    take a small team, which is how a solo studio can charge {BUILD_FEE} instead of
+                    $3,000+ and still do the work properly.
                   </p>
                   <p className="text-white font-bold">
-                    So I did. And now I'm packaging everything I've learned into products, websites,
-                    and automation you can use immediately.
+                    So that&apos;s the pitch: a new studio, one person, a fair price for where I
+                    actually am — building websites and an AI receptionist demo for local businesses
+                    in {SERVICE_AREA_LABEL}.
                   </p>
                   <p className="text-lime-400 font-medium">
-                    No courses. No coaching. Just tools that work.
+                    No invented history. No fake case studies. Just the work.
                   </p>
                 </div>
               </FadeIn>
-            </div>
-          </Section>
-
-          {/* Timeline */}
-          <Section className="py-24 relative">
-            <FadeIn>
-              <h2 className="text-3xl md:text-4xl font-black text-white text-center mb-16">
-                Timeline
-              </h2>
-            </FadeIn>
-
-            <div className="max-w-4xl mx-auto">
-              <StaggerContainer className="space-y-8">
-                {TIMELINE.map((item) => (
-                  <div
-                    key={item.year}
-                    className="relative pl-8 border-l-2 border-lime-400/30 hover:border-lime-400 transition-colors"
-                  >
-                    <div className="absolute -left-2 top-0 w-4 h-4 bg-lime-400 rounded-full" />
-                    <div className="text-lime-400 font-bold text-sm mb-1">{item.year}</div>
-                    <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                    <p className="text-gray-400">{item.description}</p>
-                  </div>
-                ))}
-              </StaggerContainer>
             </div>
           </Section>
 
@@ -169,10 +135,10 @@ export default function AboutPage() {
 
             <FadeIn>
               <h2 className="text-3xl md:text-4xl font-black text-white text-center mb-4">
-                What We Believe
+                What I Believe
               </h2>
               <p className="text-gray-400 text-center mb-16 max-w-2xl mx-auto">
-                The principles that guide everything we build
+                The principles that guide everything I build
               </p>
             </FadeIn>
 
@@ -192,14 +158,15 @@ export default function AboutPage() {
             </StaggerContainer>
           </Section>
 
-          {/* Team */}
+          {/* Founder */}
           <Section className="py-24 relative">
             <FadeIn>
               <h2 className="text-3xl md:text-4xl font-black text-white text-center mb-4">
-                The Team
+                Just Me
               </h2>
               <p className="text-gray-400 text-center mb-12 max-w-xl mx-auto">
-                Small team, big output. No bureaucracy, no meetings, just shipping.
+                No bureaucracy, no meetings, no account manager relaying messages — just the person
+                building your site.
               </p>
             </FadeIn>
 
@@ -210,11 +177,11 @@ export default function AboutPage() {
                     <span className="text-3xl font-black text-black">AH</span>
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-2">Austin Hodges</h3>
-                  <p className="text-lime-400 font-medium mb-4">Founder & Builder</p>
+                  <p className="text-lime-400 font-medium mb-4">Founder</p>
                   <p className="text-gray-300 leading-relaxed max-w-lg mx-auto mb-6">
-                    Former enterprise automation consultant turned indie builder. I use AI to build
-                    10x faster, ship daily, and help entrepreneurs stop wasting time on things that
-                    should be simple.
+                    I started Soft Systems Studio in 2026 to build websites and an AI receptionist
+                    for local service businesses near Phenix City, Alabama. I use AI to build fast
+                    and keep prices honest, and I do the design, build, and support myself.
                   </p>
                   <div className="flex justify-center gap-4 text-sm text-gray-400">
                     <span>🛠️ Building in public</span>
@@ -236,57 +203,40 @@ export default function AboutPage() {
             </FadeIn>
           </Section>
 
-          {/* What We Offer */}
+          {/* What I Do */}
           <Section className="py-24 relative">
             <div className="absolute inset-0 bg-gradient-to-br from-lime-900/10 via-transparent to-pink-900/10 pointer-events-none" />
 
             <div className="max-w-4xl mx-auto relative z-10">
               <FadeIn>
                 <h2 className="text-3xl md:text-4xl font-black text-white text-center mb-16">
-                  What We Do
+                  What I Do
                 </h2>
               </FadeIn>
 
-              <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur text-center">
-                  <div className="text-4xl mb-4">📦</div>
-                  <h3 className="text-xl font-bold text-white mb-3">Digital Products</h3>
-                  <p className="text-gray-400 text-sm mb-4">
-                    Templates, launch kits, and systems for entrepreneurs
-                  </p>
-                  <a
-                    href="/#digital-products"
-                    className="text-lime-400 text-sm font-medium hover:underline"
-                  >
-                    Browse Products →
-                  </a>
-                </div>
-
-                <div className="p-6 rounded-2xl border border-lime-400/30 bg-gradient-to-br from-lime-400/5 to-transparent backdrop-blur text-center scale-105">
+              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="p-6 rounded-2xl border border-lime-400/30 bg-gradient-to-br from-lime-400/5 to-transparent backdrop-blur text-center">
                   <div className="text-4xl mb-4">🎨</div>
-                  <h3 className="text-xl font-bold text-white mb-3">Website Design</h3>
+                  <h3 className="text-xl font-bold text-white mb-3">Website Build</h3>
                   <p className="text-gray-400 text-sm mb-4">
-                    Modern sites built in 48hr-2 weeks, starting at $799
+                    A flat {BUILD_FEE} build for local service businesses — no tiers, no upsells.
                   </p>
-                  <a
-                    href="/#web-design"
-                    className="text-lime-400 text-sm font-medium hover:underline"
-                  >
-                    See Packages →
+                  <a href="/#website" className="text-lime-400 text-sm font-medium hover:underline">
+                    See the Details →
                   </a>
                 </div>
 
                 <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur text-center">
                   <div className="text-4xl mb-4">🤖</div>
-                  <h3 className="text-xl font-bold text-white mb-3">AI Automation</h3>
+                  <h3 className="text-xl font-bold text-white mb-3">AI Receptionist</h3>
                   <p className="text-gray-400 text-sm mb-4">
-                    Custom AI solutions for service businesses
+                    A live browser demo today; pricing quoted alongside a build or retainer.
                   </p>
                   <a
-                    href="/#ai-services"
+                    href="/#ai-receptionist"
                     className="text-lime-400 text-sm font-medium hover:underline"
                   >
-                    Learn More →
+                    Try the Demo →
                   </a>
                 </div>
               </StaggerContainer>
@@ -300,25 +250,23 @@ export default function AboutPage() {
             <FadeIn>
               <div className="max-w-3xl mx-auto text-center relative z-10">
                 <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-                  Ready to Move Fast?
+                  Ready to Be an Early Client?
                 </h2>
                 <p className="text-xl text-gray-300 mb-10">
-                  Browse products, start a website project, or get AI automation
+                  Start a website project or try the AI receptionist demo first
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
-                    href="https://softsystemsstudioco.gumroad.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="/intake"
                     className="inline-block px-10 py-5 bg-lime-400 text-black font-bold text-lg rounded-lg hover:bg-lime-300 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-lime-400/50"
                   >
-                    Shop Products
+                    Start a Project
                   </a>
                   <a
-                    href="/intake"
+                    href="/#ai-receptionist"
                     className="inline-block px-10 py-5 border-2 border-white/20 text-white font-bold text-lg rounded-lg hover:bg-white/10 transition-all duration-300"
                   >
-                    Start a Project
+                    Try the Demo
                   </a>
                 </div>
               </div>

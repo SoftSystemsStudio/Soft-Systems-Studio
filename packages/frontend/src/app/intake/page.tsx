@@ -4,7 +4,8 @@ import IntakeForm from './intake-form';
 export const metadata: Metadata = {
   title: 'Get a Free Quote',
   description:
-    'Get a free quote for your website or AI receptionist. We help local service businesses never miss a call again.',
+    'Get a free quote for a $997 flat website build or the AI receptionist. Serving local service businesses in Phenix City, AL and Columbus, GA.',
+  alternates: { canonical: '/intake' },
 };
 
 export default function IntakePage() {

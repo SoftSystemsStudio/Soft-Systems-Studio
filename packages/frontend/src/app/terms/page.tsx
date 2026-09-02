@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Navbar, Footer } from '@/components/ui';
+import { CONTACT_EMAIL } from '@/lib/business';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description: 'Terms of service for Soft Systems Studio LLC.',
+  alternates: { canonical: '/terms' },
 };
 
 const NAV_ITEMS = [
@@ -19,7 +21,7 @@ export default function TermsPage() {
         <h1 className="text-4xl font-bold text-white mb-8">Terms of Service</h1>
         <div className="prose prose-invert prose-gray max-w-none space-y-6 text-gray-300 leading-relaxed">
           <p>
-            <strong className="text-white">Last updated:</strong> February 2026
+            <strong className="text-white">Last updated:</strong> September 2026
           </p>
           <p>
             By using Soft Systems Studio LLC services, you agree to these terms. Please read them
@@ -32,15 +34,15 @@ export default function TermsPage() {
           </p>
           <h2 className="text-2xl font-semibold text-white mt-8">Payment Terms</h2>
           <ul className="list-disc pl-6 space-y-2">
-            <li>Setup fees are due upfront before work begins</li>
-            <li>Monthly fees are billed at the beginning of each month</li>
+            <li>The website build fee is due upfront before work begins</li>
+            <li>Retainer fees are billed at the beginning of each month</li>
             <li>All payments are processed via Stripe</li>
-            <li>Refunds are provided per our 30-day money-back guarantee</li>
+            <li>Refund terms are agreed on a per-project basis before work begins</li>
           </ul>
           <h2 className="text-2xl font-semibold text-white mt-8">Cancellation</h2>
           <p>
-            You may cancel monthly services at any time. No refunds for partial months. Setup fees
-            are non-refundable after 30 days.
+            You may cancel a monthly retainer at any time. No refunds for partial months. The
+            website build fee is non-refundable once work has begun.
           </p>
           <h2 className="text-2xl font-semibold text-white mt-8">Intellectual Property</h2>
           <p>
@@ -60,11 +62,8 @@ export default function TermsPage() {
           <h2 className="text-2xl font-semibold text-white mt-8">Contact</h2>
           <p>
             Questions? Email us at{' '}
-            <a
-              href="mailto:hello@softsystemsstudiollc.com"
-              className="text-lime-400 hover:underline"
-            >
-              hello@softsystemsstudiollc.com
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-lime-400 hover:underline">
+              {CONTACT_EMAIL}
             </a>
             .
           </p>

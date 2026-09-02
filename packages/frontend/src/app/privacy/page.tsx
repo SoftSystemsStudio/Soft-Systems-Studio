@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Navbar, Footer } from '@/components/ui';
+import { CONTACT_EMAIL } from '@/lib/business';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'Privacy policy for Soft Systems Studio LLC.',
+  alternates: { canonical: '/privacy' },
 };
 
 const NAV_ITEMS = [
@@ -19,7 +21,7 @@ export default function PrivacyPage() {
         <h1 className="text-4xl font-bold text-white mb-8">Privacy Policy</h1>
         <div className="prose prose-invert prose-gray max-w-none space-y-6 text-gray-300 leading-relaxed">
           <p>
-            <strong className="text-white">Last updated:</strong> February 2026
+            <strong className="text-white">Last updated:</strong> September 2026
           </p>
           <p>
             Soft Systems Studio LLC (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) operates
@@ -51,11 +53,8 @@ export default function PrivacyPage() {
           <h2 className="text-2xl font-semibold text-white mt-8">Contact Us</h2>
           <p>
             If you have questions about this privacy policy, contact us at{' '}
-            <a
-              href="mailto:hello@softsystemsstudiollc.com"
-              className="text-lime-400 hover:underline"
-            >
-              hello@softsystemsstudiollc.com
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-lime-400 hover:underline">
+              {CONTACT_EMAIL}
             </a>
             .
           </p>

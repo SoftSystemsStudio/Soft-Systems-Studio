@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { SERVICE_AREA_LABEL, BUSINESS_PHONE } from '@/lib/business';
 
 interface FooterLink {
   label: string;
@@ -46,6 +47,23 @@ export default function Footer({
             </Link>
           ))}
         </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-6 mt-6 pt-6 border-t border-white/5 text-center text-xs text-white/40">
+        Serving {SERVICE_AREA_LABEL}.
+        {BUSINESS_PHONE && (
+          <>
+            {' '}
+            Call{' '}
+            <a href={`tel:${BUSINESS_PHONE}`} className="text-white/60 hover:text-lime-400">
+              {BUSINESS_PHONE}
+            </a>
+            .
+          </>
+        )}
+        {/* TODO(Austin): once a business phone number exists, set BUSINESS_PHONE
+            in src/lib/business.ts (E.164 format) — this line and the
+            LocalBusiness schema pick it up automatically. Do not hardcode a
+            number here. */}
       </div>
     </footer>
   );
