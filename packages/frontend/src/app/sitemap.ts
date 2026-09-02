@@ -17,12 +17,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/digital-products`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.95,
-    },
     // Demo sites - showcase portfolio
     {
       url: `${baseUrl}/demo/apex-plumbing`,

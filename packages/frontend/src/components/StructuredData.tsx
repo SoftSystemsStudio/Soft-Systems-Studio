@@ -6,13 +6,13 @@
  */
 
 import Script from 'next/script';
-
-interface Product {
-  name: string;
-  price: string;
-  description: string;
-  link: string;
-}
+import {
+  BUILD_FEE,
+  RETAINER_MIN,
+  RETAINER_MAX,
+  SERVICE_AREA_CITIES,
+  BUSINESS_PHONE,
+} from '@/lib/business';
 
 interface FAQ {
   question: string;
@@ -30,7 +30,7 @@ export function OrganizationSchema() {
     url: 'https://softsystemsstudiollc.com',
     logo: 'https://softsystemsstudiollc.com/images/soft-systems-logo.png',
     description:
-      'Digital products, AI-powered websites, and intelligent automation for entrepreneurs who refuse to waste time.',
+      'Website builds and an AI receptionist for local service businesses in and around Phenix City, AL and Columbus, GA.',
     sameAs: [
       // Add your social media profiles here
       // 'https://twitter.com/softsystems',
@@ -53,36 +53,38 @@ export function OrganizationSchema() {
 }
 
 /**
- * Product Schema - Helps Google show rich product cards in search
+ * LocalBusiness Schema - service-area business, no street address.
+ *
+ * Austin works from home; we were told explicitly not to publish a home
+ * address. `areaServed` carries the geo signal instead of `address`. Phone
+ * is added automatically once BUSINESS_PHONE (lib/business.ts) is set —
+ * until then this schema simply omits `telephone` rather than invent one.
  */
-export function ProductListSchema({ products }: { products: Product[] }) {
-  const schemas = products.map((product) => ({
+export function LocalBusinessSchema() {
+  const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    description: product.description,
-    offers: {
-      '@type': 'Offer',
-      price: product.price.replace('$', ''),
-      priceCurrency: 'USD',
-      availability: 'https://schema.org/InStock',
-      url: product.link,
-      seller: {
-        '@type': 'Organization',
-        name: 'Soft Systems Studio LLC',
-      },
-    },
-    brand: {
-      '@type': 'Brand',
-      name: 'Soft Systems Studio',
-    },
-  }));
+    '@type': 'ProfessionalService',
+    name: 'Soft Systems Studio LLC',
+    url: 'https://softsystemsstudiollc.com',
+    image: 'https://softsystemsstudiollc.com/images/soft-systems-logo.png',
+    description:
+      'Website builds and an AI receptionist for local service businesses — serving Phenix City and Smiths Station, AL, and Columbus, GA.',
+    priceRange: `${BUILD_FEE} / ${RETAINER_MIN}-${RETAINER_MAX} per month`,
+    areaServed: (SERVICE_AREA_CITIES as string[]).map((name: string) => ({
+      '@type': 'City',
+      name,
+    })),
+  };
+
+  if (BUSINESS_PHONE) {
+    schema.telephone = BUSINESS_PHONE;
+  }
 
   return (
     <Script
-      id="product-list-schema"
+      id="local-business-schema"
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
   );
 }
@@ -114,7 +116,11 @@ export function FAQSchema({ faqs }: { faqs: FAQ[] }) {
 }
 
 /**
- * WebSite Schema - Enables sitelinks search box in Google
+ * WebSite Schema - basic site identity for search engines.
+ *
+ * No `potentialAction`/`SearchAction` here on purpose: the site has no
+ * search feature, so promising Google a `/?s={search_term_string}` box
+ * would just fail if anyone used it.
  */
 export function WebSiteSchema() {
   const schema = {
@@ -122,14 +128,6 @@ export function WebSiteSchema() {
     '@type': 'WebSite',
     name: 'Soft Systems Studio',
     url: 'https://softsystemsstudiollc.com',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: 'https://softsystemsstudiollc.com/?s={search_term_string}',
-      },
-      'query-input': 'required name=search_term_string',
-    },
   };
 
   return (

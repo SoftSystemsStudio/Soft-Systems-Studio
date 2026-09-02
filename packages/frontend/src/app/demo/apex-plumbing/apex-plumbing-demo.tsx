@@ -104,18 +104,18 @@ const reviews = [
 ];
 
 const serviceAreas = [
-  'Austin',
-  'Round Rock',
-  'Cedar Park',
-  'Pflugerville',
-  'Georgetown',
-  'Lakeway',
-  'Bee Cave',
-  'Leander',
-  'Dripping Springs',
-  'Kyle',
-  'Buda',
-  'Manor',
+  'Downtown',
+  'Northside',
+  'Westgate',
+  'Riverside',
+  'Eastwood',
+  'Fairview',
+  'Hillcrest',
+  'Lakeview',
+  'Southport',
+  'Millbrook',
+  'Cedar Grove',
+  'Oak Ridge',
 ];
 
 /* ─── component ─── */
@@ -170,7 +170,7 @@ export default function ApexPlumbingDemo() {
             <div>
               <div className="text-xl font-black tracking-tight">APEX PLUMBING</div>
               <div className="text-[10px] text-orange-500/80 font-semibold tracking-[0.2em] uppercase -mt-0.5">
-                Austin, Texas
+                Licensed &amp; Insured
               </div>
             </div>
           </a>
@@ -258,7 +258,7 @@ export default function ApexPlumbingDemo() {
               </div>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight mb-8">
-                Austin&apos;s Most
+                Your Most
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
                   Trusted Plumber
                 </span>
@@ -316,7 +316,7 @@ export default function ApexPlumbingDemo() {
                         ⭐
                       </div>
                       <div>
-                        <div className="font-bold text-lg">Rated #1 in Austin</div>
+                        <div className="font-bold text-lg">Rated #1 Locally</div>
                         <div className="text-sm text-gray-400">Based on 500+ verified reviews</div>
                       </div>
                     </div>
@@ -340,7 +340,7 @@ export default function ApexPlumbingDemo() {
         <div className="max-w-7xl mx-auto px-6 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { icon: '🛡️', title: 'Licensed & Insured', desc: 'TX License #M-41205' },
+              { icon: '🛡️', title: 'Licensed & Insured', desc: 'License #M-41205' },
               { icon: '💰', title: 'Upfront Pricing', desc: 'No surprise fees, ever' },
               { icon: '⚡', title: 'Same-Day Service', desc: 'Fast dispatch guaranteed' },
               { icon: '✅', title: '100% Satisfaction', desc: 'Or your money back' },
@@ -412,7 +412,7 @@ export default function ApexPlumbingDemo() {
               </div>
               <h2 className="text-4xl md:text-5xl font-black mb-4">Before &amp; After</h2>
               <p className="text-gray-400 max-w-xl mx-auto">
-                See the transformations we deliver for Austin homeowners every day.
+                See the transformations we deliver for local homeowners every day.
               </p>
             </div>
           </Reveal>
@@ -456,7 +456,7 @@ export default function ApexPlumbingDemo() {
                   <h4 className="font-bold text-lg group-hover:text-orange-500 transition-colors duration-300">
                     {project.label}
                   </h4>
-                  <p className="text-sm text-gray-500">Completed in Austin, TX</p>
+                  <p className="text-sm text-gray-500">Completed for a local customer</p>
                 </div>
               </Reveal>
             ))}
@@ -532,10 +532,10 @@ export default function ApexPlumbingDemo() {
                 <div className="text-orange-500 text-sm font-bold tracking-[0.2em] uppercase mb-4">
                   Service Areas
                 </div>
-                <h2 className="text-4xl md:text-5xl font-black mb-6">Serving Greater Austin</h2>
+                <h2 className="text-4xl md:text-5xl font-black mb-6">Serving the Greater Metro</h2>
                 <p className="text-gray-400 mb-10 leading-relaxed">
-                  From downtown Austin to the surrounding suburbs, our trucks are always nearby and
-                  ready to roll. Most service calls answered within 60 minutes.
+                  From downtown to the surrounding suburbs, our trucks are always nearby and ready
+                  to roll. Most service calls answered within 60 minutes.
                 </p>
                 <div className="grid grid-cols-3 gap-3">
                   {serviceAreas.map((area) => (
@@ -598,7 +598,7 @@ export default function ApexPlumbingDemo() {
                 </div>
                 <div className="absolute bottom-6 left-6 bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl px-5 py-3">
                   <div className="text-orange-500 font-bold text-lg">30-mile radius</div>
-                  <div className="text-xs text-gray-500">from downtown Austin</div>
+                  <div className="text-xs text-gray-500">from downtown</div>
                 </div>
               </div>
             </Reveal>
@@ -701,7 +701,7 @@ export default function ApexPlumbingDemo() {
                 <div className="text-xl font-black">APEX PLUMBING</div>
               </div>
               <p className="text-gray-500 text-sm leading-relaxed mb-6">
-                Austin&apos;s trusted plumbing professionals. Licensed, insured, and committed to
+                Your trusted local plumbing professionals. Licensed, insured, and committed to
                 excellence since 2015.
               </p>
               <div className="flex gap-3">
@@ -766,7 +766,7 @@ export default function ApexPlumbingDemo() {
                 <a href="#" className="block hover:text-orange-500 transition-colors duration-300">
                   ✉️ info@apexplumbing.com
                 </a>
-                <p>📍 Austin, TX 78701</p>
+                <p>📍 Serving the greater metro area</p>
                 <div className="pt-2">
                   <div className="text-xs text-gray-600 mb-1">Hours:</div>
                   <p>Mon-Fri: 7am – 8pm</p>
@@ -782,7 +782,7 @@ export default function ApexPlumbingDemo() {
             <div className="flex flex-wrap items-center justify-center gap-8">
               {[
                 'BBB A+ Rated',
-                'TX Licensed #M-41205',
+                'Licensed #M-41205',
                 'Fully Insured',
                 'EPA Certified',
                 'HomeAdvisor Top Rated',

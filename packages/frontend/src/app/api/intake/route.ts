@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
 import env from '@/lib/env';
+import { CONTACT_EMAIL } from '@/lib/business';
 
 type IntakeFormData = {
   name: string;
@@ -16,9 +17,9 @@ type IntakeFormData = {
 };
 
 const SERVICE_LABELS: Record<string, string> = {
-  website: 'Website Only ($2,500)',
-  ai_receptionist: 'AI Receptionist ($997 + $197/mo)',
-  complete_package: 'Complete Package ($2,997 + $197/mo)',
+  website: 'Website Build ($997 flat)',
+  ai_receptionist: 'AI Receptionist (pricing quoted with a build or retainer)',
+  complete_package: 'Website + AI Receptionist (bundle — custom quote)',
 };
 
 export async function POST(request: NextRequest) {
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
     }
 
-    const adminEmail = env.ADMIN_EMAIL || env.RESEND_FROM_EMAIL || 'admin@softsystems.studio';
+    const adminEmail = env.ADMIN_EMAIL || env.RESEND_FROM_EMAIL || CONTACT_EMAIL;
 
     await sendEmail({
       to: adminEmail,
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
         <p style="color: #fff; font-weight: bold; margin: 0;">The Soft Systems Studio Team</p>
         <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1);"><p style="color: #6b7280; font-size: 12px; margin: 0;">Questions? Just reply to this email.</p></div>
       </div>`,
-      replyTo: env.ADMIN_EMAIL || 'softsystemstudioco@gmail.com',
+      replyTo: env.ADMIN_EMAIL || CONTACT_EMAIL,
     });
 
     return NextResponse.json({ success: true });
