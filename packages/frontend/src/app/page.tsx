@@ -47,7 +47,7 @@ const PORTFOLIO_SITES = [
     name: 'Ironwood Auto & Tire',
     type: 'Auto Repair',
     description: 'Phone-first and built for someone who needs their car back today.',
-    image: '/images/demo/ironwood-auto/hero-lift.jpg',
+    image: '/images/demo/ironwood-auto/hero-shop.jpg',
     url: '/demo/ironwood-auto',
   },
   {
