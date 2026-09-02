@@ -3,9 +3,15 @@
  *
  * These components add rich snippets to improve search engine understanding
  * and enable enhanced search results (rich cards, knowledge panels, etc.)
+ *
+ * Deliberately plain <script> tags, not next/script: next/script's default
+ * `afterInteractive` strategy injects the tag client-side after hydration,
+ * so it never appears in the server-rendered HTML crawlers (and curl) see —
+ * which defeats the entire point of JSON-LD. A plain <script> is a normal
+ * host element and gets server-rendered like any other markup. This matches
+ * Next.js's own documented pattern for JSON-LD.
  */
 
-import Script from 'next/script';
 import {
   BUILD_FEE,
   RETAINER_MIN,
@@ -44,7 +50,7 @@ export function OrganizationSchema() {
   };
 
   return (
-    <Script
+    <script
       id="organization-schema"
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
@@ -81,7 +87,7 @@ export function LocalBusinessSchema() {
   }
 
   return (
-    <Script
+    <script
       id="local-business-schema"
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
@@ -107,7 +113,7 @@ export function FAQSchema({ faqs }: { faqs: FAQ[] }) {
   };
 
   return (
-    <Script
+    <script
       id="faq-schema"
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
@@ -131,7 +137,7 @@ export function WebSiteSchema() {
   };
 
   return (
-    <Script
+    <script
       id="website-schema"
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
