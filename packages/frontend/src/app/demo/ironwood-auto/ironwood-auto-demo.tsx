@@ -32,7 +32,20 @@ function useReveal(threshold = 0.15) {
       { threshold },
     );
     io.observe(el);
-    return () => io.disconnect();
+    // Backstop: a static render (a crawler, a link-preview bot, or a
+    // screenshot taken right after load, e.g. one Austin sends a
+    // prospect) never scrolls the page, so IntersectionObserver correctly
+    // never fires for anything below the fold — without this, those
+    // sections show as permanently blank space instead of their real
+    // content. Confirmed live: this demo's own full-page screenshot
+    // showed Services/Reviews/Hours as empty (2026-09-05 process audit).
+    // Same fix as the lead-tool generator's section library
+    // (lib/site/sections/base.ts) uses for the identical failure mode.
+    const backstop = setTimeout(() => setVisible(true), 600);
+    return () => {
+      io.disconnect();
+      clearTimeout(backstop);
+    };
   }, [threshold]);
   return { ref, visible };
 }
