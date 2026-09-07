@@ -204,7 +204,15 @@ export default function GreenBenchDemo() {
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-10 w-full text-white">
-          <p className="text-sm tracking-[0.15em] uppercase text-[#E8B08F] mb-4 font-semibold">
+          {/* bg-black/90 pill added 2026-09-06: this line sits over a live
+              photo behind only a thin (~35% opacity) scrim at this height,
+              so its contrast depends on how bright the photo happens to be
+              right here — measured soft against this bundled photo (a
+              lawn/sky area), and the underlying issue (text color alone,
+              no guaranteed-dark backing) would recur with any other photo
+              too. A solid-ish backing makes it provably safe regardless of
+              the photo, the same way the CTA buttons below already are. */}
+          <p className="inline-block bg-black/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm tracking-[0.15em] uppercase text-[#E8B08F] mb-4 font-semibold">
             Serving Phenix City & Smiths Station, AL, and Columbus, GA
           </p>
           <h1
