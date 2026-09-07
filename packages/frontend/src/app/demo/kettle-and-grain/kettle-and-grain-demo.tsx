@@ -182,7 +182,14 @@ export default function KettleAndGrainDemo() {
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-10 w-full">
-          <p className="text-sm tracking-[0.15em] uppercase text-[#C99A44] mb-4">
+          {/* Same fix as Green Bench's hero eyebrow (2026-09-06): a solid-ish
+              backing makes this line's contrast provably safe regardless of
+              the photo behind it, rather than depending on the thin scrim
+              alone. This particular photo doesn't trigger the failure, but
+              the underlying risk (text color with no guaranteed-dark
+              backing over a live photo) is the same one that did on
+              Green Bench's. */}
+          <p className="inline-block bg-black/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm tracking-[0.15em] uppercase text-[#C99A44] mb-4">
             Downtown Phenix City, Alabama
           </p>
           <h1
